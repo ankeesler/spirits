@@ -1,3 +1,0 @@
-Duncee::A quiet town by the sea::Home::Visit your home
-Duncee Hills::Rolling hills separating Duncee from Minnepolis::Battle::Instigate a battle with nearby spirits
-Minnepolis::A bustling metropolis::Inn::Visit the inn::Market::Visit the market::Shaman::Visit the shaman
