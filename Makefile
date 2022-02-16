@@ -1,6 +1,10 @@
 SPIRITS ?= .bin/spirits
 BTOOL ?= .bin/btool
 
+GENERATED_FILES =         \
+  source/data/locations.h \
+  source/data/locations.c
+
 all: $(SPIRITS)
 
 .PHONY: registry
@@ -18,9 +22,15 @@ $(BTOOL):
 	gunzip $(BTOOL).gz
 	chmod +x $@
 
-source/main: $(BTOOL) registry
+source/main: $(BTOOL) registry # $(GENERATED_FILES)
 	$< -root source -target main -registry http://localhost:80
 
 $(SPIRITS): source/main
 	mkdir -p $(@D)
 	cp $< $@
+
+source/data/%.h: script/%.awk data/%.txt
+	awk -F "::" -v source=$< -v output_type=h -f $^ >$@
+
+source/data/%.c: script/%.awk data/%.txt
+	awk -F "::" -v source=$< -v output_type=c -f $^ >$@

@@ -2,14 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "context.h"
 #include "log.h"
 #include "menu.h"
 
 static void trim_newline(char *s, int len);
 
-void run_menu(const menu_t *menu, void *context) {
+void run_menu(const menu_t *menu, context_t *context) {
   while (1) {
-    printf("---\n");
+    printf("@@@@@@@@@\n");
     printf("  %s\n", menu->title);
   
     int item_num = 0;
@@ -18,7 +19,7 @@ void run_menu(const menu_t *menu, void *context) {
       printf("    %d\t-\t%s\t-\t%s\n", item_num, mi->name, mi->description);
     }
 
-    printf("\n option: ");
+    printf("\n  Enter option: ");
     char input[8] = {0,};
     fgets(input, sizeof(input) - 1, stdin);
     trim_newline(input, sizeof(input) - 1);
@@ -26,9 +27,9 @@ void run_menu(const menu_t *menu, void *context) {
 
     int option = atoi(input);
     if (input[0] == 0 || option < 0 || option >= item_num) {
-      printf("\n invalid option: '%s' (%d)\n", input, option);
+      printf("\n Invalid option: '%s' (%d)\n", input, option);
     } else {
-      (*menu->items[option].run)(NULL);
+      (*menu->items[option].run)(context, option);
     }
   }
 }
