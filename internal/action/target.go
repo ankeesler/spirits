@@ -3,7 +3,7 @@ package action
 import (
 	"strings"
 
-	"github.com/ankeesler/spirits/pkg/spirit"
+	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 // Target is a bitmask that describes on what/who a spirit.Action is performed.

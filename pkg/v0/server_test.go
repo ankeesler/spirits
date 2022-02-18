@@ -1,4 +1,4 @@
-package server_test
+package v0_test
 
 import (
 	"net/http"
@@ -7,11 +7,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/ankeesler/spirits/pkg/server"
+	api "github.com/ankeesler/spirits/pkg/v0"
 )
 
 func TestServer(t *testing.T) {
-	s := httptest.NewServer(server.New())
+	s := httptest.NewServer(api.New())
 	t.Cleanup(s.Close)
 
 	c := &http.Client{}

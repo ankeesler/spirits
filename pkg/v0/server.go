@@ -1,9 +1,4 @@
-// Package server provides an http.Handler that implements the spirits game server.
-//
-// The http.Handler in this package is serves a single WebSocket endpoint at /rooms/<room-id>.
-//
-// The API objects for interacting with this server can be found in pkg/api.
-package server
+package v0
 
 import (
 	"log"

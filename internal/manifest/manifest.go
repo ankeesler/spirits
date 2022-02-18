@@ -4,10 +4,10 @@ package manifest
 import (
 	"fmt"
 
-	"github.com/ankeesler/spirits/pkg/action"
-	"github.com/ankeesler/spirits/pkg/api"
-	"github.com/ankeesler/spirits/pkg/spirit"
-	"github.com/ankeesler/spirits/pkg/team"
+	"github.com/ankeesler/spirits/internal/action"
+	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/team"
+	api "github.com/ankeesler/spirits/pkg/v0"
 )
 
 // Load instantiates a list of team.Team's from an api.Manifest.

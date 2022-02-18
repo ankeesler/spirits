@@ -3,7 +3,7 @@
 package team
 
 import (
-	"github.com/ankeesler/spirits/pkg/spirit"
+	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 type Team struct {

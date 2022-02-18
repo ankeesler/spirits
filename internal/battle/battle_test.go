@@ -3,9 +3,9 @@ package battle_test
 import (
 	"testing"
 
-	"github.com/ankeesler/spirits/pkg/battle"
-	"github.com/ankeesler/spirits/pkg/spirit"
-	"github.com/ankeesler/spirits/pkg/team"
+	"github.com/ankeesler/spirits/internal/battle"
+	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/team"
 	"github.com/stretchr/testify/require"
 )
 

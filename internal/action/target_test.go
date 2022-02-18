@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/ankeesler/spirits/pkg/action"
+	"github.com/ankeesler/spirits/internal/action"
 )
 
 func TestTargetString(t *testing.T) {

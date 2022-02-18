@@ -1,4 +1,4 @@
-package integration
+package test
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIntegration(t *testing.T) {
+func TestCLI(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -48,7 +48,7 @@ func buildCLI(ctx context.Context, t *testing.T) string {
 		"build",
 		"-o",
 		cliPath,
-		"../cmd/spirits",
+		"../../cmd/spirits",
 	).CombinedOutput()
 	require.NoError(t, err, string(output))
 

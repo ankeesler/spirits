@@ -2,8 +2,8 @@
 package battle
 
 import (
-	"github.com/ankeesler/spirits/pkg/spirit"
-	"github.com/ankeesler/spirits/pkg/team"
+	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/team"
 )
 
 // Callback is a type that wants to handle specific events that happen during the course of a

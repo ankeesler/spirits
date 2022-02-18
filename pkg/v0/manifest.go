@@ -1,9 +1,4 @@
-// Package api provides the spirits API. These types are used to interact with the spirits command
-// line and game server.
-//
-// See runtime packages for more information about each type (e.g., pkg/manifest for Manifest,
-// pkg/team for Team, pkg/spirit for Spirit, pkg/action for Action, etc.).
-package api
+package v0
 
 type Manifest struct {
 	Metadata map[string]string `json:"metadata"`

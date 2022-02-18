@@ -6,11 +6,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ankeesler/spirits/pkg/api"
-	"github.com/ankeesler/spirits/pkg/battle"
-	"github.com/ankeesler/spirits/pkg/manifest"
-	"github.com/ankeesler/spirits/pkg/team"
-	"github.com/ankeesler/spirits/pkg/ui"
+	"github.com/ankeesler/spirits/internal/battle"
+	"github.com/ankeesler/spirits/internal/manifest"
+	"github.com/ankeesler/spirits/internal/team"
+	"github.com/ankeesler/spirits/internal/ui"
+	api "github.com/ankeesler/spirits/pkg/v0"
 	"gopkg.in/yaml.v2"
 )
 
@@ -66,7 +66,7 @@ func runBattle() error {
 	}
 
 	b := battle.New(battleTeams...)
-	b.Callback = ui.Text(os.Stdout)
+	b.Callback = ui.NewText(os.Stdout)
 	b.Run()
 
 	return nil

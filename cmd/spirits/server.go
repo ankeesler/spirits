@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ankeesler/spirits/pkg/server"
+	api "github.com/ankeesler/spirits/pkg/v0"
 )
 
 func runServer() error {
@@ -25,5 +25,5 @@ func runServer() error {
 
 	address := fmt.Sprintf(":%d", port)
 	log.Printf("starting server on %s", address)
-	return http.ListenAndServe(address, server.New())
+	return http.ListenAndServe(address, api.New())
 }

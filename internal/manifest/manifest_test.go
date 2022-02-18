@@ -3,11 +3,11 @@ package manifest_test
 import (
 	"testing"
 
-	"github.com/ankeesler/spirits/pkg/action"
-	"github.com/ankeesler/spirits/pkg/api"
-	"github.com/ankeesler/spirits/pkg/manifest"
-	"github.com/ankeesler/spirits/pkg/spirit"
-	"github.com/ankeesler/spirits/pkg/team"
+	"github.com/ankeesler/spirits/internal/action"
+	"github.com/ankeesler/spirits/internal/manifest"
+	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/team"
+	api "github.com/ankeesler/spirits/pkg/v0"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 )
