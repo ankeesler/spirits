@@ -1,12 +1,10 @@
-// Package manifest provides a mapping from a api.Manifest into the runtime object model.
+// Package manifest provides a mapping from an API manifest into the runtime data model.
 package manifest
 
 import (
 	"fmt"
 
-	"github.com/ankeesler/spirits/internal/action"
 	"github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/internal/team"
 	api "github.com/ankeesler/spirits/pkg/v0"
 )
 
@@ -36,7 +34,7 @@ func loadTeam(t *api.Team) (*team.Team, error) {
 		}
 	}
 
-	return team.New(t.Name, spirits), nil
+	return team.New(t.Name, spirits...), nil
 }
 
 func loadSpirit(s *api.Spirit) (*spirit.Spirit, error) {

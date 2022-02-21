@@ -74,7 +74,7 @@ func runBattle() error {
 
 func findTeam(needle string, haystack []*team.Team) *team.Team {
 	for _, hay := range haystack {
-		if hay.Name == needle {
+		if hay.Name() == needle {
 			return hay
 		}
 	}

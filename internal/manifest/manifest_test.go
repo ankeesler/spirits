@@ -3,24 +3,18 @@ package manifest_test
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/require"
+
 	"github.com/ankeesler/spirits/internal/action"
 	"github.com/ankeesler/spirits/internal/manifest"
 	"github.com/ankeesler/spirits/internal/spirit"
 	"github.com/ankeesler/spirits/internal/team"
+	testpkg "github.com/ankeesler/spirits/internal/test"
 	api "github.com/ankeesler/spirits/pkg/v0"
-	"github.com/google/go-cmp/cmp"
-	"github.com/stretchr/testify/require"
 )
 
 func TestLoad(t *testing.T) {
-	spiritComparer := cmp.Comparer(func(a, b *spirit.Spirit) bool {
-		return a.Name() == b.Name() &&
-			a.Health() == b.Health() &&
-			a.Power() == b.Power() &&
-			a.Armour() == b.Armour() &&
-			a.Agility() == b.Agility()
-	})
-
 	goodManifest := &api.Manifest{
 		Data: &api.ManifestData{
 			Teams: []*api.Team{
@@ -72,20 +66,16 @@ func TestLoad(t *testing.T) {
 			name: "happy path",
 			m:    goodManifest,
 			wantTeams: []*team.Team{
-				{
-					Name: "team 0",
-					Spirits: []*spirit.Spirit{
-						spirit.New("spirit 0a", 1, 0, 0, 0, action.Attack(action.TargetAll)),
-						spirit.New("spirit 0b", 0, 2, 0, 0, action.Attack(action.TargetMe)),
-					},
-				},
-				{
-					Name: "team 1",
-					Spirits: []*spirit.Spirit{
-						spirit.New("spirit 1a", 0, 0, 3, 0, action.Attack(action.TargetUs)),
-						spirit.New("spirit 1b", 0, 0, 0, 4, action.Attack(action.TargetThem)),
-					},
-				},
+				team.New(
+					"team 0",
+					spirit.New("spirit 0a", 1, 0, 0, 0, action.Attack(action.TargetAll)),
+					spirit.New("spirit 0b", 0, 2, 0, 0, action.Attack(action.TargetMe)),
+				),
+				team.New(
+					"team 1",
+					spirit.New("spirit 1a", 0, 0, 3, 0, action.Attack(action.TargetAll)),
+					spirit.New("spirit 1b", 0, 0, 0, 4, action.Attack(action.TargetMe)),
+				),
 			},
 		},
 		{
@@ -102,7 +92,7 @@ func TestLoad(t *testing.T) {
 				require.EqualError(t, gotErr, test.wantError)
 				return
 			}
-			if diff := cmp.Diff(test.wantTeams, gotTeams, spiritComparer); diff != "" {
+			if diff := cmp.Diff(test.wantTeams, gotTeams, testpkg.Comparer()); diff != "" {
 				t.Fatalf("-want, +got:\n%s", diff)
 			}
 		})

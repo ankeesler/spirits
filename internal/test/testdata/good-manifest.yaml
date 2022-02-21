@@ -7,46 +7,51 @@ data:
     - name: my-team
       spirits:
         - name: healer
-          health: 15
-          power: 3
-          armour: 3
-          agility: 3
+          stats:
+            health: 15
+            power: 3
+            armour: 3
+            agility: 3
           action:
             type: heal
             target: 8 # me
         - name: attacker
-          health: 15
-          power: 4
-          armour: 3
-          agility: 2
+          stats:
+            health: 15
+            power: 4
+            armour: 3
+            agility: 2
           action:
             type: attack
             target: 1 # one-of-them
     - name: their-team
       spirits:
         - name: defender
-          health: 15
-          power: 2
-          armour: 5
-          agility: 2
+          stats:
+            health: 15
+            power: 2
+            armour: 5
+            agility: 2
           action:
             type: attack
             target: 1 # one-of-them
         - name: attacker
-          health: 15
-          power: 4
-          armour: 3
-          agility: 2
+          stats:
+            health: 15
+            power: 4
+            armour: 3
+            agility: 2
           action:
             type: attack
             target: 1 # one-of-them
     - name: rando-team
       spirits:
         - name: monkey
-          health: 45
-          power: 1
-          armour: 1
-          agility: 1
+          stats:
+            health: 45
+            power: 1
+            armour: 1
+            agility: 1
           action:
             type: attack
             target: 1 # one-of-them

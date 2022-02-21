@@ -3,90 +3,62 @@
 // See Spirit doc.
 package spirit
 
+import (
+	"github.com/ankeesler/spirits/internal/tbass"
+	"github.com/ankeesler/spirits/internal/tbass/actor"
+	"github.com/ankeesler/spirits/internal/tbass/actor/stats"
+)
+
+const (
+	StatHealth  string = "health"
+	StatPower          = "power"
+	StatArmour         = "defense"
+	StatAgility        = "agility"
+)
+
 // Spirit is a participant in a battle.Battle.
-//
-// A Spirit has health. When a Spirit's health is decreased to 0, it cannot participate in a
-// battle.Battle anymore.
-//
-// A Spirit has power, which determines the strength of its attacks.
-//
-// A Spirit has armour, which determines the strength of its defense.
-//
-// A Spirit has agility, which determines how often it can perform an Action.
-//
-// A Spirit has an Action, which is actually how it contributes to the battle.Battle.
 type Spirit struct {
-	name string
-
-	action Action
-
-	baseHealth, health   int
-	basePower, power     int
-	baseArmour, armour   int
-	baseAgility, agility int
+	tbass.Actor
 }
 
-func New(name string, health, power, armour, agility int, action Action) *Spirit {
-	s := &Spirit{
-		name:   name,
-		action: action,
+func New(name string, health, power, armour, agility tbass.StatValue, action actor.Action) *Spirit {
+	stats := stats.New().
+		With(StatHealth, health, 0, health).
+		With(StatPower, power, 1, power*4).
+		With(StatArmour, armour, 1, armour*4).
+		With(StatAgility, agility, 1, agility*4)
+	return &Spirit{
+		Actor: actor.New(name, stats, action),
 	}
+}
 
-	s.baseHealth = s.health
-	s.health = health
+// Flatten returns a 1-D slice of Spirit's from a 2-D array of Spirit's.
+func Flatten(sss [][]*Spirit) []*Spirit {
+	var ss []*Spirit
+	for i := range sss {
+		ss = append(ss, sss[i]...)
+	}
+	return ss
+}
 
-	s.basePower = s.power
-	s.power = power
-
-	s.baseArmour = s.armour
-	s.armour = armour
-
-	s.baseAgility = s.agility
-	s.agility = agility
-
+// Min finds the Spirit with the minium stat returned by statFunc.
+//
+// The first Spirit encountered with the minimum stat will be returned.
+//
+// Spirit's with current health of 0 are ignored.
+func Min(ss []*Spirit, statFunc func(*Spirit) int) *Spirit {
+	var s *Spirit
+	for i := range ss {
+		if ss[i].Stat(StatHealth).Get() > 0 && (s == nil || statFunc(ss[i]) < statFunc(s)) {
+			s = ss[i]
+		}
+	}
 	return s
 }
 
-func (s *Spirit) Name() string { return s.name }
-
-func (s *Spirit) Action() Action { return s.action }
-
-// Health returns this Spirit's current health.
-func (s *Spirit) Health() int              { return s.health }
-func (s *Spirit) IncreaseHealth(count int) { changeStat(true, &s.health, count, 0, s.baseHealth) }
-func (s *Spirit) DecreaseHealth(count int) { changeStat(false, &s.health, count, 0, s.baseHealth) }
-
-// Power returns this Spirit's current power stat.
-func (s *Spirit) Power() int              { return s.power }
-func (s *Spirit) IncreasePower(count int) { changeStat(true, &s.power, count, 1, s.basePower) }
-func (s *Spirit) DecreasePower(count int) { changeStat(false, &s.power, count, 1, s.basePower) }
-
-// Armour returns this Spirit's current armour stat.
-func (s *Spirit) Armour() int              { return s.armour }
-func (s *Spirit) IncreaseArmour(count int) { changeStat(true, &s.armour, count, 0, s.baseArmour) }
-func (s *Spirit) DecreaseArmour(count int) { changeStat(false, &s.armour, count, 0, s.baseArmour) }
-
-// Agility returns this Spirit's current agility stat.
-func (s *Spirit) Agility() int              { return s.agility }
-func (s *Spirit) IncreaseAgility(count int) { changeStat(true, &s.agility, count, 1, s.baseAgility) }
-func (s *Spirit) DecreaseAgility(count int) { changeStat(false, &s.agility, count, 1, s.baseAgility) }
-
-func changeStat(increase bool, stat *int, count int, min, max int) {
-	if count < 0 {
-		return
-	}
-
-	if !increase {
-		count *= -1
-	}
-
-	*stat += count
-
-	if *stat < min {
-		*stat = min
-	}
-
-	if *stat > max {
-		*stat = max
+// ForEach calls f for every Spirit in ss, in the order in which they are provided.
+func ForEach(ss []*Spirit, f func(*Spirit)) {
+	for _, s := range ss {
+		f(s)
 	}
 }
