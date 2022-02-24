@@ -11,6 +11,9 @@ stack:
   client:
     cli: node
     ui: react
+  tools:
+    linter: eslint
+    testing: tap
 initiatives:
   - name: one-on-one-spirits
     epics:
@@ -23,7 +26,7 @@ initiatives:
               - lib/ui.js implements the battle callback and just prints out the spirit that runs to injected stream
               - lib/battle.js will export battle() that takes in two spirits and uses them.health - me.power + me.armour and then exits after one spirit health is 0
               - lib/battle.js will take callback that is called after each spirit goes
-              - test/battle.js will use jest to mock callback function and make sure it gets called
+              - test/battle.js will use CallTracker function and make sure it gets called with correct args
               - test/ui.js will make sure when we get called the print out looks good on a stream
               - test/integration.js will make sure when we run (with some fixtures) it will be similar to this https://github.com/npm/cli/blob/latest/test/index.js
           - name: i can POST manifest to server and see battle run

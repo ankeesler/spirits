@@ -1,0 +1,30 @@
+{
+  "name": "spirits",
+  "version": "0.0.0",
+  "description": "A turn-based battle framework",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "tap test --no-coverage",
+    "lint": "eslint test lib",
+    "check": "npm run lint && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankeesler/spirits.git"
+  },
+  "author": "Andrew Keesler <ankeesler1@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ankeesler/spirits/issues"
+  },
+  "homepage": "https://github.com/ankeesler/spirits#readme",
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "tap": "^15.1.6"
+  }
+}
