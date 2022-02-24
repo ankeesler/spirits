@@ -6,5 +6,5 @@
 //   - various Go struct's representing the API types.
 //
 // See runtime packages for more information about each API type (e.g., internal/manifest for
-// Manifest, internal/team for Team, internal/spirit for Spirit, internal/action for Action, etc.).
+// Manifest).
 package v0

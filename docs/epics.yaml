@@ -1,0 +1,118 @@
+---
+vision: turn-based battle framework
+muses:
+  - pokemon
+  - dnd
+  - ff
+  - fire emblem
+stack:
+  infra: heroku
+  server: node
+  client:
+    cli: node
+    ui: react
+initiatives:
+  - name: one-on-one-spirits
+    epics:
+      - name: one-on-one-spirits-api
+        stories:
+          - name: i provide list of two spirits and see battle output on CLI
+            notes:
+              - index.js says something like npm index.js in which it just loads the lib/main.js file and calls it with process.argv
+              - lib/main.js exports main function which calls battle() with two spirits loaded from argv and a callback function from lib/ui.js
+              - lib/ui.js implements the battle callback and just prints out the spirit that runs to injected stream
+              - lib/battle.js will export battle() that takes in two spirits and uses them.health - me.power + me.armour and then exits after one spirit health is 0
+              - lib/battle.js will take callback that is called after each spirit goes
+              - test/battle.js will use jest to mock callback function and make sure it gets called
+              - test/ui.js will make sure when we get called the print out looks good on a stream
+              - test/integration.js will make sure when we run (with some fixtures) it will be similar to this https://github.com/npm/cli/blob/latest/test/index.js
+          - name: i can POST manifest to server and see battle run
+            notes:
+              - single /battle handler
+              - lib/serve.js exports a single function serve that when created will run the server via express and offer POST /battle which calls battle callback?
+              - test/serve.js will create a server on a port and call it with supertest and make sure we get some battle stuff back on the callback with jest
+          - name: i can run battle via speed algorithm
+            notes:
+              - lib/battle.js will loop through teams in manifest, check if there are any teams alive, get next to go, run action (power - armour on spirit w weakest health)
+              - test/battle.js will be updated to use the speed algorithm tests from golang
+      - name: one-on-one-spirits-ui
+        stories:
+          - name: enter a manifest with two spirits, call the battle API, see the battle output
+      - name: simple-moves
+        notes:
+          - i don't want to sink too much time into this since we have a "better moves" epic as well
+        stories:
+          - name: i can have a spirit 'heal'
+            notes:
+              - add new manifest field for spirit that is for the action
+          - name: i can have a spirit 'buf-defense'
+          - name: i can have a spirit 'debuf-defense'
+          - name: i can have a spirit 'buf-attack'
+          - name: i can have a spirit 'debuf-attack'
+          - name: i can have a spirit 'buf-speed'
+          - name: i can have a spirit 'debuf-speed'
+      - name: generate-spirits
+        stories:
+          - name: i can generate a spirit with a generated name
+          - name: i can generate a spirit with a generated picture (just a color? emoji?)
+          - name: i can generate a spirit with a generated move
+      - name: botd
+        stories:
+          - name: i can see a generated battle everyday
+          - name: the battle of the day has silly commentary
+  - name: teams
+    epics:
+      - name: many-on-many-spirits
+      - name: one-on-one-team
+      - name: team-selection
+        stories:
+          - name: i can select teams from my manifests to battle
+      - name: better-ui
+        stories:
+          - name: i can add an svg image for each spirit
+          - name: i can see the health bar for each spirit that goes
+          - name: i can see images for each spirit on their turn
+          - name: i can see the images for the spirits on the same team while they aren't running
+      - name: generate-teams
+        stories:
+          - name: i can generate a team with a header/defender/attacker/speedster
+          - name: i can generate a team with generated names
+          - name: i can generate a team with generated pictures
+          - name: i can generate a team with a certain number of spirits
+          - name: i can generate a team with a certain number of roles
+  - name: multi-player
+      - name: multi-player
+        stories:
+          - name: i can create manifest from multiple clients and see battle output
+      - name: multi-room
+        stories:
+          - name: i can create a separate room to play in
+  - name: productionalize
+      - name: security
+        stories:
+          - name: i can make my room protected via some secret
+            notes: [maybe some idea of a player has a public key]
+      - name: validation
+        stories:
+          - name: i can provide validations in my manifest to run when i load my manifest
+          - name: i can chose which validations to run on a set of teams before battle
+          - name: i can chose which validations to run when i create a room
+epics:
+  - name: multi-move
+    stories:
+      - name: spirits can have multiple moves
+      - name: i can select which move i want a spirit to use
+  - name: better-moves
+    stories:
+      - name: i can select whether my move targets a team or spirit
+      - name: i can select whether my move is a buf or debuf
+      - name: i can select if my move targets a min or a max stat
+      - name: i can select what stat my move targets
+      - name: i can say that i want my power to be some arithmetic expression
+      - name: i can add randomness scale into my move
+        notes: [skylark?]
+  - name: more-stats
+    notes: [this probably goes with better-moves]
+    stories:
+      - name: i can add more stats to my spirits
+      - name: i can base my moves off of those stats
