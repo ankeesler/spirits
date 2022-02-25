@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "tap test --no-coverage",
     "lint": "eslint test lib",
     "check": "npm run lint && npm run test"
@@ -25,6 +25,12 @@
   "devDependencies": {
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2",
     "tap": "^15.1.6"
+  },
+  "dependencies": {
+    "express": "^4.17.3",
+    "fastify": "^3.27.2"
   }
 }

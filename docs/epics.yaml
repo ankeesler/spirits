@@ -31,9 +31,10 @@ initiatives:
               - test/integration.js will make sure when we run (with some fixtures) it will be similar to this https://github.com/npm/cli/blob/latest/test/index.js
           - name: i can POST manifest to server and see battle run
             notes:
-              - single /battle handler
-              - lib/serve.js exports a single function serve that when created will run the server via express and offer POST /battle which calls battle callback?
-              - test/serve.js will create a server on a port and call it with supertest and make sure we get some battle stuff back on the callback with jest
+              - single POST /battle handler
+              - lib/server.js exports createServer() that returns http.Server that serves /battle which runs battle and streams output to client
+              - lib/ui.js should be updated to take in an output stream
+              - test/server.js will call createServer() and run through test cases via supertest (not found, method not allowed, incorrect content-type, incorrect accept, happy path with battle output and content-type and status = 200)
           - name: i can run battle via speed algorithm
             notes:
               - lib/battle.js will loop through teams in manifest, check if there are any teams alive, get next to go, run action (power - armour on spirit w weakest health)
