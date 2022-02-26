@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -14,11 +15,31 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const defaultAddress = "localhost:12345"
+const spiritsTestBaseURLEnvVar = "SPIRITS_TEST_BASE_URL"
+
+var serverUnderTest = struct {
+	baseURL string
+	remote  bool
+}{
+	baseURL: "http://localhost:12345",
+	remote:  false,
+}
+
+func TestMain(m *testing.M) {
+	if val := os.Getenv(spiritsTestBaseURLEnvVar); len(val) > 0 {
+		serverUnderTest.baseURL = val
+		serverUnderTest.remote = true
+	}
+
+	os.Exit(m.Run())
+}
 
 func TestSpirits(t *testing.T) {
-	spiritsExecPath := build(t)
-	start(t, spiritsExecPath)
+	t.Log("sup")
+	if !serverUnderTest.remote {
+		spiritsExecPath := build(t)
+		start(t, spiritsExecPath)
+	}
 
 	steps := []struct {
 		name           string
@@ -129,7 +150,7 @@ func start(t *testing.T, execPath string) {
 	require.NoError(t, err)
 
 	require.Eventually(t, func() bool {
-		_, err := http.Get("http://" + defaultAddress)
+		_, err := http.Get(serverUnderTest.baseURL)
 		return err == nil
 	}, time.Second*10, time.Second*1)
 
@@ -154,7 +175,7 @@ func newRequest(t *testing.T, method, urlPath string, body interface{}) *http.Re
 	err := json.NewEncoder(buf).Encode(body)
 	require.NoError(t, err)
 
-	req, err := http.NewRequest(method, "http://"+defaultAddress+urlPath, buf)
+	req, err := http.NewRequest(method, serverUnderTest.baseURL+urlPath, buf)
 	require.NoError(t, err)
 
 	return req
