@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -15,27 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const spiritsTestBaseURLEnvVar = "SPIRITS_TEST_BASE_URL"
-
-var serverUnderTest = struct {
-	baseURL string
-	remote  bool
-}{
-	baseURL: "http://localhost:12345",
-	remote:  false,
-}
-
-func TestMain(m *testing.M) {
-	if val := os.Getenv(spiritsTestBaseURLEnvVar); len(val) > 0 {
-		serverUnderTest.baseURL = val
-		serverUnderTest.remote = true
-	}
-
-	os.Exit(m.Run())
-}
-
-func TestSpirits(t *testing.T) {
-	t.Log("sup")
+func TestAPI(t *testing.T) {
 	if !serverUnderTest.remote {
 		spiritsExecPath := build(t)
 		start(t, spiritsExecPath)
@@ -49,7 +28,7 @@ func TestSpirits(t *testing.T) {
 	}{
 		{
 			name: "run battle",
-			req: newRequest(t, http.MethodPost, "/battles", []*spirit.Spirit{
+			req: newRequest(t, http.MethodPost, "/api/battles", []*spirit.Spirit{
 				{Name: "a", Health: 3, Power: 1},
 				{Name: "b", Health: 3, Power: 2},
 			}),
@@ -73,27 +52,25 @@ func TestSpirits(t *testing.T) {
 		},
 		{
 			name: "1 spirit",
-			req: newRequest(t, http.MethodPost, "/battles", []*spirit.Spirit{
+			req: newRequest(t, http.MethodPost, "/api/battles", []*spirit.Spirit{
 				{Name: "a", Health: 3, Power: 1},
 			}),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody: `{"error": "must provide 2 spirits"}
-`,
+			wantBody:       "must provide 2 spirits\n",
 		},
 		{
 			name: "3 spirits",
-			req: newRequest(t, http.MethodPost, "/battles", []*spirit.Spirit{
+			req: newRequest(t, http.MethodPost, "/api/battles", []*spirit.Spirit{
 				{Name: "a", Health: 3, Power: 1},
 				{Name: "b", Health: 3, Power: 1},
 				{Name: "c", Health: 3, Power: 1},
 			}),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody: `{"error": "must provide 2 spirits"}
-`,
+			wantBody:       "must provide 2 spirits\n",
 		},
 		{
 			name: "not found",
-			req: newRequest(t, http.MethodPost, "/nope", []*spirit.Spirit{
+			req: newRequest(t, http.MethodPost, "/api/nope", []*spirit.Spirit{
 				{Name: "a", Health: 3, Power: 1},
 				{Name: "b", Health: 3, Power: 2},
 			}),
@@ -101,7 +78,7 @@ func TestSpirits(t *testing.T) {
 		},
 		{
 			name: "method not allowed",
-			req: newRequest(t, http.MethodPut, "/battles", []*spirit.Spirit{
+			req: newRequest(t, http.MethodPut, "/api/battles", []*spirit.Spirit{
 				{Name: "a", Health: 3, Power: 1},
 				{Name: "b", Health: 3, Power: 2},
 			}),
@@ -109,10 +86,9 @@ func TestSpirits(t *testing.T) {
 		},
 		{
 			name:           "invalid body",
-			req:            newRequest(t, http.MethodPost, "/battles", 42),
+			req:            newRequest(t, http.MethodPost, "/api/battles", 42),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody: `{"error": "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit"}
-`,
+			wantBody:       "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
 		},
 	}
 	for _, step := range steps {
@@ -129,6 +105,8 @@ func TestSpirits(t *testing.T) {
 }
 
 func build(t *testing.T) string {
+	t.Helper()
+
 	execPath := filepath.Join(t.TempDir(), "spirits")
 	output, err := exec.Command(
 		"go",
@@ -142,6 +120,8 @@ func build(t *testing.T) string {
 }
 
 func start(t *testing.T, execPath string) {
+	t.Helper()
+
 	stdout, stderr := bytes.NewBuffer([]byte{}), bytes.NewBuffer([]byte{})
 	cmd := exec.Command(execPath)
 	cmd.Stdout = stdout

@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/ankeesler/spirits/internal/battle"
@@ -12,7 +12,8 @@ import (
 
 func New() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/battles" {
+		if got, want := r.URL.Path, "/battles"; got != want {
+			log.Printf("url path %q != %q", got, want)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -24,14 +25,12 @@ func New() http.Handler {
 
 		var spirits []*spirit.Spirit
 		if err := json.NewDecoder(r.Body).Decode(&spirits); err != nil {
-			message := fmt.Sprintf(`{"error": "cannot decode body: %s"}`, err.Error())
-			http.Error(w, message, http.StatusBadRequest)
+			http.Error(w, "cannot decode body: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		if len(spirits) != 2 {
-			message := fmt.Sprintf(`{"error": "must provide 2 spirits"}`)
-			http.Error(w, message, http.StatusBadRequest)
+			http.Error(w, "must provide 2 spirits", http.StatusBadRequest)
 			return
 		}
 
