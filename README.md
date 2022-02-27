@@ -13,5 +13,6 @@
 
 * Infrastructure: Heroku
 * Server: Golang
-* Client: VanillaJS
+* Client: VanillaJS/CSS/HTML
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
+* Testing: Golang, ChromeDriver/Selenium
