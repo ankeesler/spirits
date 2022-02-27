@@ -2,7 +2,6 @@ package test
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"net/http"
 	"os/exec"
@@ -10,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ankeesler/spirits/internal/spirit"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,60 +22,42 @@ func TestAPI(t *testing.T) {
 		wantBodySuffix string
 	}{
 		{
-			name: "run battle",
-			req: newRequest(t, http.MethodPost, baseURL+"/api/battles", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 1},
-				{Name: "b", Health: 3, Power: 2},
-			}),
+			name:           "run battle",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusOK,
 			wantBodySuffix: readFile(t, "testdata/good-spirits.txt"),
 		},
 		{
-			name: "1 spirit",
-			req: newRequest(t, http.MethodPost, baseURL+"/api/battles", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 1},
-			}),
+			name:           "1 spirit",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/too-few-spirits.json")),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "must provide 2 spirits\n",
 		},
 		{
-			name: "3 spirits",
-			req: newRequest(t, http.MethodPost, baseURL+"/api/battles", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 1},
-				{Name: "b", Health: 3, Power: 1},
-				{Name: "c", Health: 3, Power: 1},
-			}),
+			name:           "3 spirits",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/too-many-spirits.json")),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "must provide 2 spirits\n",
 		},
 		{
-			name: "not found",
-			req: newRequest(t, http.MethodPost, baseURL+"/api/nope", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 1},
-				{Name: "b", Health: 3, Power: 2},
-			}),
+			name:           "not found",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/nope", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusNotFound,
 		},
 		{
-			name: "method not allowed",
-			req: newRequest(t, http.MethodPut, baseURL+"/api/battles", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 1},
-				{Name: "b", Health: 3, Power: 2},
-			}),
+			name:           "method not allowed",
+			req:            newRequest(t, http.MethodPut, baseURL+"/api/battles", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusMethodNotAllowed,
 		},
 		{
 			name:           "invalid body",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", 42),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", "42"),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
 		},
 		{
-			name: "infinite loop",
-			req: newRequest(t, http.MethodPost, baseURL+"/api/battles", []*spirit.Spirit{
-				{Name: "a", Health: 3, Power: 0},
-				{Name: "b", Health: 3, Power: 0},
-			}),
+			name:           "infinite loop",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/powerless-spirits.json")),
 			wantStatusCode: http.StatusOK,
 			wantBodySuffix: "> error: too many turns\n",
 		},
@@ -116,10 +96,8 @@ func build(t *testing.T) string {
 	return execPath
 }
 
-func newRequest(t *testing.T, method, url string, body interface{}) *http.Request {
-	buf := bytes.NewBuffer([]byte{})
-	err := json.NewEncoder(buf).Encode(body)
-	require.NoError(t, err)
+func newRequest(t *testing.T, method, url string, body string) *http.Request {
+	buf := bytes.NewBuffer([]byte(body))
 
 	req, err := http.NewRequest(method, url, buf)
 	require.NoError(t, err)
