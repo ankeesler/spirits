@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,8 +11,21 @@ import (
 )
 
 func main() {
+	var (
+		webAssetsDir string
+		help         bool
+	)
+	flag.StringVar(&webAssetsDir, "web-assets-dir", "public", "path to web assets directory")
+	flag.BoolVar(&help, "help", false, "whether to print this help message")
+	flag.Parse()
+
+	if help {
+		flag.Usage()
+		return
+	}
+
 	api := api.New()
-	web := http.FileServer(http.Dir("public"))
+	web := http.FileServer(http.Dir(webAssetsDir))
 	mux := http.NewServeMux()
 	mux.Handle("/", web)
 	mux.Handle("/api/", http.StripPrefix("/api", api))
@@ -22,5 +36,7 @@ func main() {
 	}
 	address := fmt.Sprintf(":%s", port)
 	log.Printf("listening on address %s", address)
-	http.ListenAndServe(address, mux)
+	if err := http.ListenAndServe(address, mux); err != nil {
+		log.Printf("HTTP server stopped listening: %s\n", err.Error())
+	}
 }
