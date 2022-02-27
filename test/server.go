@@ -30,7 +30,7 @@ func serverBaseURL(t *testing.T) string {
 			"build",
 			"-o",
 			serverExe,
-			"../../cmd/spirits",
+			"../cmd/spirits",
 		).CombinedOutput()
 		require.NoErrorf(t, err, "output: %s", string(output))
 	})
@@ -38,7 +38,7 @@ func serverBaseURL(t *testing.T) string {
 	// Actually start the binary, but only if it hasn't been started by this test.
 	const port = 12345
 	if _, ok := runServerOncePerTest[t]; !ok {
-		startProcess(t, checkPortFunc(port), serverExe, "-web-assets-dir", "../../public")
+		startProcess(t, checkPortFunc(port), serverExe, "-web-assets-dir", "../public")
 		runServerOncePerTest[t] = struct{}{}
 	}
 
