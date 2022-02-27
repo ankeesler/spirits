@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -24,7 +25,7 @@ func TestAPI(t *testing.T) {
 		name           string
 		req            *http.Request
 		wantStatusCode int
-		wantBody       string
+		wantBodySuffix string
 	}{
 		{
 			name: "run battle",
@@ -33,7 +34,7 @@ func TestAPI(t *testing.T) {
 				{Name: "b", Health: 3, Power: 2},
 			}),
 			wantStatusCode: http.StatusOK,
-			wantBody: `> summary
+			wantBodySuffix: `> summary
   a: 3
   b: 3
 > summary
@@ -56,7 +57,7 @@ func TestAPI(t *testing.T) {
 				{Name: "a", Health: 3, Power: 1},
 			}),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "must provide 2 spirits\n",
+			wantBodySuffix: "must provide 2 spirits\n",
 		},
 		{
 			name: "3 spirits",
@@ -66,7 +67,7 @@ func TestAPI(t *testing.T) {
 				{Name: "c", Health: 3, Power: 1},
 			}),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "must provide 2 spirits\n",
+			wantBodySuffix: "must provide 2 spirits\n",
 		},
 		{
 			name: "not found",
@@ -88,7 +89,16 @@ func TestAPI(t *testing.T) {
 			name:           "invalid body",
 			req:            newRequest(t, http.MethodPost, "/api/battles", 42),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
+			wantBodySuffix: "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
+		},
+		{
+			name: "infinite loop",
+			req: newRequest(t, http.MethodPost, "/api/battles", []*spirit.Spirit{
+				{Name: "a", Health: 3, Power: 0},
+				{Name: "b", Health: 3, Power: 0},
+			}),
+			wantStatusCode: http.StatusOK,
+			wantBodySuffix: "> error: too many turns\n",
 		},
 	}
 	for _, step := range steps {
@@ -100,7 +110,13 @@ func TestAPI(t *testing.T) {
 
 		gotBody, err := io.ReadAll(rsp.Body)
 		require.NoError(t, err)
-		require.Equal(t, step.wantBody, string(gotBody))
+		require.Truef(
+			t,
+			strings.HasSuffix(string(gotBody), step.wantBodySuffix),
+			"body %q does not end in %q",
+			string(gotBody),
+			step.wantBodySuffix,
+		)
 	}
 }
 
