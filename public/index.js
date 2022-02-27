@@ -19,7 +19,7 @@ window.onload = () => {
   };
 
   const runBattle = () => {
-    fetch('/api/battles', {
+    fetch('/api/battle', {
       method: 'POST',
       body: inputTextarea.value,
     }).then((response) => {

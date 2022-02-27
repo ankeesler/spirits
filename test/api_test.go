@@ -23,19 +23,19 @@ func TestAPI(t *testing.T) {
 	}{
 		{
 			name:           "run battle",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/good-spirits.json")),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusOK,
 			wantBodySuffix: readFile(t, "testdata/good-spirits.txt"),
 		},
 		{
 			name:           "1 spirit",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/too-few-spirits.json")),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-few-spirits.json")),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "must provide 2 spirits\n",
 		},
 		{
 			name:           "3 spirits",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/too-many-spirits.json")),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-many-spirits.json")),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "must provide 2 spirits\n",
 		},
@@ -46,18 +46,18 @@ func TestAPI(t *testing.T) {
 		},
 		{
 			name:           "method not allowed",
-			req:            newRequest(t, http.MethodPut, baseURL+"/api/battles", readFile(t, "testdata/good-spirits.json")),
+			req:            newRequest(t, http.MethodPut, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusMethodNotAllowed,
 		},
 		{
 			name:           "invalid body",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", "42"),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", "42"),
 			wantStatusCode: http.StatusBadRequest,
 			wantBodySuffix: "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
 		},
 		{
 			name:           "infinite loop",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battles", readFile(t, "testdata/powerless-spirits.json")),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/powerless-spirits.json")),
 			wantStatusCode: http.StatusOK,
 			wantBodySuffix: "> error: too many turns\n",
 		},

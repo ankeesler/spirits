@@ -12,7 +12,7 @@ import (
 
 func New() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if got, want := r.URL.Path, "/battles"; got != want {
+		if got, want := r.URL.Path, "/battle"; got != want {
 			log.Printf("url path %q != %q", got, want)
 			w.WriteHeader(http.StatusNotFound)
 			return
