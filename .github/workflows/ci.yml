@@ -30,5 +30,15 @@ jobs:
     - name: Vet
       run: go vet -v ./...
 
-    - name: Test
-      run: go test -v ./...
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: oh-great-spirits
+        heroku_email: ankeesler1@gmail.com
+        healthcheck: "https://oh-great-spirits.herokuapp.com/health"
+        rollbackonhealthcheckfailed: true
