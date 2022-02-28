@@ -24,7 +24,7 @@ func TestWeb(t *testing.T) {
 	wd := startBrowser(t, chromedriverPort)
 
 	// Get the homepage.
-	homepage := serverBaseURL(t) + "/"
+	homepage := serverBaseURL(t) + "/?seed=1"
 	err := wd.Get(homepage)
 	require.NoError(t, err)
 
@@ -72,6 +72,21 @@ func TestWeb(t *testing.T) {
 	err = input.SendKeys("]")
 	require.NoError(t, err)
 	happyPath()
+
+	// When generate-spirits button is clicked, a battle is run.
+	generateSpirits, err := wd.FindElement(selenium.ByID, "generate-spirits")
+	require.NoError(t, err)
+	err = generateSpirits.Click()
+	require.NoError(t, err)
+	require.Eventually(t, func() bool {
+		inputText, err := input.Text()
+		require.NoError(t, err)
+		if want, got := readFile(t, "testdata/generated-spirits-seed-1.json"), inputText; want != got {
+			t.Logf("eventually: want %q, got %q", want, got)
+		}
+		return true
+	}, time.Second*3, time.Second)
+	eventuallyOutputText(t, wd, readFile(t, "testdata/generated-spirits-seed-1.txt"))
 }
 
 func startBrowser(t *testing.T, port int) selenium.WebDriver {

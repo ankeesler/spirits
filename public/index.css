@@ -45,3 +45,10 @@ textarea {
   margin-left: 12%;
   margin-right: 12%;
 }
+
+#generate-spirits {
+  margin-top: 2px;
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+}
