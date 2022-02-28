@@ -20,6 +20,9 @@ jobs:
 
     - name: Set up chromedriver
       uses: nanasess/setup-chromedriver@v1
+      
+    - name: Mod
+      run: go mod download
 
     - name: Fmt
       run: test -n "$(go fmt ./...)"
