@@ -11,7 +11,7 @@
 
 ## Tech Stack
 
-* Infrastructure: Heroku
+* Infrastructure: [Heroku](https://oh-great-spirits.herokuapp.com/)
 * Server: Golang
 * Client: VanillaJS/CSS/HTML
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
