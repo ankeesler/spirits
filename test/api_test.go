@@ -18,7 +18,7 @@ func TestAPI(t *testing.T) {
 		wantStatusCode int
 		wantBody       string
 	}{
-		// Happy paths
+		// /battle happy paths
 		{
 			name:           "same speed",
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
@@ -49,7 +49,7 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-with-defense.txt"),
 		},
-		// Error cases
+		// /battle sad paths
 		{
 			name:           "1 spirit",
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-few-spirits.json")),
@@ -84,6 +84,30 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/powerless-spirits.txt"),
 		},
+		// /spirit happy paths
+		{
+			name:           "generated spirits with seed 1",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=1", ""),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/generated-spirits-seed-1.json"),
+		},
+		{
+			name:           "generated spirits with seed 2",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=2", ""),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/generated-spirits-seed-2.json"),
+		},
+		{
+			name:           "/spirit wrong method",
+			req:            newRequest(t, http.MethodPut, baseURL+"/api/spirit?seed=2", ""),
+			wantStatusCode: http.StatusMethodNotAllowed,
+		},
+		{
+			name:           "/spirit bad seed",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=tuna", ""),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "invalid seed\n",
+		},
 	}
 	for _, step := range steps {
 		t.Logf("step: %s", step.name)
@@ -94,7 +118,7 @@ func TestAPI(t *testing.T) {
 
 		gotBody, err := io.ReadAll(rsp.Body)
 		require.NoError(t, err)
-		require.Equal(t, string(gotBody), step.wantBody)
+		require.Equal(t, step.wantBody, string(gotBody))
 	}
 }
 
