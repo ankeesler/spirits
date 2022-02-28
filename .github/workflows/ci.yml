@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
       uses: nanasess/setup-chromedriver@v1
 
     - name: Fmt
-      run: test -n "$(go fmt)"
+      run: test -n "$(go fmt ./...)"
       
     - name: Vet
       run: go vet -v ./...
