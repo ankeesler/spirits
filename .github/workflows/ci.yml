@@ -25,7 +25,7 @@ jobs:
       run: go mod download
 
     - name: Fmt
-      run: test -n "$(go fmt ./...)"
+      run: test -z "$(go fmt ./...)"
       
     - name: Vet
       run: go vet -v ./...
