@@ -18,6 +18,7 @@ func TestAPI(t *testing.T) {
 		wantStatusCode int
 		wantBody       string
 	}{
+		// Happy paths
 		{
 			name:           "same speed",
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
@@ -42,6 +43,13 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-3-to-2-speed.txt"),
 		},
+		{
+			name:           "with defense",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-defense.json")),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/good-spirits-with-defense.txt"),
+		},
+		// Error cases
 		{
 			name:           "1 spirit",
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-few-spirits.json")),

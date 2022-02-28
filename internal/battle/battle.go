@@ -21,10 +21,17 @@ func Run(spirits []*spirit.Spirit, onSpirits func([]*spirit.Spirit, error)) {
 			return
 		}
 		from, to := s.next()
-		to.Health -= from.Power
+
+		netPower := (from.Power - to.Armour)
+		if netPower < 0 {
+			netPower = 0
+		}
+
+		to.Health -= netPower
 		if to.Health < 0 {
 			to.Health = 0
 		}
+
 		onSpirits(spirits, nil)
 	}
 }
