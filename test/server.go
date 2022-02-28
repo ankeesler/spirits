@@ -22,7 +22,7 @@ func serverBaseURL(t *testing.T) string {
 		return envVar
 	}
 
-	// Build binary, but only once per test run.
+	// Build binary, but only once per all test runs.
 	serverExe := filepath.Join(testDir, "spirits-under-test")
 	buildServerOnce.Do(func() {
 		output, err := exec.Command(
@@ -35,7 +35,7 @@ func serverBaseURL(t *testing.T) string {
 		require.NoErrorf(t, err, "output: %s", string(output))
 	})
 
-	// Actually start the binary, but only if it hasn't been started by this test.
+	// Start the binary, but only one per single test run.
 	const port = 12345
 	if _, ok := runServerOncePerTest[t]; !ok {
 		startProcess(t, checkPortFunc(port), serverExe, "-web-assets-dir", "../public")
