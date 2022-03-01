@@ -76,7 +76,7 @@ func TestAPI(t *testing.T) {
 			name:           "invalid body",
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", "42"),
 			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "cannot decode body: json: cannot unmarshal number into Go value of type []*spirit.Spirit\n",
+			wantBody:       "cannot decode body: json: cannot unmarshal number into Go value of type []*api.Spirit\n",
 		},
 		{
 			name:           "infinite loop",

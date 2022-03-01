@@ -12,6 +12,14 @@ import (
 	"github.com/ankeesler/spirits/internal/ui"
 )
 
+type Spirit struct {
+	Name    string
+	Health  int
+	Power   int
+	Agility int
+	Armour  int
+}
+
 var handlers = map[string]http.HandlerFunc{
 	"/battle": handleBattle,
 	"/spirit": handleSpirit,
@@ -34,19 +42,39 @@ func handleBattle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var spirits []*spirit.Spirit
-	if err := json.NewDecoder(r.Body).Decode(&spirits); err != nil {
+	var apiSpirits []*Spirit
+	if err := json.NewDecoder(r.Body).Decode(&apiSpirits); err != nil {
 		http.Error(w, "cannot decode body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if len(spirits) != 2 {
+	if len(apiSpirits) != 2 {
 		http.Error(w, "must provide 2 spirits", http.StatusBadRequest)
 		return
 	}
 
+	internalSpirits := toInternalSpirits(apiSpirits)
+
 	u := ui.New(w)
-	battle.Run(spirits, u.OnSpirits)
+	battle.Run(internalSpirits, u.OnSpirits)
+}
+
+func toInternalSpirits(apiSpirits []*Spirit) []*spirit.Spirit {
+	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
+	for i := range apiSpirits {
+		internalSpirits[i] = toModelSpirit(apiSpirits[i])
+	}
+	return internalSpirits
+}
+
+func toModelSpirit(apiSpirit *Spirit) *spirit.Spirit {
+	return &spirit.Spirit{
+		Name:    apiSpirit.Name,
+		Health:  apiSpirit.Health,
+		Power:   apiSpirit.Power,
+		Agility: apiSpirit.Agility,
+		Armour:  apiSpirit.Armour,
+	}
 }
 
 func handleSpirit(w http.ResponseWriter, r *http.Request) {
