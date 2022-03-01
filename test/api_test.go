@@ -49,6 +49,12 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-with-defense.txt"),
 		},
+		{
+			name:           "bolster",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-bolster.json")),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/good-spirits-with-bolster.txt"),
+		},
 		// /battle sad paths
 		{
 			name:           "1 spirit",
@@ -126,9 +132,9 @@ func TestAPI(t *testing.T) {
 		t.Logf("req: %s %s", step.req.Method, step.req.URL)
 		rsp, err := http.DefaultClient.Do(step.req)
 		require.NoError(t, err)
-		require.Equal(t, step.wantStatusCode, rsp.StatusCode)
 
 		gotBody, err := io.ReadAll(rsp.Body)
+		require.Equalf(t, step.wantStatusCode, rsp.StatusCode, "body: %q", string(gotBody))
 		require.NoError(t, err)
 		require.Equal(t, step.wantBody, string(gotBody))
 	}

@@ -1,0 +1,18 @@
+> summary
+  a: 3
+  b: 3
+> summary
+  a: 3
+  b: 2
+> summary
+  a: 2
+  b: 2
+> summary
+  a: 2
+  b: 1
+> summary
+  a: 2
+  b: 1
+> summary
+  a: 2
+  b: 0

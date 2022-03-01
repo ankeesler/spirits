@@ -26,3 +26,22 @@ func Attack() spirit.Action {
 		},
 	}
 }
+
+func Bolster() spirit.Action {
+	return &action{
+		name: "bolster",
+		run: func(from, to *spirit.Spirit) {
+			netPower := ((from.Power / 2) - to.Armour)
+			if netPower < 0 {
+				netPower = 0
+			}
+
+			to.Health -= netPower
+			if to.Health < 0 {
+				to.Health = 0
+			}
+
+			from.Armour += (from.Power / 2)
+		},
+	}
+}

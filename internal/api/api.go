@@ -106,11 +106,14 @@ func toInternalAction(ids []string) (spirit.Action, error) {
 		return nil, errors.New("must specify one action")
 	}
 
-	if len(ids[0]) == 0 || ids[0] == "attack" {
+	switch ids[0] {
+	case "", "attack":
 		return action.Attack(), nil
+	case "bolster":
+		return action.Bolster(), nil
+	default:
+		return nil, fmt.Errorf("unrecognized action: %q", ids[0])
 	}
-
-	return nil, fmt.Errorf("unrecognized action: %q", ids[0])
 }
 
 func handleSpirit(w http.ResponseWriter, r *http.Request) {
