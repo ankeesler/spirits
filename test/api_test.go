@@ -150,6 +150,27 @@ func TestAPI(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, step.wantBody, string(gotBody))
 	}
+
+	t.Log("step: generated spirits are valid")
+	for i := 0; i < 20; i++ {
+		// Generate spirits.
+		req := newRequest(t, http.MethodPost, baseURL+"/api/spirit", "")
+		rsp, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+
+		gotBody, err := io.ReadAll(rsp.Body)
+		require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
+		require.NoError(t, err)
+
+		// Make sure spirits are valid.
+		req = newRequest(t, http.MethodPost, baseURL+"/api/battle", string(gotBody))
+		rsp, err = http.DefaultClient.Do(req)
+		require.NoError(t, err)
+
+		gotBody, err = io.ReadAll(rsp.Body)
+		require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
+		require.NoError(t, err)
+	}
 }
 
 func newRequest(t *testing.T, method, url string, body string) *http.Request {
