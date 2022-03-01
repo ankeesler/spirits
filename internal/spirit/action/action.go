@@ -45,3 +45,22 @@ func Bolster() spirit.Action {
 		},
 	}
 }
+
+func Drain() spirit.Action {
+	return &action{
+		name: "drain",
+		run: func(from, to *spirit.Spirit) {
+			netPower := ((from.Power / 2) - to.Armour)
+			if netPower < 0 {
+				netPower = 0
+			}
+
+			to.Health -= netPower
+			if to.Health < 0 {
+				to.Health = 0
+			}
+
+			from.Health += (netPower / 2)
+		},
+	}
+}

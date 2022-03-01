@@ -55,6 +55,12 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-with-bolster.txt"),
 		},
+		{
+			name:           "drain",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-drain.json")),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/good-spirits-with-drain.txt"),
+		},
 		// /battle sad paths
 		{
 			name:           "1 spirit",

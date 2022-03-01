@@ -1,0 +1,27 @@
+> summary
+  a: 10
+  b: 10
+> summary
+  a: 11
+  b: 8
+> summary
+  a: 7
+  b: 8
+> summary
+  a: 8
+  b: 6
+> summary
+  a: 4
+  b: 6
+> summary
+  a: 5
+  b: 4
+> summary
+  a: 1
+  b: 4
+> summary
+  a: 2
+  b: 2
+> summary
+  a: 0
+  b: 2
