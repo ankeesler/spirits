@@ -1,30 +1,30 @@
 > summary
-  pillow-dj: 16
-  snake-iron: 16
+  pillow-dessert: 16
+  panda-mystic: 16
 > summary
-  pillow-dj: 13
-  snake-iron: 16
+  pillow-dessert: 13
+  panda-mystic: 16
 > summary
-  pillow-dj: 13
-  snake-iron: 11
+  pillow-dessert: 13
+  panda-mystic: 11
 > summary
-  pillow-dj: 10
-  snake-iron: 11
+  pillow-dessert: 10
+  panda-mystic: 11
 > summary
-  pillow-dj: 10
-  snake-iron: 6
+  pillow-dessert: 10
+  panda-mystic: 6
 > summary
-  pillow-dj: 7
-  snake-iron: 6
+  pillow-dessert: 7
+  panda-mystic: 6
 > summary
-  pillow-dj: 7
-  snake-iron: 1
+  pillow-dessert: 7
+  panda-mystic: 1
 > summary
-  pillow-dj: 4
-  snake-iron: 1
+  pillow-dessert: 4
+  panda-mystic: 1
 > summary
-  pillow-dj: 1
-  snake-iron: 1
+  pillow-dessert: 1
+  panda-mystic: 1
 > summary
-  pillow-dj: 1
-  snake-iron: 0
+  pillow-dessert: 1
+  panda-mystic: 0
