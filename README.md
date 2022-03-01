@@ -25,3 +25,4 @@
 | `test`  | e2e tests  |
 | `internal`  | source code  |
 | `public`  | web assets  |
+| `script` | project helper scripts |
