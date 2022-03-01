@@ -91,5 +91,16 @@ func randomWords() []string {
 		"dj",
 		"squash",
 		"shovel",
+		"bunny",
+		"dog",
+		"notebook",
+		"pencil",
+		"farmer",
+		"cliff",
+		"pot",
+		"ditch",
+		"cup",
+		"black",
+		"dust",
 	}
 }
