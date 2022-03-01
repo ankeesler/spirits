@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/spirit/action"
 )
 
 func Generate(seed int64) []*spirit.Spirit {
@@ -19,6 +20,7 @@ func generate(r *rand.Rand) *spirit.Spirit {
 		Power:   generateStat(r) / 2,
 		Agility: generateStat(r),
 		Armour:  generateStat(r) / 4,
+		Action:  action.Attack(),
 	}
 }
 

@@ -2,22 +2,26 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/ankeesler/spirits/internal/battle"
 	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/internal/spirit/action"
 	"github.com/ankeesler/spirits/internal/spirit/generate"
 	"github.com/ankeesler/spirits/internal/ui"
 )
 
 type Spirit struct {
-	Name    string
-	Health  int
-	Power   int
-	Agility int
-	Armour  int
+	Name    string   `json:"name"`
+	Health  int      `json:"health"`
+	Power   int      `json:"power"`
+	Agility int      `json:"agility"`
+	Armour  int      `json:"armour"`
+	Actions []string `json:"actions,omitempty"`
 }
 
 var handlers = map[string]http.HandlerFunc{
@@ -53,28 +57,60 @@ func handleBattle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	internalSpirits := toInternalSpirits(apiSpirits)
+	internalSpirits, err := toInternalSpirits(apiSpirits)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	u := ui.New(w)
 	battle.Run(internalSpirits, u.OnSpirits)
 }
 
-func toInternalSpirits(apiSpirits []*Spirit) []*spirit.Spirit {
+func toInternalSpirits(apiSpirits []*Spirit) ([]*spirit.Spirit, error) {
 	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
+	var err error
 	for i := range apiSpirits {
-		internalSpirits[i] = toModelSpirit(apiSpirits[i])
+		internalSpirits[i], err = toInternalSpirit(apiSpirits[i])
+		if err != nil {
+			return nil, err
+		}
 	}
-	return internalSpirits
+	return internalSpirits, nil
 }
 
-func toModelSpirit(apiSpirit *Spirit) *spirit.Spirit {
-	return &spirit.Spirit{
+func toInternalSpirit(apiSpirit *Spirit) (*spirit.Spirit, error) {
+	s := &spirit.Spirit{
 		Name:    apiSpirit.Name,
 		Health:  apiSpirit.Health,
 		Power:   apiSpirit.Power,
 		Agility: apiSpirit.Agility,
 		Armour:  apiSpirit.Armour,
 	}
+
+	var err error
+	s.Action, err = toInternalAction(apiSpirit.Actions)
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
+}
+
+func toInternalAction(ids []string) (spirit.Action, error) {
+	if len(ids) == 0 {
+		return action.Attack(), nil
+	}
+
+	if len(ids) > 1 {
+		return nil, errors.New("must specify one action")
+	}
+
+	if len(ids[0]) == 0 || ids[0] == "attack" {
+		return action.Attack(), nil
+	}
+
+	return nil, fmt.Errorf("unrecognized action: %q", ids[0])
 }
 
 func handleSpirit(w http.ResponseWriter, r *http.Request) {
@@ -96,9 +132,30 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 		seed = time.Now().Unix()
 	}
 
-	spirits := generate.Generate(int64(seed))
-	if err := json.NewEncoder(w).Encode(spirits); err != nil {
+	internalSpirits := generate.Generate(int64(seed))
+	apiSpirits := fromInternalSpirits(internalSpirits)
+
+	if err := json.NewEncoder(w).Encode(apiSpirits); err != nil {
 		http.Error(w, "cannot encode response: "+err.Error(), http.StatusBadRequest)
 		return
+	}
+}
+
+func fromInternalSpirits(internalSpirits []*spirit.Spirit) []*Spirit {
+	apiSpirits := make([]*Spirit, len(internalSpirits))
+	for i := range apiSpirits {
+		apiSpirits[i] = fromInternalSpirit(internalSpirits[i])
+	}
+	return apiSpirits
+}
+
+func fromInternalSpirit(internalSpirit *spirit.Spirit) *Spirit {
+	return &Spirit{
+		Name:    internalSpirit.Name,
+		Health:  internalSpirit.Health,
+		Power:   internalSpirit.Power,
+		Agility: internalSpirit.Agility,
+		Armour:  internalSpirit.Armour,
+		Actions: []string{internalSpirit.Action.Name()},
 	}
 }

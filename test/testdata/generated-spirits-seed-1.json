@@ -1,1 +1,1 @@
-[{"Name":"pillow-dj","Health":16,"Power":7,"Agility":10,"Armour":2},{"Name":"snake-iron","Health":16,"Power":5,"Agility":13,"Armour":2}]
+[{"name":"pillow-dj","health":16,"power":7,"agility":10,"armour":2,"actions":["attack"]},{"name":"snake-iron","health":16,"power":5,"agility":13,"armour":2,"actions":["attack"]}]

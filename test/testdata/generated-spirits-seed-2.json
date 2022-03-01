@@ -1,1 +1,1 @@
-[{"Name":"uranium-sweatshirt","Health":20,"Power":5,"Agility":7,"Armour":2},{"Name":"red-club","Health":22,"Power":5,"Agility":7,"Armour":2}]
+[{"name":"uranium-sweatshirt","health":20,"power":5,"agility":7,"armour":2,"actions":["attack"]},{"name":"red-club","health":22,"power":5,"agility":7,"armour":2,"actions":["attack"]}]

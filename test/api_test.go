@@ -84,6 +84,18 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/powerless-spirits.txt"),
 		},
+		{
+			name:           "too many actions",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-many-actions.json")),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "must specify one action\n",
+		},
+		{
+			name:           "unrecognized action",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/unrecognized-action.json")),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "unrecognized action: \"tuna\"\n",
+		},
 		// /spirit happy paths
 		{
 			name:           "generated spirits with seed 1",
