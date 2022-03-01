@@ -159,6 +159,10 @@ func fromInternalSpirit(internalSpirit *spirit.Spirit) *Spirit {
 		Power:   internalSpirit.Power,
 		Agility: internalSpirit.Agility,
 		Armour:  internalSpirit.Armour,
+
+		// This worries me...we wire the action based on an API symbol (e.g., "attack"),
+		// but rely on the underlying spirit.Action to give us the name back...that
+		// seems asymetrical.
 		Actions: []string{internalSpirit.Action.Name()},
 	}
 }
