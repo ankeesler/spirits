@@ -113,6 +113,8 @@ func toInternalAction(ids []string) (spirit.Action, error) {
 		return action.Bolster(), nil
 	case "drain":
 		return action.Drain(), nil
+	case "charge":
+		return action.Charge(), nil
 	default:
 		return nil, fmt.Errorf("unrecognized action: %q", ids[0])
 	}
