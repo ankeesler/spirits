@@ -1,30 +1,30 @@
 > summary
   pillow-dessert: 16
-  panda-mystic: 16
+  mystic-dog: 16
 > summary
-  pillow-dessert: 13
-  panda-mystic: 16
+  pillow-dessert: 16
+  mystic-dog: 16
 > summary
-  pillow-dessert: 13
-  panda-mystic: 11
+  pillow-dessert: 16
+  mystic-dog: 11
 > summary
-  pillow-dessert: 10
-  panda-mystic: 11
+  pillow-dessert: 16
+  mystic-dog: 11
 > summary
-  pillow-dessert: 10
-  panda-mystic: 6
+  pillow-dessert: 16
+  mystic-dog: 6
 > summary
-  pillow-dessert: 7
-  panda-mystic: 6
+  pillow-dessert: 16
+  mystic-dog: 6
 > summary
-  pillow-dessert: 7
-  panda-mystic: 1
+  pillow-dessert: 16
+  mystic-dog: 1
 > summary
-  pillow-dessert: 4
-  panda-mystic: 1
+  pillow-dessert: 16
+  mystic-dog: 1
 > summary
-  pillow-dessert: 1
-  panda-mystic: 1
+  pillow-dessert: 16
+  mystic-dog: 1
 > summary
-  pillow-dessert: 1
-  panda-mystic: 0
+  pillow-dessert: 16
+  mystic-dog: 0

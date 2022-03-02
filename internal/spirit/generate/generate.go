@@ -5,22 +5,21 @@ import (
 	"math/rand"
 
 	"github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/internal/spirit/action"
 )
 
-func Generate(seed int64) []*spirit.Spirit {
+func Generate(seed int64, actions []spirit.Action) []*spirit.Spirit {
 	r := rand.New(rand.NewSource(seed))
-	return []*spirit.Spirit{generate(r), generate(r)}
+	return []*spirit.Spirit{generate(r, actions), generate(r, actions)}
 }
 
-func generate(r *rand.Rand) *spirit.Spirit {
+func generate(r *rand.Rand, actions []spirit.Action) *spirit.Spirit {
 	return &spirit.Spirit{
 		Name:    generateName(r),
 		Health:  generateStat(r) * 2,
 		Power:   generateStat(r) / 2,
 		Agility: generateStat(r),
 		Armour:  generateStat(r) / 4,
-		Action:  action.Attack(),
+		Action:  generateAction(r, actions),
 	}
 }
 
@@ -42,6 +41,10 @@ func generateStat(r *rand.Rand) int {
 		stat = 1
 	}
 	return int(stat)
+}
+
+func generateAction(r *rand.Rand, actions []spirit.Action) spirit.Action {
+	return actions[r.Intn(len(actions))]
 }
 
 func randomWords() []string {

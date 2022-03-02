@@ -139,7 +139,13 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 		seed = time.Now().Unix()
 	}
 
-	internalSpirits := generate.Generate(int64(seed))
+	wellKnownActions := []spirit.Action{
+		action.Attack(),
+		action.Bolster(),
+		action.Drain(),
+		action.Charge(),
+	}
+	internalSpirits := generate.Generate(int64(seed), wellKnownActions)
 	apiSpirits := fromInternalSpirits(internalSpirits)
 
 	if err := json.NewEncoder(w).Encode(apiSpirits); err != nil {
