@@ -24,6 +24,11 @@ type Spirit struct {
 	Actions []string `json:"actions,omitempty"`
 }
 
+type actions struct {
+	ids []string
+	spirit.Action
+}
+
 var handlers = map[string]http.HandlerFunc{
 	"/battle": handleBattle,
 	"/spirit": handleSpirit,
@@ -106,18 +111,21 @@ func toInternalAction(ids []string) (spirit.Action, error) {
 		return nil, errors.New("must specify one action")
 	}
 
+	internalAction := &actions{ids: ids}
 	switch ids[0] {
 	case "", "attack":
-		return action.Attack(), nil
+		internalAction.Action = action.Attack()
 	case "bolster":
-		return action.Bolster(), nil
+		internalAction.Action = action.Bolster()
 	case "drain":
-		return action.Drain(), nil
+		internalAction.Action = action.Drain()
 	case "charge":
-		return action.Charge(), nil
+		internalAction.Action = action.Charge()
 	default:
 		return nil, fmt.Errorf("unrecognized action: %q", ids[0])
 	}
+
+	return internalAction, nil
 }
 
 func handleSpirit(w http.ResponseWriter, r *http.Request) {
@@ -140,13 +148,29 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	wellKnownActions := []spirit.Action{
-		action.Attack(),
-		action.Bolster(),
-		action.Drain(),
-		action.Charge(),
+		&actions{
+			ids:    []string{"attack"},
+			Action: action.Attack(),
+		},
+		&actions{
+			ids:    []string{"bolster"},
+			Action: action.Bolster(),
+		},
+		&actions{
+			ids:    []string{"drain"},
+			Action: action.Drain(),
+		},
+		&actions{
+			ids:    []string{"charge"},
+			Action: action.Charge(),
+		},
 	}
 	internalSpirits := generate.Generate(int64(seed), wellKnownActions)
-	apiSpirits := fromInternalSpirits(internalSpirits)
+	apiSpirits, err := fromInternalSpirits(internalSpirits)
+	if err != nil {
+		http.Error(w, "cannot process spirits: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(apiSpirits); err != nil {
 		http.Error(w, "cannot encode response: "+err.Error(), http.StatusBadRequest)
@@ -154,25 +178,30 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fromInternalSpirits(internalSpirits []*spirit.Spirit) []*Spirit {
+func fromInternalSpirits(internalSpirits []*spirit.Spirit) ([]*Spirit, error) {
 	apiSpirits := make([]*Spirit, len(internalSpirits))
 	for i := range apiSpirits {
-		apiSpirits[i] = fromInternalSpirit(internalSpirits[i])
+		var err error
+		apiSpirits[i], err = fromInternalSpirit(internalSpirits[i])
+		if err != nil {
+			return nil, fmt.Errorf("could not convert from internal spirit %s: %w", internalSpirits[i].Name, err)
+		}
 	}
-	return apiSpirits
+	return apiSpirits, nil
 }
 
-func fromInternalSpirit(internalSpirit *spirit.Spirit) *Spirit {
+func fromInternalSpirit(internalSpirit *spirit.Spirit) (*Spirit, error) {
+	apiActions, ok := internalSpirit.Action.(*actions)
+	if !ok {
+		return nil, fmt.Errorf("invalid internal spirit action type: %T", internalSpirit.Action)
+	}
+
 	return &Spirit{
 		Name:    internalSpirit.Name,
 		Health:  internalSpirit.Health,
 		Power:   internalSpirit.Power,
 		Agility: internalSpirit.Agility,
 		Armour:  internalSpirit.Armour,
-
-		// This worries me...we wire the action based on an API symbol (e.g., "attack"),
-		// but rely on the underlying spirit.Action to give us the name back...that
-		// seems asymetrical.
-		Actions: []string{internalSpirit.Action.Name()},
-	}
+		Actions: apiActions.ids,
+	}, nil
 }

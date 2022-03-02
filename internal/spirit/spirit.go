@@ -1,7 +1,6 @@
 package spirit
 
 type Action interface {
-	Name() string
 	Run(to, from *Spirit)
 }
 
