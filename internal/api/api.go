@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -107,25 +106,24 @@ func toInternalAction(ids []string) (spirit.Action, error) {
 		return action.Attack(), nil
 	}
 
-	if len(ids) > 1 {
-		return nil, errors.New("must specify one action")
+	var internalActions []spirit.Action
+	for _, id := range ids {
+		switch id {
+		case "", "attack":
+			internalActions = append(internalActions, action.Attack())
+		case "bolster":
+			internalActions = append(internalActions, action.Bolster())
+		case "drain":
+			internalActions = append(internalActions, action.Drain())
+		case "charge":
+			internalActions = append(internalActions, action.Charge())
+		default:
+			return nil, fmt.Errorf("unrecognized action: %q", ids[0])
+		}
 	}
 
-	internalAction := &actions{ids: ids}
-	switch ids[0] {
-	case "", "attack":
-		internalAction.Action = action.Attack()
-	case "bolster":
-		internalAction.Action = action.Bolster()
-	case "drain":
-		internalAction.Action = action.Drain()
-	case "charge":
-		internalAction.Action = action.Charge()
-	default:
-		return nil, fmt.Errorf("unrecognized action: %q", ids[0])
-	}
-
-	return internalAction, nil
+	internalAction := action.RoundRobin(internalActions)
+	return &actions{ids: ids, Action: internalAction}, nil
 }
 
 func handleSpirit(w http.ResponseWriter, r *http.Request) {

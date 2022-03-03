@@ -67,6 +67,12 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-with-charge.txt"),
 		},
+		{
+			name:           "multi-move roundrobin",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-roundrobin.json")),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/good-spirits-with-roundrobin.txt"),
+		},
 		// /battle sad paths
 		{
 			name:           "1 spirit",
@@ -101,12 +107,6 @@ func TestAPI(t *testing.T) {
 			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/powerless-spirits.json")),
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/powerless-spirits.txt"),
-		},
-		{
-			name:           "too many actions",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-many-actions.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "must specify one action\n",
 		},
 		{
 			name:           "unrecognized action",
