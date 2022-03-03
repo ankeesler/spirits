@@ -1,0 +1,4 @@
+[
+  {"name": "a", "health": 3, "power": 1, "agility": 1, "actions": [""]},
+  {"name": "b", "health": 3, "power": 2, "agility": 1}
+]

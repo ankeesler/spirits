@@ -4,6 +4,8 @@ module github.com/ankeesler/spirits
 go 1.17
 
 require (
+	github.com/gorilla/websocket v1.5.0
+	github.com/mitchellh/mapstructure v1.4.3
 	github.com/stretchr/testify v1.7.0
 	github.com/tebeka/selenium v0.9.9
 )

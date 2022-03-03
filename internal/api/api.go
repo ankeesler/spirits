@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -46,8 +47,13 @@ func New() http.Handler {
 }
 
 func handleBattle(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodPost && r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		serveWebsocket(w, r)
 		return
 	}
 
@@ -68,21 +74,25 @@ func handleBattle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	internalSpirits, err := toInternalSpirits(apiSpirits, seed)
+	internalSpirits, err := toInternalSpirits(apiSpirits, seed, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	u := ui.New(w)
-	battle.Run(internalSpirits, u.OnSpirits)
+	battle.Run(context.Background(), internalSpirits, u.OnSpirits)
 }
 
-func toInternalSpirits(apiSpirits []*Spirit, seed int64) ([]*spirit.Spirit, error) {
+func toInternalSpirits(
+	apiSpirits []*Spirit,
+	seed int64,
+	humanActionFunc func(ctx context.Context, s *Spirit) (spirit.Action, error),
+) ([]*spirit.Spirit, error) {
 	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
 	var err error
 	for i := range apiSpirits {
-		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], seed)
+		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], seed, humanActionFunc)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +100,7 @@ func toInternalSpirits(apiSpirits []*Spirit, seed int64) ([]*spirit.Spirit, erro
 	return internalSpirits, nil
 }
 
-func toInternalSpirit(apiSpirit *Spirit, seed int64) (*spirit.Spirit, error) {
+func toInternalSpirit(apiSpirit *Spirit, seed int64, humanActionFunc func(ctx context.Context, s *Spirit) (spirit.Action, error)) (*spirit.Spirit, error) {
 	s := &spirit.Spirit{
 		Name:    apiSpirit.Name,
 		Health:  apiSpirit.Health,
@@ -99,8 +109,14 @@ func toInternalSpirit(apiSpirit *Spirit, seed int64) (*spirit.Spirit, error) {
 		Armor:   apiSpirit.Armor,
 	}
 
+	var lazyActionFunc func(ctx context.Context) (spirit.Action, error)
+	if humanActionFunc != nil {
+		lazyActionFunc = func(ctx context.Context) (spirit.Action, error) {
+			return humanActionFunc(ctx, apiSpirit)
+		}
+	}
 	var err error
-	s.Action, err = toInternalAction(apiSpirit.Actions, apiSpirit.Intelligence, seed)
+	s.Action, err = toInternalAction(apiSpirit.Actions, apiSpirit.Intelligence, seed, lazyActionFunc)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +124,12 @@ func toInternalSpirit(apiSpirit *Spirit, seed int64) (*spirit.Spirit, error) {
 	return s, nil
 }
 
-func toInternalAction(ids []string, intelligence string, seed int64) (spirit.Action, error) {
+func toInternalAction(
+	ids []string,
+	intelligence string,
+	seed int64,
+	lazyActionFunc func(ctx context.Context) (spirit.Action, error),
+) (spirit.Action, error) {
 	var internalActions []spirit.Action
 	if len(ids) == 0 {
 		internalActions = []spirit.Action{action.Attack()}
@@ -135,6 +156,11 @@ func toInternalAction(ids []string, intelligence string, seed int64) (spirit.Act
 		internalAction = action.RoundRobin(internalActions)
 	case "random":
 		internalAction = action.Random(seed, internalActions)
+	case "human":
+		if lazyActionFunc == nil {
+			return nil, fmt.Errorf("unsupported intelligence value (hint: you must use websocket API): %q", intelligence)
+		}
+		internalAction = action.Lazy(lazyActionFunc)
 	default:
 		return nil, fmt.Errorf("unrecognized intelligence: %q", intelligence)
 	}
