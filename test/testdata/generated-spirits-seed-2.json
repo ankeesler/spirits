@@ -1,1 +1,1 @@
-[{"name":"banana-cliff","health":20,"power":5,"agility":7,"armour":2,"actions":["drain"]},{"name":"mystic-notebook","health":22,"power":3,"agility":9,"armour":2,"actions":["attack"]}]
+[{"name":"banana-cliff","health":20,"power":5,"agility":7,"armour":2,"actions":["attack","charge"]},{"name":"uranium-black","health":18,"power":5,"agility":9,"armour":2,"actions":["bolster"]}]

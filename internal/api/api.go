@@ -163,7 +163,16 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 			Action: action.Charge(),
 		},
 	}
-	internalSpirits := generate.Generate(int64(seed), wellKnownActions)
+	internalSpirits := generate.Generate(int64(seed), wellKnownActions, func(generatedActions []spirit.Action) spirit.Action {
+		var ids []string
+		for _, generatedAction := range generatedActions {
+			ids = append(ids, generatedAction.(*actions).ids...)
+		}
+		return &actions{
+			ids:    ids,
+			Action: action.RoundRobin(generatedActions),
+		}
+	})
 	apiSpirits, err := fromInternalSpirits(internalSpirits)
 	if err != nil {
 		http.Error(w, "cannot process spirits: "+err.Error(), http.StatusInternalServerError)

@@ -7,19 +7,19 @@ import (
 	"github.com/ankeesler/spirits/internal/spirit"
 )
 
-func Generate(seed int64, actions []spirit.Action) []*spirit.Spirit {
+func Generate(seed int64, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) []*spirit.Spirit {
 	r := rand.New(rand.NewSource(seed))
-	return []*spirit.Spirit{generate(r, actions), generate(r, actions)}
+	return []*spirit.Spirit{generate(r, actions, actionFunc), generate(r, actions, actionFunc)}
 }
 
-func generate(r *rand.Rand, actions []spirit.Action) *spirit.Spirit {
+func generate(r *rand.Rand, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) *spirit.Spirit {
 	return &spirit.Spirit{
 		Name:    generateName(r),
 		Health:  generateStat(r) * 2,
 		Power:   generateStat(r) / 2,
 		Agility: generateStat(r),
 		Armour:  generateStat(r) / 4,
-		Action:  generateAction(r, actions),
+		Action:  generateAction(r, actions, actionFunc),
 	}
 }
 
@@ -43,8 +43,13 @@ func generateStat(r *rand.Rand) int {
 	return int(stat)
 }
 
-func generateAction(r *rand.Rand, actions []spirit.Action) spirit.Action {
-	return actions[r.Intn(len(actions))]
+func generateAction(r *rand.Rand, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) spirit.Action {
+	numActions := r.Intn(3) + 1
+	var generatedActions []spirit.Action
+	for i := 0; i < numActions; i++ {
+		generatedActions = append(generatedActions, actions[r.Intn(len(actions))])
+	}
+	return actionFunc(generatedActions)
 }
 
 func randomWords() []string {
