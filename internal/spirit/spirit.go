@@ -9,6 +9,6 @@ type Spirit struct {
 	Health  int
 	Power   int
 	Agility int
-	Armour  int
+	Armor   int
 	Action  Action
 }

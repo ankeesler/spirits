@@ -8,7 +8,7 @@ func (f actionFunc) Run(from, to *spirit.Spirit) { f(from, to) }
 
 func Attack() spirit.Action {
 	return actionFunc(func(from, to *spirit.Spirit) {
-		netPower := (from.Power - to.Armour)
+		netPower := (from.Power - to.Armor)
 		if netPower < 0 {
 			netPower = 0
 		}
@@ -22,7 +22,7 @@ func Attack() spirit.Action {
 
 func Bolster() spirit.Action {
 	return actionFunc(func(from, to *spirit.Spirit) {
-		netPower := ((from.Power / 2) - to.Armour)
+		netPower := ((from.Power / 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
 		}
@@ -32,13 +32,13 @@ func Bolster() spirit.Action {
 			to.Health = 0
 		}
 
-		from.Armour += (from.Power / 2)
+		from.Armor += (from.Power / 2)
 	})
 }
 
 func Drain() spirit.Action {
 	return actionFunc(func(from, to *spirit.Spirit) {
-		netPower := ((from.Power / 2) - to.Armour)
+		netPower := ((from.Power / 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
 		}
@@ -54,7 +54,7 @@ func Drain() spirit.Action {
 
 func Charge() spirit.Action {
 	return actionFunc(func(from, to *spirit.Spirit) {
-		netPower := ((from.Power * 2) - to.Armour)
+		netPower := ((from.Power * 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
 		}

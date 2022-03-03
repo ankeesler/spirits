@@ -18,7 +18,7 @@ func generate(r *rand.Rand, actions []spirit.Action, actionFunc func([]spirit.Ac
 		Health:  generateStat(r) * 2,
 		Power:   generateStat(r) / 2,
 		Agility: generateStat(r),
-		Armour:  generateStat(r) / 4,
+		Armor:   generateStat(r) / 4,
 		Action:  generateAction(r, actions, actionFunc),
 	}
 }

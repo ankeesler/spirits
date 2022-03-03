@@ -1,4 +1,4 @@
 [
-  {"name": "a", "health": 3, "power": 3, "agility": 1, "armour": 1},
-  {"name": "b", "health": 3, "power": 3, "agility": 1, "armour": 2}
+  {"name": "a", "health": 3, "power": 3, "agility": 1, "armor": 1},
+  {"name": "b", "health": 3, "power": 3, "agility": 1, "armor": 2}
 ]

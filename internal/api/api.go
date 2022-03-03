@@ -19,7 +19,7 @@ type Spirit struct {
 	Health       int      `json:"health"`
 	Power        int      `json:"power"`
 	Agility      int      `json:"agility"`
-	Armour       int      `json:"armour"`
+	Armor        int      `json:"armor"`
 	Actions      []string `json:"actions,omitempty"`
 	Intelligence string   `json:"intelligence,omitempty"`
 }
@@ -96,7 +96,7 @@ func toInternalSpirit(apiSpirit *Spirit, seed int64) (*spirit.Spirit, error) {
 		Health:  apiSpirit.Health,
 		Power:   apiSpirit.Power,
 		Agility: apiSpirit.Agility,
-		Armour:  apiSpirit.Armour,
+		Armor:   apiSpirit.Armor,
 	}
 
 	var err error
@@ -217,7 +217,7 @@ func fromInternalSpirit(internalSpirit *spirit.Spirit) (*Spirit, error) {
 		Health:  internalSpirit.Health,
 		Power:   internalSpirit.Power,
 		Agility: internalSpirit.Agility,
-		Armour:  internalSpirit.Armour,
+		Armor:   internalSpirit.Armor,
 		Actions: apiActions.ids,
 	}, nil
 }
