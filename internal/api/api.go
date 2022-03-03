@@ -15,12 +15,13 @@ import (
 )
 
 type Spirit struct {
-	Name    string   `json:"name"`
-	Health  int      `json:"health"`
-	Power   int      `json:"power"`
-	Agility int      `json:"agility"`
-	Armour  int      `json:"armour"`
-	Actions []string `json:"actions,omitempty"`
+	Name         string   `json:"name"`
+	Health       int      `json:"health"`
+	Power        int      `json:"power"`
+	Agility      int      `json:"agility"`
+	Armour       int      `json:"armour"`
+	Actions      []string `json:"actions,omitempty"`
+	Intelligence string   `json:"intelligence,omitempty"`
 }
 
 type actions struct {
@@ -61,7 +62,13 @@ func handleBattle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	internalSpirits, err := toInternalSpirits(apiSpirits)
+	seed, ok := getSeed(r)
+	if !ok {
+		http.Error(w, "invalid seed", http.StatusBadRequest)
+		return
+	}
+
+	internalSpirits, err := toInternalSpirits(apiSpirits, seed)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -71,11 +78,11 @@ func handleBattle(w http.ResponseWriter, r *http.Request) {
 	battle.Run(internalSpirits, u.OnSpirits)
 }
 
-func toInternalSpirits(apiSpirits []*Spirit) ([]*spirit.Spirit, error) {
+func toInternalSpirits(apiSpirits []*Spirit, seed int64) ([]*spirit.Spirit, error) {
 	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
 	var err error
 	for i := range apiSpirits {
-		internalSpirits[i], err = toInternalSpirit(apiSpirits[i])
+		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], seed)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +90,7 @@ func toInternalSpirits(apiSpirits []*Spirit) ([]*spirit.Spirit, error) {
 	return internalSpirits, nil
 }
 
-func toInternalSpirit(apiSpirit *Spirit) (*spirit.Spirit, error) {
+func toInternalSpirit(apiSpirit *Spirit, seed int64) (*spirit.Spirit, error) {
 	s := &spirit.Spirit{
 		Name:    apiSpirit.Name,
 		Health:  apiSpirit.Health,
@@ -93,7 +100,7 @@ func toInternalSpirit(apiSpirit *Spirit) (*spirit.Spirit, error) {
 	}
 
 	var err error
-	s.Action, err = toInternalAction(apiSpirit.Actions)
+	s.Action, err = toInternalAction(apiSpirit.Actions, apiSpirit.Intelligence, seed)
 	if err != nil {
 		return nil, err
 	}
@@ -101,28 +108,37 @@ func toInternalSpirit(apiSpirit *Spirit) (*spirit.Spirit, error) {
 	return s, nil
 }
 
-func toInternalAction(ids []string) (spirit.Action, error) {
-	if len(ids) == 0 {
-		return action.Attack(), nil
-	}
-
+func toInternalAction(ids []string, intelligence string, seed int64) (spirit.Action, error) {
 	var internalActions []spirit.Action
-	for _, id := range ids {
-		switch id {
-		case "", "attack":
-			internalActions = append(internalActions, action.Attack())
-		case "bolster":
-			internalActions = append(internalActions, action.Bolster())
-		case "drain":
-			internalActions = append(internalActions, action.Drain())
-		case "charge":
-			internalActions = append(internalActions, action.Charge())
-		default:
-			return nil, fmt.Errorf("unrecognized action: %q", ids[0])
+	if len(ids) == 0 {
+		internalActions = []spirit.Action{action.Attack()}
+	} else {
+		for _, id := range ids {
+			switch id {
+			case "", "attack":
+				internalActions = append(internalActions, action.Attack())
+			case "bolster":
+				internalActions = append(internalActions, action.Bolster())
+			case "drain":
+				internalActions = append(internalActions, action.Drain())
+			case "charge":
+				internalActions = append(internalActions, action.Charge())
+			default:
+				return nil, fmt.Errorf("unrecognized action: %q", ids[0])
+			}
 		}
 	}
 
-	internalAction := action.RoundRobin(internalActions)
+	var internalAction spirit.Action
+	switch intelligence {
+	case "", "roundrobin":
+		internalAction = action.RoundRobin(internalActions)
+	case "random":
+		internalAction = action.Random(seed, internalActions)
+	default:
+		return nil, fmt.Errorf("unrecognized intelligence: %q", intelligence)
+	}
+
 	return &actions{ids: ids, Action: internalAction}, nil
 }
 
@@ -132,17 +148,10 @@ func handleSpirit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var seed int64
-	query := r.URL.Query()
-	if query.Has("seed") {
-		var err error
-		seed, err = strconv.ParseInt(query.Get("seed"), 10, 64)
-		if err != nil {
-			http.Error(w, "invalid seed", http.StatusBadRequest)
-			return
-		}
-	} else {
-		seed = time.Now().Unix()
+	seed, ok := getSeed(r)
+	if !ok {
+		http.Error(w, "invalid seed", http.StatusBadRequest)
+		return
 	}
 
 	wellKnownActions := []spirit.Action{
@@ -211,4 +220,19 @@ func fromInternalSpirit(internalSpirit *spirit.Spirit) (*Spirit, error) {
 		Armour:  internalSpirit.Armour,
 		Actions: apiActions.ids,
 	}, nil
+}
+
+func getSeed(r *http.Request) (int64, bool) {
+	var seed int64
+	query := r.URL.Query()
+	if query.Has("seed") {
+		var err error
+		seed, err = strconv.ParseInt(query.Get("seed"), 10, 64)
+		if err != nil {
+			return 0, false
+		}
+	} else {
+		seed = time.Now().Unix()
+	}
+	return seed, true
 }

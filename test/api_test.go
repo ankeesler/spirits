@@ -73,6 +73,12 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/good-spirits-with-roundrobin.txt"),
 		},
+		{
+			name:           "multi-move random",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle?seed=1", readFile(t, "testdata/good-spirits-with-random.json")),
+			wantStatusCode: http.StatusOK,
+			wantBody:       readFile(t, "testdata/good-spirits-with-random.txt"),
+		},
 		// /battle sad paths
 		{
 			name:           "1 spirit",
@@ -114,6 +120,18 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusBadRequest,
 			wantBody:       "unrecognized action: \"tuna\"\n",
 		},
+		{
+			name:           "unrecognized intelligence",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/unrecognized-intelligence.json")),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "unrecognized intelligence: \"tuna\"\n",
+		},
+		{
+			name:           "/battle bad seed",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=tuna", ""),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "invalid seed\n",
+		},
 		// /spirit happy paths
 		{
 			name:           "generated spirits with seed 1",
@@ -127,6 +145,7 @@ func TestAPI(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 			wantBody:       readFile(t, "testdata/generated-spirits-seed-2.json"),
 		},
+		// /spirit sad paths
 		{
 			name:           "/spirit wrong method",
 			req:            newRequest(t, http.MethodPut, baseURL+"/api/spirit?seed=2", ""),

@@ -1,0 +1,20 @@
+package action
+
+import (
+	"math/rand"
+
+	"github.com/ankeesler/spirits/internal/spirit"
+)
+
+type random struct {
+	r       *rand.Rand
+	actions []spirit.Action
+}
+
+func Random(seed int64, actions []spirit.Action) spirit.Action {
+	return &random{r: rand.New(rand.NewSource(seed)), actions: actions}
+}
+
+func (r *random) Run(from, to *spirit.Spirit) {
+	r.actions[r.r.Intn(len(r.actions))].Run(from, to)
+}

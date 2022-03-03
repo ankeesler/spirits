@@ -1,0 +1,4 @@
+[
+  {"name": "a", "health": 10, "power": 6, "agility": 1, "armour": 1, "actions":["drain","attack"], "intelligence": "random"},
+  {"name": "b", "health": 10, "power": 5, "agility": 1, "armour": 1, "actions":["attack","bolster","attack"], "intelligence": "random"}
+]
