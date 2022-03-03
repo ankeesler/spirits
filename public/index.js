@@ -62,7 +62,7 @@ window.onload = () => {
         response.text().then(text => console.log(`POST /api/spirit error: ${text}`));
       }
     }).then((json) => {
-      inputTextarea.value = JSON.stringify(json) + "\n";
+      inputTextarea.value = JSON.stringify(json, null, 2) + "\n";
       runBattle();
     }).catch((error) => {
       console.log(`POST /api/spirit error: ${error.message}`);

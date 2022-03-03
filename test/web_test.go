@@ -1,6 +1,8 @@
 package test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -86,7 +88,7 @@ func TestWeb(t *testing.T) {
 
 				inputTextFunc := func() (string, error) { return input.GetAttribute("value") }
 				outputTextFunc := func() (string, error) { return output.GetAttribute("value") }
-				eventually(t, inputTextFunc, readFile(t, "testdata/generated-spirits-seed-1.json"), true, true)
+				eventually(t, inputTextFunc, prettyJSON(t, readFile(t, "testdata/generated-spirits-seed-1.json")), true, true)
 				eventually(t, outputTextFunc, readFile(t, "testdata/generated-spirits-seed-1.txt"), true, true)
 			},
 		},
@@ -109,7 +111,7 @@ func TestWeb(t *testing.T) {
 				require.NoError(t, err)
 
 				inputTextFunc := func() (string, error) { return input.GetAttribute("value") }
-				eventually(t, inputTextFunc, readFile(t, "testdata/generated-spirits-seed-1.json"), false, true)
+				eventually(t, inputTextFunc, prettyJSON(t, readFile(t, "testdata/generated-spirits-seed-1.json")), false, true)
 			},
 		},
 	}
@@ -196,4 +198,14 @@ func eventually(t *testing.T, textFunc func() (string, error), wantText string, 
 	}
 
 	requireFunc(t, conditionFunc, time.Second*3, time.Second)
+}
+
+func prettyJSON(t *testing.T, s string) string {
+	t.Helper()
+
+	buf := bytes.NewBuffer([]byte{})
+	err := json.Indent(buf, []byte(s), "", "  ")
+	require.NoError(t, err)
+
+	return buf.String()
 }
