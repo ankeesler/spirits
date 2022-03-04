@@ -30,7 +30,7 @@ func serverBaseURL(t *testing.T) string {
 			"build",
 			"-o",
 			serverExe,
-			"../cmd/spirits",
+			"..",
 		).CombinedOutput()
 		require.NoErrorf(t, err, "output: %s", string(output))
 	})

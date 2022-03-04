@@ -21,7 +21,6 @@
 
 | Path  | Description |
 | ------------- | ------------- |
-| `cmd`  | `spirits` main function and other executable entrypoints  |
 | `test`  | e2e tests  |
 | `internal`  | source code  |
 | `public`  | web assets  |
