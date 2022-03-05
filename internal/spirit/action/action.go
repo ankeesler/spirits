@@ -1,13 +1,19 @@
 package action
 
-import "github.com/ankeesler/spirits/internal/spirit"
+import (
+	"context"
 
-type actionFunc func(from, to *spirit.Spirit)
+	"github.com/ankeesler/spirits/internal/spirit"
+)
 
-func (f actionFunc) Run(from, to *spirit.Spirit) { f(from, to) }
+type actionFunc func(ctx context.Context, from, to *spirit.Spirit) error
+
+func (f actionFunc) Run(ctx context.Context, from, to *spirit.Spirit) error {
+	return f(ctx, from, to)
+}
 
 func Attack() spirit.Action {
-	return actionFunc(func(from, to *spirit.Spirit) {
+	return actionFunc(func(ctx context.Context, from, to *spirit.Spirit) error {
 		netPower := (from.Power - to.Armor)
 		if netPower < 0 {
 			netPower = 0
@@ -17,11 +23,13 @@ func Attack() spirit.Action {
 		if to.Health < 0 {
 			to.Health = 0
 		}
+
+		return nil
 	})
 }
 
 func Bolster() spirit.Action {
-	return actionFunc(func(from, to *spirit.Spirit) {
+	return actionFunc(func(ctx context.Context, from, to *spirit.Spirit) error {
 		netPower := ((from.Power / 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
@@ -33,11 +41,13 @@ func Bolster() spirit.Action {
 		}
 
 		from.Armor += (from.Power / 2)
+
+		return nil
 	})
 }
 
 func Drain() spirit.Action {
-	return actionFunc(func(from, to *spirit.Spirit) {
+	return actionFunc(func(ctx context.Context, from, to *spirit.Spirit) error {
 		netPower := ((from.Power / 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
@@ -49,11 +59,13 @@ func Drain() spirit.Action {
 		}
 
 		from.Health += (netPower / 2)
+
+		return nil
 	})
 }
 
 func Charge() spirit.Action {
-	return actionFunc(func(from, to *spirit.Spirit) {
+	return actionFunc(func(ctx context.Context, from, to *spirit.Spirit) error {
 		netPower := ((from.Power * 2) - to.Armor)
 		if netPower < 0 {
 			netPower = 0
@@ -68,5 +80,7 @@ func Charge() spirit.Action {
 		if from.Health < 0 {
 			from.Health = 0
 		}
+
+		return nil
 	})
 }

@@ -1,7 +1,9 @@
 package spirit
 
+import "context"
+
 type Action interface {
-	Run(to, from *Spirit)
+	Run(ctx context.Context, to, from *Spirit) error
 }
 
 type Spirit struct {

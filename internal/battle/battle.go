@@ -1,14 +1,16 @@
 package battle
 
 import (
+	"context"
 	"errors"
+	"fmt"
 
 	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 const maxTurns = 100
 
-func Run(spirits []*spirit.Spirit, onSpirits func([]*spirit.Spirit, error)) {
+func Run(ctx context.Context, spirits []*spirit.Spirit, onSpirits func([]*spirit.Spirit, error)) {
 	turns := 0
 
 	onSpirits(spirits, nil)
@@ -22,7 +24,10 @@ func Run(spirits []*spirit.Spirit, onSpirits func([]*spirit.Spirit, error)) {
 		}
 		from, to := s.next()
 
-		from.Action.Run(from, to)
+		if err := from.Action.Run(ctx, from, to); err != nil {
+			onSpirits(spirits, fmt.Errorf("action errored: %w", err))
+			return
+		}
 
 		onSpirits(spirits, nil)
 	}

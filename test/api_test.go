@@ -2,17 +2,32 @@ package test
 
 import (
 	"bytes"
+	"context"
+	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
+	"os"
 	"testing"
+	"time"
 
+	"github.com/ankeesler/spirits/internal/api"
+	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAPI(t *testing.T) {
 	baseURL := serverBaseURL(t)
+	t.Run("HTTP", func(t *testing.T) {
+		testHTTPAPI(t, baseURL)
+	})
+	t.Run("Websocket", func(t *testing.T) {
+		testWebsocketAPI(t, baseURL)
+	})
+}
 
-	steps := []struct {
+func testHTTPAPI(t *testing.T, baseURL string) {
+	tests := []struct {
 		name           string
 		req            *http.Request
 		wantStatusCode int
@@ -128,9 +143,15 @@ func TestAPI(t *testing.T) {
 		},
 		{
 			name:           "/battle bad seed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=tuna", ""),
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle?seed=tuna", readFile(t, "testdata/good-spirits.json")),
 			wantStatusCode: http.StatusBadRequest,
 			wantBody:       "invalid seed\n",
+		},
+		{
+			name:           "/battle with human interaction requested",
+			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-single-human-interaction.json")),
+			wantStatusCode: http.StatusBadRequest,
+			wantBody:       "unsupported intelligence value (hint: you must use websocket API): \"human\"\n",
 		},
 		// /spirit happy paths
 		{
@@ -158,38 +179,41 @@ func TestAPI(t *testing.T) {
 			wantBody:       "invalid seed\n",
 		},
 	}
-	for _, step := range steps {
-		t.Logf("step: %s", step.name)
-		t.Logf("req: %s %s", step.req.Method, step.req.URL)
-		rsp, err := http.DefaultClient.Do(step.req)
-		require.NoError(t, err)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Logf("req: %s %s", test.req.Method, test.req.URL)
+			rsp, err := http.DefaultClient.Do(test.req)
+			require.NoError(t, err)
 
-		gotBody, err := io.ReadAll(rsp.Body)
-		require.Equalf(t, step.wantStatusCode, rsp.StatusCode, "body: %q", string(gotBody))
-		require.NoError(t, err)
-		require.Equal(t, step.wantBody, string(gotBody))
+			gotBody, err := io.ReadAll(rsp.Body)
+			require.Equalf(t, test.wantStatusCode, rsp.StatusCode, "body: %q", string(gotBody))
+			require.NoError(t, err)
+			require.Equal(t, test.wantBody, string(gotBody))
+		})
 	}
 
-	t.Log("step: generated spirits are valid")
-	for i := 0; i < 20; i++ {
-		// Generate spirits.
-		req := newRequest(t, http.MethodPost, baseURL+"/api/spirit", "")
-		rsp, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
+	t.Run("generated spirits are valid", func(t *testing.T) {
+		for i := 0; i < 20; i++ {
+			// Generate spirits.
+			req := newRequest(t, http.MethodPost, baseURL+"/api/spirit", "")
+			rsp, err := http.DefaultClient.Do(req)
+			require.NoError(t, err)
 
-		gotBody, err := io.ReadAll(rsp.Body)
-		require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
-		require.NoError(t, err)
+			gotBody, err := io.ReadAll(rsp.Body)
+			require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
+			require.NoError(t, err)
 
-		// Make sure spirits are valid.
-		req = newRequest(t, http.MethodPost, baseURL+"/api/battle", string(gotBody))
-		rsp, err = http.DefaultClient.Do(req)
-		require.NoError(t, err)
+			// Make sure spirits are valid.
+			req = newRequest(t, http.MethodPost, baseURL+"/api/battle", string(gotBody))
+			rsp, err = http.DefaultClient.Do(req)
+			require.NoError(t, err)
 
-		gotBody, err = io.ReadAll(rsp.Body)
-		require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
-		require.NoError(t, err)
-	}
+			gotBody, err = io.ReadAll(rsp.Body)
+			require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
+			require.NoError(t, err)
+		}
+	})
 }
 
 func newRequest(t *testing.T, method, url string, body string) *http.Request {
@@ -199,4 +223,844 @@ func newRequest(t *testing.T, method, url string, body string) *http.Request {
 	require.NoError(t, err)
 
 	return req
+}
+
+type testMsg struct {
+	in    bool // true: tx, false: rx
+	reset bool // true to reset connection
+	msg   interface{}
+}
+
+func testWebsocketAPI(t *testing.T, baseURL string) {
+	u, err := url.Parse(baseURL)
+	require.NoError(t, err)
+
+	t.Run("http connection to websocket path", func(t *testing.T) {
+		rsp, err := http.DefaultClient.Get("http://" + u.Host + "/api/battle")
+		require.NoError(t, err)
+		require.Equal(t, http.StatusBadRequest, rsp.StatusCode)
+		io.Copy(io.Discard, rsp.Body)
+	})
+
+	t.Run("invalid seed", func(t *testing.T) {
+		_, rsp, err := websocket.DefaultDialer.Dial("ws://"+u.Host+"/api/battle?seed=tuna", nil)
+		require.EqualError(t, err, "websocket: bad handshake")
+		require.Equal(t, http.StatusBadRequest, rsp.StatusCode)
+
+		data, err := io.ReadAll(rsp.Body)
+		require.NoError(t, err)
+		require.Equal(t, "invalid seed\n", string(data))
+	})
+
+	var c *websocket.Conn
+	dial := func() {
+		var err error
+		c, _, err = websocket.DefaultDialer.Dial("ws://"+u.Host+"/api/battle", nil)
+		require.NoError(t, err)
+		t.Cleanup(func() {
+			c.Close()
+		})
+	}
+	dial()
+
+	steps := []struct {
+		name string
+		msgs []testMsg
+	}{
+		{
+			name: "when the error type is invalid it doesn't take down the server",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: "invalid",
+					},
+				},
+			},
+		},
+		{
+			name: "when the message type is the wrong schema it doesn't take down the server",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: map[string]interface{}{
+						"type": 1,
+					},
+				},
+			},
+		},
+		{
+			name: "when the message details are the wrong schema it doesn't take down the server",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: map[string]interface{}{
+						"type":    api.MessageTypeActionRequest,
+						"details": 1,
+					},
+				},
+			},
+		},
+		// Happy path
+		{
+			name: "battle-start with 2 spirits without human interaction",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-without-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: readFile(t, "testdata/good-spirits-without-human-interaction.txt"),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 2 spirits with single human interaction",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       1,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+							ID: "attack",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> summary\n  a: 1\n  b: 1\n> summary\n  a: 0\n  b: 1\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 2 spirits with double human interaction",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-double-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+								Actions:      []string{"charge"},
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name: "a",
+							},
+							ID: "", // defaults to first entry (charge)
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 2\n  b: 1\n",
+							Spirit: api.Spirit{
+								Name:         "b",
+								Health:       3,
+								Power:        2,
+								Agility:      1,
+								Intelligence: "human",
+								Actions:      []string{"charge", "bolster"},
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name: "b",
+							},
+							ID: "bolster",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 1\n  b: 1\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+								Actions:      []string{"charge"},
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name: "a",
+							},
+							ID: "charge",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> summary\n  a: 1\n  b: 0\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 2 spirits with human interaction and closed connection bounces back",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					reset: true,
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       1,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+							ID: "attack",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> summary\n  a: 1\n  b: 1\n> summary\n  a: 0\n  b: 1\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 2 spirits with human interaction and battle stop bounces back",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type:    api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> error: action errored: action canceled: context canceled\n",
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       1,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+							ID: "attack",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> summary\n  a: 1\n  b: 1\n> summary\n  a: 0\n  b: 1\n",
+						},
+					},
+				},
+			},
+		},
+		// Error cases
+		{
+			name: "battle-start with 0 spirits",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: []*api.Spirit{},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "must provide 2 spirits",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 1 spirit",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: []*api.Spirit{{Name: "a"}},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "must provide 2 spirits",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 3 spirits",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: []*api.Spirit{{Name: "a"}, {Name: "b"}, {Name: "c"}},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "must provide 2 spirits",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-stop without battle-start",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type:    api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "unexpected battle-stop: no battle running",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "action-request without battle-start",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Spirit: api.Spirit{Name: "a"},
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: `unexpected action-request for spirit: "a"`,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "action-response without battle-start",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{Name: "a"},
+							ID:     "whatever",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: `unexpected action-response with ID "whatever" for spirit: "a"`,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "battle-start with 2 spirits and a battle already exists",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "battle already running",
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type:    api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: "> error: action errored: action canceled: context canceled\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "unknown action id",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/good-spirits-with-single-human-interaction.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeActionRequest,
+						Details: &api.MessageDetailsActionRequest{
+							Output: "> summary\n  a: 3\n  b: 3\n",
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+						},
+					},
+				},
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeActionResponse,
+						Details: &api.MessageDetailsActionResponse{
+							Spirit: api.Spirit{
+								Name:         "a",
+								Health:       3,
+								Power:        1,
+								Agility:      1,
+								Intelligence: "human",
+							},
+							ID: "invalid",
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: `> error: action errored: unknown action "invalid" for spirit "a"` + "\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "infinite loop",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/powerless-spirits.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: readFile(t, "testdata/powerless-spirits.txt"),
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, step := range steps {
+		t.Logf("step: %s", step.name)
+		for _, msg := range step.msgs {
+			if msg.in {
+				err := c.WriteJSON(msg.msg)
+				require.NoError(t, err)
+				continue
+			}
+
+			if msg.reset {
+				err := c.Close()
+				require.NoError(t, err)
+				dial()
+				continue
+			}
+
+			msgIn, err := readMessage(c)
+			require.NoErrorf(t, err, "waiting for %#v", msg.msg.(api.Message))
+			require.Equal(t, msg.msg.(api.Message), *msgIn)
+		}
+	}
+}
+
+func readSpirits(t *testing.T, path string) []*api.Spirit {
+	t.Helper()
+
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+
+	var spirits []*api.Spirit
+	err = json.Unmarshal(data, &spirits)
+	require.NoError(t, err)
+
+	return spirits
+}
+
+func readMessage(c *websocket.Conn) (*api.Message, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	defer cancel()
+
+	var msg api.Message
+	errCh := make(chan error)
+	go func() { errCh <- c.ReadJSON(&msg) }()
+	select {
+	case err := <-errCh:
+		return &msg, err
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
 }
