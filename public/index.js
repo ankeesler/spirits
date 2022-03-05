@@ -2,6 +2,16 @@ window.onload = () => {
   const inputTextarea = document.getElementById('input');
   const outputTextarea = document.getElementById('output');
   const errorMessage = document.getElementById('error-message');
+  const ws = new WebSocket('ws://' + window.location.host + '/api/battle');
+  ws.onopen = () => {
+    console.log('websocket opened');
+  };
+  ws.onclose = () => {
+    console.log('websocket closed');
+  };
+  ws.onerror = (e) => {
+    console.log(`websocket error: ${e}`);
+  };
 
   const setOutputTextarea = (pending, text) => {
     if (pending) {
@@ -19,27 +29,37 @@ window.onload = () => {
   };
 
   const runBattle = () => {
-    fetch('/api/battle', {
-      method: 'POST',
-      body: inputTextarea.value,
-    }).then((response) => {
-      console.log(`POST ${response.url} response: ${response.status} ${response.statusText}`);
+    const battle = {type: 'battle-start', details: {spirits: JSON.parse(inputTextarea.value)}};
+    ws.send(JSON.stringify(battle));
 
-      if (response.status === 200) {
-        return response.text()
-      } else if (response.status >= 400 && response.status <= 499) {
-        response.text().then(text => console.log(`POST /api/battle error: ${text}`));
-        throw new Error(`invalid spirits json`);
+    ws.onmessage = (m) => {
+      console.log(`received websocket message`);
+  
+      const message = JSON.parse(m.data);
+      if (message.type === 'battle-stop') {
+        setOutputTextarea(false, message.details.output);
+      } else if (message.type === 'action-req') {
+        document.getElementById('actions').innerHTML = '';
+        outputTextarea.value += message.details.output;
+
+        const spirit = message.details.spirit;
+        let actionsHTML = `please select action for spirit ${spirit.name} <br\>`;
+
+        spirit.actions.forEach((a) => actionsHTML += `<button id="action-${a}">${a}</button> <br\>`);
+        document.getElementById('actions').innerHTML = actionsHTML;
+
+        spirit.actions.forEach((a) => {
+          document.getElementById(`action-${a}`).onclick = (e) => {
+            const actionRsp = {type: 'action-rsp', details: {ID: e.target.innerText}};
+            ws.send(JSON.stringify(actionRsp));
+          };
+        });
+      } else if (message.type === 'error') {
+        setErrorMessage(message.details.reason);
       } else {
-        throw new Error('server error :(');
+        console.log(`received unknown message type: ${message.type}`);
       }
-    }).then((text) => {
-      setErrorMessage('');
-      setOutputTextarea(false, text);
-    }).catch((error) => {
-      setErrorMessage(error.message);
-      setOutputTextarea(false, '');
-    });
+    };
   };
 
   let timer = setTimeout(() => { }, 0);
