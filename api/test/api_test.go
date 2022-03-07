@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ankeesler/spirits/internal/api"
+	"github.com/ankeesler/spirits/api/internal/api"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 )
