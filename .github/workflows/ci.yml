@@ -21,6 +21,3 @@ jobs:
         healthcheck: "https://oh-great-spirits.herokuapp.com"
         rollbackonhealthcheckfailed: true
         usedocker: true
-      
-    - name: Acceptance
-      run: ./script/acceptance-test.sh
