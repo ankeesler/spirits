@@ -48,15 +48,17 @@ func (e *eventHandler) run(ctx context.Context) {
 
 	e.inBattle.Store(false)
 
-	for {
+	keepGoing := true
+	for keepGoing {
 		select {
 		case inMsg, ok := <-e.inMsgCh:
 			if !ok {
+				keepGoing = false
 				break
 			}
 			e.process(inMsg)
 		case <-ctx.Done():
-			break
+			keepGoing = false
 		}
 	}
 }

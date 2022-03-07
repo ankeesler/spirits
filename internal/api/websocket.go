@@ -109,7 +109,11 @@ func serveWebsocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	upgrader := websocket.Upgrader{}
+	upgrader := websocket.Upgrader{
+		Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
+			log.Printf("could not upgrade connection: %d %s", status, reason.Error())
+		},
+	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		http.Error(w, "could not upgrade connection: "+err.Error(), http.StatusBadRequest)
