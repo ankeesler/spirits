@@ -13,7 +13,7 @@
 
 * Infrastructure: [Heroku](https://oh-great-spirits.herokuapp.com/)
 * Server: Golang
-* Client: VanillaJS/CSS/HTML
+* Client: React
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
 * Testing: Golang, ChromeDriver/Selenium
 
@@ -25,3 +25,4 @@
 | `internal`  | source code  |
 | `public`  | web assets  |
 | `script` | project helper scripts |
+| `web` | next gen frontend code |

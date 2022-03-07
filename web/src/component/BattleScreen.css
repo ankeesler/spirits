@@ -1,0 +1,9 @@
+.component-battle-screen {
+  padding: .25em;
+  margin: .25em;
+  flex: 2;
+  text-align: center;
+
+  display: flex;
+  flex-flow: row wrap;
+}

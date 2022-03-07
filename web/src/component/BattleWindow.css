@@ -1,0 +1,9 @@
+.component-battle-window {
+  border: .5em solid lightgray;
+
+  height: 90%;
+  width: 90%;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
