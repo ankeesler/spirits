@@ -3,16 +3,40 @@ name: CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-
-  deploy:
+  test-api:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Mod
+      run: go mod download
+    - name: Fmt
+      run: cd api && test -z "$(go fmt ./...)"
+    - name: Vet
+      run: cd api && go vet -v ./...
+    - name: Test
+      run: cd api && go test -race -v ./...
 
+  test-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '17'
+    - run: cd web && npm install
+    - run: cd web && npm run check
+
+  deploy:
+    needs: [test-web, test-api]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
     - uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
