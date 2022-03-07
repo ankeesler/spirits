@@ -7,6 +7,9 @@ on:
 jobs:
   test-api:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
     steps:
     - uses: actions/checkout@v2
     - name: Set up Go
@@ -16,21 +19,24 @@ jobs:
     - name: Mod
       run: go mod download
     - name: Fmt
-      run: cd api && test -z "$(go fmt ./...)"
+      run: test -z "$(go fmt ./...)"
     - name: Vet
-      run: cd api && go vet -v ./...
+      run: go vet -v ./...
     - name: Test
-      run: cd api && go test -race -v ./...
+      run: go test -race -v ./...
 
   test-web:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
         node-version: '17'
-    - run: cd web && npm install
-    - run: cd web && npm run check
+    - run: npm install
+    - run: npm run check
 
   deploy:
     needs: [test-web, test-api]
