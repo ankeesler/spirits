@@ -17,7 +17,7 @@ Run `./script/run.sh` and open browser to `http://localhost:12345` to view game.
 * Backend: [Golang](api)
 * Frontend: [React](web)
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
-* Testing: [Golang/ChromeDriver/Selenium](test)
+* Testing: [TBD](test)
 
 ## Directory Structure
 
