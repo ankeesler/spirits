@@ -2,6 +2,8 @@
 
 `spirits` is a turn-based battle framework.
 
+Run `./script/run.sh` and open browser to `http://localhost:12345` to view game.
+
 ## Muses
 
 * Pokémon
