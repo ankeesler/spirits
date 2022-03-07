@@ -3,7 +3,7 @@ package action
 import (
 	"context"
 
-	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
 type actionFunc func(ctx context.Context, from, to *spirit.Spirit) error

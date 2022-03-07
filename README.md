@@ -12,17 +12,16 @@
 ## Tech Stack
 
 * Infrastructure: [Heroku](https://oh-great-spirits.herokuapp.com/)
-* Server: Golang
-* Client: React
+* Backend: [Golang](api)
+* Frontend: [React](web)
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
-* Testing: Golang, ChromeDriver/Selenium
+* Testing: [Golang/ChromeDriver/Selenium](test)
 
 ## Directory Structure
 
 | Path  | Description |
 | ------------- | ------------- |
-| `test`  | e2e tests  |
-| `internal`  | source code  |
-| `public`  | web assets  |
+| `api`  | backend code  |
 | `script` | project helper scripts |
-| `web` | next gen frontend code |
+| `test`  | e2e tests  |
+| `web` | frontend code |

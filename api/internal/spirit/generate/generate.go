@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
 func Generate(seed int64, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) []*spirit.Spirit {

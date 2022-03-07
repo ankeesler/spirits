@@ -8,9 +8,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/ankeesler/spirits/internal/battle"
-	"github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/internal/ui"
+	"github.com/ankeesler/spirits/api/internal/battle"
+	"github.com/ankeesler/spirits/api/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/ui"
 )
 
 type eventHandler struct {

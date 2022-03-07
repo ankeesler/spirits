@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ankeesler/spirits/internal/api"
+	"github.com/ankeesler/spirits/api/internal/api"
 )
 
 func main() {

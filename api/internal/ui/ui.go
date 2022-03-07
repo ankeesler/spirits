@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
 type UI struct {

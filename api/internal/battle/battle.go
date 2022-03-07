@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
 const maxTurns = 100

@@ -3,7 +3,7 @@ package battle
 import (
 	"container/heap"
 
-	"github.com/ankeesler/spirits/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
 type strategy struct {

@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ankeesler/spirits/internal/battle"
-	"github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/internal/spirit/action"
-	"github.com/ankeesler/spirits/internal/spirit/generate"
-	"github.com/ankeesler/spirits/internal/ui"
+	"github.com/ankeesler/spirits/api/internal/battle"
+	"github.com/ankeesler/spirits/api/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit/action"
+	"github.com/ankeesler/spirits/api/internal/spirit/generate"
+	"github.com/ankeesler/spirits/api/internal/ui"
 )
 
 type Spirit struct {
