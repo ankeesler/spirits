@@ -29,6 +29,5 @@ $ # open browser to localhost:12345
 | Path  | Description |
 | ------------- | ------------- |
 | `api`  | backend code  |
-| `script` | project helper scripts |
 | `test`  | e2e tests  |
 | `web` | frontend code |
