@@ -4,8 +4,7 @@
 
 To run:
 ```sh
-$ docker build -t spirits .
-$ docker run -p 12345:12345 spirits
+$ ./script/run.sh
 $ # open browser to localhost:12345
 ```
 
@@ -30,4 +29,5 @@ $ # open browser to localhost:12345
 | ------------- | ------------- |
 | `api`  | backend code  |
 | `test`  | e2e tests  |
+| `script` | project scripts |
 | `web` | frontend code |

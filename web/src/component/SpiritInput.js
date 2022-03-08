@@ -12,7 +12,11 @@ const SpiritInput = (props) => {
   };
 
   const onDoubleClick = async (e) => {
-    props.generateSpirits((error, generatedSpirits) => {
+    props.client.generateSpirits((error, generatedSpirits) => {
+      if (error) {
+        console.log(`generate spirits error: ${error}`);
+        return;
+      }
       setSpirits(generatedSpirits);
       props.onSpirits(generatedSpirits);
     });
@@ -28,7 +32,7 @@ SpiritInput.defaultProps = {
 
 SpiritInput.propTypes = {
   onSpirits: PropTypes.func.isRequired,
-  generateSpirits: PropTypes.func.isRequired,
+  client: PropTypes.object.isRequired,
 };
 
 export default SpiritInput;

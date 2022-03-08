@@ -255,7 +255,7 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 	var c *websocket.Conn
 	dial := func() {
 		var err error
-		c, _, err = websocket.DefaultDialer.Dial("ws://"+u.Host+"/api/battle", nil)
+		c, _, err = websocket.DefaultDialer.Dial("ws://"+u.Host+"/api/battle?seed=1", nil)
 		require.NoError(t, err)
 		t.Cleanup(func() {
 			c.Close()
@@ -295,7 +295,7 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: map[string]interface{}{
-						"type":    api.MessageTypeActionRequest,
+						"type":    api.MessageTypeActionReq,
 						"details": 1,
 					},
 				},
@@ -338,8 +338,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -354,8 +354,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       3,
@@ -368,8 +368,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -384,8 +384,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       1,
@@ -421,8 +421,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -438,8 +438,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name: "a",
 							},
@@ -449,8 +449,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 2\n  b: 1\n",
 							Spirit: api.Spirit{
 								Name:         "b",
@@ -466,8 +466,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name: "b",
 							},
@@ -477,8 +477,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 1\n  b: 1\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -494,8 +494,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name: "a",
 							},
@@ -527,8 +527,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -554,8 +554,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -570,8 +570,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       3,
@@ -584,8 +584,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -600,8 +600,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       1,
@@ -637,8 +637,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -676,8 +676,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -692,8 +692,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       3,
@@ -706,8 +706,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 2\n> summary\n  a: 1\n  b: 2\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -722,8 +722,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       1,
@@ -740,6 +740,26 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 						Type: api.MessageTypeBattleStop,
 						Details: &api.MessageDetailsBattleStop{
 							Output: "> summary\n  a: 1\n  b: 1\n> summary\n  a: 0\n  b: 1\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "spirit-req",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type:    api.MessageTypeSpiritReq,
+						Details: &api.MessageDetailsSpiritReq{},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeSpiritRsp,
+						Details: &api.MessageDetailsSpiritRsp{
+							Spirits: readSpirits(t, "testdata/generated-spirits-seed-1.json"),
 						},
 					},
 				},
@@ -838,8 +858,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Spirit: api.Spirit{Name: "a"},
 						},
 					},
@@ -848,7 +868,7 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 					msg: api.Message{
 						Type: api.MessageTypeError,
 						Details: &api.MessageDetailsError{
-							Reason: `unexpected action-request for spirit: "a"`,
+							Reason: `unexpected action-req for spirit: "a"`,
 						},
 					},
 				},
@@ -860,8 +880,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{Name: "a"},
 							ID:     "whatever",
 						},
@@ -871,7 +891,27 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 					msg: api.Message{
 						Type: api.MessageTypeError,
 						Details: &api.MessageDetailsError{
-							Reason: `unexpected action-response with ID "whatever" for spirit: "a"`,
+							Reason: `unexpected action-rsp with ID "whatever" for spirit: "a"`,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "unsolicited spirit-rsp",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type:    api.MessageTypeSpiritRsp,
+						Details: &api.MessageDetailsSpiritRsp{},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "unexpected spirit-rsp",
 						},
 					},
 				},
@@ -891,8 +931,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -952,8 +992,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeActionRequest,
-						Details: &api.MessageDetailsActionRequest{
+						Type: api.MessageTypeActionReq,
+						Details: &api.MessageDetailsActionReq{
 							Output: "> summary\n  a: 3\n  b: 3\n",
 							Spirit: api.Spirit{
 								Name:         "a",
@@ -968,8 +1008,8 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 				{
 					in: true,
 					msg: api.Message{
-						Type: api.MessageTypeActionResponse,
-						Details: &api.MessageDetailsActionResponse{
+						Type: api.MessageTypeActionRsp,
+						Details: &api.MessageDetailsActionRsp{
 							Spirit: api.Spirit{
 								Name:         "a",
 								Health:       3,

@@ -18,11 +18,11 @@ type MessageType string
 const (
 	MessageTypeBattleStart MessageType = "battle-start"
 	MessageTypeBattleStop              = "battle-stop"
-
-	MessageTypeActionRequest  = "action-req"
-	MessageTypeActionResponse = "action-rsp"
-
-	MessageTypeError = "error"
+	MessageTypeActionReq               = "action-req"
+	MessageTypeActionRsp               = "action-rsp"
+	MessageTypeSpiritReq               = "spirit-req"
+	MessageTypeSpiritRsp               = "spirit-rsp"
+	MessageTypeError                   = "error"
 )
 
 type MessageDetails interface{}
@@ -50,8 +50,10 @@ func (m *Message) UnmarshalJSON(b []byte) error {
 	}{
 		{t: MessageTypeBattleStart, d: &MessageDetailsBattleStart{}},
 		{t: MessageTypeBattleStop, d: &MessageDetailsBattleStop{}},
-		{t: MessageTypeActionRequest, d: &MessageDetailsActionRequest{}},
-		{t: MessageTypeActionResponse, d: &MessageDetailsActionResponse{}},
+		{t: MessageTypeActionReq, d: &MessageDetailsActionReq{}},
+		{t: MessageTypeActionRsp, d: &MessageDetailsActionRsp{}},
+		{t: MessageTypeSpiritReq, d: &MessageDetailsSpiritReq{}},
+		{t: MessageTypeSpiritRsp, d: &MessageDetailsSpiritRsp{}},
 		{t: MessageTypeError, d: &MessageDetailsError{}},
 	}
 	for _, detail := range details {
@@ -86,14 +88,21 @@ type MessageDetailsBattleStop struct {
 	Output string `json:"output" mapstructure:"output"`
 }
 
-type MessageDetailsActionRequest struct {
+type MessageDetailsActionReq struct {
 	Spirit Spirit `json:"spirit" mapstructure:"spirit"`
 	Output string `json:"output" mapstructure:"output"`
 }
 
-type MessageDetailsActionResponse struct {
+type MessageDetailsActionRsp struct {
 	Spirit Spirit `json:"spirit" mapstructure:"spirit"`
 	ID     string `json:"id" mapstructure:"id"`
+}
+
+type MessageDetailsSpiritReq struct {
+}
+
+type MessageDetailsSpiritRsp struct {
+	Spirits []*Spirit `json:"spirits" mapstructure:"spirits"`
 }
 
 type MessageDetailsError struct {

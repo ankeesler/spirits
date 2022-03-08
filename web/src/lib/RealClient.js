@@ -1,7 +1,8 @@
 class RealClient {
   constructor() {
     this._ready = false;
-    this._callback = null;
+    this._battle_callback = null;
+    this._spirit_callback = null;
 
     const scheme = (window.location.protocol === 'https:' ? 'wss://' : 'ws://');
     this._ws = new WebSocket(scheme + window.location.host + '/api/battle');
@@ -23,6 +24,12 @@ class RealClient {
         case 'battle-stop':
           this._onBattleStop(message);
           break;
+        case 'spirit-rsp':
+          this._onSpiritRsp(message);
+          break;
+        case 'error':
+          this._onError(message);
+          break;
         default:
           console.log(`unexpected message type: ${message.type}`);
       };
@@ -30,13 +37,29 @@ class RealClient {
   };
 
   _onBattleStop(message) {
-    if (!this._callback) {
+    if (!this._battle_callback) {
       console.log(`unexpected battle-stop: ${message.details}`);
       return;
     } 
     
-    this._callback('', message.details.output);
-    this._callback = null;
+    this._battle_callback('', message.details.output);
+    this._battle_callback = null;
+  }
+
+  _onSpiritRsp(message) {
+    if (!this._spirit_callback) {
+      console.log(`unexpected spirit-rsp: ${message.details}`);
+      return;
+    }
+
+    this._spirit_callback('', JSON.stringify(message.details.spirits));
+    this._spirit_callback = null;
+  }
+
+  _onError(message) {
+    console.log(`error message: ${message.details.reason}`);
+    this._battle_callback = null;
+    this._spirit_callback = null;
   }
 
   startBattle(spirits, callback) {
@@ -44,7 +67,7 @@ class RealClient {
       callback('client not ready');
       return;
     }
-    if (this._callback) {
+    if (this._battle_callback) {
       callback('battle already running');
       return;
     }
@@ -66,23 +89,25 @@ class RealClient {
       },
     };
     this._ws.send(JSON.stringify(battleStart));
-    this._callback = callback;
+    this._battle_callback = callback;
   };
 
   generateSpirits(callback) {
-    fetch('/api/spirit', {
-      method: 'POST',
-    }).then((rsp) => {
-      if (!rsp.ok) {
-        callback(`unexpected response: ${rsp.status}`);
-        return;
-      }
-      return rsp.text();
-    }).then((text) => {
-      callback('', text);
-    }).catch((error) => {
-      callback(error);
-    });
+    if (!this._ready) {
+      callback('client not ready');
+      return;
+    }
+    if (this._spirit_callback) {
+      callback('spirit request already in flight');
+      return;
+    }
+
+    const spiritReq = {
+      type: 'spirit-req',
+      details: {},
+    };
+    this._ws.send(JSON.stringify(spiritReq));
+    this._spirit_callback = callback;
   };
 };
 

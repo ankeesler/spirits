@@ -7,7 +7,7 @@ import './BattleScreen.css';
 const BattleScreen = (props) => {
   return (
     <div className="component-battle-screen">
-      <SpiritInput onSpirits={props.onSpirits} generateSpirits={props.generateSpirits} />
+      <SpiritInput onSpirits={props.onSpirits} client={props.client} />
     </div>
   );
 };
@@ -16,7 +16,7 @@ BattleScreen.defaultProps = {
 };
 
 BattleScreen.propTypes = {
-  generateSpirits: PropTypes.func.isRequired,
+  client: PropTypes.object.isRequired,
   onSpirits: PropTypes.func.isRequired,
 };
 

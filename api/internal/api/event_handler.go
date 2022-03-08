@@ -10,6 +10,8 @@ import (
 
 	"github.com/ankeesler/spirits/api/internal/battle"
 	"github.com/ankeesler/spirits/api/internal/spirit"
+	"github.com/ankeesler/spirits/api/internal/spirit/action"
+	"github.com/ankeesler/spirits/api/internal/spirit/generate"
 	"github.com/ankeesler/spirits/api/internal/ui"
 )
 
@@ -20,7 +22,7 @@ type eventHandler struct {
 	seed int64
 
 	wantActionResponse atomic.Value // *sync.Once
-	actionResponse     chan *MessageDetailsActionResponse
+	actionResponse     chan *MessageDetailsActionRsp
 
 	inBattle     atomic.Value // bool
 	battleDone   chan struct{}
@@ -37,7 +39,7 @@ func newEventHandler(inMsgCh <-chan *Message, outMsgCh chan<- *Message, seed int
 }
 
 func (e *eventHandler) run(ctx context.Context) {
-	e.actionResponse = make(chan *MessageDetailsActionResponse)
+	e.actionResponse = make(chan *MessageDetailsActionRsp)
 	defer close(e.actionResponse)
 	e.battleDone = make(chan struct{})
 	defer close(e.battleDone)
@@ -73,12 +75,18 @@ func (e *eventHandler) process(msg *Message) {
 	case MessageTypeBattleStop:
 		details := msg.Details.(*MessageDetailsBattleStop)
 		e.onBattleStop(details)
-	case MessageTypeActionRequest:
-		details := msg.Details.(*MessageDetailsActionRequest)
-		e.onActionRequest(details)
-	case MessageTypeActionResponse:
-		details := msg.Details.(*MessageDetailsActionResponse)
-		e.onActionResponse(details)
+	case MessageTypeActionReq:
+		details := msg.Details.(*MessageDetailsActionReq)
+		e.onActionReq(details)
+	case MessageTypeActionRsp:
+		details := msg.Details.(*MessageDetailsActionRsp)
+		e.onActionRsp(details)
+	case MessageTypeSpiritReq:
+		details := msg.Details.(*MessageDetailsSpiritReq)
+		e.onSpiritReq(details)
+	case MessageTypeSpiritRsp:
+		details := msg.Details.(*MessageDetailsSpiritRsp)
+		e.onSpiritRsp(details)
 	default:
 		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unrecognized event type: %q", msg.Type))
 	}
@@ -131,18 +139,18 @@ func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
 
 func (e *eventHandler) onBattleStop(details *MessageDetailsBattleStop) {
 	if !e.inBattle.Load().(bool) {
-		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected battle-stop: no battle running"))
+		e.outMsgCh <- newErrorMsg("unexpected battle-stop: no battle running")
 		return
 	}
 
 	e.battleDone <- struct{}{}
 }
 
-func (e *eventHandler) onActionRequest(details *MessageDetailsActionRequest) {
-	e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-request for spirit: %q", details.Spirit.Name))
+func (e *eventHandler) onActionReq(details *MessageDetailsActionReq) {
+	e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-req for spirit: %q", details.Spirit.Name))
 }
 
-func (e *eventHandler) onActionResponse(details *MessageDetailsActionResponse) {
+func (e *eventHandler) onActionRsp(details *MessageDetailsActionRsp) {
 	var handled bool
 	e.wantActionResponse.Load().(*sync.Once).Do(func() {
 		e.actionResponse <- details
@@ -150,7 +158,7 @@ func (e *eventHandler) onActionResponse(details *MessageDetailsActionResponse) {
 	})
 
 	if !handled {
-		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-response with ID %q for spirit: %q", details.ID, details.Spirit.Name))
+		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-rsp with ID %q for spirit: %q", details.ID, details.Spirit.Name))
 	}
 }
 
@@ -159,15 +167,15 @@ func (e *eventHandler) getAction(ctx context.Context, s *Spirit) (spirit.Action,
 
 	// Send the request.
 	e.outMsgCh <- &Message{
-		Type: MessageTypeActionRequest,
-		Details: MessageDetailsActionRequest{
+		Type: MessageTypeActionReq,
+		Details: MessageDetailsActionReq{
 			Spirit: *s,
 			Output: e.battleOutput.read(),
 		},
 	}
 
 	// Wait for the response.
-	var actionResponse *MessageDetailsActionResponse
+	var actionResponse *MessageDetailsActionRsp
 	var ok bool
 	select {
 	case actionResponse, ok = <-e.actionResponse:
@@ -201,6 +209,53 @@ func (e *eventHandler) getAction(ctx context.Context, s *Spirit) (spirit.Action,
 
 	log.Printf("running action %q for spirit %q", actionID, s.Name)
 	return toInternalAction([]string{actionID}, "", e.seed, nil)
+}
+
+func (e *eventHandler) onSpiritReq(details *MessageDetailsSpiritReq) {
+	wellKnownActions := []spirit.Action{
+		&actions{
+			ids:    []string{"attack"},
+			Action: action.Attack(),
+		},
+		&actions{
+			ids:    []string{"bolster"},
+			Action: action.Bolster(),
+		},
+		&actions{
+			ids:    []string{"drain"},
+			Action: action.Drain(),
+		},
+		&actions{
+			ids:    []string{"charge"},
+			Action: action.Charge(),
+		},
+	}
+	internalSpirits := generate.Generate(e.seed, wellKnownActions, func(generatedActions []spirit.Action) spirit.Action {
+		var ids []string
+		for _, generatedAction := range generatedActions {
+			ids = append(ids, generatedAction.(*actions).ids...)
+		}
+		return &actions{
+			ids:    ids,
+			Action: action.RoundRobin(generatedActions),
+		}
+	})
+	apiSpirits, err := fromInternalSpirits(internalSpirits)
+	if err != nil {
+		e.outMsgCh <- newErrorMsg("could not generate spirits: " + err.Error())
+		return
+	}
+
+	e.outMsgCh <- &Message{
+		Type: MessageTypeSpiritRsp,
+		Details: &MessageDetailsSpiritRsp{
+			Spirits: apiSpirits,
+		},
+	}
+}
+
+func (e *eventHandler) onSpiritRsp(details *MessageDetailsSpiritRsp) {
+	e.outMsgCh <- newErrorMsg("unexpected spirit-rsp")
 }
 
 func newErrorMsg(reason string) *Message {

@@ -14,10 +14,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test src",
     "eject": "react-scripts eject",
     "lint": "eslint src",
-    "check": "npm run lint && npm run test"
+    "check": "npm run lint && npm test -- --watchAll=false"
   },
   "eslintConfig": {
     "extends": [

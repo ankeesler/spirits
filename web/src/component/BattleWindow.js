@@ -29,7 +29,7 @@ const BattleWindow = (props) => {
 
   return (
     <div className="component-battle-window">
-      <BattleScreen generateSpirits={props.client.generateSpirits} onSpirits={onSpirits} />
+      <BattleScreen client={props.client} onSpirits={onSpirits} />
       <BattleConsole message={output} />
     </div>
   );
