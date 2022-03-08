@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 
 	"github.com/ankeesler/spirits/api/internal/api"
 )
@@ -35,8 +36,16 @@ func main() {
 		port = "12345"
 	}
 	address := fmt.Sprintf(":%s", port)
-	log.Printf("listening on address %s", address)
-	if err := http.ListenAndServe(address, mux); err != nil {
-		log.Printf("HTTP server stopped listening: %s\n", err.Error())
-	}
+
+	go func() {
+		log.Printf("listening on address %s", address)
+		if err := http.ListenAndServe(address, mux); err != nil {
+			log.Printf("HTTP server stopped listening: %s\n", err.Error())
+		}
+	}()
+
+	signals := make(chan os.Signal)
+	signal.Notify(signals, os.Interrupt)
+	signal := <-signals
+	log.Printf("received signal %q", signal.String())
 }

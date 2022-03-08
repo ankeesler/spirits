@@ -19,4 +19,6 @@ FROM gcr.io/distroless/static:latest
 COPY --from=build-web /workspace/web/build /web
 COPY --from=build-api /workspace/api/spirits /spirits
 
+EXPOSE 12345
+
 ENTRYPOINT ["/spirits", "-web-assets-dir", "/web"]
