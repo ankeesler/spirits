@@ -1,33 +1,31 @@
+const {fail} = require('assert');
 const fs = require('fs');
 const path = require('path');
 
 const puppeteer = require('puppeteer');
 
-const server = require('./server');
+let browser, page;
 
 const fixture = (name) => {
   return fs.readFileSync(path.join(__dirname, 'fixture', name), {encoding: 'utf-8'});
 };
 
-let browser, page;
-
 // Worst case scenario we have to build the whole container and wait for it to start.
 jest.setTimeout(1000 * 10);
 
 beforeAll(async () => {
-  const baseUrl = await server.start((details) => {
-    if (details.code !== 0) {
-      console.log(`server errored: ${JSON.stringify(details, null, 2)}`);
-    }
-  });
+  const baseUrl = process.env.SPIRITS_TEST_URL;
+  if (!baseUrl) {
+    fail("must set 'process.env.SPIRITS_TEST_URL'");
+  }
+
   browser = await puppeteer.launch();
   page = await browser.newPage();
   await page.goto(baseUrl);
 });
 
 afterAll(async () => {
-  server.stop();
-  await browser.close();
+  if (browser) await browser.close();
 });
 
 test('can generate spirtis', async () => {
