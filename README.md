@@ -2,7 +2,12 @@
 
 `spirits` is a turn-based battle framework.
 
-Run `./script/run.sh` and open browser to `http://localhost:12345` to view game.
+To run:
+```sh
+$ docker build -t spirits .
+$ docker run -p 12345:12345 spirits
+$ # open browser to localhost:12345
+```
 
 ## Muses
 
@@ -17,7 +22,7 @@ Run `./script/run.sh` and open browser to `http://localhost:12345` to view game.
 * Backend: [Golang](api)
 * Frontend: [React](web)
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
-* Testing: [TBD](test)
+* E2E Testing: [Node/Pupeteer](test)
 
 ## Directory Structure
 
