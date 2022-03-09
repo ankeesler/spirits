@@ -2,17 +2,13 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/ankeesler/spirits/api/internal/battle"
 	"github.com/ankeesler/spirits/api/internal/spirit"
 	"github.com/ankeesler/spirits/api/internal/spirit/action"
-	"github.com/ankeesler/spirits/api/internal/spirit/generate"
-	"github.com/ankeesler/spirits/api/internal/ui"
 )
 
 type Spirit struct {
@@ -30,58 +26,8 @@ type actions struct {
 	spirit.Action
 }
 
-var handlers = map[string]http.HandlerFunc{
-	"/battle": handleBattle,
-	"/spirit": handleSpirit,
-}
-
 func New() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler, ok := handlers[r.URL.Path]
-		if !ok {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		handler(w, r)
-	})
-}
-
-func handleBattle(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost && r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	if r.Method == http.MethodGet {
-		serveWebsocket(w, r)
-		return
-	}
-
-	var apiSpirits []*Spirit
-	if err := json.NewDecoder(r.Body).Decode(&apiSpirits); err != nil {
-		http.Error(w, "cannot decode body: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if len(apiSpirits) != 2 {
-		http.Error(w, "must provide 2 spirits", http.StatusBadRequest)
-		return
-	}
-
-	seed, ok := getSeed(r)
-	if !ok {
-		http.Error(w, "invalid seed", http.StatusBadRequest)
-		return
-	}
-
-	internalSpirits, err := toInternalSpirits(apiSpirits, seed, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	u := ui.New(w)
-	battle.Run(context.Background(), internalSpirits, u.OnSpirits)
+	return http.HandlerFunc(serveWebsocket)
 }
 
 func toInternalSpirits(
@@ -166,58 +112,6 @@ func toInternalAction(
 	}
 
 	return &actions{ids: ids, Action: internalAction}, nil
-}
-
-func handleSpirit(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	seed, ok := getSeed(r)
-	if !ok {
-		http.Error(w, "invalid seed", http.StatusBadRequest)
-		return
-	}
-
-	wellKnownActions := []spirit.Action{
-		&actions{
-			ids:    []string{"attack"},
-			Action: action.Attack(),
-		},
-		&actions{
-			ids:    []string{"bolster"},
-			Action: action.Bolster(),
-		},
-		&actions{
-			ids:    []string{"drain"},
-			Action: action.Drain(),
-		},
-		&actions{
-			ids:    []string{"charge"},
-			Action: action.Charge(),
-		},
-	}
-	internalSpirits := generate.Generate(int64(seed), wellKnownActions, func(generatedActions []spirit.Action) spirit.Action {
-		var ids []string
-		for _, generatedAction := range generatedActions {
-			ids = append(ids, generatedAction.(*actions).ids...)
-		}
-		return &actions{
-			ids:    ids,
-			Action: action.RoundRobin(generatedActions),
-		}
-	})
-	apiSpirits, err := fromInternalSpirits(internalSpirits)
-	if err != nil {
-		http.Error(w, "cannot process spirits: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := json.NewEncoder(w).Encode(apiSpirits); err != nil {
-		http.Error(w, "cannot encode response: "+err.Error(), http.StatusBadRequest)
-		return
-	}
 }
 
 func fromInternalSpirits(internalSpirits []*spirit.Spirit) ([]*Spirit, error) {

@@ -1,13 +1,14 @@
 package test
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -16,213 +17,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAPI(t *testing.T) {
-	baseURL := serverBaseURL(t)
-	t.Run("HTTP", func(t *testing.T) {
-		testHTTPAPI(t, baseURL)
-	})
-	t.Run("Websocket", func(t *testing.T) {
-		testWebsocketAPI(t, baseURL)
-	})
-}
-
-func testHTTPAPI(t *testing.T, baseURL string) {
-	tests := []struct {
-		name           string
-		req            *http.Request
-		wantStatusCode int
-		wantBody       string
-	}{
-		// /battle happy paths
-		{
-			name:           "same speed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits.txt"),
-		},
-		{
-			name:           "double speed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-double-speed.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-double-speed.txt"),
-		},
-		{
-			name:           "triple speed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-triple-speed.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-triple-speed.txt"),
-		},
-		{
-			name:           "3:2 speed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-3-to-2-speed.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-3-to-2-speed.txt"),
-		},
-		{
-			name:           "with defense",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-defense.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-defense.txt"),
-		},
-		{
-			name:           "bolster",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-bolster.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-bolster.txt"),
-		},
-		{
-			name:           "drain",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-drain.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-drain.txt"),
-		},
-		{
-			name:           "charge",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-charge.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-charge.txt"),
-		},
-		{
-			name:           "multi-move roundrobin",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-roundrobin.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-roundrobin.txt"),
-		},
-		{
-			name:           "multi-move random",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle?seed=1", readFile(t, "testdata/good-spirits-with-random.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/good-spirits-with-random.txt"),
-		},
-		// /battle sad paths
-		{
-			name:           "1 spirit",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-few-spirits.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "must provide 2 spirits\n",
-		},
-		{
-			name:           "3 spirits",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/too-many-spirits.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "must provide 2 spirits\n",
-		},
-		{
-			name:           "not found",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/nope", readFile(t, "testdata/good-spirits.json")),
-			wantStatusCode: http.StatusNotFound,
-		},
-		{
-			name:           "method not allowed",
-			req:            newRequest(t, http.MethodPut, baseURL+"/api/battle", readFile(t, "testdata/good-spirits.json")),
-			wantStatusCode: http.StatusMethodNotAllowed,
-		},
-		{
-			name:           "invalid body",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", "42"),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "cannot decode body: json: cannot unmarshal number into Go value of type []*api.Spirit\n",
-		},
-		{
-			name:           "infinite loop",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/powerless-spirits.json")),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/powerless-spirits.txt"),
-		},
-		{
-			name:           "unrecognized action",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/unrecognized-action.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "unrecognized action: \"tuna\"\n",
-		},
-		{
-			name:           "unrecognized intelligence",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/unrecognized-intelligence.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "unrecognized intelligence: \"tuna\"\n",
-		},
-		{
-			name:           "/battle bad seed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle?seed=tuna", readFile(t, "testdata/good-spirits.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "invalid seed\n",
-		},
-		{
-			name:           "/battle with human interaction requested",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/battle", readFile(t, "testdata/good-spirits-with-single-human-interaction.json")),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "unsupported intelligence value (hint: you must use websocket API): \"human\"\n",
-		},
-		// /spirit happy paths
-		{
-			name:           "generated spirits with seed 1",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=1", ""),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/generated-spirits-seed-1.json"),
-		},
-		{
-			name:           "generated spirits with seed 2",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=2", ""),
-			wantStatusCode: http.StatusOK,
-			wantBody:       readFile(t, "testdata/generated-spirits-seed-2.json"),
-		},
-		// /spirit sad paths
-		{
-			name:           "/spirit wrong method",
-			req:            newRequest(t, http.MethodPut, baseURL+"/api/spirit?seed=2", ""),
-			wantStatusCode: http.StatusMethodNotAllowed,
-		},
-		{
-			name:           "/spirit bad seed",
-			req:            newRequest(t, http.MethodPost, baseURL+"/api/spirit?seed=tuna", ""),
-			wantStatusCode: http.StatusBadRequest,
-			wantBody:       "invalid seed\n",
-		},
-	}
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			t.Logf("req: %s %s", test.req.Method, test.req.URL)
-			rsp, err := http.DefaultClient.Do(test.req)
-			require.NoError(t, err)
-
-			gotBody, err := io.ReadAll(rsp.Body)
-			require.Equalf(t, test.wantStatusCode, rsp.StatusCode, "body: %q", string(gotBody))
-			require.NoError(t, err)
-			require.Equal(t, test.wantBody, string(gotBody))
-		})
-	}
-
-	t.Run("generated spirits are valid", func(t *testing.T) {
-		for i := 0; i < 20; i++ {
-			// Generate spirits.
-			req := newRequest(t, http.MethodPost, baseURL+"/api/spirit", "")
-			rsp, err := http.DefaultClient.Do(req)
-			require.NoError(t, err)
-
-			gotBody, err := io.ReadAll(rsp.Body)
-			require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
-			require.NoError(t, err)
-
-			// Make sure spirits are valid.
-			req = newRequest(t, http.MethodPost, baseURL+"/api/battle", string(gotBody))
-			rsp, err = http.DefaultClient.Do(req)
-			require.NoError(t, err)
-
-			gotBody, err = io.ReadAll(rsp.Body)
-			require.Equalf(t, http.StatusOK, rsp.StatusCode, "body: %q", string(gotBody))
-			require.NoError(t, err)
-		}
-	})
-}
-
-func newRequest(t *testing.T, method, url string, body string) *http.Request {
-	buf := bytes.NewBuffer([]byte(body))
-
-	req, err := http.NewRequest(method, url, buf)
-	require.NoError(t, err)
-
-	return req
+type testCase struct {
+	name string
+	msgs []testMsg
 }
 
 type testMsg struct {
@@ -231,7 +28,8 @@ type testMsg struct {
 	msg   interface{}
 }
 
-func testWebsocketAPI(t *testing.T, baseURL string) {
+func TestAPI(t *testing.T) {
+	baseURL := serverBaseURL(t)
 	u, err := url.Parse(baseURL)
 	require.NoError(t, err)
 
@@ -263,12 +61,9 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 	}
 	dial()
 
-	steps := []struct {
-		name string
-		msgs []testMsg
-	}{
+	steps := []testCase{
 		{
-			name: "when the error type is invalid it doesn't take down the server",
+			name: "when the message type is invalid it doesn't take down the server",
 			msgs: []testMsg{
 				{
 					in: true,
@@ -302,28 +97,6 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 			},
 		},
 		// Happy path
-		{
-			name: "battle-start with 2 spirits without human interaction",
-			msgs: []testMsg{
-				{
-					in: true,
-					msg: api.Message{
-						Type: api.MessageTypeBattleStart,
-						Details: &api.MessageDetailsBattleStart{
-							Spirits: readSpirits(t, "testdata/good-spirits-without-human-interaction.json"),
-						},
-					},
-				},
-				{
-					msg: api.Message{
-						Type: api.MessageTypeBattleStop,
-						Details: &api.MessageDetailsBattleStop{
-							Output: readFile(t, "testdata/good-spirits-without-human-interaction.txt"),
-						},
-					},
-				},
-			},
-		},
 		{
 			name: "battle-start with 2 spirits with single human interaction",
 			msgs: []testMsg{
@@ -1032,28 +805,51 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 			},
 		},
 		{
-			name: "infinite loop",
+			name: "unrecognized intelligence type",
 			msgs: []testMsg{
 				{
 					in: true,
 					msg: api.Message{
 						Type: api.MessageTypeBattleStart,
 						Details: &api.MessageDetailsBattleStart{
-							Spirits: readSpirits(t, "testdata/powerless-spirits.json"),
+							Spirits: readSpirits(t, "testdata/unrecognized-intelligence.json"),
 						},
 					},
 				},
 				{
 					msg: api.Message{
-						Type: api.MessageTypeBattleStop,
-						Details: &api.MessageDetailsBattleStop{
-							Output: readFile(t, "testdata/powerless-spirits.txt"),
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: `unrecognized intelligence: "tuna"`,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "unrecognized action type",
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, "testdata/unrecognized-action.json"),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: `unrecognized action: "tuna"`,
 						},
 					},
 				},
 			},
 		},
 	}
+	steps = append(steps, getAutoTests(t)...)
 	for _, step := range steps {
 		t.Logf("step: %s", step.name)
 		for _, msg := range step.msgs {
@@ -1075,6 +871,78 @@ func testWebsocketAPI(t *testing.T, baseURL string) {
 			require.Equal(t, msg.msg.(api.Message), *msgIn)
 		}
 	}
+
+	t.Run("generated spirits are valid", func(t *testing.T) {
+		for i := 0; i < 20; i++ {
+			err := c.WriteJSON(&api.Message{
+				Type: api.MessageTypeSpiritReq,
+			})
+			require.NoError(t, err)
+
+			var m api.Message
+			err = c.ReadJSON(&m)
+			require.NoError(t, err)
+			require.Equalf(t, m.Type, api.MessageTypeSpiritRsp, "wanted spirit-rsp, got %#v", &m)
+
+			err = c.WriteJSON(&api.Message{
+				Type: api.MessageTypeBattleStart,
+				Details: &api.MessageDetailsBattleStart{
+					Spirits: m.Details.(*api.MessageDetailsSpiritRsp).Spirits,
+				},
+			})
+			require.NoError(t, err)
+
+			err = c.ReadJSON(&m)
+			require.NoError(t, err)
+			require.Equalf(t, m.Type, api.MessageTypeBattleStop, "wanted battle-stop, got %#v", &m)
+		}
+	})
+}
+
+func getAutoTests(t *testing.T) []testCase {
+	t.Helper()
+
+	testCases := []testCase{}
+
+	dirName := filepath.Join("testdata", "auto")
+	entries, err := os.ReadDir(dirName)
+	require.NoError(t, err)
+	for _, entry := range entries {
+		name := entry.Name()
+		if !strings.HasSuffix(name, ".json") {
+			t.Logf("ignoring non-json file %q", name)
+			continue
+		}
+
+		otherName := strings.ReplaceAll(name, ".json", ".txt")
+		_, err := os.Stat(filepath.Join(dirName, otherName))
+		require.NoErrorf(t, err, "wanted file %q for %q", otherName, name)
+
+		testCases = append(testCases, testCase{
+			name: name,
+			msgs: []testMsg{
+				{
+					in: true,
+					msg: api.Message{
+						Type: api.MessageTypeBattleStart,
+						Details: &api.MessageDetailsBattleStart{
+							Spirits: readSpirits(t, filepath.Join(dirName, name)),
+						},
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeBattleStop,
+						Details: &api.MessageDetailsBattleStop{
+							Output: readFile(t, filepath.Join(dirName, otherName)),
+						},
+					},
+				},
+			},
+		})
+	}
+
+	return testCases
 }
 
 func readSpirits(t *testing.T, path string) []*api.Spirit {
@@ -1088,6 +956,12 @@ func readSpirits(t *testing.T, path string) []*api.Spirit {
 	require.NoError(t, err)
 
 	return spirits
+}
+
+func readFile(t *testing.T, path string) string {
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+	return string(data)
 }
 
 func readMessage(c *websocket.Conn) (*api.Message, error) {

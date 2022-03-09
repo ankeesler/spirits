@@ -17,12 +17,12 @@ type MessageType string
 
 const (
 	MessageTypeBattleStart MessageType = "battle-start"
-	MessageTypeBattleStop              = "battle-stop"
-	MessageTypeActionReq               = "action-req"
-	MessageTypeActionRsp               = "action-rsp"
-	MessageTypeSpiritReq               = "spirit-req"
-	MessageTypeSpiritRsp               = "spirit-rsp"
-	MessageTypeError                   = "error"
+	MessageTypeBattleStop  MessageType = "battle-stop"
+	MessageTypeActionReq   MessageType = "action-req"
+	MessageTypeActionRsp   MessageType = "action-rsp"
+	MessageTypeSpiritReq   MessageType = "spirit-req"
+	MessageTypeSpiritRsp   MessageType = "spirit-rsp"
+	MessageTypeError       MessageType = "error"
 )
 
 type MessageDetails interface{}
