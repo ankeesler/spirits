@@ -12,8 +12,8 @@ type random struct {
 	actions []spirit.Action
 }
 
-func Random(seed int64, actions []spirit.Action) spirit.Action {
-	return &random{r: rand.New(rand.NewSource(seed)), actions: actions}
+func Random(r *rand.Rand, actions []spirit.Action) spirit.Action {
+	return &random{r: r, actions: actions}
 }
 
 func (r *random) Run(ctx context.Context, from, to *spirit.Spirit) error {

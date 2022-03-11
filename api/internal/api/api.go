@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
@@ -32,13 +33,13 @@ func New() http.Handler {
 
 func toInternalSpirits(
 	apiSpirits []*Spirit,
-	seed int64,
+	r *rand.Rand,
 	humanActionFunc func(ctx context.Context, s *Spirit) (spirit.Action, error),
 ) ([]*spirit.Spirit, error) {
 	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
 	var err error
 	for i := range apiSpirits {
-		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], seed, humanActionFunc)
+		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], r, humanActionFunc)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +47,7 @@ func toInternalSpirits(
 	return internalSpirits, nil
 }
 
-func toInternalSpirit(apiSpirit *Spirit, seed int64, humanActionFunc func(ctx context.Context, s *Spirit) (spirit.Action, error)) (*spirit.Spirit, error) {
+func toInternalSpirit(apiSpirit *Spirit, r *rand.Rand, humanActionFunc func(ctx context.Context, s *Spirit) (spirit.Action, error)) (*spirit.Spirit, error) {
 	s := &spirit.Spirit{
 		Name:    apiSpirit.Name,
 		Health:  apiSpirit.Health,
@@ -62,7 +63,7 @@ func toInternalSpirit(apiSpirit *Spirit, seed int64, humanActionFunc func(ctx co
 		}
 	}
 	var err error
-	s.Action, err = toInternalAction(apiSpirit.Actions, apiSpirit.Intelligence, seed, lazyActionFunc)
+	s.Action, err = toInternalAction(apiSpirit.Actions, apiSpirit.Intelligence, r, lazyActionFunc)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +74,7 @@ func toInternalSpirit(apiSpirit *Spirit, seed int64, humanActionFunc func(ctx co
 func toInternalAction(
 	ids []string,
 	intelligence string,
-	seed int64,
+	r *rand.Rand,
 	lazyActionFunc func(ctx context.Context) (spirit.Action, error),
 ) (spirit.Action, error) {
 	var internalActions []spirit.Action
@@ -101,7 +102,7 @@ func toInternalAction(
 	case "", "roundrobin":
 		internalAction = action.RoundRobin(internalActions)
 	case "random":
-		internalAction = action.Random(seed, internalActions)
+		internalAction = action.Random(r, internalActions)
 	case "human":
 		if lazyActionFunc == nil {
 			return nil, fmt.Errorf("unsupported intelligence value (hint: you must use websocket API): %q", intelligence)

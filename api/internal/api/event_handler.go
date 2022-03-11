@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"sync"
 	"sync/atomic"
 
@@ -24,8 +25,7 @@ type conn interface {
 
 type eventHandler struct {
 	conn conn
-
-	seed int64
+	r    *rand.Rand
 
 	wantActionResponse atomic.Value // *sync.Once
 	actionResponse     chan *MessageDetailsActionRsp
@@ -38,7 +38,7 @@ type eventHandler struct {
 func newEventHandler(conn conn, seed int64) *eventHandler {
 	return &eventHandler{
 		conn: conn,
-		seed: seed,
+		r:    rand.New(rand.NewSource(seed)),
 	}
 }
 
@@ -116,7 +116,7 @@ func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
 		return
 	}
 
-	internalSpirits, err := toInternalSpirits(details.Spirits, e.seed, e.getAction)
+	internalSpirits, err := toInternalSpirits(details.Spirits, e.r, e.getAction)
 	if err != nil {
 		e.sendError(err.Error())
 		return
@@ -221,7 +221,7 @@ func (e *eventHandler) getAction(ctx context.Context, s *Spirit) (spirit.Action,
 	}
 
 	log.Printf("running action %q for spirit %q", actionID, s.Name)
-	return toInternalAction([]string{actionID}, "", e.seed, nil)
+	return toInternalAction([]string{actionID}, "", e.r, nil)
 }
 
 func (e *eventHandler) onSpiritReq(details *MessageDetailsSpiritReq) {
@@ -243,7 +243,7 @@ func (e *eventHandler) onSpiritReq(details *MessageDetailsSpiritReq) {
 			Action: action.Charge(),
 		},
 	}
-	internalSpirits := generate.Generate(e.seed, wellKnownActions, func(generatedActions []spirit.Action) spirit.Action {
+	internalSpirits := generate.Generate(e.r, wellKnownActions, func(generatedActions []spirit.Action) spirit.Action {
 		var ids []string
 		for _, generatedAction := range generatedActions {
 			ids = append(ids, generatedAction.(*actions).ids...)

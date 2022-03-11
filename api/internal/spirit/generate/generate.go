@@ -7,8 +7,7 @@ import (
 	"github.com/ankeesler/spirits/api/internal/spirit"
 )
 
-func Generate(seed int64, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) []*spirit.Spirit {
-	r := rand.New(rand.NewSource(seed))
+func Generate(r *rand.Rand, actions []spirit.Action, actionFunc func([]spirit.Action) spirit.Action) []*spirit.Spirit {
 	return []*spirit.Spirit{generate(r, actions, actionFunc), generate(r, actions, actionFunc)}
 }
 

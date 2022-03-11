@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -896,7 +897,8 @@ func TestAPI(t *testing.T) {
 		}
 	}
 
-	t.Run("generated spirits are valid", func(t *testing.T) {
+	t.Run("generated spirits are valid (and different)", func(t *testing.T) {
+		gottenSpirits := make(map[string]int)
 		for i := 0; i < 20; i++ {
 			err := c.WriteJSON(&api.Message{
 				Type: api.MessageTypeSpiritReq,
@@ -907,6 +909,13 @@ func TestAPI(t *testing.T) {
 			err = c.ReadJSON(&m)
 			require.NoError(t, err)
 			require.Equalf(t, m.Type, api.MessageTypeSpiritRsp, "wanted spirit-rsp, got %#v", &m)
+
+			spirits := m.Details.(*api.MessageDetailsSpiritRsp).Spirits
+			spiritsDigest := makeSpiritsDigest(spirits)
+			if loop, ok := gottenSpirits[spiritsDigest]; ok {
+				t.Errorf("already got spirits from loop # %d in loop # %d", i, loop)
+			}
+			gottenSpirits[spiritsDigest] = i
 
 			err = c.WriteJSON(&api.Message{
 				Type: api.MessageTypeBattleStart,
@@ -921,6 +930,14 @@ func TestAPI(t *testing.T) {
 			require.Equalf(t, m.Type, api.MessageTypeBattleStop, "wanted battle-stop, got %#v", &m)
 		}
 	})
+}
+
+func makeSpiritsDigest(spirits []*api.Spirit) string {
+	s := ""
+	for _, spirit := range spirits {
+		s += fmt.Sprintf("%+v", spirit)
+	}
+	return s
 }
 
 func getAutoTests(t *testing.T) []testCase {
