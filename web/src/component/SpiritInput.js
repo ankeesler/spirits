@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import log from './../lib/log';
+
 import './SpiritInput.css';
 
 const SpiritInput = (props) => {
@@ -14,7 +16,7 @@ const SpiritInput = (props) => {
   const onDoubleClick = async (e) => {
     props.client.generateSpirits((error, generatedSpirits) => {
       if (error) {
-        console.log(`generate spirits error: ${error}`);
+        log(`generate spirits error: ${error}`);
         return;
       }
       setSpirits(generatedSpirits);

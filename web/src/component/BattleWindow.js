@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import BattleConsole from './BattleConsole';
 import BattleScreen from './BattleScreen';
+import log from './../lib/log';
 
 import './BattleWindow.css';
 
@@ -11,7 +12,7 @@ const BattleWindow = (props) => {
   const [timer, setTimer] = React.useState(setTimeout(() => {}, 0));
 
   const runBattle = (spirits) => {
-    console.log('running battle with ' + spirits);
+    log('running battle with ' + spirits);
     props.client.startBattle(spirits, (error, newOutput) => {
       if (error) {
         setOutput(`error: ${error}`);
