@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -13,11 +14,16 @@ import (
 	"github.com/ankeesler/spirits/api/internal/spirit/action"
 	"github.com/ankeesler/spirits/api/internal/spirit/generate"
 	"github.com/ankeesler/spirits/api/internal/ui"
+	"github.com/gorilla/websocket"
 )
 
+type conn interface {
+	ReadMessage() (int, []byte, error)
+	WriteMessage(int, []byte) error
+}
+
 type eventHandler struct {
-	inMsgCh  <-chan *Message
-	outMsgCh chan<- *Message
+	conn conn
 
 	seed int64
 
@@ -29,11 +35,9 @@ type eventHandler struct {
 	battleOutput syncBuffer
 }
 
-func newEventHandler(inMsgCh <-chan *Message, outMsgCh chan<- *Message, seed int64) *eventHandler {
+func newEventHandler(conn conn, seed int64) *eventHandler {
 	return &eventHandler{
-		inMsgCh:  inMsgCh,
-		outMsgCh: outMsgCh,
-
+		conn: conn,
 		seed: seed,
 	}
 }
@@ -50,18 +54,27 @@ func (e *eventHandler) run(ctx context.Context) {
 
 	e.inBattle.Store(false)
 
-	keepGoing := true
-	for keepGoing {
+	for {
 		select {
-		case inMsg, ok := <-e.inMsgCh:
-			if !ok {
-				keepGoing = false
-				break
-			}
-			e.process(inMsg)
 		case <-ctx.Done():
-			keepGoing = false
+			log.Printf("context closed: %s", ctx.Err().Error())
+			return
+		default:
 		}
+
+		_, data, err := e.conn.ReadMessage()
+		if err != nil {
+			log.Printf("error reading message: %s", err.Error())
+			return
+		}
+
+		var m Message
+		if err := json.Unmarshal(data, &m); err != nil {
+			e.sendError(err.Error())
+			continue
+		}
+
+		e.process(&m)
 	}
 }
 
@@ -88,24 +101,24 @@ func (e *eventHandler) process(msg *Message) {
 		details := msg.Details.(*MessageDetailsSpiritRsp)
 		e.onSpiritRsp(details)
 	default:
-		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unrecognized event type: %q", msg.Type))
+		e.sendError(fmt.Sprintf("unrecognized event type: %q", msg.Type))
 	}
 }
 
 func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
 	if e.inBattle.Load().(bool) {
-		e.outMsgCh <- newErrorMsg("battle already running")
+		e.sendError("battle already running")
 		return
 	}
 
 	if len(details.Spirits) != 2 {
-		e.outMsgCh <- newErrorMsg("must provide 2 spirits")
+		e.sendError("must provide 2 spirits")
 		return
 	}
 
 	internalSpirits, err := toInternalSpirits(details.Spirits, e.seed, e.getAction)
 	if err != nil {
-		e.outMsgCh <- newErrorMsg(err.Error())
+		e.sendError(err.Error())
 		return
 	}
 
@@ -128,18 +141,18 @@ func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
 
 		u := ui.New(&e.battleOutput)
 		battle.Run(ctx, internalSpirits, u.OnSpirits)
-		e.outMsgCh <- &Message{
+		e.send(&Message{
 			Type: MessageTypeBattleStop,
 			Details: &MessageDetailsBattleStop{
 				Output: e.battleOutput.read(),
 			},
-		}
+		})
 	}()
 }
 
 func (e *eventHandler) onBattleStop(details *MessageDetailsBattleStop) {
 	if !e.inBattle.Load().(bool) {
-		e.outMsgCh <- newErrorMsg("unexpected battle-stop: no battle running")
+		e.sendError("unexpected battle-stop: no battle running")
 		return
 	}
 
@@ -147,7 +160,7 @@ func (e *eventHandler) onBattleStop(details *MessageDetailsBattleStop) {
 }
 
 func (e *eventHandler) onActionReq(details *MessageDetailsActionReq) {
-	e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-req for spirit: %q", details.Spirit.Name))
+	e.sendError(fmt.Sprintf("unexpected action-req for spirit: %q", details.Spirit.Name))
 }
 
 func (e *eventHandler) onActionRsp(details *MessageDetailsActionRsp) {
@@ -158,7 +171,7 @@ func (e *eventHandler) onActionRsp(details *MessageDetailsActionRsp) {
 	})
 
 	if !handled {
-		e.outMsgCh <- newErrorMsg(fmt.Sprintf("unexpected action-rsp with ID %q for spirit: %q", details.ID, details.Spirit.Name))
+		e.sendError(fmt.Sprintf("unexpected action-rsp with ID %q for spirit: %q", details.ID, details.Spirit.Name))
 	}
 }
 
@@ -166,13 +179,13 @@ func (e *eventHandler) getAction(ctx context.Context, s *Spirit) (spirit.Action,
 	e.wantActionResponse.Store(&sync.Once{})
 
 	// Send the request.
-	e.outMsgCh <- &Message{
+	e.send(&Message{
 		Type: MessageTypeActionReq,
 		Details: MessageDetailsActionReq{
 			Spirit: *s,
 			Output: e.battleOutput.read(),
 		},
-	}
+	})
 
 	// Wait for the response.
 	var actionResponse *MessageDetailsActionRsp
@@ -242,27 +255,40 @@ func (e *eventHandler) onSpiritReq(details *MessageDetailsSpiritReq) {
 	})
 	apiSpirits, err := fromInternalSpirits(internalSpirits)
 	if err != nil {
-		e.outMsgCh <- newErrorMsg("could not generate spirits: " + err.Error())
+		e.sendError("could not generate spirits: " + err.Error())
 		return
 	}
 
-	e.outMsgCh <- &Message{
+	e.send(&Message{
 		Type: MessageTypeSpiritRsp,
 		Details: &MessageDetailsSpiritRsp{
 			Spirits: apiSpirits,
 		},
-	}
+	})
 }
 
 func (e *eventHandler) onSpiritRsp(details *MessageDetailsSpiritRsp) {
-	e.outMsgCh <- newErrorMsg("unexpected spirit-rsp")
+	e.sendError("unexpected spirit-rsp")
 }
 
-func newErrorMsg(reason string) *Message {
-	return &Message{
+func (e *eventHandler) sendError(reason string) {
+	e.send(&Message{
 		Type: MessageTypeError,
 		Details: &MessageDetailsError{
 			Reason: reason,
 		},
+	})
+}
+
+func (e *eventHandler) send(m *Message) {
+	data, err := json.Marshal(m)
+	if err != nil {
+		log.Printf("marshal message failed: %s", err.Error())
+		return
+	}
+
+	if err := e.conn.WriteMessage(websocket.TextMessage, data); err != nil {
+		log.Printf("write message failed: %s", err.Error())
+		return
 	}
 }

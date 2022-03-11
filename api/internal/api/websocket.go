@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -39,7 +38,7 @@ func (m *Message) UnmarshalJSON(b []byte) error {
 	}{}
 
 	if err := json.Unmarshal(b, &mTmp); err != nil {
-		return &messageInvalidError{error: fmt.Errorf("invalid message base: %w", err)}
+		return fmt.Errorf("invalid message base: %w", err)
 	}
 
 	m.Type = mTmp.Type
@@ -59,7 +58,7 @@ func (m *Message) UnmarshalJSON(b []byte) error {
 	for _, detail := range details {
 		if m.Type == detail.t {
 			if err := mapstructure.Decode(mTmp.Details, detail.d); err != nil {
-				return &messageInvalidError{error: fmt.Errorf("invalid message details: %w", err)}
+				return fmt.Errorf("invalid message details: %w", err)
 			}
 
 			m.Details = detail.d
@@ -68,16 +67,7 @@ func (m *Message) UnmarshalJSON(b []byte) error {
 		}
 	}
 
-	return &messageInvalidError{error: fmt.Errorf("invalid message type: %q", m.Type)}
-}
-
-type messageInvalidError struct {
-	error
-}
-
-func (e *messageInvalidError) Is(target error) bool {
-	_, ok := target.(*messageInvalidError)
-	return ok
+	return fmt.Errorf("unrecognized message type: %q", m.Type)
 }
 
 type MessageDetailsBattleStart struct {
@@ -129,50 +119,15 @@ func serveWebsocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Print("upgraded connection")
+	defer func() {
+		log.Printf("closing connection")
+		conn.Close()
+	}()
 
 	// Set a really long timeout, just in case...
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
+	defer cancel()
 
-	go func() {
-		defer conn.Close()
-		<-ctx.Done()
-	}()
-
-	inMsgCh := make(chan *Message)
-	go func() {
-		defer cancel()
-		defer close(inMsgCh)
-
-		for {
-			var msg Message
-			if err := conn.ReadJSON(&msg); err != nil {
-				log.Printf("error receiving message: %s %#v", err.Error(), err)
-				if errors.Is(err, &messageInvalidError{}) {
-					e := &messageInvalidError{}
-					errors.As(err, &e)
-					log.Printf("received an invalid message: %s", e.Error())
-					continue
-				}
-				return
-			}
-			inMsgCh <- &msg
-		}
-	}()
-
-	outMsgCh := make(chan *Message)
-	go func() {
-		defer cancel()
-		defer close(outMsgCh)
-
-		for outMsg := range outMsgCh {
-			if err := conn.WriteJSON(outMsg); err != nil {
-				log.Printf("error sending message: %s", err.Error())
-				return
-			}
-		}
-	}()
-
-	go newEventHandler(inMsgCh, outMsgCh, seed).run(ctx)
-
-	log.Print("started event handler")
+	log.Print("starting event handler")
+	newEventHandler(conn, seed).run(ctx)
 }

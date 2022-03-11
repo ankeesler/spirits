@@ -71,6 +71,14 @@ func TestAPI(t *testing.T) {
 						Type: "invalid",
 					},
 				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: `unrecognized message type: "invalid"`,
+						},
+					},
+				},
 			},
 		},
 		{
@@ -80,6 +88,14 @@ func TestAPI(t *testing.T) {
 					in: true,
 					msg: map[string]interface{}{
 						"type": 1,
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "invalid message base: json: cannot unmarshal number into Go struct field .type of type api.MessageType",
+						},
 					},
 				},
 			},
@@ -92,6 +108,14 @@ func TestAPI(t *testing.T) {
 					msg: map[string]interface{}{
 						"type":    api.MessageTypeActionReq,
 						"details": 1,
+					},
+				},
+				{
+					msg: api.Message{
+						Type: api.MessageTypeError,
+						Details: &api.MessageDetailsError{
+							Reason: "invalid message base: json: cannot unmarshal number into Go struct field .details of type map[string]interface {}",
+						},
 					},
 				},
 			},
