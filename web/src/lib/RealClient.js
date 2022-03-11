@@ -1,24 +1,25 @@
+import log from './log';
+
 class RealClient {
-  constructor() {
+  constructor(ws) {
+    this._ws = ws;
+
     this._ready = false;
     this._battle_callback = null;
     this._spirit_callback = null;
 
-    const scheme = (window.location.protocol === 'https:' ? 'wss://' : 'ws://');
-    this._ws = new WebSocket(scheme + window.location.host + '/api/battle');
-
     this._ws.addEventListener('open', (e) => {
-      console.log('ws opened');
+      log('ws opened');
       this._ready = true;
     });
     this._ws.addEventListener('close', (e) => {
-      console.log('ws closed');
+      log('ws closed');
     });
     this._ws.addEventListener('error', (e) => {
-      console.log(`ws error: ${e}`);
+      log(`ws error: ${e}`);
     });
     this._ws.addEventListener('message', (e) => {
-      console.log(`ws message`);
+      log(`ws message`);
       const message = JSON.parse(e.data);
       switch (message.type) {
         case 'battle-stop':
@@ -31,14 +32,14 @@ class RealClient {
           this._onError(message);
           break;
         default:
-          console.log(`unexpected message type: ${message.type}`);
+          log(`unexpected message type: ${message.type}`);
       };
     });
   };
 
   _onBattleStop(message) {
     if (!this._battle_callback) {
-      console.log(`unexpected battle-stop: ${message.details}`);
+      log(`unexpected battle-stop: ${message.details}`);
       return;
     } 
     
@@ -48,7 +49,7 @@ class RealClient {
 
   _onSpiritRsp(message) {
     if (!this._spirit_callback) {
-      console.log(`unexpected spirit-rsp: ${message.details}`);
+      log(`unexpected spirit-rsp: ${message.details}`);
       return;
     }
 
@@ -57,9 +58,15 @@ class RealClient {
   }
 
   _onError(message) {
-    console.log(`error message: ${message.details.reason}`);
-    this._battle_callback = null;
-    this._spirit_callback = null;
+    log(`error message: ${message.details.reason}`);
+    if (this._battle_callback) {
+      this._battle_callback(message.details.reason);
+      this._battle_callback = null;
+    }
+    if (this._spirit_callback) {
+      this._spirit_callback(message.details.reason);
+      this._spirit_callback = null;
+    }
   }
 
   startBattle(spirits, callback) {
@@ -80,6 +87,7 @@ class RealClient {
     }
     if (!spiritsObj) {
       callback('invalid spirits JSON');
+      return;
     }
 
     const battleStart = {
