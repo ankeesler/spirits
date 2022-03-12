@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -111,6 +113,41 @@ func serveWebsocket(w http.ResponseWriter, r *http.Request) {
 	upgrader := websocket.Upgrader{
 		Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
 			log.Printf("could not upgrade connection: %d %s", status, reason.Error())
+		},
+		CheckOrigin: func(r *http.Request) bool {
+			origin := r.Header.Get("origin")
+			if len(origin) == 0 {
+				log.Printf("origin is empty, allowing")
+				return true
+			}
+
+			originURL, err := url.Parse(origin)
+			if err != nil {
+				log.Printf("failed parsing origin url (%s), disallowing", err.Error())
+				return false
+			}
+
+			if len(r.Host) == 0 {
+				log.Printf("host is empty, disallowing")
+				return false
+			}
+
+			// net.SplitHostPort() doesn't allow host[:port]...
+			// This logic surely doesn't work for all allowable values...
+			originSplit := strings.Split(originURL.Host, ":")
+			hostSplit := strings.Split(r.Host, ":")
+			if (originSplit[0] == "127.0.0.1" && hostSplit[0] == "127.0.0.1") ||
+				(originSplit[0] == "localhost" && hostSplit[0] == "localhost") {
+				log.Printf("origin and host are loopback, allowing")
+				return true
+			}
+
+			if !strings.EqualFold(originURL.Host, r.Host) {
+				log.Printf("origin (%s) and host (%s) mismatch, disallowing", origin, r.Host)
+				return false
+			}
+
+			return true
 		},
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
