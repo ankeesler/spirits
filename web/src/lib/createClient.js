@@ -59,20 +59,12 @@ class FakeWebsocket {
 }
 
 const tryWs = (wsDetails) => {
-  return new Promise((resolve, reject) => {
-    let opened = false;
+  return new Promise((resolve) => {
     const ws = wsDetails.create();
-    ws.addEventListener('open', () => {opened = true});
-
-    setTimeout(() => {
-      if (opened) {
-        wsDetails.ws = ws;
-        resolve(wsDetails);
-      } else {
-        reject(`${wsDetails.name} not opened within 1000 ms`);
-        ws.close();
-      }
-    }, 1000);
+    ws.addEventListener('open', () => {
+      wsDetails.ws = ws;
+      resolve(wsDetails);
+    });
   });
 };
 
