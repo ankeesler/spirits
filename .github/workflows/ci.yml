@@ -91,3 +91,10 @@ jobs:
         healthcheck: "https://oh-great-spirits.herokuapp.com"
         rollbackonhealthcheckfailed: true
         usedocker: true
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '17'
+    - run: npm test
+      working-directory: test
+      env: 
+        SPIRITS_TEST_URL: "https://oh-great-spirits.herokuapp.com"
