@@ -12,7 +12,7 @@ const BattleWindow = (props) => {
   const [timer, setTimer] = React.useState(setTimeout(() => {}, 0));
 
   const runBattle = (spirits) => {
-    log('running battle with ' + spirits);
+    log('running battle with ' + JSON.stringify(spirits));
     props.client.startBattle(spirits, (error, newOutput) => {
       if (error) {
         setOutput(`error: ${error}`);

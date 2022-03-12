@@ -10,7 +10,12 @@ const SpiritInput = (props) => {
 
   const onSpirits = (e) => {
     setSpirits(e.target.value);
-    props.onSpirits(e.target.value);
+    try {
+      props.onSpirits(JSON.parse(e.target.value));
+    } catch (error) {
+      log(`invalid spirits: ${error}`);
+      props.onSpirits([]);
+    }
   };
 
   const onDoubleClick = async (e) => {
@@ -19,7 +24,7 @@ const SpiritInput = (props) => {
         log(`generate spirits error: ${error}`);
         return;
       }
-      setSpirits(generatedSpirits);
+      setSpirits(JSON.stringify(generatedSpirits));
       props.onSpirits(generatedSpirits);
     });
   };

@@ -1,28 +1,18 @@
-import RealClient from './RealClient';
+import Client from './Client';
 
-describe('RealClient', () => {
+describe('Client', () => {
   describe('generateSpirit()', () => {
     [
       {
-        name: 'when the ws is not open',
-        calls: 1,
-        open: false,
-        messages: [],
-        wantSends: [],
-        wantCallbackCalls: [['client not ready']],
-      },
-      {
         name: 'when the ws is open',
         calls: 1,
-        open: true,
         messages: [{type: 'spirit-rsp', details: {spirits: ['some-spirits']}}],
         wantSends: [{type: "spirit-req", details: {}}],
-        wantCallbackCalls: [['', '["some-spirits"]']],
+        wantCallbackCalls: [['', ["some-spirits"]]],
       },
       {
         name: 'when the ws is open and there is an error',
         calls: 1,
-        open: true,
         messages: [{type: 'error', details: {reason: 'some error'}}],
         wantSends: [{type: "spirit-req", details: {}}],
         wantCallbackCalls: [['some error']],
@@ -30,21 +20,19 @@ describe('RealClient', () => {
       {
         name: 'when the ws is open and there is an unexpected battle-stop',
         calls: 1,
-        open: true,
         messages: [
           {type: 'battle-stop', details: {}},
           {type: 'spirit-rsp', details: {spirits: ['some-spirits']}},
         ],
         wantSends: [{type: "spirit-req", details: {}}],
-        wantCallbackCalls: [['', '["some-spirits"]']],
+        wantCallbackCalls: [['', ["some-spirits"]]],
       },
       {
         name: 'when the ws is open and we call generateSpirits twice',
         calls: 2,
-        open: true,
         messages: [{type: 'spirit-rsp', details: {spirits: ['some-spirits']}}],
         wantSends: [{type: "spirit-req", details: {}}],
-        wantCallbackCalls: [['spirit request already in flight'], ['', '["some-spirits"]']],
+        wantCallbackCalls: [['spirit request already in flight'], ['', ["some-spirits"]]],
       },
     ].forEach(test => {
       const wsListeners = new Map();
@@ -53,20 +41,12 @@ describe('RealClient', () => {
           wsListeners.set(id, cb);
         },
       };
-      const client = new RealClient(ws);
+      const client = new Client(ws);
       const f = () => {
         const wsSends = [];
         ws.send = (d) => {
           wsSends.push(d);
         };
-
-        if (test.open) {
-          wsListeners.get('open')();
-        }
-
-        if (test.open) {
-          wsListeners.get('open')();
-        }
 
         const callback = jest.fn();
         for (let i = 0; i < test.calls; i++) {
@@ -89,36 +69,17 @@ describe('RealClient', () => {
   describe('startBattle()', () => {
     [
       {
-        name: 'when the ws is not open',
-        calls: 1,
-        open: false,
-        messages: [],
-        wantSends: [],
-        wantCallbackCalls: [['client not ready']],
-      },
-      {
         name: 'when the ws is open',
         calls: 1,
-        open: true,
-        spirits: JSON.stringify(['some-spirits']),
+        spirits: ['some-spirits'],
         messages: [{type: 'battle-stop', details: {output: 'some-output'}}],
         wantSends: [{type: "battle-start", details: {spirits: ['some-spirits']}}],
         wantCallbackCalls: [['', 'some-output']],
       },
       {
-        name: 'when the ws is open and we send bad spirits',
-        calls: 1,
-        open: true,
-        spirits: 'invalid [ json',
-        messages: [],
-        wantSends: [],
-        wantCallbackCalls: [['invalid spirits JSON']],
-      },
-      {
         name: 'when the ws is open and there is an error',
         calls: 1,
-        open: true,
-        spirits: JSON.stringify(['some-spirits']),
+        spirits: ['some-spirits'],
         messages: [{type: 'error', details: {reason: 'some error'}}],
         wantSends: [{type: "battle-start", details: {spirits: ['some-spirits']}}],
         wantCallbackCalls: [['some error']],
@@ -126,8 +87,7 @@ describe('RealClient', () => {
       {
         name: 'when the ws is open and there is an unexpected spirit-rsp',
         calls: 1,
-        open: true,
-        spirits: JSON.stringify(['some-spirits']),
+        spirits: ['some-spirits'],
         messages: [
           {type: 'spirit-rsp', details: {spirits: ['some-spirits']}},
           {type: 'battle-stop', details: {output: 'some-output'}},
@@ -138,8 +98,7 @@ describe('RealClient', () => {
       {
         name: 'when the ws is open and we call startBattle twice',
         calls: 2,
-        open: true,
-        spirits: JSON.stringify(['some-spirits']),
+        spirits: ['some-spirits'],
         messages: [{type: 'battle-stop', details: {output: 'some-output'}}],
         wantSends: [{type: "battle-start", details: {spirits: ['some-spirits']}}],
         wantCallbackCalls: [['battle already running'], ['', 'some-output']],
@@ -151,16 +110,12 @@ describe('RealClient', () => {
           wsListeners.set(id, cb);
         },
       };
-      const client = new RealClient(ws);
+      const client = new Client(ws);
       const f = () => {
         const wsSends = [];
         ws.send = (d) => {
           wsSends.push(d);
         };
-
-        if (test.open) {
-          wsListeners.get('open')();
-        }
 
         const callback = jest.fn();
         for (let i = 0; i < test.calls; i++) {

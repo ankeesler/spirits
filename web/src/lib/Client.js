@@ -1,16 +1,14 @@
 import log from './log';
 
-class RealClient {
+class Client {
   constructor(ws) {
     this._ws = ws;
 
-    this._ready = false;
     this._battle_callback = null;
     this._spirit_callback = null;
 
     this._ws.addEventListener('open', (e) => {
-      log('ws opened');
-      this._ready = true;
+      log('ws opened...again?');
     });
     this._ws.addEventListener('close', (e) => {
       log('ws closed');
@@ -53,7 +51,7 @@ class RealClient {
       return;
     }
 
-    this._spirit_callback('', JSON.stringify(message.details.spirits));
+    this._spirit_callback('', message.details.spirits);
     this._spirit_callback = null;
   }
 
@@ -70,30 +68,15 @@ class RealClient {
   }
 
   startBattle(spirits, callback) {
-    if (!this._ready) {
-      callback('client not ready');
-      return;
-    }
     if (this._battle_callback) {
       callback('battle already running');
-      return;
-    }
-
-    let spiritsObj = null;
-    try {
-      spiritsObj = JSON.parse(spirits);
-    } catch (error) {
-      spiritsObj = null;
-    }
-    if (!spiritsObj) {
-      callback('invalid spirits JSON');
       return;
     }
 
     const battleStart = {
       type: 'battle-start',
       details: {
-        spirits: spiritsObj,
+        spirits: spirits,
       },
     };
     this._ws.send(JSON.stringify(battleStart));
@@ -101,10 +84,6 @@ class RealClient {
   };
 
   generateSpirits(callback) {
-    if (!this._ready) {
-      callback('client not ready');
-      return;
-    }
     if (this._spirit_callback) {
       callback('spirit request already in flight');
       return;
@@ -119,4 +98,4 @@ class RealClient {
   };
 };
 
-export default RealClient;
+export default Client;

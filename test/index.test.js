@@ -28,7 +28,7 @@ afterAll(async () => {
   if (browser) await browser.close();
 });
 
-test('can generate spirtis', async () => {
+test('can run a battle', async () => {
   const inputSelector = '.component-spirit-input';
   const outputSelector = '.component-battle-console';
 
