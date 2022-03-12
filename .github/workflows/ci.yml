@@ -95,6 +95,7 @@ jobs:
       with:
         node-version: '17'
     - run: npm install
+      working-directory: test
     - run: npm test
       working-directory: test
       env: 
