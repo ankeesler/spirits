@@ -1,14 +1,8 @@
 const {fail} = require('assert');
-const fs = require('fs');
-const path = require('path');
 
 const puppeteer = require('puppeteer');
 
 let browser, page;
-
-const fixture = (name) => {
-  return fs.readFileSync(path.join(__dirname, 'fixture', name), {encoding: 'utf-8'});
-};
 
 // Worst case scenario we have to build the whole container and wait for it to start.
 jest.setTimeout(1000 * 10);
@@ -28,22 +22,27 @@ afterAll(async () => {
   if (browser) await browser.close();
 });
 
-test('can run a battle', async () => {
-  const inputSelector = '.component-spirit-input';
-  const outputSelector = '.component-battle-console';
+const generateButton = '.component-spirit-window > button';
+const spiritsInput = '.component-spirit-window > div';
+const battleButton = '.component-navigation > button + button';
+const battleOutput = '.component-battle-screen';
 
-  await page.waitForSelector(inputSelector);
-  await page.type(inputSelector, fixture('good-spirits.json'));
+test('generated spirits', async () => {
+  // Click generate button.
+  await page.waitForSelector(generateButton);
+  await page.click(generateButton);
 
-  const getOutput = async () => {
-    return await page.$eval(outputSelector, e => e.value);
-  };
-  const waitForOutput = async (length) => {
-    await page.waitForFunction(`document.querySelector("${outputSelector}").value.length > ${length}`);
-  };
-  await page.waitForSelector(outputSelector);
-  await waitForOutput(0);
-  expect(await getOutput()).toEqual('⏳');
-  await waitForOutput(10);
-  expect(await getOutput()).toEqual(fixture('good-spirits.txt'));
+  // Make sure generated spirits show up.
+  await page.waitForSelector(spiritsInput)
+  await page.waitForFunction(`document.querySelector("${spiritsInput}").innerText.length > 0`);
+
+  // Click on battle button.
+  await page.waitForSelector(battleButton);
+  await page.click(battleButton);
+
+  // Get battle output.
+  await page.waitForSelector(battleOutput);
+  await page.waitForFunction(`document.querySelector("${battleOutput}").innerText.length > 0`);
+  const output = await page.$eval(battleOutput, (e) => e.innerText);
+  expect(output).toMatch(/^> summary/);
 });

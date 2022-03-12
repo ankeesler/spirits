@@ -1,8 +1,7 @@
 .component-battle-console {
-  border: .25em solid #033f63;
-  padding: .25em;
-  margin: .25em;
-  border-radius: .25em;
+  border: 2px solid black;
+  padding: 1%;
+  height: 100%;
+  width: 100%;
   flex: 1;
-  resize: none;
 }

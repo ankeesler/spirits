@@ -87,8 +87,8 @@ const createClient = (callback) => {
   Promise.any(promises).then(wsDetails => {
     log(`choosing websocket: ${wsDetails.name}`);
     callback(new Client(wsDetails.ws));
-  }).catch(error => {
-    log('falling back to fake websocket');
+  }).catch((error) => {
+    log(`falling back to fake websocket (error: ${error})`);
     callback(new Client(new FakeWebsocket()));
   });
 };

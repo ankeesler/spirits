@@ -1,9 +1,8 @@
 .component-battle-window {
-  border: .5em solid #7c9885;
-
-  height: 90%;
-  width: 90%;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
+  align-items: center;
 }

@@ -3,4 +3,8 @@
   flex-flow: column nowrap;
   align-items: center;
   height: 100%;
+  width: 100%;
+  padding-bottom: 5%;
+  padding-left: 5%;
+  padding-right: 5%;
 }

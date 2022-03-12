@@ -9,11 +9,10 @@ import './BattleWindow.css';
 
 const BattleWindow = (props) => {
   const [output, setOutput] = React.useState('');
-  const [timer, setTimer] = React.useState(setTimeout(() => {}, 0));
 
-  const runBattle = (spirits) => {
-    log('running battle with ' + JSON.stringify(spirits));
-    props.client.startBattle(spirits, (error, newOutput) => {
+  const runBattle = () => {
+    log('running battle with ' + JSON.stringify(props.spirits));
+    props.client.startBattle(props.spirits, (error, newOutput) => {
       if (error) {
         setOutput(`error: ${error}`);
         return;
@@ -21,17 +20,12 @@ const BattleWindow = (props) => {
       setOutput(newOutput);
     });
   };
-
-  const onSpirits = (spirits) => {
-    setOutput('⏳');
-    clearTimeout(timer);
-    setTimer(setTimeout(() => runBattle(spirits), 2000));
-  };
+  React.useEffect(runBattle);
 
   return (
     <div className="component-battle-window">
-      <BattleScreen client={props.client} onSpirits={onSpirits} />
-      <BattleConsole message={output} />
+      <BattleScreen output={output} />
+      <BattleConsole />
     </div>
   );
 };

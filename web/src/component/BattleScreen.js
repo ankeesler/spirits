@@ -1,23 +1,27 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-
-import SpiritInput from './SpiritInput'
 
 import './BattleScreen.css';
 
 const BattleScreen = (props) => {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    ref.current.scrollTop = ref.current.scrollHeight;
+  });
+
   return (
-    <div className="component-battle-screen">
-      <SpiritInput onSpirits={props.onSpirits} client={props.client} />
+    <div ref={ref} className="component-battle-screen">
+      {props.output}
     </div>
   );
 };
 
 BattleScreen.defaultProps = {
+  output: '...',
 };
 
 BattleScreen.propTypes = {
-  client: PropTypes.object.isRequired,
-  onSpirits: PropTypes.func.isRequired,
+  output: PropTypes.string,
 };
 
 export default BattleScreen;

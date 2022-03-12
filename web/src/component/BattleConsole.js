@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import './BattleConsole.css';
 
 const BattleConsole = (props) => {
-  const textareaRef = React.useRef(null);
+  const ref = React.useRef(null);
   React.useEffect(() => {
-    textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    ref.current.scrollTop = ref.current.scrollHeight;
   });
   return (
-    <textarea ref={textareaRef} className="component-battle-console" defaultValue={props.message} />
+    <div ref={ref} className='component-battle-console'>
+      {props.message}  
+    </div>
   );
 };
 
