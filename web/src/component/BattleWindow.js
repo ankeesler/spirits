@@ -48,10 +48,12 @@ const BattleWindow = (props) => {
 
   return (
     <div className='container container-vertical'>
-      <div>
-        <button className='button' id='start-battle-button' onClick={startBattle}>start</button>
-        <button className='button' onClick={stopBattle}>stop</button>
-      </div>
+      <span>
+        <div className='container'>
+          <button className='button' id='start-battle-button' onClick={startBattle}>start</button>
+          <button className='button' onClick={stopBattle}>stop</button>
+        </div>
+      </span>
       <BattleScreen output={output} />
       <BattleConsole actioningSpirit={actioningSpirit} onAction={onAction} />
     </div>

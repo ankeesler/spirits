@@ -31,6 +31,7 @@ body {
   width: 100%;
   display: flex;
   resize: none;
+  gap: 2%;
 }
 
 .container-vertical {
@@ -48,21 +49,17 @@ body {
 }
 
 .flex-1 {
-  flex: 1;
+  flex: 1 0;
 }
 
 .flex-2 {
-  flex: 2;
+  flex: 2 0;
 }
 
 /* spacing */
 
 .padded {
   padding: 2%;
-}
-
-.margin-bottom {
-  margin-bottom: 1%;
 }
 
 /* visuals */
@@ -78,7 +75,6 @@ body {
 /* components */
 
 .button {
-  margin: 2%;
   padding: 1%;
 }
 

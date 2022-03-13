@@ -17,7 +17,9 @@ function Navigation(props) {
   };
   return (
     <nav>
-      {renderButtons()}
+      <div className='container'>
+        {renderButtons()}
+      </div>
     </nav>
   );
 };

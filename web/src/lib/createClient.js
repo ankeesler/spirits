@@ -40,7 +40,7 @@ class FakeWebsocket {
         obj = {
           type: 'spirit-rsp',
           details: {
-            spirits: [{name: 'a', health: 3, power: 1}, {name: 'b', health: 3, power: 2}],
+            spirits: [{name: 'a', health: 3, power: 1}, {name: 'b', health: 3, power: 2}, {name: 'c', health: 2, power: 3}],
           },
         };
         break;
