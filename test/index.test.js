@@ -22,11 +22,11 @@ afterAll(async () => {
   if (browser) await browser.close();
 });
 
-const generateSpiritsButton = '.component-spirit-window > button';
-const spiritsInput = '.component-spirit-window > div';
-const battleButton = '.component-navigation > button + button';
-const startBattleButton = `.component-battle-window > button`;
-const battleOutput = '.component-battle-screen';
+const generateSpiritsButton = '#generate-spirits-button';
+const spiritsInput = '#spirits-text';
+const battleButton = '#show-battle-window-button';
+const startBattleButton = `#start-battle-button`;
+const battleOutput = '#battle-text';
 
 test('generated spirits', async () => {
   // Click generate button.

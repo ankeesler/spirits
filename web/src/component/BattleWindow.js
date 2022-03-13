@@ -5,8 +5,6 @@ import BattleConsole from './BattleConsole';
 import BattleScreen from './BattleScreen';
 import log from './../lib/log';
 
-import './BattleWindow.css';
-
 const BattleWindow = (props) => {
   const [output, setOutput] = React.useState('');
   const [actioningSpirit, setActioningSpirit] = React.useState(null);
@@ -49,9 +47,11 @@ const BattleWindow = (props) => {
   };
 
   return (
-    <div className="component-battle-window">
-      <button onClick={startBattle}>start</button>
-      <button onClick={stopBattle}>stop</button>
+    <div className='container'>
+      <div>
+        <button className='button' id='start-battle-button' onClick={startBattle}>start</button>
+        <button className='button' onClick={stopBattle}>stop</button>
+      </div>
       <BattleScreen output={output} />
       <BattleConsole actioningSpirit={actioningSpirit} onAction={onAction} />
     </div>

@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './BattleConsole.css';
-
 const BattleConsole = (props) => {
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -11,19 +9,19 @@ const BattleConsole = (props) => {
 
   const renderMessage = () => {
     if (props.actioningSpirit) {
-      return <div style={{padding: '1%'}}>{`select action for spirit ${props.actioningSpirit.name}`}</div>
+      return <div className='padded'>{`select action for spirit ${props.actioningSpirit.name}`}</div>
     }
   };
 
   const renderButtons = () => {
     if (props.actioningSpirit) {
       return props.actioningSpirit.actions.map((action, i) => {
-        return <button key={i} onClick={(e) => props.onAction(e.target.value)}>{action}</button>
+        return <button className='button' key={i} onClick={(e) => props.onAction(e.target.value)}>{action}</button>
       });
     }
   };
   return (
-    <div ref={ref} className='component-battle-console'>
+    <div ref={ref} className='container flex-1 padded border-small'>
       {renderMessage()}
       {renderButtons()}
     </div>

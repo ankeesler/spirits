@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 
 import log from './../lib/log';
 
-import './SpiritWindow.css';
-import './Window.css';
-
 const SpiritWindow = (props) => {
   const [spirits, setSpirits] = React.useState('');
 
@@ -29,10 +26,12 @@ const SpiritWindow = (props) => {
   };
 
   return (
-    <div className='component-spirit-window'>
-      <button onClick={onClick}>generate</button>
-      <div onInput={e => onSpirits(e.target.value)}>{spirits}</div>
-    </div>    
+    <div className='container'>
+      <div>
+        <button className='button' id='generate-spirits-button' onClick={onClick}>generate</button>
+      </div>
+      <div className='container border padded' id='spirits-text' onInput={e => onSpirits(e.target.value)}>{spirits}</div>
+    </div>
   );
 };
 

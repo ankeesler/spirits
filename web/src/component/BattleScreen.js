@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './BattleScreen.css';
-
 const BattleScreen = (props) => {
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -10,7 +8,7 @@ const BattleScreen = (props) => {
   });
 
   return (
-    <div ref={ref} className="component-battle-screen">
+    <div ref={ref} className='container text-container flex-2 margin-bottom' id='battle-text'>
       {props.output}
     </div>
   );
