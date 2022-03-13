@@ -6,3 +6,8 @@
   flex-flow: column nowrap;
   align-items: center;
 }
+
+.component-battle-window > button {
+  margin: 1em;
+  font-family: monospace;  
+}

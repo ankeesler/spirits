@@ -8,19 +8,34 @@ const BattleConsole = (props) => {
   React.useEffect(() => {
     ref.current.scrollTop = ref.current.scrollHeight;
   });
+
+  const renderMessage = () => {
+    if (props.actioningSpirit) {
+      return <div style={{padding: '1%'}}>{`select action for spirit ${props.actioningSpirit.name}`}</div>
+    }
+  };
+
+  const renderButtons = () => {
+    if (props.actioningSpirit) {
+      return props.actioningSpirit.actions.map((action, i) => {
+        return <button key={i} onClick={(e) => props.onAction(e.target.value)}>{action}</button>
+      });
+    }
+  };
   return (
     <div ref={ref} className='component-battle-console'>
-      {props.message}  
+      {renderMessage()}
+      {renderButtons()}
     </div>
   );
 };
 
 BattleConsole.defaultProps = {
-  message: '...',
 };
 
 BattleConsole.propTypes = {
-  message: PropTypes.string,
+  actioningSpirit: PropTypes.object,
+  onAction: PropTypes.func.isRequired,
 };
 
 export default BattleConsole;

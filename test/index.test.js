@@ -22,15 +22,16 @@ afterAll(async () => {
   if (browser) await browser.close();
 });
 
-const generateButton = '.component-spirit-window > button';
+const generateSpiritsButton = '.component-spirit-window > button';
 const spiritsInput = '.component-spirit-window > div';
 const battleButton = '.component-navigation > button + button';
+const startBattleButton = `.component-battle-window > button`;
 const battleOutput = '.component-battle-screen';
 
 test('generated spirits', async () => {
   // Click generate button.
-  await page.waitForSelector(generateButton);
-  await page.click(generateButton);
+  await page.waitForSelector(generateSpiritsButton);
+  await page.click(generateSpiritsButton);
 
   // Make sure generated spirits show up.
   await page.waitForSelector(spiritsInput)
@@ -39,6 +40,10 @@ test('generated spirits', async () => {
   // Click on battle button.
   await page.waitForSelector(battleButton);
   await page.click(battleButton);
+
+  // Click on start battle.
+  await page.waitForSelector(startBattleButton);
+  await page.click(startBattleButton);
 
   // Get battle output.
   await page.waitForSelector(battleOutput);
