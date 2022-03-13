@@ -21,12 +21,10 @@ const SpiritWindow = (props) => {
   };
 
   const onClick = async (e) => {
-    props.client.generateSpirits((error, generatedSpirits) => {
-      if (error) {
-        log(`generate spirits error: ${error}`);
-        return;
-      }
+    props.generator.generate().then((generatedSpirits) => {
       onSpirits(JSON.stringify(generatedSpirits));
+    }).catch((error) => {
+      log(`generate spirits error: ${error}`);
     });
   };
 
@@ -43,7 +41,7 @@ SpiritWindow.defaultProps = {
 
 SpiritWindow.propTypes = {
   onSpirits: PropTypes.func.isRequired,
-  client: PropTypes.object.isRequired,
+  generator: PropTypes.object.isRequired,
 };
 
 export default SpiritWindow;

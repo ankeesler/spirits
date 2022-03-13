@@ -12,12 +12,10 @@ const BattleWindow = (props) => {
 
   const runBattle = () => {
     log('running battle with ' + JSON.stringify(props.spirits));
-    props.client.startBattle(props.spirits, (error, newOutput) => {
-      if (error) {
-        setOutput(`error: ${error}`);
-        return;
-      }
+    props.battle.start(props.spirits).then((newOutput) => {
       setOutput(newOutput);
+    }).catch((error) => {
+      setOutput(`error: ${error}`);
     });
   };
   React.useEffect(runBattle);
@@ -34,7 +32,7 @@ BattleWindow.defaultProps = {
 };
 
 BattleWindow.propTypes = {
-  client: PropTypes.object.isRequired,
+  battle: PropTypes.object.isRequired,
 };
 
 export default BattleWindow;

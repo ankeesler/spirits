@@ -59,12 +59,15 @@ class FakeWebsocket {
 }
 
 const tryWs = (wsDetails) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const ws = wsDetails.create();
     ws.addEventListener('open', () => {
       wsDetails.ws = ws;
       resolve(wsDetails);
     });
+    setTimeout(() => {
+      reject(`timed out waiting for websocket ${wsDetails.name} to open`);
+    }, 1000);
   });
 };
 
