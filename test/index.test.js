@@ -35,7 +35,7 @@ test('generated spirits', async () => {
 
   // Make sure generated spirits show up.
   await page.waitForSelector(spiritsInput)
-  await page.waitForFunction(`document.querySelector("${spiritsInput}").innerText.length > 0`);
+  await page.waitForFunction(`document.querySelector("${spiritsInput}").value.length > 0`);
 
   // Click on battle button.
   await page.waitForSelector(battleButton);

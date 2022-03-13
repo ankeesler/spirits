@@ -19,7 +19,7 @@ const SpiritWindow = (props) => {
 
   const onClick = async (e) => {
     props.generator.generate().then((generatedSpirits) => {
-      onSpirits(JSON.stringify(generatedSpirits));
+      onSpirits(JSON.stringify(generatedSpirits, null, 2));
     }).catch((error) => {
       log(`generate spirits error: ${error}`);
     });
@@ -30,7 +30,7 @@ const SpiritWindow = (props) => {
       <div>
         <button className='button' id='generate-spirits-button' onClick={onClick}>generate</button>
       </div>
-      <div className='container border padded' id='spirits-text' onInput={e => onSpirits(e.target.value)}>{spirits}</div>
+      <textarea className='container border padded' id='spirits-text' onInput={e => onSpirits(e.target.value)} value={spirits}></textarea>
     </div>
   );
 };
