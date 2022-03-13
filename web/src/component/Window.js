@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 
-import './Window.css';
-
 function Window(props) {
-  let className = 'component-window';
+  let className = 'row bg-light p-1 border border-4';
   if (!props.active) {
-    className += ' hidden';
+    className += ' d-none';
   }
 
   return (

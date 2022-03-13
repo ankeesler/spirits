@@ -5,9 +5,8 @@ import BattleConsole from './BattleConsole';
 import BattleScreen from './BattleScreen';
 import log from './../lib/log';
 
-import './BattleWindow.css';
-
 const BattleWindow = (props) => {
+  const [inBattle, setInBattle] = React.useState(false);
   const [output, setOutput] = React.useState('');
   const [actioningSpirit, setActioningSpirit] = React.useState(null);
 
@@ -19,15 +18,18 @@ const BattleWindow = (props) => {
     } else {
       // No action request - we are done.
       setActioningSpirit(null);
+      setInBattle(false);
     }
   };
 
   const handleBattleReject = (error) => {
     setOutput(`error: ${error}`);
+    setInBattle(false);
   };
 
   const startBattle = () => {
     log('running battle with ' + JSON.stringify(props.spirits));
+    setInBattle(true);
     props.battle
       .start(props.spirits)
       .then(handleBattleResolve)
@@ -49,11 +51,17 @@ const BattleWindow = (props) => {
   };
 
   return (
-    <div className="component-battle-window">
-      <button onClick={startBattle}>start</button>
-      <button onClick={stopBattle}>stop</button>
-      <BattleScreen output={output} />
-      <BattleConsole actioningSpirit={actioningSpirit} onAction={onAction} />
+    <div>
+      <div className='row p-2'>
+        <div className='col'><button className="btn btn-secondary" id='start-battle-button' onClick={startBattle} disabled={inBattle}>start</button></div>
+        <div className='col'><button className="btn btn-secondary" onClick={stopBattle} disabled={!inBattle}>stop</button></div>
+      </div>
+      <div className='row'>
+        <BattleScreen output={output} />
+      </div>
+      <div className='row'>
+        <BattleConsole actioningSpirit={actioningSpirit} onAction={onAction} />
+      </div>
     </div>
   );
 };

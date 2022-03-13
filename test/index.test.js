@@ -4,7 +4,6 @@ const puppeteer = require('puppeteer');
 
 let browser, page;
 
-// Worst case scenario we have to build the whole container and wait for it to start.
 jest.setTimeout(1000 * 10);
 
 beforeAll(async () => {
@@ -13,20 +12,21 @@ beforeAll(async () => {
     fail("must set 'process.env.SPIRITS_TEST_URL'");
   }
 
-  browser = await puppeteer.launch();
+  browser = await puppeteer.launch({headless: false});
   page = await browser.newPage();
   await page.goto(baseUrl);
+  page.setDefaultTimeout(30000);
 });
 
 afterAll(async () => {
   if (browser) await browser.close();
 });
 
-const generateSpiritsButton = '.component-spirit-window > button';
-const spiritsInput = '.component-spirit-window > div';
-const battleButton = '.component-navigation > button + button';
-const startBattleButton = `.component-battle-window > button`;
-const battleOutput = '.component-battle-screen';
+const generateSpiritsButton = '#generate-spirits-button';
+const spiritsInput = '#spirits-text';
+const battleButton = '#battle-navigation';
+const startBattleButton = '#start-battle-button';
+const battleOutput = '#battle-text';
 
 test('generated spirits', async () => {
   // Click generate button.

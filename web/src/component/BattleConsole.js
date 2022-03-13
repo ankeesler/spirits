@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './BattleConsole.css';
-
 const BattleConsole = (props) => {
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -23,7 +21,7 @@ const BattleConsole = (props) => {
     }
   };
   return (
-    <div ref={ref} className='component-battle-console'>
+    <div ref={ref}>
       {renderMessage()}
       {renderButtons()}
     </div>

@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 
-import './Navigation.css';
-
 function Navigation(props) {
   const onClick = (e, location) => {
     props.onLocation(location);
@@ -12,15 +10,15 @@ function Navigation(props) {
     let i = 0;
     for (const location in props.locations) {
       const disabled = !props.locations[location];
-      const button = <button key={i++} onClick={(e) => onClick(e, location)} disabled={disabled}>{location}</button>
+      const button = <div key={i++} className="col"><button id={location + '-navigation'} className="btn btn-primary" onClick={(e) => onClick(e, location)} disabled={disabled}>{location}</button></div>
       buttons.push(button);
     }
     return buttons;
   };
   return (
-    <div className="component-navigation">
+    <>
       {renderButtons()}
-    </div>
+    </>
   );
 };
 
