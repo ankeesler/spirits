@@ -8,7 +8,7 @@ const BattleScreen = (props) => {
   });
 
   return (
-    <div ref={ref} className='container text-container flex-2 margin-bottom' id='battle-text'>
+    <div ref={ref} className='container container-vertical container-text flex-2 margin-bottom' id='battle-text'>
       {props.output}
     </div>
   );

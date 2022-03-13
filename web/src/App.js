@@ -12,7 +12,7 @@ function App(props) {
   const [location, setLocation] = React.useState('spirit');
   const [spirits, setSpirits] = React.useState([]);
   return (
-    <div className='container padded'>
+    <div className='container container-vertical padded'>
       <header><h1>spirits</h1></header>
       <Navigation locations={{spirit: true, battle: spirits.length === 2}} onLocation={setLocation} />
       <Window active={location === 'spirit'}>

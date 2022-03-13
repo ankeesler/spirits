@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 function Window(props) {
-  let className = 'container border padded';
+  let className = 'container container-vertical border padded';
   if (!props.active) {
     className += ' hidden';
   }

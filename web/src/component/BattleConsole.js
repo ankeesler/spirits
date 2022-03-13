@@ -21,7 +21,7 @@ const BattleConsole = (props) => {
     }
   };
   return (
-    <div ref={ref} className='container flex-1 padded border-small'>
+    <div ref={ref} className='container container-vertical flex-1 padded border-small'>
       {renderMessage()}
       {renderButtons()}
     </div>

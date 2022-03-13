@@ -47,7 +47,7 @@ const BattleWindow = (props) => {
   };
 
   return (
-    <div className='container'>
+    <div className='container container-vertical'>
       <div>
         <button className='button' id='start-battle-button' onClick={startBattle}>start</button>
         <button className='button' onClick={stopBattle}>stop</button>

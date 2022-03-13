@@ -2,35 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import log from './../lib/log';
+import SpiritInfo from './SpiritInfo.js';
 
 const SpiritWindow = (props) => {
-  const [spirits, setSpirits] = React.useState('');
-
-  const onSpirits = (spirits) => {
-    setSpirits(spirits);
-
-    try {
-      props.onSpirits(JSON.parse(spirits));
-    } catch (error) {
-      log(`error parsing spirits: ${error}`);
-      props.onSpirits([]);
-    }
-  };
+  const [spirits, setSpirits] = React.useState([]);
 
   const onClick = async (e) => {
     props.generator.generate().then((generatedSpirits) => {
-      onSpirits(JSON.stringify(generatedSpirits, null, 2));
+      props.onSpirits(generatedSpirits);
+      setSpirits(generatedSpirits);
     }).catch((error) => {
       log(`generate spirits error: ${error}`);
     });
   };
 
   return (
-    <div className='container'>
+    <div className='container container-vertical' id='spirit-window'>
       <div>
-        <button className='button' id='generate-spirits-button' onClick={onClick}>generate</button>
+        <button className='button' onClick={onClick}>generate</button>
       </div>
-      <textarea className='container border padded' id='spirits-text' onInput={e => onSpirits(e.target.value)} value={spirits}></textarea>
+      {spirits.map((spirit, i) => <SpiritInfo key={i} spirit={spirit} />)}
     </div>
   );
 };
