@@ -23,6 +23,72 @@ type conn interface {
 	WriteMessage(int, []byte) error
 }
 
+type battleRunner struct {
+	mu sync.Mutex
+
+	s      atomic.Value // []*spirit.Spirit
+	o      syncBuffer
+	cancel func()
+}
+
+// start starts a battle. start will panic if a battle is already running.
+func (b *battleRunner) start(ctx context.Context, spirits []*spirit.Spirit) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if b.runningLocked() {
+		panic("battle already running")
+	}
+
+	var battleCtx context.Context
+	battleCtx, b.cancel = context.WithCancel(ctx)
+	go func() {
+		defer b.cancel()
+
+		b.o.reset()
+		u := ui.New(&b.o)
+		battle.Run(battleCtx, spirits, func(spirits []*spirit.Spirit, err error) {
+			u.OnSpirits(spirits, err)
+			b.s.Store(spirits)
+		})
+	}()
+}
+
+// stop stops a battle that is currently running. stop will panic if a battle is not running.
+func (b *battleRunner) stop() {
+	if !b.running() {
+		panic("battle not running")
+	}
+}
+
+// running returns whether a battle is currently being run.
+func (b *battleRunner) running() bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.runningLocked()
+}
+
+// running returns whether a battle is currently being run.
+func (b *battleRunner) runningLocked() bool {
+	return b.cancel != nil
+}
+
+// output returns the output up to this point. output will panic if a battle is not running.
+func (b *battleRunner) output() string {
+	if !b.running() {
+		panic("battle not running")
+	}
+	return ""
+}
+
+// spirits returns the spirits that are currently involved in the battle. spirits will panic if a battle is not running.
+func (b *battleRunner) spirits() []*spirit.Spirit {
+	if !b.running() {
+		panic("battle not running")
+	}
+	return nil
+}
+
 type eventHandler struct {
 	conn conn
 	r    *rand.Rand
