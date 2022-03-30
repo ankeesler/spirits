@@ -33,6 +33,10 @@ type Message struct {
 	Details MessageDetails `json:"details"`
 }
 
+func (m *Message) String() string {
+	return fmt.Sprintf("api.Message{Type:%q, Details:%i}", m.Type, m.Details)
+}
+
 func (m *Message) UnmarshalJSON(b []byte) error {
 	mTmp := struct {
 		Type    MessageType            `json:"type"`

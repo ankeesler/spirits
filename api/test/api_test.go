@@ -1015,7 +1015,7 @@ func TestAPI(t *testing.T) {
 				}
 
 				msgIn, err := readMessage(c)
-				require.NoErrorf(t, err, "waiting for %#v", msg.msg.(api.Message))
+				require.NoErrorf(t, err, "waiting for %s", msg.msg.(api.Message))
 				require.Equal(t, msg.msg.(api.Message), *msgIn)
 			}
 		}

@@ -10,90 +10,16 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/ankeesler/spirits/api/internal/battle"
+	"github.com/ankeesler/spirits/api/internal/battle/runner"
 	"github.com/ankeesler/spirits/api/internal/spirit"
 	"github.com/ankeesler/spirits/api/internal/spirit/action"
 	"github.com/ankeesler/spirits/api/internal/spirit/generate"
-	"github.com/ankeesler/spirits/api/internal/ui"
 	"github.com/gorilla/websocket"
 )
 
 type conn interface {
 	ReadMessage() (int, []byte, error)
 	WriteMessage(int, []byte) error
-}
-
-type battleRunner struct {
-	mu sync.Mutex
-
-	s      atomic.Value // []*spirit.Spirit
-	o      syncBuffer
-	cancel func()
-}
-
-// start starts a battle. start will panic if a battle is already running.
-func (b *battleRunner) start(ctx context.Context, spirits []*spirit.Spirit) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-
-	if b.runningLocked() {
-		panic("battle already running")
-	}
-
-	var battleCtx context.Context
-	battleCtx, b.cancel = context.WithCancel(ctx)
-	go func() {
-		defer func() {
-			b.mu.Lock()
-			defer b.mu.Unlock()
-
-			b.cancel()
-			b.cancel = nil
-		}()
-
-		b.o.reset()
-		u := ui.New(&b.o)
-		battle.Run(battleCtx, spirits, func(spirits []*spirit.Spirit, err error) {
-			u.OnSpirits(spirits, err)
-			b.s.Store(spirits)
-		})
-	}()
-}
-
-// stop stops a battle that is currently running. stop will panic if a battle is not running.
-func (b *battleRunner) stop() {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-
-	if !b.runningLocked() {
-		panic("battle not running")
-	}
-
-	b.cancel()
-}
-
-// running returns whether a battle is currently being run.
-func (b *battleRunner) running() bool {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	return b.runningLocked()
-}
-
-func (b *battleRunner) runningLocked() bool {
-	return b.cancel != nil
-}
-
-// output returns the output up to this point. output will panic if a battle is not running.
-func (b *battleRunner) output() string {
-	return b.o.read()
-}
-
-// spirits returns the spirits that are currently involved in the battle. spirits will panic if a battle is not running.
-func (b *battleRunner) spirits() []*spirit.Spirit {
-	if !b.running() {
-		panic("battle not running")
-	}
-	return b.s.Load().([]*spirit.Spirit)
 }
 
 type eventHandler struct {
@@ -103,9 +29,7 @@ type eventHandler struct {
 	wantActionResponse atomic.Value // *sync.Once
 	actionResponse     chan *MessageDetailsActionRsp
 
-	inBattle     atomic.Value // bool
-	battleDone   chan struct{}
-	battleOutput syncBuffer
+	battleRunner runner.Runner
 }
 
 func newEventHandler(conn conn, seed int64) *eventHandler {
@@ -118,14 +42,10 @@ func newEventHandler(conn conn, seed int64) *eventHandler {
 func (e *eventHandler) run(ctx context.Context) {
 	e.actionResponse = make(chan *MessageDetailsActionRsp)
 	defer close(e.actionResponse)
-	e.battleDone = make(chan struct{})
-	defer close(e.battleDone)
 
 	alreadyUsedOnce := sync.Once{}
 	alreadyUsedOnce.Do(func() {})
 	e.wantActionResponse.Store(&alreadyUsedOnce)
-
-	e.inBattle.Store(false)
 
 	for {
 		select {
@@ -179,11 +99,6 @@ func (e *eventHandler) process(msg *Message) {
 }
 
 func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
-	if e.inBattle.Load().(bool) {
-		e.sendError("battle already running")
-		return
-	}
-
 	if len(details.Spirits) != 2 {
 		e.sendError("must provide 2 spirits")
 		return
@@ -195,41 +110,25 @@ func (e *eventHandler) onBattleStart(details *MessageDetailsBattleStart) {
 		return
 	}
 
-	e.inBattle.Store(true)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		defer cancel()
-		defer e.inBattle.Store(false)
-
-		select {
-		case <-e.battleDone:
-		case <-ctx.Done():
-		}
-	}()
-
-	go func() {
-		defer cancel()
-		defer e.battleOutput.reset()
-
-		u := ui.New(&e.battleOutput)
-		battle.Run(ctx, internalSpirits, u.OnSpirits)
+	onBattleDone := func() {
 		e.send(&Message{
 			Type: MessageTypeBattleStop,
 			Details: &MessageDetailsBattleStop{
-				Output: e.battleOutput.read(),
+				Output: e.battleRunner.Output(),
 			},
 		})
-	}()
+	}
+	if !e.battleRunner.Start(context.TODO(), internalSpirits, onBattleDone) {
+		e.sendError("battle already running")
+		return
+	}
 }
 
 func (e *eventHandler) onBattleStop(details *MessageDetailsBattleStop) {
-	if !e.inBattle.Load().(bool) {
+	if !e.battleRunner.Stop() {
 		e.sendError("unexpected battle-stop: no battle running")
 		return
 	}
-
-	e.battleDone <- struct{}{}
 }
 
 func (e *eventHandler) onActionReq(details *MessageDetailsActionReq) {
@@ -256,7 +155,7 @@ func (e *eventHandler) getAction(ctx context.Context, s *Spirit) (spirit.Action,
 		Type: MessageTypeActionReq,
 		Details: MessageDetailsActionReq{
 			Spirit: *s,
-			Output: e.battleOutput.read(),
+			Output: e.battleRunner.Output(),
 		},
 	})
 
