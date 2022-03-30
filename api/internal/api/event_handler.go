@@ -43,7 +43,13 @@ func (b *battleRunner) start(ctx context.Context, spirits []*spirit.Spirit) {
 	var battleCtx context.Context
 	battleCtx, b.cancel = context.WithCancel(ctx)
 	go func() {
-		defer b.cancel()
+		defer func() {
+			b.mu.Lock()
+			defer b.mu.Unlock()
+
+			b.cancel()
+			b.cancel = nil
+		}()
 
 		b.o.reset()
 		u := ui.New(&b.o)
@@ -56,9 +62,14 @@ func (b *battleRunner) start(ctx context.Context, spirits []*spirit.Spirit) {
 
 // stop stops a battle that is currently running. stop will panic if a battle is not running.
 func (b *battleRunner) stop() {
-	if !b.running() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if !b.runningLocked() {
 		panic("battle not running")
 	}
+
+	b.cancel()
 }
 
 // running returns whether a battle is currently being run.
@@ -68,17 +79,13 @@ func (b *battleRunner) running() bool {
 	return b.runningLocked()
 }
 
-// running returns whether a battle is currently being run.
 func (b *battleRunner) runningLocked() bool {
 	return b.cancel != nil
 }
 
 // output returns the output up to this point. output will panic if a battle is not running.
 func (b *battleRunner) output() string {
-	if !b.running() {
-		panic("battle not running")
-	}
-	return ""
+	return b.o.read()
 }
 
 // spirits returns the spirits that are currently involved in the battle. spirits will panic if a battle is not running.
@@ -86,7 +93,7 @@ func (b *battleRunner) spirits() []*spirit.Spirit {
 	if !b.running() {
 		panic("battle not running")
 	}
-	return nil
+	return b.s.Load().([]*spirit.Spirit)
 }
 
 type eventHandler struct {
