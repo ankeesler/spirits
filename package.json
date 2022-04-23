@@ -1,0 +1,23 @@
+{
+  "name": "spirits",
+  "version": "0.0.0",
+  "description": "spirits is a turn-based battle framework",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankeesler/spirits.git"
+  },
+  "author": "Andrew Keesler <ankeesler1@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ankeesler/spirits/issues"
+  },
+  "homepage": "https://github.com/ankeesler/spirits#readme",
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}
