@@ -1,0 +1,28 @@
+{
+  "name": "spirits",
+  "version": "0.0.0",
+  "description": "spirits is a turn-based battle royale game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest ./src/**"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankeesler/spirits.git"
+  },
+  "author": "Andrew Keesler <ankeesler1@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ankeesler/spirits/issues"
+  },
+  "homepage": "https://github.com/ankeesler/spirits#readme",
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "react-scripts": "^5.0.0"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.16.3",
+    "node-fetch": "^3.2.3"
+  }
+}

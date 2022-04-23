@@ -1,0 +1,9 @@
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Spirit
+metadata:
+  name: a
+spec:
+  stats:
+    health: 5
+
