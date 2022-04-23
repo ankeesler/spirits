@@ -1,0 +1,13 @@
+---
+server:
+  language: golang
+  packaging: imgpkg (contains CRDs, Deployment)
+  framework: client-go
+  controllers:
+  - Spirit
+  - Battle
+  aggregatedAPI:
+  - Action
+client:
+  language: js
+  framework: react

@@ -1,0 +1,72 @@
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits
+  name: a
+spec:
+  stats:
+    health: 4
+    power: 3
+    armour: 2
+    agility: 3
+  actions:
+  - name: attack
+  - name: drain
+status:
+  conditions:
+  - type: Ready
+    status: "False"
+    lastTransitionTime: ...
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits
+  name: b
+spec:
+  stats:
+    health: 4
+    power: 3
+    armour: 2
+    agility: 3
+  actions:
+  - name: attack
+  - name: heal
+status:
+  conditions:
+  - type: Ready
+    status: "False"
+    lastTransitionTime: ...
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Battle
+metadata:
+  namespace: spirits
+  name: battle-abc123
+spec:
+  spirits: [a, b]
+status:
+  spirits: [a-abc123, b-abc123]
+  acting: a-abc123
+  conditions:
+  - type: Ready
+    status: "False"
+    lastTransitionTime: ...
+  - type: Started
+    status: "False"
+    lastTransitionTime: ...
+  - type: Finished
+    status: "False"
+    lastTransitionTime: ...
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Action
+metadata:
+  namespace: spirits
+spec:
+  battle: a
+  spirit: b
+  action: attack
+status:
+  error: empty on success
