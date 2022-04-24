@@ -1,4 +1,0 @@
-[
-  {"name": "a", "health": 10, "power": 6, "agility": 1, "armor": 1, "actions":["drain"]},
-  {"name": "b", "health": 10, "power": 5, "agility": 1, "armor": 1}
-]
