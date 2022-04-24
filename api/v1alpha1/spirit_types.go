@@ -73,6 +73,11 @@ type SpiritSpec struct {
 
 // SpiritStatus defines the observed state of Spirit
 type SpiritStatus struct {
+	// Phase summarizes the overall status of the Spirit
+	// +kubebuilder:default=Pending
+	// +kubebuilder:validation:Enum=Pending;Ready;Error
+	Phase Phase `json:"phase,omitempty"`
+
 	// Conditions represents the observations of a Spirit's current state
 	// +patchMergeKey=type
 	// +patchStrategy=merge
@@ -86,6 +91,7 @@ type SpiritStatus struct {
 
 // Spirit is the Schema for the spirits API
 // +kubebuilder:resource:categories=spiritsworld
+// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.spec.status.phase`
 // +kubebuilder:printcolumn:name="Health",type=string,JSONPath=`.spec.stats.health`
 type Spirit struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -93,6 +99,12 @@ type Spirit struct {
 
 	Spec   SpiritSpec   `json:"spec,omitempty"`
 	Status SpiritStatus `json:"status,omitempty"`
+}
+
+var _ Object = &Spirit{}
+
+func (b *Spirit) Conditions() *[]metav1.Condition {
+	return &b.Status.Conditions
 }
 
 //+kubebuilder:object:root=true

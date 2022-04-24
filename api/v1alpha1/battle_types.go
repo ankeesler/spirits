@@ -20,19 +20,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type BattlePhase string
-
-const (
-	// BattlePhasePending is the default phase for newly-created Battle resources.
-	BattlePhasePending BattlePhase = "Pending"
-
-	// BattlePhaseReady is the phase for an Battle resource in a healthy state.
-	BattlePhaseReady BattlePhase = "Ready"
-
-	// BattlePhaseError is the phase for an Battle in an unhealthy state.
-	BattlePhaseError BattlePhase = "Error"
-)
-
 // BattleSpec defines the desired state of Battle
 type BattleSpec struct {
 	// Spirits are the spirits involved in this Battle
@@ -46,7 +33,7 @@ type BattleStatus struct {
 	// Phase summarizes the overall status of the Battle
 	// +kubebuilder:default=Pending
 	// +kubebuilder:validation:Enum=Pending;Ready;Error
-	Phase BattlePhase `json:"phase,omitempty"`
+	Phase Phase `json:"phase,omitempty"`
 
 	// Conditions represents the observations of a Spirit's current state
 	// +patchMergeKey=type
@@ -68,6 +55,12 @@ type Battle struct {
 
 	Spec   BattleSpec   `json:"spec,omitempty"`
 	Status BattleStatus `json:"status,omitempty"`
+}
+
+var _ Object = &Battle{}
+
+func (b *Battle) Conditions() *[]metav1.Condition {
+	return &b.Status.Conditions
 }
 
 //+kubebuilder:object:root=true

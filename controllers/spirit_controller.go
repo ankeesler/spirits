@@ -21,11 +21,9 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
-	"time"
 
 	"github.com/go-logr/logr"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -53,40 +51,37 @@ type SpiritReconciler struct {
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Spirit object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
+	// Get spirit - if it doesn't exist, then delete it from the cache and return.
 	var spirit spiritsdevv1alpha1.Spirit
 	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
 		if k8serrors.IsNotFound(err) {
-			r.SpiritsCache.Delete(spirit.Name)
+			r.SpiritsCache.Delete(req.Name)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, fmt.Errorf("could not get spirit: %w", err)
 	}
 
-	internalSpirit, err := toInternalSpirit(
-		&spirit,
-		r.Rand,
-		func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spiritpkg.Action, error) {
-			// TODO: implement human intelligence
-			return action.Attack(), nil
-		},
-	)
-	r.updateStatus(ctx, log, &spirit, err)
-	if err != nil {
+	updateFunc := func() error {
+		// Update conditions on current spirit status
+		spirit.Status.Conditions = []metav1.Condition{}
+		spirit.Status.Conditions = append(spirit.Status.Conditions, r.readyInternalSpirits(ctx, log, &spirit))
+
+		// Update spirit phase
+		spirit.Status.Phase = getPhase(&spirit)
+
+		return nil
+	}
+
+	// Update spirit
+	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &spirit, updateFunc); err != nil {
+		log.Error(err, "could not patch spirit")
 		return ctrl.Result{}, nil
 	}
 
-	r.SpiritsCache.Store(internalSpirit.Name, internalSpirit)
-	log.Info("successfully reconciled spirit", "namespace", req.Namespace, "name", req.Name)
+	log.Info("reconciled spirit", "namespace", req.Namespace, "name", req.Name)
 
 	return ctrl.Result{}, nil
 }
@@ -98,25 +93,28 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *SpiritReconciler) updateStatus(ctx context.Context, log logr.Logger, spirit *spiritsdevv1alpha1.Spirit, err error) {
-	condition := metav1.Condition{
-		Type:               "Ready",
-		Status:             metav1.ConditionTrue,
-		Reason:             "Success",
-		Message:            "spirit is ready",
-		ObservedGeneration: spirit.Generation,
-		LastTransitionTime: metav1.NewTime(time.Now()),
-	}
+func (r *SpiritReconciler) readyInternalSpirits(
+	ctx context.Context,
+	log logr.Logger,
+	spirit *spiritsdevv1alpha1.Spirit,
+) metav1.Condition {
+	const conditionType = "Ready"
+
+	// Convert to internal spirit
+	internalSpirit, err := toInternalSpirit(
+		spirit,
+		r.Rand,
+		func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spiritpkg.Action, error) {
+			// TODO: implement human intelligence
+			return action.Attack(), nil
+		},
+	)
 	if err != nil {
-		condition.Status = metav1.ConditionFalse
-		condition.Reason = "Error"
-		condition.Message = err.Error()
+		return newCondition(spirit, conditionType, fmt.Errorf("could not convert to internal spirit: %w", err))
 	}
 
-	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, spirit, func() error {
-		meta.SetStatusCondition(&spirit.Status.Conditions, condition)
-		return nil
-	}); err != nil {
-		log.Error(err, "could not patch spirit")
-	}
+	// Store in cache
+	r.SpiritsCache.Store(spirit.Name, internalSpirit)
+
+	return newCondition(spirit, conditionType, nil)
 }
