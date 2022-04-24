@@ -47,18 +47,29 @@ const makeInformers = (kc, installedCrdsRsps, namespace, clients) => {
 };
 
 const makeControllers = (clients, informers) => {
-  spiritsController.make(clients.get('spirits'), informers.get('spirits'));
-  battlesController.make(clients.get('battles'), clients.get('spirits'), informers.get('battles'), informers.get('spirits'));
+  const spiritCache = new Map();
+  spiritsController.make(
+    clients.get('spirits'),
+    informers.get('spirits'),
+    spiritCache,
+  );
+  battlesController.make(
+    clients.get('battles'),
+    clients.get('spirits'),
+    informers.get('battles'),
+    informers.get('spirits'),
+    spiritCache,
+  );
 };
 
 const startInformers = (informers) => {
   informers.forEach((informer, type) => {
     informer.on('error', (error) => {
       log(`${type} informer error: ${error}`);
-      setTimeout(() => {
-        log(`restarting ${type} informer`);
-        informer.start();
-      }, 3000);
+      // setTimeout(() => {
+      //   log(`restarting ${type} informer`);
+      //   informer.start();
+      // }, 3000);
     });
 
     log(`starting ${type} informer`);
@@ -66,7 +77,14 @@ const startInformers = (informers) => {
   });
 };
 
-const main = async () => {
+const stopInformers = (informers) => {
+  informers.forEach((informer, type) => {
+    log(`stopping ${type} informer`);
+    informer.stop();
+  });
+};
+
+const main = async (onTeardown) => {
   const kc = loadKubeconfig();
   log('loaded kubeconfig');
 
@@ -87,6 +105,11 @@ const main = async () => {
 
   startInformers(informers);
   log(`started informers`);
+
+  onTeardown(() => {
+    stopInformers(informers);
+    log(`stopped informers`);
+  });
 };
 
 module.exports = {

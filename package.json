@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest --testPathIgnorePatterns ./test/*.js",
-    "test-integration": "jest --testPathPattern ./test/*.js"
+    "test-integration": "jest --testPathPattern ./test/*.js --forceExit"
   },
   "repository": {
     "type": "git",

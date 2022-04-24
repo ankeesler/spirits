@@ -1,32 +1,39 @@
-const log = require('../../log');
+const action = require('../../internal/action');
 const conditions = require('../conditions');
+const log = require('../../log');
 
-const validate = (spirit, callback) => {
-  callback();
+const toInternalSpirit = (spirit) => {
+  return {
+    name: spirit.metadata.name,
+    stats: spirit.stats,
+    action: action.attack,
+  };
 };
 
-const reconcile = (client, spirit) => {
+const reconcile = async (client, spiritsCache, spirit) => {
   log(`spirit-controller: reconciling ${JSON.stringify(spirit)}`);
 
-  if (!spirit.status) {
-    spirit.status = {};
+  let error;
+  try {
+    spiritsCache.set(spirit.metadata.name, toInternalSpirit(spirit));
+  } catch (e) {
+    error = e.message;
   }
 
-  validate(spirit, (error) => {
-    if (conditions.upsert(
-      spirit.status,
-      'Ready',
-      error ? 'False' : 'True',
-      error ? 'Error' : 'Valid',
-    )) {
-      client.updateStatus(spirit);
-    }
-  });
+  if (conditions.upsert(
+    spirit,
+    'Ready',
+    error ? 'False' : 'True',
+    error ? 'Error' : 'Valid',
+    error ? error : 'spirit is valid',
+  )) {
+    await client.updateStatus(spirit);
+  }
 };
 
 module.exports = {
-  make: (client, informer) => {
-    const reconcileFn = (obj) => reconcile(client, obj);
+  make: (client, informer, spiritsCache) => {
+    const reconcileFn = async (obj) => reconcile(client, spiritsCache, obj);
     informer.on('add', reconcileFn);
     informer.on('update', reconcileFn);
   },

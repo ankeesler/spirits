@@ -25,6 +25,9 @@ class Client {
     this._namespace = namespace;
   }
 
+  // TODO: set user-agent
+  // TODO: should we have raw* calls that do HTTP stuff, and then non raw calls that return the actual object?
+
   create(obj) {
     return this._client.createNamespacedCustomObject(this._group, this._version, this._namespace, this._resource, obj);
     // return fetch(this._baseUrl, {

@@ -33,6 +33,7 @@ describe('spirits controller', () => {
       spirit = {
         metadata: {
           name: 'some-name',
+          generation: 555,
         },
         spec: {
           stats: {
@@ -50,6 +51,8 @@ describe('spirits controller', () => {
           type: 'Ready',
           status: 'True',
           reason: 'Valid',
+          message: 'spirit is valid',
+          observedGeneration: 555,
           lastTransitionTime: 'some-date',
         },
       ];
@@ -62,6 +65,7 @@ describe('spirits controller', () => {
       spirit = {
         metadata: {
           name: 'some-name',
+          generation: 555,
         },
         spec: {
           stats: {
@@ -74,6 +78,8 @@ describe('spirits controller', () => {
               type: 'Ready',
               status: 'True',
               reason: 'Valid',
+              message: 'spirit is valid',
+              observedGeneration: 555,
               lastTransitionTime: 'some-date',
             },
           ]
