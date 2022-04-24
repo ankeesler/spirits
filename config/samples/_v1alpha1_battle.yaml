@@ -1,0 +1,6 @@
+apiVersion: spirits.dev/v1alpha1
+kind: Battle
+metadata:
+  name: battle-sample
+spec:
+  # TODO(user): Add fields here

@@ -1,0 +1,24 @@
+# permissions for end users to edit spirits.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spirit-editor-role
+rules:
+- apiGroups:
+  - spirits.dev
+  resources:
+  - spirits
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - spirits.dev
+  resources:
+  - spirits/status
+  verbs:
+  - get
