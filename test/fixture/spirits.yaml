@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spirits-test
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits-test
+  name: spirit-a
+spec:
+  stats:
+    health: 3
+    power: 2
+    armor: 1
+    agility: 1
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits-test
+  name: spirit-b
+spec:
+  stats:
+    health: 4
+    power: 1
+    armor: 2
+    agility: 1
+---
+apiVersion: spirits.dev/v1alpha1
+kind: Battle
+metadata:
+  namespace: spirits-test
+  name: the-battle
+spec:
+  spirits: ["spirit-a", "spirit-b"]
