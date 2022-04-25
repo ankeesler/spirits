@@ -58,30 +58,29 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	var spirit spiritsdevv1alpha1.Spirit
 	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
 		if k8serrors.IsNotFound(err) {
+			// TODO: this doesn't work across namespaces
 			r.SpiritsCache.Delete(req.Name)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, fmt.Errorf("could not get spirit: %w", err)
 	}
 
-	updateFunc := func() error {
+	// Update spirit
+	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &spirit, func() error {
 		// Update conditions on current spirit status
-		spirit.Status.Conditions = []metav1.Condition{}
-		spirit.Status.Conditions = append(spirit.Status.Conditions, r.readyInternalSpirits(ctx, log, &spirit))
+		spirit.Status.Conditions = []metav1.Condition{
+			newCondition(&spirit, "Ready", r.readySpirit(ctx, log, &spirit)),
+		}
 
 		// Update spirit phase
-		spirit.Status.Phase = getPhase(&spirit)
+		spirit.Status.Phase = getPhase(spirit.Status.Conditions)
 
 		return nil
+	}); err != nil {
+		return ctrl.Result{}, fmt.Errorf("could not patch sprit: %w", err)
 	}
 
-	// Update spirit
-	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &spirit, updateFunc); err != nil {
-		log.Error(err, "could not patch spirit")
-		return ctrl.Result{}, nil
-	}
-
-	log.Info("reconciled spirit", "namespace", req.Namespace, "name", req.Name)
+	log.Info("reconciled spirit")
 
 	return ctrl.Result{}, nil
 }
@@ -93,28 +92,32 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *SpiritReconciler) readyInternalSpirits(
+func (r *SpiritReconciler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
 	spirit *spiritsdevv1alpha1.Spirit,
-) metav1.Condition {
-	const conditionType = "Ready"
-
+) error {
 	// Convert to internal spirit
 	internalSpirit, err := toInternalSpirit(
 		spirit,
 		r.Rand,
 		func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spiritpkg.Action, error) {
 			// TODO: implement human intelligence
+			// battleName := battleNameFromContext(ctx)
+			// action, err := r.ActionsCache.Get(battleName, s.Name)
+			// if err != nil {
+			//   return nil, fmt.Errorf("could not get action from cache: %w", err)
+			// }
+			// return action, nil
 			return action.Attack(), nil
 		},
 	)
 	if err != nil {
-		return newCondition(spirit, conditionType, fmt.Errorf("could not convert to internal spirit: %w", err))
+		return fmt.Errorf("could not convert to internal spirit: %w", err)
 	}
 
 	// Store in cache
 	r.SpiritsCache.Store(spirit.Name, internalSpirit)
 
-	return newCondition(spirit, conditionType, nil)
+	return nil
 }

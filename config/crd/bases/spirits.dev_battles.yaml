@@ -18,7 +18,7 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.status.phase
+    - jsonPath: .status.phase
       name: Phase
       type: string
     name: v1alpha1
@@ -55,7 +55,7 @@ spec:
             description: BattleStatus defines the observed state of Battle
             properties:
               conditions:
-                description: Conditions represents the observations of a Spirit's
+                description: Conditions represents the observations of a Battle's
                   current state
                 items:
                   description: "Condition contains details for one aspect of the current
@@ -127,6 +127,12 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
+              inBattleSpirits:
+                description: InBattleSpirits holds the names of the Spirit's that
+                  are participating in this Battle
+                items:
+                  type: string
+                type: array
               phase:
                 default: Pending
                 description: Phase summarizes the overall status of the Battle
@@ -135,6 +141,8 @@ spec:
                 - Ready
                 - Error
                 type: string
+            required:
+            - inBattleSpirits
             type: object
         type: object
     served: true

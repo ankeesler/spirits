@@ -62,6 +62,7 @@ type SpiritSpec struct {
 	Stats SpiritStats `json:"stats"`
 
 	// Actions are the list of actions that this Spirit can perform
+	// +kubebuilder:default={attack}
 	// +optional
 	Actions []string `json:"actions"`
 
@@ -91,7 +92,7 @@ type SpiritStatus struct {
 
 // Spirit is the Schema for the spirits API
 // +kubebuilder:resource:categories=spiritsworld
-// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.spec.status.phase`
+// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 // +kubebuilder:printcolumn:name="Health",type=string,JSONPath=`.spec.stats.health`
 type Spirit struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -99,12 +100,6 @@ type Spirit struct {
 
 	Spec   SpiritSpec   `json:"spec,omitempty"`
 	Status SpiritStatus `json:"status,omitempty"`
-}
-
-var _ Object = &Spirit{}
-
-func (b *Spirit) Conditions() *[]metav1.Condition {
-	return &b.Status.Conditions
 }
 
 //+kubebuilder:object:root=true

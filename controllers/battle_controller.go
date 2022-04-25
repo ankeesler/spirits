@@ -18,8 +18,8 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	spiritsdevv1alpha1 "github.com/ankeesler/spirits/api/v1alpha1"
+	battlepkg "github.com/ankeesler/spirits/internal/battle"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	"github.com/go-logr/logr"
 )
@@ -60,35 +61,30 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	var battle spiritsdevv1alpha1.Battle
 	if err := r.Get(ctx, req.NamespacedName, &battle); err != nil {
 		if k8serrors.IsNotFound(err) {
-			internalBattle, ok := r.BattlesCache.LoadAndDelete(req.Name)
-			if ok {
-				internalBattle.Stop()
-			}
+			// TODO: cancel battle
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, fmt.Errorf("could not get battle: %w", err)
 	}
 
-	updateFunc := func() error {
+	// Update battle
+	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &battle, func() error {
 		// Update conditions on current battle status
-		battle.Status.Conditions = []metav1.Condition{}
-		internalSpirits, condition := r.readyInternalSpirits(ctx, log, &battle)
-		battle.Status.Conditions = append(battle.Status.Conditions, condition)
-		battle.Status.Conditions = append(battle.Status.Conditions, r.progressBattle(ctx, log, &battle, internalSpirits))
+		battle.Status.Conditions = []metav1.Condition{
+			newCondition(&battle, "Ready", r.readySpirits(ctx, log, &battle)),
+			newCondition(&battle, "Progressing", r.progressBattle(ctx, log, &battle)),
+		}
 
 		// Update battle phase
-		battle.Status.Phase = getPhase(&battle)
+		battle.Status.Phase = getPhase(battle.Status.Conditions)
 
 		return nil
+	}); err != nil {
+		log.Info("battle", "battle", battle)
+		return ctrl.Result{}, fmt.Errorf("could not patch battle: %w", err)
 	}
 
-	// Update battle
-	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &battle, updateFunc); err != nil {
-		log.Error(err, "could not patch spirit")
-		return ctrl.Result{}, nil
-	}
-
-	log.Info("reconciled battle", "namespace", req.Namespace, "name", req.Name)
+	log.Info("reconciled battle")
 
 	return ctrl.Result{}, nil
 }
@@ -102,55 +98,179 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *BattleReconciler) readyInternalSpirits(
+func (r *BattleReconciler) readySpirits(
 	ctx context.Context,
 	log logr.Logger,
 	battle *spiritsdevv1alpha1.Battle,
-) ([]*spiritpkg.Spirit, metav1.Condition) {
-	const conditionType = "Ready"
+) error {
+	// TODO: what happens if someone changes the model spirit...
+	// TODO: if we change the in-battle spirit, it remains the same
 
-	// Ensure internal spirits are in the cache.
-	internalSpirits, err := r.getInternalSpirits(battle)
-	if err != nil {
-		return nil, newCondition(battle, conditionType, fmt.Errorf("could not find internal spirits: %w", err))
+	// Reinitialize the in-battle spirits list
+	battle.Status.InBattleSpirits = []string{}
+
+	// Get internal spirits from cache
+	internalSpirits, ok := r.getInternalSpirits(battle.Spec.Spirits)
+	if !ok {
+		return fmt.Errorf("could not find internal spirits %s", battle.Spec.Spirits)
 	}
 
-	return internalSpirits, newCondition(battle, conditionType, nil)
-}
+	// Generate the names of the in-battle external spirits for this battle
+	for _, internalSpirit := range internalSpirits {
+		battle.Status.InBattleSpirits = append(battle.Status.InBattleSpirits, fmt.Sprintf("%s-%s", battle.Name, internalSpirit.Name))
+	}
 
-func (r *BattleReconciler) getInternalSpirits(battle *spiritsdevv1alpha1.Battle) ([]*spiritpkg.Spirit, error) {
-	var internalSpirits []*spiritpkg.Spirit
-	for _, spiritName := range battle.Spec.Spirits {
-		internalSpirit, ok := r.SpiritsCache.Load(spiritName)
-		if !ok {
-			return nil, fmt.Errorf("unknown spirit %q", spiritName)
+	// Get the internal in-battle spirits, if they exist
+	internalInBattleSpirits, _ := r.getInternalSpirits(battle.Status.InBattleSpirits)
+
+	// For each internal spirit in the battle, ensure we have an external in-battle spirit
+	for i := range internalSpirits {
+		// If the in-battle internal spirit already exists, copy from that
+		// Otherwise, copy from the model spirit
+		internalInBattleSpirit := internalInBattleSpirits[i]
+		if internalInBattleSpirit == nil {
+			internalInBattleSpirit = internalSpirits[i]
 		}
-		internalSpirits = append(internalSpirits, internalSpirit)
+
+		// Declare in-battle external spirit
+		externalInBattleSpirit := &spiritsdevv1alpha1.Spirit{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: battle.Namespace,
+				Name:      battle.Status.InBattleSpirits[i],
+			},
+		}
+
+		updateFunc := func() error {
+			// Convert the internal spirit to an external spirit
+			externalInBattleSpiritFromInternalInBattleSpirit, err := fromInternalSpirit(internalInBattleSpirit)
+			if err != nil {
+				return fmt.Errorf("could not convert internal spirit to in-battle external spirit: %w", err)
+			}
+			externalInBattleSpirit.Spec = externalInBattleSpiritFromInternalInBattleSpirit.Spec
+
+			// Update the external spirit object so we can track it against this battle
+			externalInBattleSpirit.ObjectMeta.Labels = map[string]string{
+				"spirits.dev/battle-name": battle.Name,
+			}
+			externalInBattleSpirit.ObjectMeta.OwnerReferences = []metav1.OwnerReference{
+				*metav1.NewControllerRef(battle, spiritsdevv1alpha1.SchemeBuilder.GroupVersion.WithKind("Battle")),
+			}
+
+			return nil
+		}
+
+		// Create or patch the in-battle external spirit
+		if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalInBattleSpirit, updateFunc); err != nil {
+			return fmt.Errorf("cannot create or update external in-battle spirit %s: %w", externalInBattleSpirit.Name, err)
+		}
 	}
-	return internalSpirits, nil
+
+	return nil
 }
 
 func (r *BattleReconciler) progressBattle(
 	ctx context.Context,
 	log logr.Logger,
 	battle *spiritsdevv1alpha1.Battle,
-	internalSpirits []*spiritpkg.Spirit,
-) metav1.Condition {
-	const conditionType = "Progressing"
-
-	ready := meta.IsStatusConditionTrue(battle.Status.Conditions, "Ready")
-	started := meta.IsStatusConditionTrue(battle.Status.Conditions, conditionType)
-
-	if !ready && started {
-		// A precondition is wrong, but the battle is running. Stop the battle.
-		return newCondition(battle, conditionType, errors.New("battle is not ready"))
+) error {
+	// Get internal in-battle spirits from cache
+	internalInBattleSpirits, ok := r.getInternalSpirits(battle.Status.InBattleSpirits)
+	if !ok {
+		return fmt.Errorf("could not find internal in-battle spirits %s", battle.Status.InBattleSpirits)
 	}
 
-	if ready && !started {
-		// All preconditions are met, but the battle is not running. Start the battle.
-		return newCondition(battle, conditionType, nil)
+	if r.loadInternalBattleCancel(battle) == nil {
+		// No battle exists - let's start it
+		ctx, cancel := context.WithCancel(context.Background())
+		r.storeInternalBattleCancel(battle, cancel)
+		battlepkg.Run(ctx, internalInBattleSpirits, func(internalSpirits []*spiritpkg.Spirit, err error) {
+			log.V(1).Info("battle callback", "spirits", internalSpirits, "error", err)
+
+			// Redeclare battle so that we don't hold onto old battle
+			battle := spiritsdevv1alpha1.Battle{
+				ObjectMeta: metav1.ObjectMeta{
+					Namespace: battle.Namespace,
+					Name:      battle.Name,
+				},
+			}
+
+			// If there is an error, update the battle condition
+			if err != nil {
+				r.setBattleError(ctx, log, &battle, err)
+				return
+			}
+
+			// Otherwise, update the in-battle external spirits
+			for _, internalSpirit := range internalSpirits {
+				externalSpirit := &spiritsdevv1alpha1.Spirit{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: battle.Namespace,
+						Name:      internalSpirit.Name,
+					},
+				}
+				if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalSpirit, func() error {
+					var err error
+					externalSpirit, err = fromInternalSpirit(internalSpirit)
+					if err != nil {
+						return fmt.Errorf("cannot convert in-battle internal spirit to external spirit: %w", err)
+					}
+					return nil
+				}); err != nil {
+					r.setBattleError(ctx, log, &battle, err)
+					return
+				}
+
+				log.V(1).Info("updated external spirit from callback", "spirit", externalSpirit)
+			}
+		})
 	}
 
-	// If we get here, then we are already in the correct state. So no updated needed.
-	return *meta.FindStatusCondition(battle.Status.Conditions, conditionType)
+	return nil
+}
+
+func (r *BattleReconciler) getInternalSpirits(spiritNames []string) ([]*spiritpkg.Spirit, bool) {
+	var internalSpirits []*spiritpkg.Spirit
+	found := 0
+	for _, spiritName := range spiritNames {
+		internalSpirit, ok := r.SpiritsCache.Load(spiritName)
+		if ok {
+			internalSpirits = append(internalSpirits, internalSpirit.(*spiritpkg.Spirit))
+			found++
+		} else {
+			internalSpirits = append(internalSpirits, nil)
+		}
+	}
+	return internalSpirits, found > 0 && found == len(spiritNames)
+}
+
+func (r *BattleReconciler) loadInternalBattleCancel(battle *spiritsdevv1alpha1.Battle) context.CancelFunc {
+	cancel, ok := r.BattlesCache.Load(getBattleCacheKey(battle))
+	if !ok {
+		return nil
+	}
+	return cancel.(context.CancelFunc)
+}
+
+func (r *BattleReconciler) storeInternalBattleCancel(battle *spiritsdevv1alpha1.Battle, cancel context.CancelFunc) {
+	r.BattlesCache.Store(getBattleCacheKey(battle), cancel)
+}
+
+func (r *BattleReconciler) setBattleError(
+	ctx context.Context,
+	log logr.Logger,
+	battle *spiritsdevv1alpha1.Battle,
+	err error,
+) {
+	log.Error(err, "battle error")
+
+	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
+		meta.SetStatusCondition(&battle.Status.Conditions, newCondition(battle, "Progressing", err))
+		return nil
+	}); err != nil {
+		log.Error(err, "could not set battle error")
+	}
+}
+
+func getBattleCacheKey(battle *spiritsdevv1alpha1.Battle) string {
+	return fmt.Sprintf("%s-%s-%s", battle.Namespace, battle.Name, strings.Join(battle.Status.InBattleSpirits, "-"))
 }

@@ -1,6 +1,7 @@
+---
 apiVersion: spirits.dev/v1alpha1
 kind: Battle
 metadata:
-  name: battle-sample
+  name: the-battle
 spec:
   spirits: ["spirit-a", "spirit-b"]

@@ -13,24 +13,10 @@ import (
 )
 
 type actions struct {
-	ids []string
 	spirit.Action
-}
 
-func toInternalSpirits(
-	apiSpirits []*spiritsdevv1alpha1.Spirit,
-	r *rand.Rand,
-	humanActionFunc func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spirit.Action, error),
-) ([]*spirit.Spirit, error) {
-	internalSpirits := make([]*spirit.Spirit, len(apiSpirits))
-	var err error
-	for i := range apiSpirits {
-		internalSpirits[i], err = toInternalSpirit(apiSpirits[i], r, humanActionFunc)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return internalSpirits, nil
+	ids          []string
+	intelligence spiritsdevv1alpha1.SpiritIntelligence
 }
 
 func toInternalSpirit(apiSpirit *spiritsdevv1alpha1.Spirit, r *rand.Rand, humanActionFunc func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spirit.Action, error)) (*spirit.Spirit, error) {
@@ -98,19 +84,7 @@ func toInternalAction(
 		return nil, fmt.Errorf("unrecognized intelligence: %q", intelligence)
 	}
 
-	return &actions{ids: ids, Action: internalAction}, nil
-}
-
-func fromInternalSpirits(internalSpirits []*spirit.Spirit) ([]*spiritsdevv1alpha1.Spirit, error) {
-	apiSpirits := make([]*spiritsdevv1alpha1.Spirit, len(internalSpirits))
-	for i := range apiSpirits {
-		var err error
-		apiSpirits[i], err = fromInternalSpirit(internalSpirits[i])
-		if err != nil {
-			return nil, fmt.Errorf("could not convert from internal spirit %s: %w", internalSpirits[i].Name, err)
-		}
-	}
-	return apiSpirits, nil
+	return &actions{Action: internalAction, ids: ids, intelligence: intelligence}, nil
 }
 
 func fromInternalSpirit(internalSpirit *spirit.Spirit) (*spiritsdevv1alpha1.Spirit, error) {
@@ -130,7 +104,8 @@ func fromInternalSpirit(internalSpirit *spirit.Spirit) (*spiritsdevv1alpha1.Spir
 				Agility: internalSpirit.Agility,
 				Armor:   internalSpirit.Armor,
 			},
-			Actions: apiActions.ids,
+			Actions:      apiActions.ids,
+			Intelligence: apiActions.intelligence,
 		},
 	}, nil
 }

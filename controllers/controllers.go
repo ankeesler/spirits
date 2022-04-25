@@ -8,10 +8,16 @@ import (
 	spiritsdevv1alpha1 "github.com/ankeesler/spirits/api/v1alpha1"
 )
 
-func newCondition(obj spiritsdevv1alpha1.Object, teyep string, err error) metav1.Condition {
+func newCondition(
+	obj metav1.Object,
+	teyep string,
+	err error,
+) metav1.Condition {
 	condition := metav1.Condition{
 		Type:               teyep,
 		Status:             metav1.ConditionTrue,
+		Reason:             "Success",
+		Message:            "success",
 		ObservedGeneration: obj.GetGeneration(),
 		LastTransitionTime: metav1.NewTime(time.Now()),
 	}
@@ -23,9 +29,9 @@ func newCondition(obj spiritsdevv1alpha1.Object, teyep string, err error) metav1
 	return condition
 }
 
-func getPhase(obj spiritsdevv1alpha1.Object) spiritsdevv1alpha1.Phase {
-	for _, condition := range *obj.Conditions() {
-		if condition.Status == metav1.ConditionFalse {
+func getPhase(conditions []metav1.Condition) spiritsdevv1alpha1.Phase {
+	for i := range conditions {
+		if conditions[i].Status == metav1.ConditionFalse {
 			return spiritsdevv1alpha1.PhaseError
 		}
 	}

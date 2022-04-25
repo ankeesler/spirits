@@ -35,12 +35,15 @@ type BattleStatus struct {
 	// +kubebuilder:validation:Enum=Pending;Ready;Error
 	Phase Phase `json:"phase,omitempty"`
 
-	// Conditions represents the observations of a Spirit's current state
+	// Conditions represents the observations of a Battle's current state
 	// +patchMergeKey=type
 	// +patchStrategy=merge
 	// +listType=map
 	// +listMapKey=type
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+
+	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
+	InBattleSpirits []string `json:"inBattleSpirits"`
 }
 
 //+kubebuilder:object:root=true
@@ -48,19 +51,13 @@ type BattleStatus struct {
 
 // Battle is the Schema for the battles API
 // +kubebuilder:resource:categories=spiritsworld
-// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.spec.status.phase`
+// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 type Battle struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	Spec   BattleSpec   `json:"spec,omitempty"`
 	Status BattleStatus `json:"status,omitempty"`
-}
-
-var _ Object = &Battle{}
-
-func (b *Battle) Conditions() *[]metav1.Condition {
-	return &b.Status.Conditions
 }
 
 //+kubebuilder:object:root=true
