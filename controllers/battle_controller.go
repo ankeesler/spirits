@@ -104,7 +104,8 @@ func (r *BattleReconciler) readySpirits(
 	battle *spiritsdevv1alpha1.Battle,
 ) error {
 	// TODO: what happens if someone changes the model spirit...
-	// TODO: if we change the in-battle spirit, it remains the same
+	// TODO: if we change the in-battle spirit, it remains the same...
+	// TODO: if someone lists the same spirits in the battle, then there is gonna be an issue
 
 	// Reinitialize the in-battle spirits list
 	battle.Status.InBattleSpirits = []string{}
@@ -173,6 +174,9 @@ func (r *BattleReconciler) progressBattle(
 	log logr.Logger,
 	battle *spiritsdevv1alpha1.Battle,
 ) error {
+	// TODO: if we run a battle and then delete the in-battle spirits, the battle doesn't get run again
+	// Almost like the in-battle internal spirits should be the controller of the in-battle external spirits...
+
 	// Get internal in-battle spirits from cache
 	internalInBattleSpirits, ok := r.getInternalSpirits(battle.Status.InBattleSpirits)
 	if !ok {
@@ -183,7 +187,9 @@ func (r *BattleReconciler) progressBattle(
 		// No battle exists - let's start it
 		ctx, cancel := context.WithCancel(context.Background())
 		r.storeInternalBattleCancel(battle, cancel)
-		battlepkg.Run(ctx, internalInBattleSpirits, func(internalSpirits []*spiritpkg.Spirit, err error) {
+
+		// TODO: after this finishes, we should probably set a status saying the battle is complete
+		go battlepkg.Run(ctx, internalInBattleSpirits, func(internalSpirits []*spiritpkg.Spirit, err error) {
 			log.V(1).Info("battle callback", "spirits", internalSpirits, "error", err)
 
 			// Redeclare battle so that we don't hold onto old battle
@@ -202,25 +208,25 @@ func (r *BattleReconciler) progressBattle(
 
 			// Otherwise, update the in-battle external spirits
 			for _, internalSpirit := range internalSpirits {
-				externalSpirit := &spiritsdevv1alpha1.Spirit{
+				externalSpirit := spiritsdevv1alpha1.Spirit{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: battle.Namespace,
 						Name:      internalSpirit.Name,
 					},
 				}
-				if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalSpirit, func() error {
-					var err error
-					externalSpirit, err = fromInternalSpirit(internalSpirit)
+				if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &externalSpirit, func() error {
+					externalSpiritFromInternalSpirit, err := fromInternalSpirit(internalSpirit)
 					if err != nil {
 						return fmt.Errorf("cannot convert in-battle internal spirit to external spirit: %w", err)
 					}
+					externalSpirit.Spec = externalSpiritFromInternalSpirit.Spec
 					return nil
 				}); err != nil {
 					r.setBattleError(ctx, log, &battle, err)
 					return
 				}
 
-				log.V(1).Info("updated external spirit from callback", "spirit", externalSpirit)
+				log.V(1).Info("updated external spirit from callback", "spirit", &externalSpirit)
 			}
 		})
 	}
@@ -263,6 +269,7 @@ func (r *BattleReconciler) setBattleError(
 ) {
 	log.Error(err, "battle error")
 
+	// TODO: I think this gets overwritten immediately
 	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
 		meta.SetStatusCondition(&battle.Status.Conditions, newCondition(battle, "Progressing", err))
 		return nil
