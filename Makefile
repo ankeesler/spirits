@@ -26,7 +26,12 @@ generate: $(GENERATED_DIRS)
 
 GENERATED_API=pkg/generated/api.json
 
-OPENAPI_GENERATE_PREFIX=echo run docker... -o $@ -i $< -g go
+OPENAPI_GENERATE_PREFIX=\
+  docker run --rm -v $(shell pwd):/local openapitools/openapi-generator-cli generate \
+    -v \
+    -i /local/$< \
+    -o /local/$@ \
+    -g
 
 $(GENERATED_API): cmd/genapi
 	go run ./$< >$@
@@ -41,7 +46,7 @@ script/generated/cli: $(GENERATED_API)
 	$(OPENAPI_GENERATE_PREFIX) bash
 
 doc/generated/adoc: $(GENERATED_API)
-	$(OPENAPI_GENERATE_PREFIX) adoc
+	$(OPENAPI_GENERATE_PREFIX) asciidoc
 
 doc/generated/html: $(GENERATED_API)
 	$(OPENAPI_GENERATE_PREFIX) html
