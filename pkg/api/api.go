@@ -8,16 +8,13 @@ import (
 //go:embed generated/api.json
 var JSON string
 
+var Object map[string]interface{}
+
 var Version string
 
 func init() {
-	var openapi struct {
-		Info struct {
-			Version string `json:"version"`
-		} `json:"info"`
-	}
-	if err := json.Unmarshal([]byte(JSON), &openapi); err != nil {
+	if err := json.Unmarshal([]byte(JSON), &Object); err != nil {
 		panic(err)
 	}
-	Version = openapi.Info.Version
+	Version = Object["info"].(map[string]interface{})["version"].(string)
 }

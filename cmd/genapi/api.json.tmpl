@@ -11,6 +11,28 @@
       "description": "The hosted spirits gameserver"
     }
   ],
+  "tags": [
+    {
+      "name": "actions",
+      "description": "Pertaining to Action's"
+    },
+    {
+      "name": "battles",
+      "description": "Pertaining to Battle's"
+    },
+    {
+      "name": "sessions",
+      "description": "Pertaining to Session's"
+    },
+    {
+      "name": "spirits",
+      "description": "Pertaining to Spirit's"
+    },
+    {
+      "name": "teams",
+      "description": "Pertaining to Team's"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
@@ -54,6 +76,7 @@
       {{ if eq "create" $verb }}
       "post": {
         "description": "Create a {{ $path.Singular }}",
+        "operationId": "create{{ $path.OperationID false }}",
         "requestBody": {
           "description": "{{ $path.Singular }} to create",
           "content": {
@@ -85,12 +108,19 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
       {{ if eq "update" $verb }}
       "put": {
         "description": "Update {{ $path.Singular }}",
+        "operationId": "update{{ $path.OperationID false }}",
         "requestBody": {
           "description": "{{ $path.Singular }} to update",
           "content": {
@@ -122,12 +152,19 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
       {{ if eq "list" $verb }}
       "get": {
         "description": "List {{ $path.Plural }}",
+        "operationId": "list{{ $path.OperationID true }}",
         "responses": {
           "200": {
             "description": "Successful {{ $path.Plural }} list",
@@ -149,12 +186,19 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
       {{ if eq "get" $verb }}
       "get": {
         "description": "Get {{ $path.Singular }}",
+        "operationId": "get{{ $path.OperationID false }}",
         "responses": {
           "200": {
             "description": "Successful {{ $path.Singular }} get",
@@ -176,12 +220,19 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
       {{ if eq "watch" $verb }}
       "get": {
         "description": "Watch {{ $path.Singular }}",
+        "operationId": "watch{{ $path.OperationID false }}",
         "responses": {
           "200": {
             "description": "Successful {{ $path.Singular }} watch",
@@ -203,12 +254,19 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
       {{ if eq "delete" $verb }}
       "delete": {
         "description": "Watch {{ $path.Singular }}",
+        "operationId": "delete{{ $path.OperationID false }}",
         "responses": {
           "200": {
             "description": "Successful {{ $path.Singular }} delete",
@@ -230,6 +288,12 @@
               {{ end }}
             ]
           }
+        ],
+        "tags": [
+          {{ range $m, $tag := $path.Tags }}
+          {{ if gt $m 0 }},{{end}}
+          "{{ $tag }}"
+          {{ end }}
         ]
       }
       {{ end }}
@@ -239,6 +303,40 @@
   },
   "components": {
     "schemas": {
+      "Action": {
+        "type": "object",
+        "description": "A reference to a Spirit's Action",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of a Spirit's Action",
+            "minLength": 1
+          }
+        }
+      },
+      "Battle": {
+        "type": "object",
+        "description": "A skirmish amongst Spirit's",
+        "required": ["name", "spirits"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Battle",
+            "minLength": 1
+          },
+          "spirits": {
+            "type": "array",
+            "description": "The spirits involved in this Battle.",
+            "minLength": 2,
+            "maxLength": 2,
+            "items": {
+              "type": "string",
+              "description": "A name of a Spirit object involved in this Battle"
+            }
+          }
+        }
+      },
       "Session": {
         "type": "object",
         "description": "An isolated collection of Battle's and Team's",
@@ -271,18 +369,6 @@
                 }
               }
             }
-          }
-        }
-      },
-      "Team": {
-        "type": "object",
-        "description": "A collection Spirit's",
-        "required": ["name"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The unique name of this Team",
-            "minLength": 1
           }
         }
       },
@@ -346,36 +432,14 @@
           }
         }
       },
-      "Battle": {
+      "Team": {
         "type": "object",
-        "description": "A skirmish amongst Spirit's",
-        "required": ["name", "spirits"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The unique name of this Battle",
-            "minLength": 1
-          },
-          "spirits": {
-            "type": "array",
-            "description": "The spirits involved in this Battle.",
-            "minLength": 2,
-            "maxLength": 2,
-            "items": {
-              "type": "string",
-              "description": "A name of a Spirit object involved in this Battle"
-            }
-          }
-        }
-      },
-      "Action": {
-        "type": "object",
-        "description": "A reference to a Spirit's Action",
+        "description": "A collection Spirit's",
         "required": ["name"],
         "properties": {
           "name": {
             "type": "string",
-            "description": "The name of a Spirit's Action",
+            "description": "The unique name of this Team",
             "minLength": 1
           }
         }

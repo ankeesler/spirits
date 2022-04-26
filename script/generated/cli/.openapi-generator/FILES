@@ -5,11 +5,16 @@ _client.sh
 client.sh
 client.sh.bash-completion
 docs/Action.md
+docs/ActionsApi.md
 docs/Battle.md
+docs/BattlesApi.md
 docs/DefaultApi.md
 docs/Session.md
 docs/SessionAuth.md
 docs/SessionAuthOidc.md
+docs/SessionsApi.md
 docs/Spirit.md
 docs/SpiritStats.md
+docs/SpiritsApi.md
 docs/Team.md
+docs/TeamsApi.md

@@ -11,6 +11,28 @@
       "description": "The hosted spirits gameserver"
     }
   ],
+  "tags": [
+    {
+      "name": "actions",
+      "description": "Pertaining to Action's"
+    },
+    {
+      "name": "battles",
+      "description": "Pertaining to Battle's"
+    },
+    {
+      "name": "sessions",
+      "description": "Pertaining to Session's"
+    },
+    {
+      "name": "spirits",
+      "description": "Pertaining to Spirit's"
+    },
+    {
+      "name": "teams",
+      "description": "Pertaining to Team's"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
@@ -34,6 +56,7 @@
       "parameters": [],
       "post": {
         "description": "Create a Session",
+        "operationId": "createSessions",
         "requestBody": {
           "description": "Session to create",
           "content": {
@@ -59,16 +82,20 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions.write"
+              "spirits:sessions.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions"
         ]
       },
       "get": {
-        "description": "Watch Session",
+        "description": "List Sessions",
+        "operationId": "listSessions",
         "responses": {
           "200": {
-            "description": "Successful Session watch",
+            "description": "Successful Sessions list",
             "content": {
               "application/json": {
                 "schema": {
@@ -81,10 +108,13 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions.write",
-              "spirits::sessions.read"
+              "spirits:sessions.write",
+              "spirits:sessions.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions"
         ]
       }
     },
@@ -104,6 +134,7 @@
       ],
       "put": {
         "description": "Update Session",
+        "operationId": "updateSessions",
         "requestBody": {
           "description": "Session to update",
           "content": {
@@ -129,16 +160,20 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions.write"
+              "spirits:sessions.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions"
         ]
       },
       "get": {
-        "description": "Watch Session",
+        "description": "Get Session",
+        "operationId": "getSessions",
         "responses": {
           "200": {
-            "description": "Successful Session watch",
+            "description": "Successful Session get",
             "content": {
               "application/json": {
                 "schema": {
@@ -151,14 +186,18 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions.write",
-              "spirits::sessions.read"
+              "spirits:sessions.write",
+              "spirits:sessions.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions"
         ]
       },
       "delete": {
         "description": "Watch Session",
+        "operationId": "deleteSessions",
         "responses": {
           "200": {
             "description": "Successful Session delete",
@@ -174,9 +213,12 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions.write"
+              "spirits:sessions.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions"
         ]
       }
     },
@@ -196,6 +238,7 @@
       ],
       "post": {
         "description": "Create a Team",
+        "operationId": "createSessionTeams",
         "requestBody": {
           "description": "Team to create",
           "content": {
@@ -221,16 +264,21 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams.write"
+              "spirits:sessions:teams.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams"
         ]
       },
       "get": {
-        "description": "Watch Team",
+        "description": "List Teams",
+        "operationId": "listSessionsTeams",
         "responses": {
           "200": {
-            "description": "Successful Team watch",
+            "description": "Successful Teams list",
             "content": {
               "application/json": {
                 "schema": {
@@ -243,10 +291,14 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams.write",
-              "spirits::sessions:teams.read"
+              "spirits:sessions:teams.write",
+              "spirits:sessions:teams.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams"
         ]
       }
     },
@@ -277,6 +329,7 @@
       ],
       "put": {
         "description": "Update Team",
+        "operationId": "updateSessionTeams",
         "requestBody": {
           "description": "Team to update",
           "content": {
@@ -302,16 +355,21 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams.write"
+              "spirits:sessions:teams.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams"
         ]
       },
       "get": {
-        "description": "Watch Team",
+        "description": "Get Team",
+        "operationId": "getSessionTeams",
         "responses": {
           "200": {
-            "description": "Successful Team watch",
+            "description": "Successful Team get",
             "content": {
               "application/json": {
                 "schema": {
@@ -324,14 +382,19 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams.write",
-              "spirits::sessions:teams.read"
+              "spirits:sessions:teams.write",
+              "spirits:sessions:teams.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams"
         ]
       },
       "delete": {
         "description": "Watch Team",
+        "operationId": "deleteSessionTeams",
         "responses": {
           "200": {
             "description": "Successful Team delete",
@@ -347,9 +410,13 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams.write"
+              "spirits:sessions:teams.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams"
         ]
       }
     },
@@ -380,6 +447,7 @@
       ],
       "post": {
         "description": "Create a Spirit",
+        "operationId": "createSessionTeamSpirits",
         "requestBody": {
           "description": "Spirit to create",
           "content": {
@@ -405,16 +473,22 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams:spirits.write"
+              "spirits:sessions:teams:spirits.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams",
+          "spirits"
         ]
       },
       "get": {
-        "description": "Watch Spirit",
+        "description": "List Spirits",
+        "operationId": "listSessionsTeamsSpirits",
         "responses": {
           "200": {
-            "description": "Successful Spirit watch",
+            "description": "Successful Spirits list",
             "content": {
               "application/json": {
                 "schema": {
@@ -427,10 +501,15 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams:spirits.write",
-              "spirits::sessions:teams:spirits.read"
+              "spirits:sessions:teams:spirits.write",
+              "spirits:sessions:teams:spirits.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams",
+          "spirits"
         ]
       }
     },
@@ -472,6 +551,7 @@
       ],
       "put": {
         "description": "Update Spirit",
+        "operationId": "updateSessionTeamSpirits",
         "requestBody": {
           "description": "Spirit to update",
           "content": {
@@ -497,16 +577,22 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams:spirits.write"
+              "spirits:sessions:teams:spirits.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams",
+          "spirits"
         ]
       },
       "get": {
-        "description": "Watch Spirit",
+        "description": "Get Spirit",
+        "operationId": "getSessionTeamSpirits",
         "responses": {
           "200": {
-            "description": "Successful Spirit watch",
+            "description": "Successful Spirit get",
             "content": {
               "application/json": {
                 "schema": {
@@ -519,14 +605,20 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams:spirits.write",
-              "spirits::sessions:teams:spirits.read"
+              "spirits:sessions:teams:spirits.write",
+              "spirits:sessions:teams:spirits.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams",
+          "spirits"
         ]
       },
       "delete": {
         "description": "Watch Spirit",
+        "operationId": "deleteSessionTeamSpirits",
         "responses": {
           "200": {
             "description": "Successful Spirit delete",
@@ -542,9 +634,14 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:teams:spirits.write"
+              "spirits:sessions:teams:spirits.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "teams",
+          "spirits"
         ]
       }
     },
@@ -564,6 +661,7 @@
       ],
       "post": {
         "description": "Create a Battle",
+        "operationId": "createSessionBattles",
         "requestBody": {
           "description": "Battle to create",
           "content": {
@@ -589,16 +687,21 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles.write"
+              "spirits:sessions:battles.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles"
         ]
       },
       "get": {
-        "description": "Watch Battle",
+        "description": "List Battles",
+        "operationId": "listSessionsBattles",
         "responses": {
           "200": {
-            "description": "Successful Battle watch",
+            "description": "Successful Battles list",
             "content": {
               "application/json": {
                 "schema": {
@@ -611,10 +714,14 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles.write",
-              "spirits::sessions:battles.read"
+              "spirits:sessions:battles.write",
+              "spirits:sessions:battles.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles"
         ]
       }
     },
@@ -644,10 +751,11 @@
         }
       ],
       "get": {
-        "description": "Watch Battle",
+        "description": "Get Battle",
+        "operationId": "getSessionBattles",
         "responses": {
           "200": {
-            "description": "Successful Battle watch",
+            "description": "Successful Battle get",
             "content": {
               "application/json": {
                 "schema": {
@@ -660,14 +768,19 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles.write",
-              "spirits::sessions:battles.read"
+              "spirits:sessions:battles.write",
+              "spirits:sessions:battles.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles"
         ]
       },
       "delete": {
         "description": "Watch Battle",
+        "operationId": "deleteSessionBattles",
         "responses": {
           "200": {
             "description": "Successful Battle delete",
@@ -683,9 +796,13 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles.write"
+              "spirits:sessions:battles.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles"
         ]
       }
     },
@@ -715,10 +832,11 @@
         }
       ],
       "get": {
-        "description": "Watch Spirit",
+        "description": "List Spirits",
+        "operationId": "listSessionsBattlesSpirits",
         "responses": {
           "200": {
-            "description": "Successful Spirit watch",
+            "description": "Successful Spirits list",
             "content": {
               "application/json": {
                 "schema": {
@@ -731,10 +849,15 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles:spirits.write",
-              "spirits::sessions:battles:spirits.read"
+              "spirits:sessions:battles:spirits.write",
+              "spirits:sessions:battles:spirits.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles",
+          "spirits"
         ]
       }
     },
@@ -775,10 +898,11 @@
         }
       ],
       "get": {
-        "description": "Watch Spirit",
+        "description": "Get Spirit",
+        "operationId": "getSessionBattleSpirits",
         "responses": {
           "200": {
-            "description": "Successful Spirit watch",
+            "description": "Successful Spirit get",
             "content": {
               "application/json": {
                 "schema": {
@@ -791,10 +915,15 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles:spirits.write",
-              "spirits::sessions:battles:spirits.read"
+              "spirits:sessions:battles:spirits.write",
+              "spirits:sessions:battles:spirits.read"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles",
+          "spirits"
         ]
       }
     },
@@ -836,6 +965,7 @@
       ],
       "post": {
         "description": "Create a Action",
+        "operationId": "createSessionBattleSpiritActions",
         "requestBody": {
           "description": "Action to create",
           "content": {
@@ -861,15 +991,60 @@
         "security": [
           {
             "oidc": [
-              "spirits::sessions:battles:spirits:actions.write"
+              "spirits:sessions:battles:spirits:actions.write"
             ]
           }
+        ],
+        "tags": [
+          "sessions",
+          "battles",
+          "spirits",
+          "actions"
         ]
       }
     }
   },
   "components": {
     "schemas": {
+      "Action": {
+        "type": "object",
+        "description": "A reference to a Spirit's Action",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of a Spirit's Action",
+            "minLength": 1
+          }
+        }
+      },
+      "Battle": {
+        "type": "object",
+        "description": "A skirmish amongst Spirit's",
+        "required": [
+          "name",
+          "spirits"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Battle",
+            "minLength": 1
+          },
+          "spirits": {
+            "type": "array",
+            "description": "The spirits involved in this Battle.",
+            "minLength": 2,
+            "maxLength": 2,
+            "items": {
+              "type": "string",
+              "description": "A name of a Spirit object involved in this Battle"
+            }
+          }
+        }
+      },
       "Session": {
         "type": "object",
         "description": "An isolated collection of Battle's and Team's",
@@ -904,20 +1079,6 @@
                 }
               }
             }
-          }
-        }
-      },
-      "Team": {
-        "type": "object",
-        "description": "A collection Spirit's",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The unique name of this Team",
-            "minLength": 1
           }
         }
       },
@@ -988,41 +1149,16 @@
           }
         }
       },
-      "Battle": {
+      "Team": {
         "type": "object",
-        "description": "A skirmish amongst Spirit's",
-        "required": [
-          "name",
-          "spirits"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The unique name of this Battle",
-            "minLength": 1
-          },
-          "spirits": {
-            "type": "array",
-            "description": "The spirits involved in this Battle.",
-            "minLength": 2,
-            "maxLength": 2,
-            "items": {
-              "type": "string",
-              "description": "A name of a Spirit object involved in this Battle"
-            }
-          }
-        }
-      },
-      "Action": {
-        "type": "object",
-        "description": "A reference to a Spirit's Action",
+        "description": "A collection Spirit's",
         "required": [
           "name"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "The name of a Spirit's Action",
+            "description": "The unique name of this Team",
             "minLength": 1
           }
         }

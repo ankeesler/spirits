@@ -68,56 +68,108 @@ _()
     # The list of available operation in the REST service
     # It's modelled as an associative array for efficient key lookup
     declare -A operations
+    operations["createSessionBattleSpiritActions"]=1
+    operations["createSessionBattleSpiritActions"]=1
+    operations["createSessionBattles"]=1
+    operations["deleteSessionBattles"]=1
+    operations["getSessionBattleSpirits"]=1
+    operations["getSessionBattles"]=1
+    operations["listSessionsBattles"]=1
+    operations["listSessionsBattlesSpirits"]=1
     operations["rootGet"]=1
-    operations["sessionsGet"]=1
-    operations["sessionsPost"]=1
-    operations["sessionsSessionNameBattlesBattleNameDelete"]=1
-    operations["sessionsSessionNameBattlesBattleNameGet"]=1
-    operations["sessionsSessionNameBattlesBattleNameSpiritsGet"]=1
-    operations["sessionsSessionNameBattlesBattleNameSpiritsSpiritNameActionsPost"]=1
-    operations["sessionsSessionNameBattlesBattleNameSpiritsSpiritNameGet"]=1
-    operations["sessionsSessionNameBattlesGet"]=1
-    operations["sessionsSessionNameBattlesPost"]=1
-    operations["sessionsSessionNameDelete"]=1
-    operations["sessionsSessionNameGet"]=1
-    operations["sessionsSessionNamePut"]=1
-    operations["sessionsSessionNameTeamsGet"]=1
-    operations["sessionsSessionNameTeamsPost"]=1
-    operations["sessionsSessionNameTeamsTeamNameDelete"]=1
-    operations["sessionsSessionNameTeamsTeamNameGet"]=1
-    operations["sessionsSessionNameTeamsTeamNamePut"]=1
-    operations["sessionsSessionNameTeamsTeamNameSpiritsGet"]=1
-    operations["sessionsSessionNameTeamsTeamNameSpiritsPost"]=1
-    operations["sessionsSessionNameTeamsTeamNameSpiritsSpiritNameDelete"]=1
-    operations["sessionsSessionNameTeamsTeamNameSpiritsSpiritNameGet"]=1
-    operations["sessionsSessionNameTeamsTeamNameSpiritsSpiritNamePut"]=1
+    operations["createSessionBattleSpiritActions"]=1
+    operations["createSessionBattles"]=1
+    operations["createSessionTeamSpirits"]=1
+    operations["createSessionTeams"]=1
+    operations["createSessions"]=1
+    operations["deleteSessionBattles"]=1
+    operations["deleteSessionTeamSpirits"]=1
+    operations["deleteSessionTeams"]=1
+    operations["deleteSessions"]=1
+    operations["getSessionBattleSpirits"]=1
+    operations["getSessionBattles"]=1
+    operations["getSessionTeamSpirits"]=1
+    operations["getSessionTeams"]=1
+    operations["getSessions"]=1
+    operations["listSessions"]=1
+    operations["listSessionsBattles"]=1
+    operations["listSessionsBattlesSpirits"]=1
+    operations["listSessionsTeams"]=1
+    operations["listSessionsTeamsSpirits"]=1
+    operations["updateSessionTeamSpirits"]=1
+    operations["updateSessionTeams"]=1
+    operations["updateSessions"]=1
+    operations["createSessionBattleSpiritActions"]=1
+    operations["createSessionTeamSpirits"]=1
+    operations["deleteSessionTeamSpirits"]=1
+    operations["getSessionBattleSpirits"]=1
+    operations["getSessionTeamSpirits"]=1
+    operations["listSessionsBattlesSpirits"]=1
+    operations["listSessionsTeamsSpirits"]=1
+    operations["updateSessionTeamSpirits"]=1
+    operations["createSessionTeamSpirits"]=1
+    operations["createSessionTeams"]=1
+    operations["deleteSessionTeamSpirits"]=1
+    operations["deleteSessionTeams"]=1
+    operations["getSessionTeamSpirits"]=1
+    operations["getSessionTeams"]=1
+    operations["listSessionsTeams"]=1
+    operations["listSessionsTeamsSpirits"]=1
+    operations["updateSessionTeamSpirits"]=1
+    operations["updateSessionTeams"]=1
 
     # An associative array of operations to their parameters
     # Only include path, query and header parameters
     declare -A operation_parameters
+    operation_parameters["createSessionBattleSpiritActions"]="sessionName= battleName= spiritName= "
+    operation_parameters["createSessionBattleSpiritActions"]="sessionName= battleName= spiritName= "
+    operation_parameters["createSessionBattles"]="sessionName= "
+    operation_parameters["deleteSessionBattles"]="sessionName= battleName= "
+    operation_parameters["getSessionBattleSpirits"]="sessionName= battleName= spiritName= "
+    operation_parameters["getSessionBattles"]="sessionName= battleName= "
+    operation_parameters["listSessionsBattles"]="sessionName= "
+    operation_parameters["listSessionsBattlesSpirits"]="sessionName= battleName= "
     operation_parameters["rootGet"]=""
-    operation_parameters["sessionsGet"]=""
-    operation_parameters["sessionsPost"]=""
-    operation_parameters["sessionsSessionNameBattlesBattleNameDelete"]="sessionName= battleName= "
-    operation_parameters["sessionsSessionNameBattlesBattleNameGet"]="sessionName= battleName= "
-    operation_parameters["sessionsSessionNameBattlesBattleNameSpiritsGet"]="sessionName= battleName= "
-    operation_parameters["sessionsSessionNameBattlesBattleNameSpiritsSpiritNameActionsPost"]="sessionName= battleName= spiritName= "
-    operation_parameters["sessionsSessionNameBattlesBattleNameSpiritsSpiritNameGet"]="sessionName= battleName= spiritName= "
-    operation_parameters["sessionsSessionNameBattlesGet"]="sessionName= "
-    operation_parameters["sessionsSessionNameBattlesPost"]="sessionName= "
-    operation_parameters["sessionsSessionNameDelete"]="sessionName= "
-    operation_parameters["sessionsSessionNameGet"]="sessionName= "
-    operation_parameters["sessionsSessionNamePut"]="sessionName= "
-    operation_parameters["sessionsSessionNameTeamsGet"]="sessionName= "
-    operation_parameters["sessionsSessionNameTeamsPost"]="sessionName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameDelete"]="sessionName= teamName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameGet"]="sessionName= teamName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNamePut"]="sessionName= teamName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameSpiritsGet"]="sessionName= teamName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameSpiritsPost"]="sessionName= teamName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameSpiritsSpiritNameDelete"]="sessionName= teamName= spiritName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameSpiritsSpiritNameGet"]="sessionName= teamName= spiritName= "
-    operation_parameters["sessionsSessionNameTeamsTeamNameSpiritsSpiritNamePut"]="sessionName= teamName= spiritName= "
+    operation_parameters["createSessionBattleSpiritActions"]="sessionName= battleName= spiritName= "
+    operation_parameters["createSessionBattles"]="sessionName= "
+    operation_parameters["createSessionTeamSpirits"]="sessionName= teamName= "
+    operation_parameters["createSessionTeams"]="sessionName= "
+    operation_parameters["createSessions"]=""
+    operation_parameters["deleteSessionBattles"]="sessionName= battleName= "
+    operation_parameters["deleteSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["deleteSessionTeams"]="sessionName= teamName= "
+    operation_parameters["deleteSessions"]="sessionName= "
+    operation_parameters["getSessionBattleSpirits"]="sessionName= battleName= spiritName= "
+    operation_parameters["getSessionBattles"]="sessionName= battleName= "
+    operation_parameters["getSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["getSessionTeams"]="sessionName= teamName= "
+    operation_parameters["getSessions"]="sessionName= "
+    operation_parameters["listSessions"]=""
+    operation_parameters["listSessionsBattles"]="sessionName= "
+    operation_parameters["listSessionsBattlesSpirits"]="sessionName= battleName= "
+    operation_parameters["listSessionsTeams"]="sessionName= "
+    operation_parameters["listSessionsTeamsSpirits"]="sessionName= teamName= "
+    operation_parameters["updateSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["updateSessionTeams"]="sessionName= teamName= "
+    operation_parameters["updateSessions"]="sessionName= "
+    operation_parameters["createSessionBattleSpiritActions"]="sessionName= battleName= spiritName= "
+    operation_parameters["createSessionTeamSpirits"]="sessionName= teamName= "
+    operation_parameters["deleteSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["getSessionBattleSpirits"]="sessionName= battleName= spiritName= "
+    operation_parameters["getSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["listSessionsBattlesSpirits"]="sessionName= battleName= "
+    operation_parameters["listSessionsTeamsSpirits"]="sessionName= teamName= "
+    operation_parameters["updateSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["createSessionTeamSpirits"]="sessionName= teamName= "
+    operation_parameters["createSessionTeams"]="sessionName= "
+    operation_parameters["deleteSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["deleteSessionTeams"]="sessionName= teamName= "
+    operation_parameters["getSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["getSessionTeams"]="sessionName= teamName= "
+    operation_parameters["listSessionsTeams"]="sessionName= "
+    operation_parameters["listSessionsTeamsSpirits"]="sessionName= teamName= "
+    operation_parameters["updateSessionTeamSpirits"]="sessionName= teamName= spiritName= "
+    operation_parameters["updateSessionTeams"]="sessionName= teamName= "
 
     # An associative array of possible values for enum parameters
     declare -A operation_parameters_enum_values

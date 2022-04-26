@@ -16,59 +16,88 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 
-// DefaultApiService DefaultApi service
-type DefaultApiService service
+// ActionsApiService ActionsApi service
+type ActionsApiService service
 
-type ApiRootGetRequest struct {
+type ApiCreateSessionBattleSpiritActionsRequest struct {
 	ctx context.Context
-	ApiService *DefaultApiService
+	ApiService *ActionsApiService
+	sessionName string
+	battleName string
+	spiritName string
+	action *Action
 }
 
-func (r ApiRootGetRequest) Execute() (map[string]interface{}, *http.Response, error) {
-	return r.ApiService.RootGetExecute(r)
+// Action to create
+func (r ApiCreateSessionBattleSpiritActionsRequest) Action(action Action) ApiCreateSessionBattleSpiritActionsRequest {
+	r.action = &action
+	return r
+}
+
+func (r ApiCreateSessionBattleSpiritActionsRequest) Execute() (*Action, *http.Response, error) {
+	return r.ApiService.CreateSessionBattleSpiritActionsExecute(r)
 }
 
 /*
-RootGet Method for RootGet
+CreateSessionBattleSpiritActions Method for CreateSessionBattleSpiritActions
 
-Retrieve the OpenAPI specification currently served
+Create a Action
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiRootGetRequest
+ @param sessionName Action name
+ @param battleName Action name
+ @param spiritName Action name
+ @return ApiCreateSessionBattleSpiritActionsRequest
 */
-func (a *DefaultApiService) RootGet(ctx context.Context) ApiRootGetRequest {
-	return ApiRootGetRequest{
+func (a *ActionsApiService) CreateSessionBattleSpiritActions(ctx context.Context, sessionName string, battleName string, spiritName string) ApiCreateSessionBattleSpiritActionsRequest {
+	return ApiCreateSessionBattleSpiritActionsRequest{
 		ApiService: a,
 		ctx: ctx,
+		sessionName: sessionName,
+		battleName: battleName,
+		spiritName: spiritName,
 	}
 }
 
 // Execute executes the request
-//  @return map[string]interface{}
-func (a *DefaultApiService) RootGetExecute(r ApiRootGetRequest) (map[string]interface{}, *http.Response, error) {
+//  @return Action
+func (a *ActionsApiService) CreateSessionBattleSpiritActionsExecute(r ApiCreateSessionBattleSpiritActionsRequest) (*Action, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodGet
+		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  map[string]interface{}
+		localVarReturnValue  *Action
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DefaultApiService.RootGet")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ActionsApiService.CreateSessionBattleSpiritActions")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/"
+	localVarPath := localBasePath + "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions"
+	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"battleName"+"}", url.PathEscape(parameterToString(r.battleName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"spiritName"+"}", url.PathEscape(parameterToString(r.spiritName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if strlen(r.sessionName) < 1 {
+		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
+	if strlen(r.battleName) < 1 {
+		return localVarReturnValue, nil, reportError("battleName must have at least 1 elements")
+	}
+	if strlen(r.spiritName) < 1 {
+		return localVarReturnValue, nil, reportError("spiritName must have at least 1 elements")
+	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -84,6 +113,8 @@ func (a *DefaultApiService) RootGetExecute(r ApiRootGetRequest) (map[string]inte
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	// body params
+	localVarPostBody = r.action
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

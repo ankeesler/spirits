@@ -27,7 +27,7 @@ type Spirit struct {
 // AssertSpiritRequired checks if the required fields are not zero-ed
 func AssertSpiritRequired(obj Spirit) error {
 	elements := map[string]interface{}{
-		"name": obj.Name,
+		"name":  obj.Name,
 		"stats": obj.Stats,
 	}
 	for name, el := range elements {

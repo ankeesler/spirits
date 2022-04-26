@@ -51,16 +51,22 @@ $(GENERATED_API): cmd/genapi/main.go cmd/genapi/config.json cmd/genapi/api.json.
 COMMON_GO_CONFIG_OPTIONS=enumClassPrefix=true,hideGenerationTimestamp=false,isGoSubmodule=true,packageVersion=$(VERSION),
 
 pkg/api/generated/client: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go -p $(COMMON_GO_CONFIG_OPTIONS),packageName=client
+	rm -rf $@
+	$(OPENAPI_GENERATE_PREFIX) go -p $(COMMON_GO_CONFIG_OPTIONS),packageName=client
 
 pkg/api/generated/server: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go-server -p $(COMMON_GO_CONFIG_OPTIONS),onlyInterfaces=true,outputAsLibrary=true,packageName=server,sourceFolder=api
+	rm -rf $@
+	$(OPENAPI_GENERATE_PREFIX) go-server -p $(COMMON_GO_CONFIG_OPTIONS),onlyInterfaces=true,outputAsLibrary=true,packageName=server,sourceFolder=api
+	goimports -w $@
 
 script/generated/cli: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) bash
+	rm -rf $@
+	$(OPENAPI_GENERATE_PREFIX) bash
 
 doc/generated/adoc: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) asciidoc
+	rm -rf $@
+	$(OPENAPI_GENERATE_PREFIX) asciidoc
 
 doc/generated/html: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) html2
+	rm -rf $@
+	$(OPENAPI_GENERATE_PREFIX) html2

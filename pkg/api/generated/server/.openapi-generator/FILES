@@ -1,7 +1,12 @@
 .openapi-generator-ignore
 README.md
 api/api.go
+api/api_actions.go
+api/api_battles.go
 api/api_default.go
+api/api_sessions.go
+api/api_spirits.go
+api/api_teams.go
 api/error.go
 api/helpers.go
 api/impl.go

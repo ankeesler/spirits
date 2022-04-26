@@ -22,7 +22,7 @@ type Battle struct {
 // AssertBattleRequired checks if the required fields are not zero-ed
 func AssertBattleRequired(obj Battle) error {
 	elements := map[string]interface{}{
-		"name": obj.Name,
+		"name":    obj.Name,
 		"spirits": obj.Spirits,
 	}
 	for name, el := range elements {

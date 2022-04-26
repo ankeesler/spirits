@@ -11,7 +11,6 @@ package server
 
 // SessionAuth - A description of the auth requirements for this Session; defaults to using the well-known OIDC provider
 type SessionAuth struct {
-
 	Oidc SessionAuthOidc `json:"oidc,omitempty"`
 }
 

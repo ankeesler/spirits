@@ -87,13 +87,7 @@ func (p *path) Params() []string {
 }
 
 func (p *path) Scopes(read bool) []string {
-	baseScope := "spirits"
-
-	for _, segment := range strings.Split(p.Name, "/") {
-		if !isParam(segment) {
-			baseScope += ":" + segment
-		}
-	}
+	baseScope := "spirits:" + strings.Join(p.Tags(), ":")
 
 	var scopes []string
 	scopes = append(scopes, baseScope+".write")
@@ -102,6 +96,32 @@ func (p *path) Scopes(read bool) []string {
 	}
 
 	return scopes
+}
+
+func (p *path) Tags() []string {
+	var tags []string
+
+	for _, segment := range strings.Split(p.Name, "/") {
+		if len(segment) > 0 && !isParam(segment) {
+			tags = append(tags, segment)
+		}
+	}
+
+	return tags
+}
+
+func (p *path) OperationID(plural bool) string {
+	id := ""
+	tags := p.Tags()
+	for i, tag := range tags {
+		id += strings.Title(tag)
+
+		// Every entity but the last should be singular (except if we specify plural)
+		if i != len(tags)-1 && !plural && len(id) > 0 {
+			id = id[:len(id)-1]
+		}
+	}
+	return id
 }
 
 func isParam(s string) bool {

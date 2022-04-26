@@ -4,8 +4,7 @@
       "name": "/sessions",
       "verbs": [
         "create",
-        "list",
-        "watch"
+        "list"
       ]
     },
     {
@@ -13,7 +12,6 @@
       "verbs": [
         "update",
         "get",
-        "watch",
         "delete"
       ]
     },
@@ -21,8 +19,7 @@
       "name": "/sessions/{sessionName}/teams",
       "verbs": [
         "create",
-        "list",
-        "watch"
+        "list"
       ]
     },
     {
@@ -30,7 +27,6 @@
       "verbs": [
         "update",
         "get",
-        "watch",
         "delete"
       ]
     },
@@ -38,8 +34,7 @@
       "name": "/sessions/{sessionName}/teams/{teamName}/spirits",
       "verbs": [
         "create",
-        "list",
-        "watch"
+        "list"
       ]
     },
     {
@@ -47,7 +42,6 @@
       "verbs": [
         "update",
         "get",
-        "watch",
         "delete"
       ]
     },
@@ -55,30 +49,26 @@
       "name": "/sessions/{sessionName}/battles",
       "verbs": [
         "create",
-        "list",
-        "watch"
+        "list"
       ]
     },
     {
       "name": "/sessions/{sessionName}/battles/{battleName}",
       "verbs": [
         "get",
-        "watch",
         "delete"
       ]
     },
     {
       "name": "/sessions/{sessionName}/battles/{battleName}/spirits",
       "verbs": [
-        "list",
-        "watch"
+        "list"
       ]
     },
     {
       "name": "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}",
       "verbs": [
-        "get",
-        "watch"
+        "get"
       ]
     },
     {
