@@ -14,26 +14,6 @@ import (
 	"net/http"
 )
 
-// ActionsApiRouter defines the required methods for binding the api requests to a responses for the ActionsApi
-// The ActionsApiRouter implementation should parse necessary information from the http request,
-// pass the data to a ActionsApiServicer to perform the required actions, then write the service results to the http response.
-type ActionsApiRouter interface {
-	CreateSessionBattleSpiritActions(http.ResponseWriter, *http.Request)
-}
-
-// BattlesApiRouter defines the required methods for binding the api requests to a responses for the BattlesApi
-// The BattlesApiRouter implementation should parse necessary information from the http request,
-// pass the data to a BattlesApiServicer to perform the required actions, then write the service results to the http response.
-type BattlesApiRouter interface {
-	CreateSessionBattleSpiritActions(http.ResponseWriter, *http.Request)
-	CreateSessionBattles(http.ResponseWriter, *http.Request)
-	DeleteSessionBattles(http.ResponseWriter, *http.Request)
-	GetSessionBattleSpirits(http.ResponseWriter, *http.Request)
-	GetSessionBattles(http.ResponseWriter, *http.Request)
-	ListSessionsBattles(http.ResponseWriter, *http.Request)
-	ListSessionsBattlesSpirits(http.ResponseWriter, *http.Request)
-}
-
 // DefaultApiRouter defines the required methods for binding the api requests to a responses for the DefaultApi
 // The DefaultApiRouter implementation should parse necessary information from the http request,
 // pass the data to a DefaultApiServicer to perform the required actions, then write the service results to the http response.
@@ -41,84 +21,62 @@ type DefaultApiRouter interface {
 	RootGet(http.ResponseWriter, *http.Request)
 }
 
+// SessionBattleSpiritActionsApiRouter defines the required methods for binding the api requests to a responses for the SessionBattleSpiritActionsApi
+// The SessionBattleSpiritActionsApiRouter implementation should parse necessary information from the http request,
+// pass the data to a SessionBattleSpiritActionsApiServicer to perform the required actions, then write the service results to the http response.
+type SessionBattleSpiritActionsApiRouter interface {
+	CreateSessionBattleSpiritActions(http.ResponseWriter, *http.Request)
+}
+
+// SessionBattleSpiritsApiRouter defines the required methods for binding the api requests to a responses for the SessionBattleSpiritsApi
+// The SessionBattleSpiritsApiRouter implementation should parse necessary information from the http request,
+// pass the data to a SessionBattleSpiritsApiServicer to perform the required actions, then write the service results to the http response.
+type SessionBattleSpiritsApiRouter interface {
+	GetSessionBattleSpirits(http.ResponseWriter, *http.Request)
+	ListSessionBattleSpirits(http.ResponseWriter, *http.Request)
+}
+
+// SessionBattlesApiRouter defines the required methods for binding the api requests to a responses for the SessionBattlesApi
+// The SessionBattlesApiRouter implementation should parse necessary information from the http request,
+// pass the data to a SessionBattlesApiServicer to perform the required actions, then write the service results to the http response.
+type SessionBattlesApiRouter interface {
+	CreateSessionBattles(http.ResponseWriter, *http.Request)
+	DeleteSessionBattles(http.ResponseWriter, *http.Request)
+	GetSessionBattles(http.ResponseWriter, *http.Request)
+	ListSessionBattles(http.ResponseWriter, *http.Request)
+}
+
+// SessionTeamSpiritsApiRouter defines the required methods for binding the api requests to a responses for the SessionTeamSpiritsApi
+// The SessionTeamSpiritsApiRouter implementation should parse necessary information from the http request,
+// pass the data to a SessionTeamSpiritsApiServicer to perform the required actions, then write the service results to the http response.
+type SessionTeamSpiritsApiRouter interface {
+	CreateSessionTeamSpirits(http.ResponseWriter, *http.Request)
+	DeleteSessionTeamSpirits(http.ResponseWriter, *http.Request)
+	GetSessionTeamSpirits(http.ResponseWriter, *http.Request)
+	ListSessionTeamSpirits(http.ResponseWriter, *http.Request)
+	UpdateSessionTeamSpirits(http.ResponseWriter, *http.Request)
+}
+
+// SessionTeamsApiRouter defines the required methods for binding the api requests to a responses for the SessionTeamsApi
+// The SessionTeamsApiRouter implementation should parse necessary information from the http request,
+// pass the data to a SessionTeamsApiServicer to perform the required actions, then write the service results to the http response.
+type SessionTeamsApiRouter interface {
+	CreateSessionTeams(http.ResponseWriter, *http.Request)
+	DeleteSessionTeams(http.ResponseWriter, *http.Request)
+	GetSessionTeams(http.ResponseWriter, *http.Request)
+	ListSessionTeams(http.ResponseWriter, *http.Request)
+	UpdateSessionTeams(http.ResponseWriter, *http.Request)
+}
+
 // SessionsApiRouter defines the required methods for binding the api requests to a responses for the SessionsApi
 // The SessionsApiRouter implementation should parse necessary information from the http request,
 // pass the data to a SessionsApiServicer to perform the required actions, then write the service results to the http response.
 type SessionsApiRouter interface {
-	CreateSessionBattleSpiritActions(http.ResponseWriter, *http.Request)
-	CreateSessionBattles(http.ResponseWriter, *http.Request)
-	CreateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	CreateSessionTeams(http.ResponseWriter, *http.Request)
 	CreateSessions(http.ResponseWriter, *http.Request)
-	DeleteSessionBattles(http.ResponseWriter, *http.Request)
-	DeleteSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	DeleteSessionTeams(http.ResponseWriter, *http.Request)
 	DeleteSessions(http.ResponseWriter, *http.Request)
-	GetSessionBattleSpirits(http.ResponseWriter, *http.Request)
-	GetSessionBattles(http.ResponseWriter, *http.Request)
-	GetSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	GetSessionTeams(http.ResponseWriter, *http.Request)
 	GetSessions(http.ResponseWriter, *http.Request)
 	ListSessions(http.ResponseWriter, *http.Request)
-	ListSessionsBattles(http.ResponseWriter, *http.Request)
-	ListSessionsBattlesSpirits(http.ResponseWriter, *http.Request)
-	ListSessionsTeams(http.ResponseWriter, *http.Request)
-	ListSessionsTeamsSpirits(http.ResponseWriter, *http.Request)
-	UpdateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	UpdateSessionTeams(http.ResponseWriter, *http.Request)
 	UpdateSessions(http.ResponseWriter, *http.Request)
-}
-
-// SpiritsApiRouter defines the required methods for binding the api requests to a responses for the SpiritsApi
-// The SpiritsApiRouter implementation should parse necessary information from the http request,
-// pass the data to a SpiritsApiServicer to perform the required actions, then write the service results to the http response.
-type SpiritsApiRouter interface {
-	CreateSessionBattleSpiritActions(http.ResponseWriter, *http.Request)
-	CreateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	DeleteSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	GetSessionBattleSpirits(http.ResponseWriter, *http.Request)
-	GetSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	ListSessionsBattlesSpirits(http.ResponseWriter, *http.Request)
-	ListSessionsTeamsSpirits(http.ResponseWriter, *http.Request)
-	UpdateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-}
-
-// TeamsApiRouter defines the required methods for binding the api requests to a responses for the TeamsApi
-// The TeamsApiRouter implementation should parse necessary information from the http request,
-// pass the data to a TeamsApiServicer to perform the required actions, then write the service results to the http response.
-type TeamsApiRouter interface {
-	CreateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	CreateSessionTeams(http.ResponseWriter, *http.Request)
-	DeleteSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	DeleteSessionTeams(http.ResponseWriter, *http.Request)
-	GetSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	GetSessionTeams(http.ResponseWriter, *http.Request)
-	ListSessionsTeams(http.ResponseWriter, *http.Request)
-	ListSessionsTeamsSpirits(http.ResponseWriter, *http.Request)
-	UpdateSessionTeamSpirits(http.ResponseWriter, *http.Request)
-	UpdateSessionTeams(http.ResponseWriter, *http.Request)
-}
-
-// ActionsApiServicer defines the api actions for the ActionsApi service
-// This interface intended to stay up to date with the openapi yaml used to generate it,
-// while the service implementation can be ignored with the .openapi-generator-ignore file
-// and updated with the logic required for the API.
-type ActionsApiServicer interface {
-	CreateSessionBattleSpiritActions(context.Context, string, string, string, Action) (ImplResponse, error)
-}
-
-// BattlesApiServicer defines the api actions for the BattlesApi service
-// This interface intended to stay up to date with the openapi yaml used to generate it,
-// while the service implementation can be ignored with the .openapi-generator-ignore file
-// and updated with the logic required for the API.
-type BattlesApiServicer interface {
-	CreateSessionBattleSpiritActions(context.Context, string, string, string, Action) (ImplResponse, error)
-	CreateSessionBattles(context.Context, string, Battle) (ImplResponse, error)
-	DeleteSessionBattles(context.Context, string, string) (ImplResponse, error)
-	GetSessionBattleSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionBattles(context.Context, string, string) (ImplResponse, error)
-	ListSessionsBattles(context.Context, string) (ImplResponse, error)
-	ListSessionsBattlesSpirits(context.Context, string, string) (ImplResponse, error)
 }
 
 // DefaultApiServicer defines the api actions for the DefaultApi service
@@ -129,63 +87,66 @@ type DefaultApiServicer interface {
 	RootGet(context.Context) (ImplResponse, error)
 }
 
+// SessionBattleSpiritActionsApiServicer defines the api actions for the SessionBattleSpiritActionsApi service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type SessionBattleSpiritActionsApiServicer interface {
+	CreateSessionBattleSpiritActions(context.Context, string, string, string, Action) (ImplResponse, error)
+}
+
+// SessionBattleSpiritsApiServicer defines the api actions for the SessionBattleSpiritsApi service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type SessionBattleSpiritsApiServicer interface {
+	GetSessionBattleSpirits(context.Context, string, string, string) (ImplResponse, error)
+	ListSessionBattleSpirits(context.Context, string, string) (ImplResponse, error)
+}
+
+// SessionBattlesApiServicer defines the api actions for the SessionBattlesApi service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type SessionBattlesApiServicer interface {
+	CreateSessionBattles(context.Context, string, Battle) (ImplResponse, error)
+	DeleteSessionBattles(context.Context, string, string) (ImplResponse, error)
+	GetSessionBattles(context.Context, string, string) (ImplResponse, error)
+	ListSessionBattles(context.Context, string) (ImplResponse, error)
+}
+
+// SessionTeamSpiritsApiServicer defines the api actions for the SessionTeamSpiritsApi service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type SessionTeamSpiritsApiServicer interface {
+	CreateSessionTeamSpirits(context.Context, string, string, Spirit) (ImplResponse, error)
+	DeleteSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
+	GetSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
+	ListSessionTeamSpirits(context.Context, string, string) (ImplResponse, error)
+	UpdateSessionTeamSpirits(context.Context, string, string, string, Spirit) (ImplResponse, error)
+}
+
+// SessionTeamsApiServicer defines the api actions for the SessionTeamsApi service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type SessionTeamsApiServicer interface {
+	CreateSessionTeams(context.Context, string, Team) (ImplResponse, error)
+	DeleteSessionTeams(context.Context, string, string) (ImplResponse, error)
+	GetSessionTeams(context.Context, string, string) (ImplResponse, error)
+	ListSessionTeams(context.Context, string) (ImplResponse, error)
+	UpdateSessionTeams(context.Context, string, string, Team) (ImplResponse, error)
+}
+
 // SessionsApiServicer defines the api actions for the SessionsApi service
 // This interface intended to stay up to date with the openapi yaml used to generate it,
 // while the service implementation can be ignored with the .openapi-generator-ignore file
 // and updated with the logic required for the API.
 type SessionsApiServicer interface {
-	CreateSessionBattleSpiritActions(context.Context, string, string, string, Action) (ImplResponse, error)
-	CreateSessionBattles(context.Context, string, Battle) (ImplResponse, error)
-	CreateSessionTeamSpirits(context.Context, string, string, Spirit) (ImplResponse, error)
-	CreateSessionTeams(context.Context, string, Team) (ImplResponse, error)
 	CreateSessions(context.Context, Session) (ImplResponse, error)
-	DeleteSessionBattles(context.Context, string, string) (ImplResponse, error)
-	DeleteSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	DeleteSessionTeams(context.Context, string, string) (ImplResponse, error)
 	DeleteSessions(context.Context, string) (ImplResponse, error)
-	GetSessionBattleSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionBattles(context.Context, string, string) (ImplResponse, error)
-	GetSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionTeams(context.Context, string, string) (ImplResponse, error)
 	GetSessions(context.Context, string) (ImplResponse, error)
 	ListSessions(context.Context) (ImplResponse, error)
-	ListSessionsBattles(context.Context, string) (ImplResponse, error)
-	ListSessionsBattlesSpirits(context.Context, string, string) (ImplResponse, error)
-	ListSessionsTeams(context.Context, string) (ImplResponse, error)
-	ListSessionsTeamsSpirits(context.Context, string, string) (ImplResponse, error)
-	UpdateSessionTeamSpirits(context.Context, string, string, string, Spirit) (ImplResponse, error)
-	UpdateSessionTeams(context.Context, string, string, Team) (ImplResponse, error)
 	UpdateSessions(context.Context, string, Session) (ImplResponse, error)
-}
-
-// SpiritsApiServicer defines the api actions for the SpiritsApi service
-// This interface intended to stay up to date with the openapi yaml used to generate it,
-// while the service implementation can be ignored with the .openapi-generator-ignore file
-// and updated with the logic required for the API.
-type SpiritsApiServicer interface {
-	CreateSessionBattleSpiritActions(context.Context, string, string, string, Action) (ImplResponse, error)
-	CreateSessionTeamSpirits(context.Context, string, string, Spirit) (ImplResponse, error)
-	DeleteSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionBattleSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	ListSessionsBattlesSpirits(context.Context, string, string) (ImplResponse, error)
-	ListSessionsTeamsSpirits(context.Context, string, string) (ImplResponse, error)
-	UpdateSessionTeamSpirits(context.Context, string, string, string, Spirit) (ImplResponse, error)
-}
-
-// TeamsApiServicer defines the api actions for the TeamsApi service
-// This interface intended to stay up to date with the openapi yaml used to generate it,
-// while the service implementation can be ignored with the .openapi-generator-ignore file
-// and updated with the logic required for the API.
-type TeamsApiServicer interface {
-	CreateSessionTeamSpirits(context.Context, string, string, Spirit) (ImplResponse, error)
-	CreateSessionTeams(context.Context, string, Team) (ImplResponse, error)
-	DeleteSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	DeleteSessionTeams(context.Context, string, string) (ImplResponse, error)
-	GetSessionTeamSpirits(context.Context, string, string, string) (ImplResponse, error)
-	GetSessionTeams(context.Context, string, string) (ImplResponse, error)
-	ListSessionsTeams(context.Context, string) (ImplResponse, error)
-	ListSessionsTeamsSpirits(context.Context, string, string) (ImplResponse, error)
-	UpdateSessionTeamSpirits(context.Context, string, string, string, Spirit) (ImplResponse, error)
-	UpdateSessionTeams(context.Context, string, string, Team) (ImplResponse, error)
 }

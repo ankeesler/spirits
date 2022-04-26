@@ -20,60 +20,67 @@ import (
 )
 
 
-// SessionsApiService SessionsApi service
-type SessionsApiService service
+// SessionBattlesApiService SessionBattlesApi service
+type SessionBattlesApiService service
 
-type ApiCreateSessionsRequest struct {
+type ApiCreateSessionBattlesRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
-	session *Session
+	ApiService *SessionBattlesApiService
+	sessionName string
+	battle *Battle
 }
 
-// Session to create
-func (r ApiCreateSessionsRequest) Session(session Session) ApiCreateSessionsRequest {
-	r.session = &session
+// Battle to create
+func (r ApiCreateSessionBattlesRequest) Battle(battle Battle) ApiCreateSessionBattlesRequest {
+	r.battle = &battle
 	return r
 }
 
-func (r ApiCreateSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.CreateSessionsExecute(r)
+func (r ApiCreateSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.CreateSessionBattlesExecute(r)
 }
 
 /*
-CreateSessions Method for CreateSessions
+CreateSessionBattles Method for CreateSessionBattles
 
-Create a Session
+Create a Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiCreateSessionsRequest
+ @param sessionName Battle name
+ @return ApiCreateSessionBattlesRequest
 */
-func (a *SessionsApiService) CreateSessions(ctx context.Context) ApiCreateSessionsRequest {
-	return ApiCreateSessionsRequest{
+func (a *SessionBattlesApiService) CreateSessionBattles(ctx context.Context, sessionName string) ApiCreateSessionBattlesRequest {
+	return ApiCreateSessionBattlesRequest{
 		ApiService: a,
 		ctx: ctx,
+		sessionName: sessionName,
 	}
 }
 
 // Execute executes the request
-//  @return Session
-func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (*Session, *http.Response, error) {
+//  @return Battle
+func (a *SessionBattlesApiService) CreateSessionBattlesExecute(r ApiCreateSessionBattlesRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Session
+		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.CreateSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.CreateSessionBattles")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions"
+	localVarPath := localBasePath + "/sessions/{sessionName}/battles"
+	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if strlen(r.sessionName) < 1 {
+		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -93,7 +100,7 @@ func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.session
+	localVarPostBody = r.battle
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -131,56 +138,63 @@ func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteSessionsRequest struct {
+type ApiDeleteSessionBattlesRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionBattlesApiService
 	sessionName string
+	battleName string
 }
 
-func (r ApiDeleteSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.DeleteSessionsExecute(r)
+func (r ApiDeleteSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.DeleteSessionBattlesExecute(r)
 }
 
 /*
-DeleteSessions Method for DeleteSessions
+DeleteSessionBattles Method for DeleteSessionBattles
 
-Watch Session
+Watch Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Session name
- @return ApiDeleteSessionsRequest
+ @param sessionName Battle name
+ @param battleName Battle name
+ @return ApiDeleteSessionBattlesRequest
 */
-func (a *SessionsApiService) DeleteSessions(ctx context.Context, sessionName string) ApiDeleteSessionsRequest {
-	return ApiDeleteSessionsRequest{
+func (a *SessionBattlesApiService) DeleteSessionBattles(ctx context.Context, sessionName string, battleName string) ApiDeleteSessionBattlesRequest {
+	return ApiDeleteSessionBattlesRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
+		battleName: battleName,
 	}
 }
 
 // Execute executes the request
-//  @return Session
-func (a *SessionsApiService) DeleteSessionsExecute(r ApiDeleteSessionsRequest) (*Session, *http.Response, error) {
+//  @return Battle
+func (a *SessionBattlesApiService) DeleteSessionBattlesExecute(r ApiDeleteSessionBattlesRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodDelete
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Session
+		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.DeleteSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.DeleteSessionBattles")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}"
+	localVarPath := localBasePath + "/sessions/{sessionName}/battles/{battleName}"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"battleName"+"}", url.PathEscape(parameterToString(r.battleName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 	if strlen(r.sessionName) < 1 {
 		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
+	if strlen(r.battleName) < 1 {
+		return localVarReturnValue, nil, reportError("battleName must have at least 1 elements")
 	}
 
 	// to determine the Content-Type header
@@ -237,27 +251,140 @@ func (a *SessionsApiService) DeleteSessionsExecute(r ApiDeleteSessionsRequest) (
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSessionsRequest struct {
+type ApiGetSessionBattlesRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionBattlesApiService
 	sessionName string
+	battleName string
 }
 
-func (r ApiGetSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.GetSessionsExecute(r)
+func (r ApiGetSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.GetSessionBattlesExecute(r)
 }
 
 /*
-GetSessions Method for GetSessions
+GetSessionBattles Method for GetSessionBattles
 
-Get Session
+Get Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Session name
- @return ApiGetSessionsRequest
+ @param sessionName Battle name
+ @param battleName Battle name
+ @return ApiGetSessionBattlesRequest
 */
-func (a *SessionsApiService) GetSessions(ctx context.Context, sessionName string) ApiGetSessionsRequest {
-	return ApiGetSessionsRequest{
+func (a *SessionBattlesApiService) GetSessionBattles(ctx context.Context, sessionName string, battleName string) ApiGetSessionBattlesRequest {
+	return ApiGetSessionBattlesRequest{
+		ApiService: a,
+		ctx: ctx,
+		sessionName: sessionName,
+		battleName: battleName,
+	}
+}
+
+// Execute executes the request
+//  @return Battle
+func (a *SessionBattlesApiService) GetSessionBattlesExecute(r ApiGetSessionBattlesRequest) (*Battle, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *Battle
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.GetSessionBattles")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/sessions/{sessionName}/battles/{battleName}"
+	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"battleName"+"}", url.PathEscape(parameterToString(r.battleName, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if strlen(r.sessionName) < 1 {
+		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
+	if strlen(r.battleName) < 1 {
+		return localVarReturnValue, nil, reportError("battleName must have at least 1 elements")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListSessionBattlesRequest struct {
+	ctx context.Context
+	ApiService *SessionBattlesApiService
+	sessionName string
+}
+
+func (r ApiListSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.ListSessionBattlesExecute(r)
+}
+
+/*
+ListSessionBattles Method for ListSessionBattles
+
+List Battles
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param sessionName Battle name
+ @return ApiListSessionBattlesRequest
+*/
+func (a *SessionBattlesApiService) ListSessionBattles(ctx context.Context, sessionName string) ApiListSessionBattlesRequest {
+	return ApiListSessionBattlesRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -265,21 +392,21 @@ func (a *SessionsApiService) GetSessions(ctx context.Context, sessionName string
 }
 
 // Execute executes the request
-//  @return Session
-func (a *SessionsApiService) GetSessionsExecute(r ApiGetSessionsRequest) (*Session, *http.Response, error) {
+//  @return Battle
+func (a *SessionBattlesApiService) ListSessionBattlesExecute(r ApiListSessionBattlesRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Session
+		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.GetSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.ListSessionBattles")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}"
+	localVarPath := localBasePath + "/sessions/{sessionName}/battles"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -306,220 +433,6 @@ func (a *SessionsApiService) GetSessionsExecute(r ApiGetSessionsRequest) (*Sessi
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiListSessionsRequest struct {
-	ctx context.Context
-	ApiService *SessionsApiService
-}
-
-func (r ApiListSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.ListSessionsExecute(r)
-}
-
-/*
-ListSessions Method for ListSessions
-
-List Sessions
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiListSessionsRequest
-*/
-func (a *SessionsApiService) ListSessions(ctx context.Context) ApiListSessionsRequest {
-	return ApiListSessionsRequest{
-		ApiService: a,
-		ctx: ctx,
-	}
-}
-
-// Execute executes the request
-//  @return Session
-func (a *SessionsApiService) ListSessionsExecute(r ApiListSessionsRequest) (*Session, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *Session
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.ListSessions")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/sessions"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiUpdateSessionsRequest struct {
-	ctx context.Context
-	ApiService *SessionsApiService
-	sessionName string
-	session *Session
-}
-
-// Session to update
-func (r ApiUpdateSessionsRequest) Session(session Session) ApiUpdateSessionsRequest {
-	r.session = &session
-	return r
-}
-
-func (r ApiUpdateSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.UpdateSessionsExecute(r)
-}
-
-/*
-UpdateSessions Method for UpdateSessions
-
-Update Session
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Session name
- @return ApiUpdateSessionsRequest
-*/
-func (a *SessionsApiService) UpdateSessions(ctx context.Context, sessionName string) ApiUpdateSessionsRequest {
-	return ApiUpdateSessionsRequest{
-		ApiService: a,
-		ctx: ctx,
-		sessionName: sessionName,
-	}
-}
-
-// Execute executes the request
-//  @return Session
-func (a *SessionsApiService) UpdateSessionsExecute(r ApiUpdateSessionsRequest) (*Session, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPut
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *Session
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.UpdateSessions")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/sessions/{sessionName}"
-	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if strlen(r.sessionName) < 1 {
-		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.session
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

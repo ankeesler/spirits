@@ -20,12 +20,12 @@ import (
 )
 
 
-// ActionsApiService ActionsApi service
-type ActionsApiService service
+// SessionBattleSpiritActionsApiService SessionBattleSpiritActionsApi service
+type SessionBattleSpiritActionsApiService service
 
 type ApiCreateSessionBattleSpiritActionsRequest struct {
 	ctx context.Context
-	ApiService *ActionsApiService
+	ApiService *SessionBattleSpiritActionsApiService
 	sessionName string
 	battleName string
 	spiritName string
@@ -53,7 +53,7 @@ Create a Action
  @param spiritName Action name
  @return ApiCreateSessionBattleSpiritActionsRequest
 */
-func (a *ActionsApiService) CreateSessionBattleSpiritActions(ctx context.Context, sessionName string, battleName string, spiritName string) ApiCreateSessionBattleSpiritActionsRequest {
+func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActions(ctx context.Context, sessionName string, battleName string, spiritName string) ApiCreateSessionBattleSpiritActionsRequest {
 	return ApiCreateSessionBattleSpiritActionsRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -65,7 +65,7 @@ func (a *ActionsApiService) CreateSessionBattleSpiritActions(ctx context.Context
 
 // Execute executes the request
 //  @return Action
-func (a *ActionsApiService) CreateSessionBattleSpiritActionsExecute(r ApiCreateSessionBattleSpiritActionsRequest) (*Action, *http.Response, error) {
+func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActionsExecute(r ApiCreateSessionBattleSpiritActionsRequest) (*Action, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -73,7 +73,7 @@ func (a *ActionsApiService) CreateSessionBattleSpiritActionsExecute(r ApiCreateS
 		localVarReturnValue  *Action
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ActionsApiService.CreateSessionBattleSpiritActions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritActionsApiService.CreateSessionBattleSpiritActions")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

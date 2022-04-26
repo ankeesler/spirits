@@ -1,10 +1,10 @@
-# \ActionsApi
+# \SessionBattleSpiritActionsApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessionBattleSpiritActions**](ActionsApi.md#CreateSessionBattleSpiritActions) | **Post** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+[**CreateSessionBattleSpiritActions**](SessionBattleSpiritActionsApi.md#CreateSessionBattleSpiritActions) | **Post** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
 
 
 
@@ -36,13 +36,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.ActionsApi.CreateSessionBattleSpiritActions(context.Background(), sessionName, battleName, spiritName).Action(action).Execute()
+    resp, r, err := apiClient.SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions(context.Background(), sessionName, battleName, spiritName).Action(action).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `ActionsApi.CreateSessionBattleSpiritActions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `CreateSessionBattleSpiritActions`: Action
-    fmt.Fprintf(os.Stdout, "Response from `ActionsApi.CreateSessionBattleSpiritActions`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions`: %v\n", resp)
 }
 ```
 

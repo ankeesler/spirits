@@ -6,17 +6,6 @@ info:
 servers:
 - description: The hosted spirits gameserver
   url: https://oh-great-spirits.herokuapp.com
-tags:
-- description: Pertaining to Action's
-  name: actions
-- description: Pertaining to Battle's
-  name: battles
-- description: Pertaining to Session's
-  name: sessions
-- description: Pertaining to Spirit's
-  name: spirits
-- description: Pertaining to Team's
-  name: teams
 paths:
   /:
     get:
@@ -45,7 +34,7 @@ paths:
         - spirits:sessions.write
         - spirits:sessions.read
       tags:
-      - sessions
+      - Sessions
     post:
       description: Create a Session
       operationId: createSessions
@@ -66,7 +55,7 @@ paths:
       - oidc:
         - spirits:sessions.write
       tags:
-      - sessions
+      - Sessions
   /sessions/{sessionName}:
     delete:
       description: Watch Session
@@ -93,7 +82,7 @@ paths:
       - oidc:
         - spirits:sessions.write
       tags:
-      - sessions
+      - Sessions
     get:
       description: Get Session
       operationId: getSessions
@@ -120,7 +109,7 @@ paths:
         - spirits:sessions.write
         - spirits:sessions.read
       tags:
-      - sessions
+      - Sessions
     put:
       description: Update Session
       operationId: updateSessions
@@ -152,11 +141,11 @@ paths:
       - oidc:
         - spirits:sessions.write
       tags:
-      - sessions
+      - Sessions
   /sessions/{sessionName}/teams:
     get:
       description: List Teams
-      operationId: listSessionsTeams
+      operationId: listSessionTeams
       parameters:
       - description: Team name
         explode: false
@@ -180,8 +169,7 @@ paths:
         - spirits:sessions:teams.write
         - spirits:sessions:teams.read
       tags:
-      - sessions
-      - teams
+      - SessionTeams
     post:
       description: Create a Team
       operationId: createSessionTeams
@@ -213,8 +201,7 @@ paths:
       - oidc:
         - spirits:sessions:teams.write
       tags:
-      - sessions
-      - teams
+      - SessionTeams
   /sessions/{sessionName}/teams/{teamName}:
     delete:
       description: Watch Team
@@ -251,8 +238,7 @@ paths:
       - oidc:
         - spirits:sessions:teams.write
       tags:
-      - sessions
-      - teams
+      - SessionTeams
     get:
       description: Get Team
       operationId: getSessionTeams
@@ -289,8 +275,7 @@ paths:
         - spirits:sessions:teams.write
         - spirits:sessions:teams.read
       tags:
-      - sessions
-      - teams
+      - SessionTeams
     put:
       description: Update Team
       operationId: updateSessionTeams
@@ -332,12 +317,11 @@ paths:
       - oidc:
         - spirits:sessions:teams.write
       tags:
-      - sessions
-      - teams
+      - SessionTeams
   /sessions/{sessionName}/teams/{teamName}/spirits:
     get:
       description: List Spirits
-      operationId: listSessionsTeamsSpirits
+      operationId: listSessionTeamSpirits
       parameters:
       - description: Spirit name
         explode: false
@@ -371,9 +355,7 @@ paths:
         - spirits:sessions:teams:spirits.write
         - spirits:sessions:teams:spirits.read
       tags:
-      - sessions
-      - teams
-      - spirits
+      - SessionTeamSpirits
     post:
       description: Create a Spirit
       operationId: createSessionTeamSpirits
@@ -415,9 +397,7 @@ paths:
       - oidc:
         - spirits:sessions:teams:spirits.write
       tags:
-      - sessions
-      - teams
-      - spirits
+      - SessionTeamSpirits
   /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}:
     delete:
       description: Watch Spirit
@@ -464,9 +444,7 @@ paths:
       - oidc:
         - spirits:sessions:teams:spirits.write
       tags:
-      - sessions
-      - teams
-      - spirits
+      - SessionTeamSpirits
     get:
       description: Get Spirit
       operationId: getSessionTeamSpirits
@@ -513,9 +491,7 @@ paths:
         - spirits:sessions:teams:spirits.write
         - spirits:sessions:teams:spirits.read
       tags:
-      - sessions
-      - teams
-      - spirits
+      - SessionTeamSpirits
     put:
       description: Update Spirit
       operationId: updateSessionTeamSpirits
@@ -567,13 +543,11 @@ paths:
       - oidc:
         - spirits:sessions:teams:spirits.write
       tags:
-      - sessions
-      - teams
-      - spirits
+      - SessionTeamSpirits
   /sessions/{sessionName}/battles:
     get:
       description: List Battles
-      operationId: listSessionsBattles
+      operationId: listSessionBattles
       parameters:
       - description: Battle name
         explode: false
@@ -597,8 +571,7 @@ paths:
         - spirits:sessions:battles.write
         - spirits:sessions:battles.read
       tags:
-      - sessions
-      - battles
+      - SessionBattles
     post:
       description: Create a Battle
       operationId: createSessionBattles
@@ -630,8 +603,7 @@ paths:
       - oidc:
         - spirits:sessions:battles.write
       tags:
-      - sessions
-      - battles
+      - SessionBattles
   /sessions/{sessionName}/battles/{battleName}:
     delete:
       description: Watch Battle
@@ -668,8 +640,7 @@ paths:
       - oidc:
         - spirits:sessions:battles.write
       tags:
-      - sessions
-      - battles
+      - SessionBattles
     get:
       description: Get Battle
       operationId: getSessionBattles
@@ -706,12 +677,11 @@ paths:
         - spirits:sessions:battles.write
         - spirits:sessions:battles.read
       tags:
-      - sessions
-      - battles
+      - SessionBattles
   /sessions/{sessionName}/battles/{battleName}/spirits:
     get:
       description: List Spirits
-      operationId: listSessionsBattlesSpirits
+      operationId: listSessionBattleSpirits
       parameters:
       - description: Spirit name
         explode: false
@@ -745,9 +715,7 @@ paths:
         - spirits:sessions:battles:spirits.write
         - spirits:sessions:battles:spirits.read
       tags:
-      - sessions
-      - battles
-      - spirits
+      - SessionBattleSpirits
   /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}:
     get:
       description: Get Spirit
@@ -795,9 +763,7 @@ paths:
         - spirits:sessions:battles:spirits.write
         - spirits:sessions:battles:spirits.read
       tags:
-      - sessions
-      - battles
-      - spirits
+      - SessionBattleSpirits
   /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions:
     post:
       description: Create a Action
@@ -850,10 +816,7 @@ paths:
       - oidc:
         - spirits:sessions:battles:spirits:actions.write
       tags:
-      - sessions
-      - battles
-      - spirits
-      - actions
+      - SessionBattleSpiritActions
 components:
   schemas:
     Action:

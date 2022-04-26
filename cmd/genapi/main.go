@@ -87,7 +87,7 @@ func (p *path) Params() []string {
 }
 
 func (p *path) Scopes(read bool) []string {
-	baseScope := "spirits:" + strings.Join(p.Tags(), ":")
+	baseScope := "spirits:" + strings.Join(p.resources(), ":")
 
 	var scopes []string
 	scopes = append(scopes, baseScope+".write")
@@ -98,7 +98,21 @@ func (p *path) Scopes(read bool) []string {
 	return scopes
 }
 
-func (p *path) Tags() []string {
+func (p *path) OperationIDSuffix() string {
+	suffix := ""
+	resources := p.resources()
+	for i, resource := range resources {
+		suffix += strings.Title(resource)
+
+		// Every word but the last should be single
+		if len(suffix) > 0 && i != len(resources)-1 {
+			suffix = suffix[:len(suffix)-1]
+		}
+	}
+	return suffix
+}
+
+func (p *path) resources() []string {
 	var tags []string
 
 	for _, segment := range strings.Split(p.Name, "/") {
@@ -108,20 +122,6 @@ func (p *path) Tags() []string {
 	}
 
 	return tags
-}
-
-func (p *path) OperationID(plural bool) string {
-	id := ""
-	tags := p.Tags()
-	for i, tag := range tags {
-		id += strings.Title(tag)
-
-		// Every entity but the last should be singular (except if we specify plural)
-		if i != len(tags)-1 && !plural && len(id) > 0 {
-			id = id[:len(id)-1]
-		}
-	}
-	return id
 }
 
 func isParam(s string) bool {

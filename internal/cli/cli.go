@@ -7,6 +7,7 @@ import (
 	"github.com/ankeesler/spirits/internal/log"
 	internalserver "github.com/ankeesler/spirits/internal/server"
 	"github.com/ankeesler/spirits/internal/service"
+	"github.com/ankeesler/spirits/internal/service/sessions"
 	"github.com/ankeesler/spirits/pkg/api"
 	server "github.com/ankeesler/spirits/pkg/api/generated/server/api"
 )
@@ -21,7 +22,14 @@ func Run() error {
 
 	defaultAPIService := service.NewDefault()
 	defaultAPIController := server.NewDefaultApiController(defaultAPIService)
-	handler := server.NewRouter(defaultAPIController)
+
+	sessionsAPIService := sessions.New()
+	sessionsAPIController := server.NewSessionsApiController(sessionsAPIService)
+
+	handler := server.NewRouter(
+		defaultAPIController,
+		sessionsAPIController,
+	)
 
 	return internalserver.Run(context.TODO(), address, handler)
 }

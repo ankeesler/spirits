@@ -1,10 +1,10 @@
-# ActionsApi
+# SessionBattleSpiritActionsApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createSessionBattleSpiritActions**](ActionsApi.md#createSessionBattleSpiritActions) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+[**createSessionBattleSpiritActions**](SessionBattleSpiritActionsApi.md#createSessionBattleSpiritActions) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
 
 
 

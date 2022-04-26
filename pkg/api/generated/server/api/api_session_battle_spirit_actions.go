@@ -17,25 +17,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ActionsApiController binds http requests to an api service and writes the service results to the http response
-type ActionsApiController struct {
-	service      ActionsApiServicer
+// SessionBattleSpiritActionsApiController binds http requests to an api service and writes the service results to the http response
+type SessionBattleSpiritActionsApiController struct {
+	service      SessionBattleSpiritActionsApiServicer
 	errorHandler ErrorHandler
 }
 
-// ActionsApiOption for how the controller is set up.
-type ActionsApiOption func(*ActionsApiController)
+// SessionBattleSpiritActionsApiOption for how the controller is set up.
+type SessionBattleSpiritActionsApiOption func(*SessionBattleSpiritActionsApiController)
 
-// WithActionsApiErrorHandler inject ErrorHandler into controller
-func WithActionsApiErrorHandler(h ErrorHandler) ActionsApiOption {
-	return func(c *ActionsApiController) {
+// WithSessionBattleSpiritActionsApiErrorHandler inject ErrorHandler into controller
+func WithSessionBattleSpiritActionsApiErrorHandler(h ErrorHandler) SessionBattleSpiritActionsApiOption {
+	return func(c *SessionBattleSpiritActionsApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewActionsApiController creates a default api controller
-func NewActionsApiController(s ActionsApiServicer, opts ...ActionsApiOption) Router {
-	controller := &ActionsApiController{
+// NewSessionBattleSpiritActionsApiController creates a default api controller
+func NewSessionBattleSpiritActionsApiController(s SessionBattleSpiritActionsApiServicer, opts ...SessionBattleSpiritActionsApiOption) Router {
+	controller := &SessionBattleSpiritActionsApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -47,8 +47,8 @@ func NewActionsApiController(s ActionsApiServicer, opts ...ActionsApiOption) Rou
 	return controller
 }
 
-// Routes returns all the api routes for the ActionsApiController
-func (c *ActionsApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionBattleSpiritActionsApiController
+func (c *SessionBattleSpiritActionsApiController) Routes() Routes {
 	return Routes{
 		{
 			"CreateSessionBattleSpiritActions",
@@ -60,7 +60,7 @@ func (c *ActionsApiController) Routes() Routes {
 }
 
 // CreateSessionBattleSpiritActions -
-func (c *ActionsApiController) CreateSessionBattleSpiritActions(w http.ResponseWriter, r *http.Request) {
+func (c *SessionBattleSpiritActionsApiController) CreateSessionBattleSpiritActions(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 

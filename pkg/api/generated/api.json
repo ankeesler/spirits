@@ -11,28 +11,6 @@
       "description": "The hosted spirits gameserver"
     }
   ],
-  "tags": [
-    {
-      "name": "actions",
-      "description": "Pertaining to Action's"
-    },
-    {
-      "name": "battles",
-      "description": "Pertaining to Battle's"
-    },
-    {
-      "name": "sessions",
-      "description": "Pertaining to Session's"
-    },
-    {
-      "name": "spirits",
-      "description": "Pertaining to Spirit's"
-    },
-    {
-      "name": "teams",
-      "description": "Pertaining to Team's"
-    }
-  ],
   "paths": {
     "/": {
       "get": {
@@ -87,7 +65,7 @@
           }
         ],
         "tags": [
-          "sessions"
+          "Sessions"
         ]
       },
       "get": {
@@ -114,7 +92,7 @@
           }
         ],
         "tags": [
-          "sessions"
+          "Sessions"
         ]
       }
     },
@@ -165,7 +143,7 @@
           }
         ],
         "tags": [
-          "sessions"
+          "Sessions"
         ]
       },
       "get": {
@@ -192,7 +170,7 @@
           }
         ],
         "tags": [
-          "sessions"
+          "Sessions"
         ]
       },
       "delete": {
@@ -218,7 +196,7 @@
           }
         ],
         "tags": [
-          "sessions"
+          "Sessions"
         ]
       }
     },
@@ -269,13 +247,12 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams"
+          "SessionTeams"
         ]
       },
       "get": {
         "description": "List Teams",
-        "operationId": "listSessionsTeams",
+        "operationId": "listSessionTeams",
         "responses": {
           "200": {
             "description": "Successful Teams list",
@@ -297,8 +274,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams"
+          "SessionTeams"
         ]
       }
     },
@@ -360,8 +336,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams"
+          "SessionTeams"
         ]
       },
       "get": {
@@ -388,8 +363,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams"
+          "SessionTeams"
         ]
       },
       "delete": {
@@ -415,8 +389,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams"
+          "SessionTeams"
         ]
       }
     },
@@ -478,14 +451,12 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams",
-          "spirits"
+          "SessionTeamSpirits"
         ]
       },
       "get": {
         "description": "List Spirits",
-        "operationId": "listSessionsTeamsSpirits",
+        "operationId": "listSessionTeamSpirits",
         "responses": {
           "200": {
             "description": "Successful Spirits list",
@@ -507,9 +478,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams",
-          "spirits"
+          "SessionTeamSpirits"
         ]
       }
     },
@@ -582,9 +551,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams",
-          "spirits"
+          "SessionTeamSpirits"
         ]
       },
       "get": {
@@ -611,9 +578,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams",
-          "spirits"
+          "SessionTeamSpirits"
         ]
       },
       "delete": {
@@ -639,9 +604,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "teams",
-          "spirits"
+          "SessionTeamSpirits"
         ]
       }
     },
@@ -692,13 +655,12 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles"
+          "SessionBattles"
         ]
       },
       "get": {
         "description": "List Battles",
-        "operationId": "listSessionsBattles",
+        "operationId": "listSessionBattles",
         "responses": {
           "200": {
             "description": "Successful Battles list",
@@ -720,8 +682,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles"
+          "SessionBattles"
         ]
       }
     },
@@ -774,8 +735,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles"
+          "SessionBattles"
         ]
       },
       "delete": {
@@ -801,8 +761,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles"
+          "SessionBattles"
         ]
       }
     },
@@ -833,7 +792,7 @@
       ],
       "get": {
         "description": "List Spirits",
-        "operationId": "listSessionsBattlesSpirits",
+        "operationId": "listSessionBattleSpirits",
         "responses": {
           "200": {
             "description": "Successful Spirits list",
@@ -855,9 +814,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles",
-          "spirits"
+          "SessionBattleSpirits"
         ]
       }
     },
@@ -921,9 +878,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles",
-          "spirits"
+          "SessionBattleSpirits"
         ]
       }
     },
@@ -996,10 +951,7 @@
           }
         ],
         "tags": [
-          "sessions",
-          "battles",
-          "spirits",
-          "actions"
+          "SessionBattleSpiritActions"
         ]
       }
     }
