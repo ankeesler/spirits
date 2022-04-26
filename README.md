@@ -4,8 +4,7 @@
 
 To run:
 ```sh
-$ ./script/run.sh
-$ # open browser to localhost:12345
+$ # TODO
 ```
 
 ## Muses
