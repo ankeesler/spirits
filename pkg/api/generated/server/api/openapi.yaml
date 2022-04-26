@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+  description: spirits is a turn-based battle royale game
+  title: spirits
+  version: 0.0.0
+servers:
+- description: The hosted spirits gameserver
+  url: https://oh-great-spirits.herokuapp.com
+paths:
+  /:
+    get:
+      description: Retrieve the OpenAPI specification currently served
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                description: Object conforming to the OpenAPI standard
+                type: object
+          description: Successful response
+components:
+  schemas: {}
+  securitySchemes:
+    oidc:
+      openIdConnectUrl: https://oh-great-spirits.herokuapp.com
+      type: openIdConnect

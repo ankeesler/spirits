@@ -1,0 +1,104 @@
+= spirits
+team@openapitools.org
+0.0.0
+:toc: left
+:numbered:
+:toclevels: 3
+:source-highlighter: highlightjs
+:keywords: openapi, rest, spirits
+:specDir: 
+:snippetDir: 
+:generator-template: v1 2019-12-20
+:info-url: https://openapi-generator.tech
+:app-name: spirits
+
+[abstract]
+.Abstract
+spirits is a turn-based battle royale game
+
+
+// markup not found, no include::{specDir}intro.adoc[opts=optional]
+
+
+
+== Endpoints
+
+
+[.Default]
+=== Default
+
+
+[.rootGet]
+==== rootGet
+
+`GET /`
+
+
+
+===== Description
+
+Retrieve the OpenAPI specification currently served
+
+
+// markup not found, no include::{specDir}GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+
+
+===== Return Type
+
+
+<<Object>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful response
+|  <<Object>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[#models]
+== Models
+
+

@@ -1,8 +1,8 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "spirits",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "spirits is a turn-based battle royale game"
   },
   "servers": [
@@ -17,6 +17,7 @@
         "description": "Retrieve the OpenAPI specification currently served",
         "responses": {
           "200": {
+            "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
@@ -32,8 +33,10 @@
   },
   "components": {
     "securitySchemes": {
-      "type": "openIdConnect",
-      "openIdConnectUrl": "https://oh-great-spirits.herokuapp.com"
+      "oidc": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://oh-great-spirits.herokuapp.com"
+      }
     }
   }
 }
