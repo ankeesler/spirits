@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   description: spirits is a turn-based battle royale game
   title: spirits
-  version: 0.0.0
+  version: 0.0.1
 servers:
 - description: The hosted spirits gameserver
   url: https://oh-great-spirits.herokuapp.com
@@ -18,8 +18,899 @@ paths:
                 description: Object conforming to the OpenAPI standard
                 type: object
           description: Successful response
+  /sessions:
+    get:
+      description: Watch Session
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: Successful Session watch
+      security:
+      - oidc:
+        - spirits::sessions.write
+        - spirits::sessions.read
+    post:
+      description: Create a Session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+        description: Session to create
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: Successful Session create
+      security:
+      - oidc:
+        - spirits::sessions.write
+  /sessions/{sessionName}:
+    delete:
+      description: Watch Session
+      parameters:
+      - description: Session name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Session name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: Successful Session delete
+      security:
+      - oidc:
+        - spirits::sessions.write
+    get:
+      description: Watch Session
+      parameters:
+      - description: Session name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Session name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: Successful Session watch
+      security:
+      - oidc:
+        - spirits::sessions.write
+        - spirits::sessions.read
+    put:
+      description: Update Session
+      parameters:
+      - description: Session name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Session name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+        description: Session to update
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: Successful Session update
+      security:
+      - oidc:
+        - spirits::sessions.write
+  /sessions/{sessionName}/teams:
+    get:
+      description: Watch Team
+      parameters:
+      - description: Team name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: Successful Team watch
+      security:
+      - oidc:
+        - spirits::sessions:teams.write
+        - spirits::sessions:teams.read
+    post:
+      description: Create a Team
+      parameters:
+      - description: Team name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+        description: Team to create
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: Successful Team create
+      security:
+      - oidc:
+        - spirits::sessions:teams.write
+  /sessions/{sessionName}/teams/{teamName}:
+    delete:
+      description: Watch Team
+      parameters:
+      - description: Team name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Team name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: Successful Team delete
+      security:
+      - oidc:
+        - spirits::sessions:teams.write
+    get:
+      description: Watch Team
+      parameters:
+      - description: Team name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Team name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: Successful Team watch
+      security:
+      - oidc:
+        - spirits::sessions:teams.write
+        - spirits::sessions:teams.read
+    put:
+      description: Update Team
+      parameters:
+      - description: Team name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Team name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Team name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+        description: Team to update
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: Successful Team update
+      security:
+      - oidc:
+        - spirits::sessions:teams.write
+  /sessions/{sessionName}/teams/{teamName}/spirits:
+    get:
+      description: Watch Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit watch
+      security:
+      - oidc:
+        - spirits::sessions:teams:spirits.write
+        - spirits::sessions:teams:spirits.read
+    post:
+      description: Create a Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Spirit'
+        description: Spirit to create
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit create
+      security:
+      - oidc:
+        - spirits::sessions:teams:spirits.write
+  /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}:
+    delete:
+      description: Watch Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: spiritName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit delete
+      security:
+      - oidc:
+        - spirits::sessions:teams:spirits.write
+    get:
+      description: Watch Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: spiritName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit watch
+      security:
+      - oidc:
+        - spirits::sessions:teams:spirits.write
+        - spirits::sessions:teams:spirits.read
+    put:
+      description: Update Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: teamName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: spiritName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Spirit'
+        description: Spirit to update
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit update
+      security:
+      - oidc:
+        - spirits::sessions:teams:spirits.write
+  /sessions/{sessionName}/battles:
+    get:
+      description: Watch Battle
+      parameters:
+      - description: Battle name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Battle'
+          description: Successful Battle watch
+      security:
+      - oidc:
+        - spirits::sessions:battles.write
+        - spirits::sessions:battles.read
+    post:
+      description: Create a Battle
+      parameters:
+      - description: Battle name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Battle'
+        description: Battle to create
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Battle'
+          description: Successful Battle create
+      security:
+      - oidc:
+        - spirits::sessions:battles.write
+  /sessions/{sessionName}/battles/{battleName}:
+    delete:
+      description: Watch Battle
+      parameters:
+      - description: Battle name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Battle name
+        explode: false
+        in: path
+        name: battleName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Battle'
+          description: Successful Battle delete
+      security:
+      - oidc:
+        - spirits::sessions:battles.write
+    get:
+      description: Watch Battle
+      parameters:
+      - description: Battle name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Battle name
+        explode: false
+        in: path
+        name: battleName
+        required: true
+        schema:
+          description: Battle name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Battle'
+          description: Successful Battle watch
+      security:
+      - oidc:
+        - spirits::sessions:battles.write
+        - spirits::sessions:battles.read
+  /sessions/{sessionName}/battles/{battleName}/spirits:
+    get:
+      description: Watch Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: battleName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit watch
+      security:
+      - oidc:
+        - spirits::sessions:battles:spirits.write
+        - spirits::sessions:battles:spirits.read
+  /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}:
+    get:
+      description: Watch Spirit
+      parameters:
+      - description: Spirit name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: battleName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Spirit name
+        explode: false
+        in: path
+        name: spiritName
+        required: true
+        schema:
+          description: Spirit name
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spirit'
+          description: Successful Spirit watch
+      security:
+      - oidc:
+        - spirits::sessions:battles:spirits.write
+        - spirits::sessions:battles:spirits.read
+  /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions:
+    post:
+      description: Create a Action
+      parameters:
+      - description: Action name
+        explode: false
+        in: path
+        name: sessionName
+        required: true
+        schema:
+          description: Action name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Action name
+        explode: false
+        in: path
+        name: battleName
+        required: true
+        schema:
+          description: Action name
+          minLength: 1
+          type: string
+        style: simple
+      - description: Action name
+        explode: false
+        in: path
+        name: spiritName
+        required: true
+        schema:
+          description: Action name
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Action'
+        description: Action to create
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Action'
+          description: Successful Action create
+      security:
+      - oidc:
+        - spirits::sessions:battles:spirits:actions.write
 components:
-  schemas: {}
+  schemas:
+    Session:
+      description: An isolated collection of Battle's and Team's
+      example:
+        auth:
+          oidc:
+            issuer: issuer
+        name: name
+      properties:
+        name:
+          description: The unique name of this Session
+          minLength: 1
+          type: string
+        auth:
+          $ref: '#/components/schemas/Session_auth'
+      required:
+      - name
+      type: object
+    Team:
+      description: A collection Spirit's
+      example:
+        name: name
+      properties:
+        name:
+          description: The unique name of this Team
+          minLength: 1
+          type: string
+      required:
+      - name
+      type: object
+    Spirit:
+      description: An actor in a Battle
+      example:
+        stats:
+          armor: 0
+          health: 1
+          power: 0
+          agility: 0
+        name: name
+        actions:
+        - actions
+        - actions
+        intelligence: roundRobin
+      properties:
+        name:
+          description: The unique name of this Spirit
+          minLength: 1
+          type: string
+        stats:
+          $ref: '#/components/schemas/Spirit_stats'
+        actions:
+          default:
+          - attack
+          description: The Action's that this Spirit can perform
+          items:
+            description: The name of an Action
+            type: string
+          type: array
+        intelligence:
+          default: roundRobin
+          description: The AI setting for this Spirit
+          type: string
+      required:
+      - name
+      - stats
+      type: object
+    Battle:
+      description: A skirmish amongst Spirit's
+      example:
+        name: name
+        spirits:
+        - spirits
+        - spirits
+      properties:
+        name:
+          description: The unique name of this Battle
+          minLength: 1
+          type: string
+        spirits:
+          description: The spirits involved in this Battle.
+          items:
+            description: A name of a Spirit object involved in this Battle
+            type: string
+          maxLength: 2
+          minLength: 2
+          type: array
+      required:
+      - name
+      - spirits
+      type: object
+    Action:
+      description: A reference to a Spirit's Action
+      example:
+        name: name
+      properties:
+        name:
+          description: The name of a Spirit's Action
+          minLength: 1
+          type: string
+      required:
+      - name
+      type: object
+    Session_auth_oidc:
+      description: OIDC authentication configuration
+      example:
+        issuer: issuer
+      properties:
+        issuer:
+          description: OIDC issuer to use for authentication
+          minLength: 1
+          pattern: ^https://.*
+          type: string
+      type: object
+    Session_auth:
+      description: A description of the auth requirements for this Session; defaults
+        to using the well-known OIDC provider
+      example:
+        oidc:
+          issuer: issuer
+      properties:
+        oidc:
+          $ref: '#/components/schemas/Session_auth_oidc'
+      type: object
+    Spirit_stats:
+      description: Quantitative properties of the Spirit; these are utilized and manipulated
+        throughout the course of a Battle
+      example:
+        armor: 0
+        health: 1
+        power: 0
+        agility: 0
+      properties:
+        health:
+          description: "A quantitative representation of the energy of the Spirit;\
+            \ when this drops to 0, the Spirit is no longer to participate in a Battle"
+          format: int64
+          minimum: 1
+          type: integer
+        power:
+          default: 0
+          description: A quantitative representation of the might of the Spirit
+          format: int64
+          minimum: 0
+          type: integer
+        armor:
+          default: 0
+          description: A quantitative representation of the defense of the Spirit
+          format: int64
+          minimum: 0
+          type: integer
+        agility:
+          default: 0
+          description: A quantitative representation of the speed of the Spirit
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - health
+      type: object
   securitySchemes:
     oidc:
       openIdConnectUrl: https://oh-great-spirits.herokuapp.com

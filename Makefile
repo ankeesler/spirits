@@ -1,6 +1,10 @@
 # --------------------------------------------------------------------------------------------------
 # API
 
+SHELL=bash -o pipefail
+
+VERSION=0.0.1
+
 GENERATED_API=pkg/api/generated/api.json
 
 GENERATED_DIRS=\
@@ -42,13 +46,15 @@ validate: $(GENERATED_API)
 # internal
 
 $(GENERATED_API): cmd/genapi/main.go cmd/genapi/config.json cmd/genapi/api.json.tmpl
-	go run ./$< >$@
+	go run ./$< $(VERSION) | jq . >$@
+
+COMMON_GO_CONFIG_OPTIONS=enumClassPrefix=true,hideGenerationTimestamp=false,isGoSubmodule=true,packageVersion=$(VERSION),
 
 pkg/api/generated/client: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go
+	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go -p $(COMMON_GO_CONFIG_OPTIONS),packageName=client
 
 pkg/api/generated/server: $(GENERATED_API)
-	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go-server
+	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) go-server -p $(COMMON_GO_CONFIG_OPTIONS),onlyInterfaces=true,outputAsLibrary=true,packageName=server,sourceFolder=api
 
 script/generated/cli: $(GENERATED_API)
 	rm -rf $@ && $(OPENAPI_GENERATE_PREFIX) bash

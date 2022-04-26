@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "spirits",
-    "version": "0.0.1",
+    "version": "{{ .Version }}",
     "description": "spirits is a turn-based battle royale game"
   },
   "servers": [
@@ -29,9 +29,358 @@
           }
         }
       }
+    },
+    {{ range $i, $path := .Paths }}
+    {{ if gt $i 0 }},{{end}}
+    "{{ $path.Name }}": {
+      "parameters": [
+        {{ range $k, $param := $path.Params }}
+        {{ if gt $k 0 }},{{end}}
+        {
+          "name": "{{ $param }}",
+          "in": "path",
+          "description": "{{ $path.Singular }} name",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "{{ $path.Singular }} name",
+            "minLength": 1
+          }
+        }
+        {{ end }}
+      ],
+      {{ range $j, $verb := $path.Verbs }}
+      {{ if gt $j 0 }},{{end}}
+      {{ if eq "create" $verb }}
+      "post": {
+        "description": "Create a {{ $path.Singular }}",
+        "requestBody": {
+          "description": "{{ $path.Singular }} to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/{{ $path.Singular }}"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful {{ $path.Singular }} create",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes false }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ if eq "update" $verb }}
+      "put": {
+        "description": "Update {{ $path.Singular }}",
+        "requestBody": {
+          "description": "{{ $path.Singular }} to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/{{ $path.Singular }}"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful {{ $path.Singular }} update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes false }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ if eq "list" $verb }}
+      "get": {
+        "description": "List {{ $path.Plural }}",
+        "responses": {
+          "200": {
+            "description": "Successful {{ $path.Plural }} list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes true }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ if eq "get" $verb }}
+      "get": {
+        "description": "Get {{ $path.Singular }}",
+        "responses": {
+          "200": {
+            "description": "Successful {{ $path.Singular }} get",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes true }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ if eq "watch" $verb }}
+      "get": {
+        "description": "Watch {{ $path.Singular }}",
+        "responses": {
+          "200": {
+            "description": "Successful {{ $path.Singular }} watch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes true }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ if eq "delete" $verb }}
+      "delete": {
+        "description": "Watch {{ $path.Singular }}",
+        "responses": {
+          "200": {
+            "description": "Successful {{ $path.Singular }} delete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/{{ $path.Singular }}"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oidc": [
+              {{ range $l, $scope := $path.Scopes false }}
+              {{ if gt $l 0 }},{{end}}
+              "{{ . }}"
+              {{ end }}
+            ]
+          }
+        ]
+      }
+      {{ end }}
+      {{ end }}
     }
+    {{ end }}
   },
   "components": {
+    "schemas": {
+      "Session": {
+        "type": "object",
+        "description": "An isolated collection of Battle's and Team's",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Session",
+            "minLength": 1
+          },
+          "auth": {
+            "type": "object",
+            "description": "A description of the auth requirements for this Session; defaults to using the well-known OIDC provider",
+            "default": {
+              "oidc": {
+                "issuer": "https://oh-great-spirits.herokuapp.com"
+              }
+            },
+            "properties": {
+              "oidc": {
+                "type": "object",
+                "description": "OIDC authentication configuration",
+                "properties": {
+                  "issuer": {
+                    "type": "string",
+                    "description": "OIDC issuer to use for authentication",
+                    "minLength": 1,
+                    "pattern": "^https://.*"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "description": "A collection Spirit's",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Team",
+            "minLength": 1
+          }
+        }
+      },
+      "Spirit": {
+        "type": "object",
+        "description": "An actor in a Battle",
+        "required": ["name", "stats"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Spirit",
+            "minLength": 1
+          },
+          "stats": {
+            "type": "object",
+            "description": "Quantitative properties of the Spirit; these are utilized and manipulated throughout the course of a Battle",
+            "required": ["health"],
+            "properties": {
+              "health": {
+                "type": "integer",
+                "description": "A quantitative representation of the energy of the Spirit; when this drops to 0, the Spirit is no longer to participate in a Battle",
+                "format": "int64",
+                "minimum": 1
+              },
+              "power": {
+                "type": "integer",
+                "description": "A quantitative representation of the might of the Spirit",
+                "format": "int64",
+                "minimum": 0,
+                "default": 0
+              },
+              "armor": {
+                "type": "integer",
+                "description": "A quantitative representation of the defense of the Spirit",
+                "format": "int64",
+                "minimum": 0,
+                "default": 0
+              },
+              "agility": {
+                "type": "integer",
+                "description": "A quantitative representation of the speed of the Spirit",
+                "format": "int64",
+                "minimum": 0,
+                "default": 0
+              }
+            }
+          },
+          "actions": {
+            "type": "array",
+            "description": "The Action's that this Spirit can perform",
+            "default": ["attack"],
+            "items": {
+              "type": "string",
+              "description": "The name of an Action"
+            }
+          },
+          "intelligence": {
+            "type": "string",
+            "description": "The AI setting for this Spirit",
+            "default": "roundRobin"
+          }
+        }
+      },
+      "Battle": {
+        "type": "object",
+        "description": "A skirmish amongst Spirit's",
+        "required": ["name", "spirits"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of this Battle",
+            "minLength": 1
+          },
+          "spirits": {
+            "type": "array",
+            "description": "The spirits involved in this Battle.",
+            "minLength": 2,
+            "maxLength": 2,
+            "items": {
+              "type": "string",
+              "description": "A name of a Spirit object involved in this Battle"
+            }
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "description": "A reference to a Spirit's Action",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of a Spirit's Action",
+            "minLength": 1
+          }
+        }
+      }
+    },
     "securitySchemes": {
       "oidc": {
         "type": "openIdConnect",

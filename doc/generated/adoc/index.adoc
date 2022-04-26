@@ -1,6 +1,6 @@
 = spirits
 team@openapitools.org
-0.0.0
+0.0.1
 :toc: left
 :numbered:
 :toclevels: 3
@@ -98,7 +98,2197 @@ ifdef::internal-generation[]
 endif::internal-generation[]
 
 
+[.sessionsGet]
+==== sessionsGet
+
+`GET /sessions`
+
+
+
+===== Description
+
+Watch Session
+
+
+// markup not found, no include::{specDir}sessions/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+
+
+===== Return Type
+
+<<Session>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Session watch
+|  <<Session>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsPost]
+==== sessionsPost
+
+`POST /sessions`
+
+
+
+===== Description
+
+Create a Session
+
+
+// markup not found, no include::{specDir}sessions/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Session
+| Session to create <<Session>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Session>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Successful Session create
+|  <<Session>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesBattleNameDelete]
+==== sessionsSessionNameBattlesBattleNameDelete
+
+`DELETE /sessions/{sessionName}/battles/{battleName}`
+
+
+
+===== Description
+
+Watch Battle
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Battle name 
+| X
+| null
+| 
+
+| battleName
+| Battle name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Battle>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Battle delete
+|  <<Battle>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/{battleName}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesBattleNameGet]
+==== sessionsSessionNameBattlesBattleNameGet
+
+`GET /sessions/{sessionName}/battles/{battleName}`
+
+
+
+===== Description
+
+Watch Battle
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Battle name 
+| X
+| null
+| 
+
+| battleName
+| Battle name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Battle>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Battle watch
+|  <<Battle>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/{battleName}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesBattleNameSpiritsGet]
+==== sessionsSessionNameBattlesBattleNameSpiritsGet
+
+`GET /sessions/{sessionName}/battles/{battleName}/spirits`
+
+
+
+===== Description
+
+Watch Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| battleName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit watch
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/{battleName}/spirits/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesBattleNameSpiritsSpiritNameActionsPost]
+==== sessionsSessionNameBattlesBattleNameSpiritsSpiritNameActionsPost
+
+`POST /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions`
+
+
+
+===== Description
+
+Create a Action
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/actions/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Action name 
+| X
+| null
+| 
+
+| battleName
+| Action name 
+| X
+| null
+| 
+
+| spiritName
+| Action name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Action
+| Action to create <<Action>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Action>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Successful Action create
+|  <<Action>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/actions/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/actions/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/actions/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesBattleNameSpiritsSpiritNameGet]
+==== sessionsSessionNameBattlesBattleNameSpiritsSpiritNameGet
+
+`GET /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}`
+
+
+
+===== Description
+
+Watch Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| battleName
+| Spirit name 
+| X
+| null
+| 
+
+| spiritName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit watch
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/\{battleName\}/spirits/\{spiritName\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesGet]
+==== sessionsSessionNameBattlesGet
+
+`GET /sessions/{sessionName}/battles`
+
+
+
+===== Description
+
+Watch Battle
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Battle name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Battle>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Battle watch
+|  <<Battle>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameBattlesPost]
+==== sessionsSessionNameBattlesPost
+
+`POST /sessions/{sessionName}/battles`
+
+
+
+===== Description
+
+Create a Battle
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Battle name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Battle
+| Battle to create <<Battle>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Battle>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Successful Battle create
+|  <<Battle>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/battles/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/battles/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/battles/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameDelete]
+==== sessionsSessionNameDelete
+
+`DELETE /sessions/{sessionName}`
+
+
+
+===== Description
+
+Watch Session
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Session name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Session>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Session delete
+|  <<Session>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameGet]
+==== sessionsSessionNameGet
+
+`GET /sessions/{sessionName}`
+
+
+
+===== Description
+
+Watch Session
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Session name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Session>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Session watch
+|  <<Session>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNamePut]
+==== sessionsSessionNamePut
+
+`PUT /sessions/{sessionName}`
+
+
+
+===== Description
+
+Update Session
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/PUT/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Session name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Session
+| Session to update <<Session>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Session>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Session update
+|  <<Session>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/PUT/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/PUT/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/PUT/PUT.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/PUT/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsGet]
+==== sessionsSessionNameTeamsGet
+
+`GET /sessions/{sessionName}/teams`
+
+
+
+===== Description
+
+Watch Team
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Team name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Team>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Team watch
+|  <<Team>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsPost]
+==== sessionsSessionNameTeamsPost
+
+`POST /sessions/{sessionName}/teams`
+
+
+
+===== Description
+
+Create a Team
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Team name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Team
+| Team to create <<Team>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Team>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Successful Team create
+|  <<Team>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameDelete]
+==== sessionsSessionNameTeamsTeamNameDelete
+
+`DELETE /sessions/{sessionName}/teams/{teamName}`
+
+
+
+===== Description
+
+Watch Team
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Team name 
+| X
+| null
+| 
+
+| teamName
+| Team name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Team>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Team delete
+|  <<Team>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameGet]
+==== sessionsSessionNameTeamsTeamNameGet
+
+`GET /sessions/{sessionName}/teams/{teamName}`
+
+
+
+===== Description
+
+Watch Team
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Team name 
+| X
+| null
+| 
+
+| teamName
+| Team name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Team>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Team watch
+|  <<Team>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNamePut]
+==== sessionsSessionNameTeamsTeamNamePut
+
+`PUT /sessions/{sessionName}/teams/{teamName}`
+
+
+
+===== Description
+
+Update Team
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/PUT/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Team name 
+| X
+| null
+| 
+
+| teamName
+| Team name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Team
+| Team to update <<Team>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Team>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Team update
+|  <<Team>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/PUT/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/PUT/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/PUT/PUT.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/PUT/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameSpiritsGet]
+==== sessionsSessionNameTeamsTeamNameSpiritsGet
+
+`GET /sessions/{sessionName}/teams/{teamName}/spirits`
+
+
+
+===== Description
+
+Watch Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| teamName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit watch
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/spirits/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameSpiritsPost]
+==== sessionsSessionNameTeamsTeamNameSpiritsPost
+
+`POST /sessions/{sessionName}/teams/{teamName}/spirits`
+
+
+
+===== Description
+
+Create a Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| teamName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Spirit
+| Spirit to create <<Spirit>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Successful Spirit create
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/spirits/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameSpiritsSpiritNameDelete]
+==== sessionsSessionNameTeamsTeamNameSpiritsSpiritNameDelete
+
+`DELETE /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}`
+
+
+
+===== Description
+
+Watch Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| teamName
+| Spirit name 
+| X
+| null
+| 
+
+| spiritName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit delete
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameSpiritsSpiritNameGet]
+==== sessionsSessionNameTeamsTeamNameSpiritsSpiritNameGet
+
+`GET /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}`
+
+
+
+===== Description
+
+Watch Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| teamName
+| Spirit name 
+| X
+| null
+| 
+
+| spiritName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit watch
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.sessionsSessionNameTeamsTeamNameSpiritsSpiritNamePut]
+==== sessionsSessionNameTeamsTeamNameSpiritsSpiritNamePut
+
+`PUT /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}`
+
+
+
+===== Description
+
+Update Spirit
+
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/PUT/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| sessionName
+| Spirit name 
+| X
+| null
+| 
+
+| teamName
+| Spirit name 
+| X
+| null
+| 
+
+| spiritName
+| Spirit name 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Spirit
+| Spirit to update <<Spirit>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Spirit>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful Spirit update
+|  <<Spirit>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/PUT/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/PUT/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}/PUT/PUT.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}sessions/\{sessionName\}/teams/\{teamName\}/spirits/\{spiritName\}/PUT/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
 [#models]
 == Models
+
+
+[#Action]
+=== _Action_ 
+
+A reference to a Spirit&#39;s Action
+
+[.fields-Action]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| name
+| X
+| String 
+| The name of a Spirit&#39;s Action
+|  
+
+|===
+
+
+[#Battle]
+=== _Battle_ 
+
+A skirmish amongst Spirit&#39;s
+
+[.fields-Battle]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| name
+| X
+| String 
+| The unique name of this Battle
+|  
+
+| spirits
+| X
+| List  of <<string>>
+| The spirits involved in this Battle.
+|  
+
+|===
+
+
+[#Session]
+=== _Session_ 
+
+An isolated collection of Battle&#39;s and Team&#39;s
+
+[.fields-Session]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| name
+| X
+| String 
+| The unique name of this Session
+|  
+
+| auth
+| 
+| Session_auth 
+| 
+|  
+
+|===
+
+
+[#SessionAuth]
+=== _SessionAuth_ 
+
+A description of the auth requirements for this Session; defaults to using the well-known OIDC provider
+
+[.fields-SessionAuth]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| oidc
+| 
+| Session_auth_oidc 
+| 
+|  
+
+|===
+
+
+[#SessionAuthOidc]
+=== _SessionAuthOidc_ 
+
+OIDC authentication configuration
+
+[.fields-SessionAuthOidc]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| issuer
+| 
+| String 
+| OIDC issuer to use for authentication
+|  
+
+|===
+
+
+[#Spirit]
+=== _Spirit_ 
+
+An actor in a Battle
+
+[.fields-Spirit]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| name
+| X
+| String 
+| The unique name of this Spirit
+|  
+
+| stats
+| X
+| Spirit_stats 
+| 
+|  
+
+| actions
+| 
+| List  of <<string>>
+| The Action&#39;s that this Spirit can perform
+|  
+
+| intelligence
+| 
+| String 
+| The AI setting for this Spirit
+|  
+
+|===
+
+
+[#SpiritStats]
+=== _SpiritStats_ 
+
+Quantitative properties of the Spirit; these are utilized and manipulated throughout the course of a Battle
+
+[.fields-SpiritStats]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| health
+| X
+| Long 
+| A quantitative representation of the energy of the Spirit; when this drops to 0, the Spirit is no longer to participate in a Battle
+| int64 
+
+| power
+| 
+| Long 
+| A quantitative representation of the might of the Spirit
+| int64 
+
+| armor
+| 
+| Long 
+| A quantitative representation of the defense of the Spirit
+| int64 
+
+| agility
+| 
+| Long 
+| A quantitative representation of the speed of the Spirit
+| int64 
+
+|===
+
+
+[#Team]
+=== _Team_ 
+
+A collection Spirit&#39;s
+
+[.fields-Team]
+[cols="2,1,2,4,1"]
+|===
+| Field Name| Required| Type| Description| Format
+
+| name
+| X
+| String 
+| The unique name of this Team
+|  
+
+|===
 
 

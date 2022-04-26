@@ -104,10 +104,40 @@ All URIs are relative to **
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *DefaultApi* | [**rootGet**](docs/DefaultApi.md#rootget) | **GET** / | 
+*DefaultApi* | [**sessionsGet**](docs/DefaultApi.md#sessionsget) | **GET** /sessions | 
+*DefaultApi* | [**sessionsPost**](docs/DefaultApi.md#sessionspost) | **POST** /sessions | 
+*DefaultApi* | [**sessionsSessionNameBattlesBattleNameDelete**](docs/DefaultApi.md#sessionssessionnamebattlesbattlenamedelete) | **DELETE** /sessions/{sessionName}/battles/{battleName} | 
+*DefaultApi* | [**sessionsSessionNameBattlesBattleNameGet**](docs/DefaultApi.md#sessionssessionnamebattlesbattlenameget) | **GET** /sessions/{sessionName}/battles/{battleName} | 
+*DefaultApi* | [**sessionsSessionNameBattlesBattleNameSpiritsGet**](docs/DefaultApi.md#sessionssessionnamebattlesbattlenamespiritsget) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits | 
+*DefaultApi* | [**sessionsSessionNameBattlesBattleNameSpiritsSpiritNameActionsPost**](docs/DefaultApi.md#sessionssessionnamebattlesbattlenamespiritsspiritnameactionspost) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+*DefaultApi* | [**sessionsSessionNameBattlesBattleNameSpiritsSpiritNameGet**](docs/DefaultApi.md#sessionssessionnamebattlesbattlenamespiritsspiritnameget) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
+*DefaultApi* | [**sessionsSessionNameBattlesGet**](docs/DefaultApi.md#sessionssessionnamebattlesget) | **GET** /sessions/{sessionName}/battles | 
+*DefaultApi* | [**sessionsSessionNameBattlesPost**](docs/DefaultApi.md#sessionssessionnamebattlespost) | **POST** /sessions/{sessionName}/battles | 
+*DefaultApi* | [**sessionsSessionNameDelete**](docs/DefaultApi.md#sessionssessionnamedelete) | **DELETE** /sessions/{sessionName} | 
+*DefaultApi* | [**sessionsSessionNameGet**](docs/DefaultApi.md#sessionssessionnameget) | **GET** /sessions/{sessionName} | 
+*DefaultApi* | [**sessionsSessionNamePut**](docs/DefaultApi.md#sessionssessionnameput) | **PUT** /sessions/{sessionName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsGet**](docs/DefaultApi.md#sessionssessionnameteamsget) | **GET** /sessions/{sessionName}/teams | 
+*DefaultApi* | [**sessionsSessionNameTeamsPost**](docs/DefaultApi.md#sessionssessionnameteamspost) | **POST** /sessions/{sessionName}/teams | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameDelete**](docs/DefaultApi.md#sessionssessionnameteamsteamnamedelete) | **DELETE** /sessions/{sessionName}/teams/{teamName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameGet**](docs/DefaultApi.md#sessionssessionnameteamsteamnameget) | **GET** /sessions/{sessionName}/teams/{teamName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNamePut**](docs/DefaultApi.md#sessionssessionnameteamsteamnameput) | **PUT** /sessions/{sessionName}/teams/{teamName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameSpiritsGet**](docs/DefaultApi.md#sessionssessionnameteamsteamnamespiritsget) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameSpiritsPost**](docs/DefaultApi.md#sessionssessionnameteamsteamnamespiritspost) | **POST** /sessions/{sessionName}/teams/{teamName}/spirits | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameSpiritsSpiritNameDelete**](docs/DefaultApi.md#sessionssessionnameteamsteamnamespiritsspiritnamedelete) | **DELETE** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameSpiritsSpiritNameGet**](docs/DefaultApi.md#sessionssessionnameteamsteamnamespiritsspiritnameget) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+*DefaultApi* | [**sessionsSessionNameTeamsTeamNameSpiritsSpiritNamePut**](docs/DefaultApi.md#sessionssessionnameteamsteamnamespiritsspiritnameput) | **PUT** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
 
 
 ## Documentation For Models
 
+ - [Action](docs/Action.md)
+ - [Battle](docs/Battle.md)
+ - [Session](docs/Session.md)
+ - [SessionAuth](docs/SessionAuth.md)
+ - [SessionAuthOidc](docs/SessionAuthOidc.md)
+ - [Spirit](docs/Spirit.md)
+ - [SpiritStats](docs/SpiritStats.md)
+ - [Team](docs/Team.md)
 
 
 ## Documentation For Authorization

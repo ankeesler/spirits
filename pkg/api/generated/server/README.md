@@ -1,4 +1,4 @@
-# Go API Server for openapi
+# Go API Server for server
 
 spirits is a turn-based battle royale game
 
@@ -12,8 +12,8 @@ To see how to make this your own, look here:
 
 [README](https://openapi-generator.tech)
 
-- API version: 0.0.0
-- Build date: 2022-04-26T15:30:13.243551Z[Etc/UTC]
+- API version: 0.0.1
+- Build date: 2022-04-26T21:47:16.991308Z[Etc/UTC]
 
 
 ### Running the server
@@ -25,10 +25,10 @@ go run main.go
 
 To run the server in a docker container
 ```
-docker build --network=host -t openapi .
+docker build --network=host -t server .
 ```
 
 Once image is built use
 ```
-docker run --rm -it openapi
+docker run --rm -it server
 ```

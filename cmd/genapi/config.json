@@ -1,61 +1,91 @@
- {
-  "paths": {
-    "/sessions": {
-      "create": true,
-      "list": true,
-      "watch": true
+{
+  "paths": [
+    {
+      "name": "/sessions",
+      "verbs": [
+        "create",
+        "list",
+        "watch"
+      ]
     },
-
-   "/sessions/{sessionName}": {
-      "update": true,
-      "get": true,
-      "watch": true,
-      "delete": true
+    {
+      "name": "/sessions/{sessionName}",
+      "verbs": [
+        "update",
+        "get",
+        "watch",
+        "delete"
+      ]
     },
-
-    "/sessions/{sessionName}/teams": {
-      "create": true,
-      "list": true,
-      "watch": true
+    {
+      "name": "/sessions/{sessionName}/teams",
+      "verbs": [
+        "create",
+        "list",
+        "watch"
+      ]
     },
-    "/sessions/{sessionName}/teams/{teamName}": {
-      "update": true,
-      "get": true,
-      "watch": true,
-      "delete": true
+    {
+      "name": "/sessions/{sessionName}/teams/{teamName}",
+      "verbs": [
+        "update",
+        "get",
+        "watch",
+        "delete"
+      ]
     },
-    "/sessions/{sessionName}/teams/{teamName}/spirits": {
-      "create": true,
-      "list": true,
-      "watch": true
+    {
+      "name": "/sessions/{sessionName}/teams/{teamName}/spirits",
+      "verbs": [
+        "create",
+        "list",
+        "watch"
+      ]
     },
-    "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}": {
-      "update": true,
-      "get": true,
-      "watch": true,
-      "delete": true
+    {
+      "name": "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}",
+      "verbs": [
+        "update",
+        "get",
+        "watch",
+        "delete"
+      ]
     },
-
-    "/sessions/{sessionName}/battles": {
-      "create": true,
-      "list": true,
-      "watch": true
+    {
+      "name": "/sessions/{sessionName}/battles",
+      "verbs": [
+        "create",
+        "list",
+        "watch"
+      ]
     },
-    "/sessions/{sessionName}/battles/{battleName}": {
-      "get": true,
-      "watch": true,
-      "delete": true
+    {
+      "name": "/sessions/{sessionName}/battles/{battleName}",
+      "verbs": [
+        "get",
+        "watch",
+        "delete"
+      ]
     },
-    "/sessions/{sessionName}/battles/{battleName}/spirits": {
-      "list": true,
-      "watch": true
+    {
+      "name": "/sessions/{sessionName}/battles/{battleName}/spirits",
+      "verbs": [
+        "list",
+        "watch"
+      ]
     },
-    "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}": {
-      "get": true,
-      "watch": true
+    {
+      "name": "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}",
+      "verbs": [
+        "get",
+        "watch"
+      ]
     },
-    "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions": {
-      "create": true
+    {
+      "name": "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions",
+      "verbs": [
+        "create"
+      ]
     }
-  }
+  ]
 }

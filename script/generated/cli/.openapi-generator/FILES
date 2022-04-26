@@ -4,4 +4,12 @@ README.md
 _client.sh
 client.sh
 client.sh.bash-completion
+docs/Action.md
+docs/Battle.md
 docs/DefaultApi.md
+docs/Session.md
+docs/SessionAuth.md
+docs/SessionAuthOidc.md
+docs/Spirit.md
+docs/SpiritStats.md
+docs/Team.md
