@@ -1,0 +1,61 @@
+ {
+  "paths": {
+    "/sessions": {
+      "create": true,
+      "list": true,
+      "watch": true
+    },
+
+   "/sessions/{sessionName}": {
+      "update": true,
+      "get": true,
+      "watch": true,
+      "delete": true
+    },
+
+    "/sessions/{sessionName}/teams": {
+      "create": true,
+      "list": true,
+      "watch": true
+    },
+    "/sessions/{sessionName}/teams/{teamName}": {
+      "update": true,
+      "get": true,
+      "watch": true,
+      "delete": true
+    },
+    "/sessions/{sessionName}/teams/{teamName}/spirits": {
+      "create": true,
+      "list": true,
+      "watch": true
+    },
+    "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}": {
+      "update": true,
+      "get": true,
+      "watch": true,
+      "delete": true
+    },
+
+    "/sessions/{sessionName}/battles": {
+      "create": true,
+      "list": true,
+      "watch": true
+    },
+    "/sessions/{sessionName}/battles/{battleName}": {
+      "get": true,
+      "watch": true,
+      "delete": true
+    },
+    "/sessions/{sessionName}/battles/{battleName}/spirits": {
+      "list": true,
+      "watch": true
+    },
+    "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}": {
+      "get": true,
+      "watch": true
+    },
+    "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions": {
+      "create": true
+    }
+  }
+}
