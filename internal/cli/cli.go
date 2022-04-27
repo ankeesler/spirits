@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/ankeesler/spirits/internal/domain"
 	"github.com/ankeesler/spirits/internal/log"
 	internalserver "github.com/ankeesler/spirits/internal/server"
 	"github.com/ankeesler/spirits/internal/service"
@@ -23,7 +24,9 @@ func Run() error {
 	defaultAPIService := service.NewDefault()
 	defaultAPIController := server.NewDefaultApiController(defaultAPIService)
 
-	sessionsAPIService := sessions.New()
+	domain := domain.New()
+
+	sessionsAPIService := sessions.New(domain)
 	sessionsAPIController := server.NewSessionApiController(sessionsAPIService)
 
 	handler := server.NewRouter(
