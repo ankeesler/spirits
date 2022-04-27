@@ -32,6 +32,7 @@ func (s *Service) UpdateSessionTeam(ctx context.Context, sessionName, teamName s
 	if session == nil {
 		return rsp, err
 	}
+	// TODO: check teamName matches team.Name
 	return service.Update(ctx, &team, session.Teams, &converterFuncs)
 }
 

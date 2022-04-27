@@ -24,6 +24,7 @@ func (s *Service) CreateSession(ctx context.Context, session server.Session) (se
 }
 
 func (s *Service) UpdateSession(ctx context.Context, name string, session server.Session) (server.ImplResponse, error) {
+	// TODO: check name matches session.Name
 	return service.Update(ctx, &session, s.domain.Sessions, &converterFuncs)
 }
 
