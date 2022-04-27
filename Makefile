@@ -67,7 +67,3 @@ script/generated/cli: $(GENERATED_API)
 doc/generated/adoc: $(GENERATED_API)
 	rm -rf $@
 	$(OPENAPI_GENERATE_PREFIX) asciidoc
-
-doc/generated/html: $(GENERATED_API)
-	rm -rf $@
-	$(OPENAPI_GENERATE_PREFIX) html2
