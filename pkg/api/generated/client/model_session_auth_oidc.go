@@ -26,6 +26,8 @@ type SessionAuthOidc struct {
 // will change when the set of required properties is changed
 func NewSessionAuthOidc() *SessionAuthOidc {
 	this := SessionAuthOidc{}
+	var issuer string = "https://oh-great-spirits.herokuapp.com"
+	this.Issuer = &issuer
 	return &this
 }
 
@@ -34,6 +36,8 @@ func NewSessionAuthOidc() *SessionAuthOidc {
 // but it doesn't guarantee that properties required by API are set
 func NewSessionAuthOidcWithDefaults() *SessionAuthOidc {
 	this := SessionAuthOidc{}
+	var issuer string = "https://oh-great-spirits.herokuapp.com"
+	this.Issuer = &issuer
 	return &this
 }
 

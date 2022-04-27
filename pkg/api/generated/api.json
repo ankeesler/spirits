@@ -1013,9 +1013,7 @@
             "type": "object",
             "description": "A description of the auth requirements for this Session; defaults to using the well-known OIDC provider",
             "default": {
-              "oidc": {
-                "issuer": "https://oh-great-spirits.herokuapp.com"
-              }
+              "oidc": {}
             },
             "properties": {
               "oidc": {
@@ -1025,6 +1023,7 @@
                   "issuer": {
                     "type": "string",
                     "description": "OIDC issuer to use for authentication",
+                    "default": "https://oh-great-spirits.herokuapp.com",
                     "minLength": 1,
                     "pattern": "^https://.*"
                   }

@@ -911,7 +911,8 @@ ul.nav-tabs {
       "minLength" : 1,
       "pattern" : "^https://.*",
       "type" : "string",
-      "description" : "OIDC issuer to use for authentication"
+      "description" : "OIDC issuer to use for authentication",
+      "default" : "https://oh-great-spirits.herokuapp.com"
     }
   },
   "description" : "OIDC authentication configuration"
@@ -1450,7 +1451,7 @@ pub fn main() {
  -d '{
   &quot;auth&quot; : {
     &quot;oidc&quot; : {
-      &quot;issuer&quot; : &quot;issuer&quot;
+      &quot;issuer&quot; : &quot;https://oh-great-spirits.herokuapp.com&quot;
     }
   },
   &quot;name&quot; : &quot;name&quot;
@@ -2801,7 +2802,7 @@ pub fn main() {
  -d '{
   &quot;auth&quot; : {
     &quot;oidc&quot; : {
-      &quot;issuer&quot; : &quot;issuer&quot;
+      &quot;issuer&quot; : &quot;https://oh-great-spirits.herokuapp.com&quot;
     }
   },
   &quot;name&quot; : &quot;name&quot;

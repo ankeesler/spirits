@@ -41,10 +41,10 @@ func (s *Service) DeleteSession(ctx context.Context, name string) (server.ImplRe
 }
 
 var converterFuncs = service.ConverterFuncs[server.Session, internalsession.Session]{
-	From: func(session *server.Session) (*internalsession.Session, error) {
+	AToB: func(session *server.Session) (*internalsession.Session, error) {
 		return internalsession.New(session.Name), nil
 	},
-	To: func(internalSession *internalsession.Session) (*server.Session, error) {
+	BToA: func(internalSession *internalsession.Session) (*server.Session, error) {
 		return &server.Session{Name: internalSession.Name}, nil
 	},
 }

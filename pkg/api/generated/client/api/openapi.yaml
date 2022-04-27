@@ -860,7 +860,7 @@ components:
       example:
         auth:
           oidc:
-            issuer: issuer
+            issuer: https://oh-great-spirits.herokuapp.com
         name: name
       properties:
         name:
@@ -923,9 +923,10 @@ components:
     Session_auth_oidc:
       description: OIDC authentication configuration
       example:
-        issuer: issuer
+        issuer: https://oh-great-spirits.herokuapp.com
       properties:
         issuer:
+          default: https://oh-great-spirits.herokuapp.com
           description: OIDC issuer to use for authentication
           minLength: 1
           pattern: ^https://.*
@@ -936,7 +937,7 @@ components:
         to using the well-known OIDC provider
       example:
         oidc:
-          issuer: issuer
+          issuer: https://oh-great-spirits.herokuapp.com
       properties:
         oidc:
           $ref: '#/components/schemas/Session_auth_oidc'

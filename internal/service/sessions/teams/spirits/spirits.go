@@ -25,7 +25,7 @@ func (s *Service) CreateSessionTeamSpirit(ctx context.Context, sessionName, team
 		return rsp, err
 	}
 	team, rsp, err := service.Find(ctx, teamName, session.Teams)
-	if session == nil {
+	if team == nil {
 		return rsp, err
 	}
 	return service.Create(ctx, &spirit, team.Spirits, &converterFuncs)
@@ -37,7 +37,7 @@ func (s *Service) UpdateSessionTeamSpirit(ctx context.Context, sessionName, team
 		return rsp, err
 	}
 	team, rsp, err := service.Find(ctx, teamName, session.Teams)
-	if session == nil {
+	if team == nil {
 		return rsp, err
 	}
 	// TODO: check spiritName matches spirit.Name
@@ -50,7 +50,7 @@ func (s *Service) ListSessionTeamSpirits(ctx context.Context, sessionName, teamN
 		return rsp, err
 	}
 	team, rsp, err := service.Find(ctx, teamName, session.Teams)
-	if session == nil {
+	if team == nil {
 		return rsp, err
 	}
 	return service.List(ctx, team.Spirits, &converterFuncs)
@@ -62,7 +62,7 @@ func (s *Service) GetSessionTeamSpirit(ctx context.Context, sessionName, teamNam
 		return rsp, err
 	}
 	team, rsp, err := service.Find(ctx, teamName, session.Teams)
-	if session == nil {
+	if team == nil {
 		return rsp, err
 	}
 	return service.Get(ctx, spiritName, team.Spirits, &converterFuncs)
@@ -74,17 +74,17 @@ func (s *Service) DeleteSessionTeamSpirit(ctx context.Context, sessionName, team
 		return rsp, err
 	}
 	team, rsp, err := service.Find(ctx, teamName, session.Teams)
-	if session == nil {
+	if team == nil {
 		return rsp, err
 	}
 	return service.Delete(ctx, spiritName, team.Spirits, &converterFuncs)
 }
 
 var converterFuncs = service.ConverterFuncs[server.Spirit, internalspirit.Spirit]{
-	From: func(spirit *server.Spirit) (*internalspirit.Spirit, error) {
+	AToB: func(spirit *server.Spirit) (*internalspirit.Spirit, error) {
 		return internalspirit.New(spirit.Name, 1), nil
 	},
-	To: func(internalSpirit *internalspirit.Spirit) (*server.Spirit, error) {
+	BToA: func(internalSpirit *internalspirit.Spirit) (*server.Spirit, error) {
 		return &server.Spirit{Name: internalSpirit.Name}, nil
 	},
 }

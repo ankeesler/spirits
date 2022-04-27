@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Issuer** | Pointer to **string** | OIDC issuer to use for authentication | [optional] 
+**Issuer** | Pointer to **string** | OIDC issuer to use for authentication | [optional] [default to "https://oh-great-spirits.herokuapp.com"]
 
 ## Methods
 

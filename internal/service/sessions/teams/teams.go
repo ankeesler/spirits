@@ -61,10 +61,10 @@ func (s *Service) DeleteSessionTeam(ctx context.Context, sessionName, teamName s
 }
 
 var converterFuncs = service.ConverterFuncs[server.Team, internalteam.Team]{
-	From: func(team *server.Team) (*internalteam.Team, error) {
+	AToB: func(team *server.Team) (*internalteam.Team, error) {
 		return internalteam.New(team.Name), nil
 	},
-	To: func(internalTeam *internalteam.Team) (*server.Team, error) {
+	BToA: func(internalTeam *internalteam.Team) (*server.Team, error) {
 		return &server.Team{Name: internalTeam.Name}, nil
 	},
 }
