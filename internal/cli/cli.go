@@ -9,6 +9,7 @@ import (
 	internalserver "github.com/ankeesler/spirits/internal/server"
 	"github.com/ankeesler/spirits/internal/service"
 	"github.com/ankeesler/spirits/internal/service/sessions"
+	"github.com/ankeesler/spirits/internal/service/sessions/teams"
 	"github.com/ankeesler/spirits/pkg/api"
 	server "github.com/ankeesler/spirits/pkg/api/generated/server/api"
 )
@@ -29,9 +30,13 @@ func Run() error {
 	sessionsAPIService := sessions.New(domain)
 	sessionsAPIController := server.NewSessionApiController(sessionsAPIService)
 
+	sessionTeamsAPIService := teams.New(domain)
+	sessionTeamsAPIController := server.NewSessionTeamApiController(sessionTeamsAPIService)
+
 	handler := server.NewRouter(
 		defaultAPIController,
 		sessionsAPIController,
+		sessionTeamsAPIController,
 	)
 
 	return internalserver.Run(context.TODO(), address, handler)

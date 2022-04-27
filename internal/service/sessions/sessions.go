@@ -13,15 +13,12 @@ import (
 )
 
 type Service struct {
-	server.SessionApiServicer
-
 	domain *domain.Domain
 }
 
 func New(domain *domain.Domain) *Service {
 	return &Service{
-		SessionApiServicer: server.NewSessionApiService(),
-		domain:             domain,
+		domain: domain,
 	}
 }
 
@@ -119,7 +116,7 @@ func (s *Service) DeleteSession(ctx context.Context, name string) (server.ImplRe
 }
 
 func toInternalSession(session *server.Session) *internalsession.Session {
-	return &internalsession.Session{Name: session.Name}
+	return internalsession.New(session.Name)
 }
 
 func fromInternalSessions(internalSessions []*internalsession.Session) []*server.Session {
