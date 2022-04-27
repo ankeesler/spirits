@@ -985,14 +985,14 @@
             "description": "The unique name of this Battle",
             "minLength": 1
           },
-          "spirits": {
+          "teams": {
             "type": "array",
-            "description": "The spirits involved in this Battle.",
+            "description": "The Team's involved in this Battle.",
             "minLength": 2,
             "maxLength": 2,
             "items": {
               "type": "string",
-              "description": "A name of a Spirit object involved in this Battle"
+              "description": "A name of a Team object involved in this Battle"
             }
           }
         }
@@ -1013,7 +1013,9 @@
             "type": "object",
             "description": "A description of the auth requirements for this Session; defaults to using the well-known OIDC provider",
             "default": {
-              "oidc": {}
+              "oidc": {
+                "issuer": "https://oh-great-spirits.herokuapp.com"
+              }
             },
             "properties": {
               "oidc": {

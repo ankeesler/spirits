@@ -33,7 +33,7 @@ import (
 
 func main() {
     sessionName := "sessionName_example" // string | Battle name
-    battle := *openapiclient.NewBattle("Name_example", []string{"Spirits_example"}) // Battle | Battle to create (optional)
+    battle := *openapiclient.NewBattle("Name_example") // Battle | Battle to create (optional)
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)

@@ -834,19 +834,19 @@ components:
     Battle:
       description: A skirmish amongst Spirit's
       example:
+        teams:
+        - teams
+        - teams
         name: name
-        spirits:
-        - spirits
-        - spirits
       properties:
         name:
           description: The unique name of this Battle
           minLength: 1
           type: string
-        spirits:
-          description: The spirits involved in this Battle.
+        teams:
+          description: The Team's involved in this Battle.
           items:
-            description: A name of a Spirit object involved in this Battle
+            description: A name of a Team object involved in this Battle
             type: string
           maxLength: 2
           minLength: 2

@@ -11,8 +11,7 @@ GENERATED_DIRS=\
   pkg/api/generated/client \
   pkg/api/generated/server \
   script/generated/cli \
-  doc/generated/adoc \
-  doc/generated/html
+  doc/generated/adoc
 
 OPENAPI_GENERATE_PREFIX=\
   docker run --rm -v $(shell pwd):/local openapitools/openapi-generator-cli:latest-release generate \
@@ -56,7 +55,7 @@ pkg/api/generated/client: $(GENERATED_API)
 
 pkg/api/generated/server: $(GENERATED_API)
 	rm -rf $@
-	$(OPENAPI_GENERATE_PREFIX) go-server -p $(COMMON_GO_CONFIG_OPTIONS),outputAsLibrary=true,packageName=server,sourceFolder=api
+	$(OPENAPI_GENERATE_PREFIX) go-server -p $(COMMON_GO_CONFIG_OPTIONS),onlyInterfaces=true,outputAsLibrary=true,packageName=api,sourceFolder=api
 	goimports -w $@
 
 script/generated/cli: $(GENERATED_API)

@@ -2151,10 +2151,10 @@ A skirmish amongst Spirit&#39;s
 | The unique name of this Battle
 |  
 
-| spirits
-| X
+| teams
+| 
 | List  of <<string>>
-| The spirits involved in this Battle.
+| The Team&#39;s involved in this Battle.
 |  
 
 |===

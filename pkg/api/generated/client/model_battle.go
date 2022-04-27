@@ -18,18 +18,17 @@ import (
 type Battle struct {
 	// The unique name of this Battle
 	Name string `json:"name"`
-	// The spirits involved in this Battle.
-	Spirits []string `json:"spirits"`
+	// The Team's involved in this Battle.
+	Teams []string `json:"teams,omitempty"`
 }
 
 // NewBattle instantiates a new Battle object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBattle(name string, spirits []string) *Battle {
+func NewBattle(name string) *Battle {
 	this := Battle{}
 	this.Name = name
-	this.Spirits = spirits
 	return &this
 }
 
@@ -65,28 +64,36 @@ func (o *Battle) SetName(v string) {
 	o.Name = v
 }
 
-// GetSpirits returns the Spirits field value
-func (o *Battle) GetSpirits() []string {
-	if o == nil {
+// GetTeams returns the Teams field value if set, zero value otherwise.
+func (o *Battle) GetTeams() []string {
+	if o == nil || o.Teams == nil {
 		var ret []string
 		return ret
 	}
-
-	return o.Spirits
+	return o.Teams
 }
 
-// GetSpiritsOk returns a tuple with the Spirits field value
+// GetTeamsOk returns a tuple with the Teams field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Battle) GetSpiritsOk() ([]string, bool) {
-	if o == nil {
+func (o *Battle) GetTeamsOk() ([]string, bool) {
+	if o == nil || o.Teams == nil {
 		return nil, false
 	}
-	return o.Spirits, true
+	return o.Teams, true
 }
 
-// SetSpirits sets field value
-func (o *Battle) SetSpirits(v []string) {
-	o.Spirits = v
+// HasTeams returns a boolean if a field has been set.
+func (o *Battle) HasTeams() bool {
+	if o != nil && o.Teams != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTeams gets a reference to the given []string and assigns it to the Teams field.
+func (o *Battle) SetTeams(v []string) {
+	o.Teams = v
 }
 
 func (o Battle) MarshalJSON() ([]byte, error) {
@@ -94,8 +101,8 @@ func (o Battle) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["name"] = o.Name
 	}
-	if true {
-		toSerialize["spirits"] = o.Spirits
+	if o.Teams != nil {
+		toSerialize["teams"] = o.Teams
 	}
 	return json.Marshal(toSerialize)
 }

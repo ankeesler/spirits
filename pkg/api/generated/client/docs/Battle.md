@@ -5,13 +5,13 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | **string** | The unique name of this Battle | 
-**Spirits** | **[]string** | The spirits involved in this Battle. | 
+**Teams** | Pointer to **[]string** | The Team&#39;s involved in this Battle. | [optional] 
 
 ## Methods
 
 ### NewBattle
 
-`func NewBattle(name string, spirits []string, ) *Battle`
+`func NewBattle(name string, ) *Battle`
 
 NewBattle instantiates a new Battle object
 This constructor will assign default values to properties that have it defined,
@@ -46,25 +46,30 @@ and a boolean to check if the value has been set.
 SetName sets Name field to given value.
 
 
-### GetSpirits
+### GetTeams
 
-`func (o *Battle) GetSpirits() []string`
+`func (o *Battle) GetTeams() []string`
 
-GetSpirits returns the Spirits field if non-nil, zero value otherwise.
+GetTeams returns the Teams field if non-nil, zero value otherwise.
 
-### GetSpiritsOk
+### GetTeamsOk
 
-`func (o *Battle) GetSpiritsOk() (*[]string, bool)`
+`func (o *Battle) GetTeamsOk() (*[]string, bool)`
 
-GetSpiritsOk returns a tuple with the Spirits field if it's non-nil, zero value otherwise
+GetTeamsOk returns a tuple with the Teams field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetSpirits
+### SetTeams
 
-`func (o *Battle) SetSpirits(v []string)`
+`func (o *Battle) SetTeams(v []string)`
 
-SetSpirits sets Spirits field to given value.
+SetTeams sets Teams field to given value.
 
+### HasTeams
+
+`func (o *Battle) HasTeams() bool`
+
+HasTeams returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
