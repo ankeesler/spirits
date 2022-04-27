@@ -79,8 +79,8 @@ func (s *Store[T]) Update(ctx context.Context, t *T) (*T, error) {
 }
 
 func (s *Store[T]) List(ctx context.Context) ([]*T, error) {
-	log.Debug("store: start: begin")
-	defer log.Debug("store: start: end")
+	log.Debug("store: list: begin")
+	defer log.Debug("store: list: end")
 
 	s.l.Lock()
 	defer s.l.Unlock()

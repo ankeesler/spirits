@@ -3,11 +3,12 @@ package teams
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/ankeesler/spirits/internal/domain"
+	internalsession "github.com/ankeesler/spirits/internal/domain/session"
 	internalteam "github.com/ankeesler/spirits/internal/domain/team"
+	"github.com/ankeesler/spirits/internal/service"
 	"github.com/ankeesler/spirits/internal/store"
 	server "github.com/ankeesler/spirits/pkg/api/generated/server/api"
 )
@@ -23,158 +24,63 @@ func New(domain *domain.Domain) *Service {
 }
 
 func (s *Service) CreateSessionTeam(ctx context.Context, sessionName string, team server.Team) (server.ImplResponse, error) {
-	internalTeam := toInternalTeam(&team)
-
-	session, err := s.domain.Sessions.Get(ctx, sessionName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
+	session, rsp, err := s.getSession(ctx, sessionName)
+	if session == nil {
+		return rsp, err
 	}
-
-	internalTeam, err = session.Teams.Create(ctx, internalTeam)
-	if err != nil {
-		if errors.Is(err, &store.ErrAlreadyExists{}) {
-			return server.ImplResponse{
-				Code: http.StatusConflict,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalTeam(internalTeam),
-	}, nil
+	return service.Create(ctx, &team, session.Teams, &converterFuncs)
 }
 
 func (s *Service) UpdateSessionTeam(ctx context.Context, sessionName, teamName string, team server.Team) (server.ImplResponse, error) {
-	internalTeam := toInternalTeam(&team)
-
-	if teamName != team.Name {
-		return server.ImplResponse{
-			Code: http.StatusBadRequest,
-			Body: fmt.Sprintf("path parameter  name %q does not match body name %q", teamName, team.Name),
-		}, nil
+	session, rsp, err := s.getSession(ctx, sessionName)
+	if session == nil {
+		return rsp, err
 	}
-
-	session, err := s.domain.Sessions.Get(ctx, sessionName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	internalTeam, err = session.Teams.Update(ctx, internalTeam)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusConflict,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalTeam(internalTeam),
-	}, nil
+	return service.Update(ctx, &team, session.Teams, &converterFuncs)
 }
 
 func (s *Service) ListSessionTeams(ctx context.Context, sessionName string) (server.ImplResponse, error) {
-	session, err := s.domain.Sessions.Get(ctx, sessionName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
+	session, rsp, err := s.getSession(ctx, sessionName)
+	if session == nil {
+		return rsp, err
 	}
-
-	internalTeams, err := session.Teams.List(ctx)
-	if err != nil {
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalTeams(internalTeams),
-	}, nil
+	return service.List(ctx, session.Teams, &converterFuncs)
 }
 
 func (s *Service) GetSessionTeam(ctx context.Context, sessionName, teamName string) (server.ImplResponse, error) {
-	session, err := s.domain.Sessions.Get(ctx, sessionName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
+	session, rsp, err := s.getSession(ctx, sessionName)
+	if session == nil {
+		return rsp, err
 	}
-
-	internalSession, err := session.Teams.Get(ctx, teamName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalTeam(internalSession),
-	}, nil
+	return service.Get(ctx, teamName, session.Teams, &converterFuncs)
 }
 
 func (s *Service) DeleteSessionTeam(ctx context.Context, sessionName, teamName string) (server.ImplResponse, error) {
-	session, err := s.domain.Sessions.Get(ctx, sessionName)
+	session, rsp, err := s.getSession(ctx, sessionName)
+	if session == nil {
+		return rsp, err
+	}
+	return service.Delete(ctx, teamName, session.Teams, &converterFuncs)
+}
+
+func (s *Service) getSession(ctx context.Context, name string) (*internalsession.Session, server.ImplResponse, error) {
+	session, err := s.domain.Sessions.Get(ctx, name)
 	if err != nil {
 		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
+			return nil, server.ImplResponse{
 				Code: http.StatusNotFound,
 			}, nil
 		}
-		return server.ImplResponse{}, err
+		return nil, server.ImplResponse{}, err
 	}
-
-	internalSession, err := session.Teams.Delete(ctx, teamName)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalTeam(internalSession),
-	}, nil
+	return session, server.ImplResponse{}, nil
 }
 
-func toInternalTeam(team *server.Team) *internalteam.Team {
-	return internalteam.New(team.Name)
-}
-
-func fromInternalTeams(internalTeams []*internalteam.Team) []*server.Team {
-	teams := []*server.Team{}
-	for _, internalTeam := range internalTeams {
-		teams = append(teams, fromInternalTeam(internalTeam))
-	}
-	return teams
-}
-
-func fromInternalTeam(internalTeam *internalteam.Team) *server.Team {
-	return &server.Team{Name: internalTeam.Name}
+var converterFuncs = service.ConverterFuncs[server.Team, internalteam.Team]{
+	From: func(team *server.Team) (*internalteam.Team, error) {
+		return internalteam.New(team.Name), nil
+	},
+	To: func(internalTeam *internalteam.Team) (*server.Team, error) {
+		return &server.Team{Name: internalTeam.Name}, nil
+	},
 }

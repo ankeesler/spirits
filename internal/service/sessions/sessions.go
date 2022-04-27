@@ -2,13 +2,10 @@ package sessions
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"net/http"
 
 	"github.com/ankeesler/spirits/internal/domain"
 	internalsession "github.com/ankeesler/spirits/internal/domain/session"
-	"github.com/ankeesler/spirits/internal/store"
+	"github.com/ankeesler/spirits/internal/service"
 	server "github.com/ankeesler/spirits/pkg/api/generated/server/api"
 )
 
@@ -23,110 +20,30 @@ func New(domain *domain.Domain) *Service {
 }
 
 func (s *Service) CreateSession(ctx context.Context, session server.Session) (server.ImplResponse, error) {
-	internalSession := toInternalSession(&session)
-
-	var err error
-	internalSession, err = s.domain.Sessions.Create(ctx, internalSession)
-	if err != nil {
-		if errors.Is(err, &store.ErrAlreadyExists{}) {
-			return server.ImplResponse{
-				Code: http.StatusConflict,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalSession(internalSession),
-	}, nil
+	return service.Create(ctx, &session, s.domain.Sessions, &converterFuncs)
 }
 
 func (s *Service) UpdateSession(ctx context.Context, name string, session server.Session) (server.ImplResponse, error) {
-	internalSession := toInternalSession(&session)
-
-	if name != session.Name {
-		return server.ImplResponse{
-			Code: http.StatusBadRequest,
-			Body: fmt.Sprintf("path parameter  name %q does not match body name %q", name, session.Name),
-		}, nil
-	}
-
-	var err error
-	internalSession, err = s.domain.Sessions.Update(ctx, internalSession)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusConflict,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalSession(internalSession),
-	}, nil
+	return service.Update(ctx, &session, s.domain.Sessions, &converterFuncs)
 }
 
 func (s *Service) ListSessions(ctx context.Context) (server.ImplResponse, error) {
-	internalSessions, err := s.domain.Sessions.List(ctx)
-	if err != nil {
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalSessions(internalSessions),
-	}, nil
+	return service.List(ctx, s.domain.Sessions, &converterFuncs)
 }
 
 func (s *Service) GetSession(ctx context.Context, name string) (server.ImplResponse, error) {
-	internalSession, err := s.domain.Sessions.Get(ctx, name)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalSession(internalSession),
-	}, nil
+	return service.Get(ctx, name, s.domain.Sessions, &converterFuncs)
 }
 
 func (s *Service) DeleteSession(ctx context.Context, name string) (server.ImplResponse, error) {
-	internalSession, err := s.domain.Sessions.Delete(ctx, name)
-	if err != nil {
-		if errors.Is(err, &store.ErrNotFound{}) {
-			return server.ImplResponse{
-				Code: http.StatusNotFound,
-			}, nil
-		}
-		return server.ImplResponse{}, err
-	}
-
-	return server.ImplResponse{
-		Code: http.StatusCreated,
-		Body: fromInternalSession(internalSession),
-	}, nil
+	return service.Delete(ctx, name, s.domain.Sessions, &converterFuncs)
 }
 
-func toInternalSession(session *server.Session) *internalsession.Session {
-	return internalsession.New(session.Name)
-}
-
-func fromInternalSessions(internalSessions []*internalsession.Session) []*server.Session {
-	sessions := []*server.Session{}
-	for _, internalSession := range internalSessions {
-		sessions = append(sessions, fromInternalSession(internalSession))
-	}
-	return sessions
-}
-
-func fromInternalSession(internalSession *internalsession.Session) *server.Session {
-	return &server.Session{Name: internalSession.Name}
+var converterFuncs = service.ConverterFuncs[server.Session, internalsession.Session]{
+	From: func(session *server.Session) (*internalsession.Session, error) {
+		return internalsession.New(session.Name), nil
+	},
+	To: func(internalSession *internalsession.Session) (*server.Session, error) {
+		return &server.Session{Name: internalSession.Name}, nil
+	},
 }
