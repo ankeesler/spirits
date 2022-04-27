@@ -1,19 +1,19 @@
-# \SessionBattlesApi
+# \SessionBattleApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessionBattles**](SessionBattlesApi.md#CreateSessionBattles) | **Post** /sessions/{sessionName}/battles | 
-[**DeleteSessionBattles**](SessionBattlesApi.md#DeleteSessionBattles) | **Delete** /sessions/{sessionName}/battles/{battleName} | 
-[**GetSessionBattles**](SessionBattlesApi.md#GetSessionBattles) | **Get** /sessions/{sessionName}/battles/{battleName} | 
-[**ListSessionBattles**](SessionBattlesApi.md#ListSessionBattles) | **Get** /sessions/{sessionName}/battles | 
+[**CreateSessionBattle**](SessionBattleApi.md#CreateSessionBattle) | **Post** /sessions/{sessionName}/battles | 
+[**DeleteSessionBattle**](SessionBattleApi.md#DeleteSessionBattle) | **Delete** /sessions/{sessionName}/battles/{battleName} | 
+[**GetSessionBattle**](SessionBattleApi.md#GetSessionBattle) | **Get** /sessions/{sessionName}/battles/{battleName} | 
+[**ListSessionBattles**](SessionBattleApi.md#ListSessionBattles) | **Get** /sessions/{sessionName}/battles | 
 
 
 
-## CreateSessionBattles
+## CreateSessionBattle
 
-> Battle CreateSessionBattles(ctx, sessionName).Battle(battle).Execute()
+> Battle CreateSessionBattle(ctx, sessionName).Battle(battle).Execute()
 
 
 
@@ -37,13 +37,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattlesApi.CreateSessionBattles(context.Background(), sessionName).Battle(battle).Execute()
+    resp, r, err := apiClient.SessionBattleApi.CreateSessionBattle(context.Background(), sessionName).Battle(battle).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattlesApi.CreateSessionBattles``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleApi.CreateSessionBattle``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `CreateSessionBattles`: Battle
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattlesApi.CreateSessionBattles`: %v\n", resp)
+    // response from `CreateSessionBattle`: Battle
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleApi.CreateSessionBattle`: %v\n", resp)
 }
 ```
 
@@ -57,7 +57,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiCreateSessionBattlesRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiCreateSessionBattleRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -83,9 +83,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## DeleteSessionBattles
+## DeleteSessionBattle
 
-> Battle DeleteSessionBattles(ctx, sessionName, battleName).Execute()
+> Battle DeleteSessionBattle(ctx, sessionName, battleName).Execute()
 
 
 
@@ -109,13 +109,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattlesApi.DeleteSessionBattles(context.Background(), sessionName, battleName).Execute()
+    resp, r, err := apiClient.SessionBattleApi.DeleteSessionBattle(context.Background(), sessionName, battleName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattlesApi.DeleteSessionBattles``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleApi.DeleteSessionBattle``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `DeleteSessionBattles`: Battle
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattlesApi.DeleteSessionBattles`: %v\n", resp)
+    // response from `DeleteSessionBattle`: Battle
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleApi.DeleteSessionBattle`: %v\n", resp)
 }
 ```
 
@@ -130,7 +130,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiDeleteSessionBattlesRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiDeleteSessionBattleRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -156,9 +156,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## GetSessionBattles
+## GetSessionBattle
 
-> Battle GetSessionBattles(ctx, sessionName, battleName).Execute()
+> Battle GetSessionBattle(ctx, sessionName, battleName).Execute()
 
 
 
@@ -182,13 +182,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattlesApi.GetSessionBattles(context.Background(), sessionName, battleName).Execute()
+    resp, r, err := apiClient.SessionBattleApi.GetSessionBattle(context.Background(), sessionName, battleName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattlesApi.GetSessionBattles``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleApi.GetSessionBattle``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetSessionBattles`: Battle
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattlesApi.GetSessionBattles`: %v\n", resp)
+    // response from `GetSessionBattle`: Battle
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleApi.GetSessionBattle`: %v\n", resp)
 }
 ```
 
@@ -203,7 +203,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSessionBattlesRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSessionBattleRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -254,13 +254,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattlesApi.ListSessionBattles(context.Background(), sessionName).Execute()
+    resp, r, err := apiClient.SessionBattleApi.ListSessionBattles(context.Background(), sessionName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattlesApi.ListSessionBattles``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleApi.ListSessionBattles``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `ListSessionBattles`: Battle
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattlesApi.ListSessionBattles`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleApi.ListSessionBattles`: %v\n", resp)
 }
 ```
 

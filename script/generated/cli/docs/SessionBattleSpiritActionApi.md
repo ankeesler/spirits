@@ -1,14 +1,14 @@
-# SessionBattleSpiritActionsApi
+# SessionBattleSpiritActionApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createSessionBattleSpiritActions**](SessionBattleSpiritActionsApi.md#createSessionBattleSpiritActions) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+[**createSessionBattleSpiritAction**](SessionBattleSpiritActionApi.md#createSessionBattleSpiritAction) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
 
 
 
-## createSessionBattleSpiritActions
+## createSessionBattleSpiritAction
 
 
 
@@ -17,7 +17,7 @@ Create a Action
 ### Example
 
 ```bash
- createSessionBattleSpiritActions sessionName=value battleName=value spiritName=value
+ createSessionBattleSpiritAction sessionName=value battleName=value spiritName=value
 ```
 
 ### Parameters

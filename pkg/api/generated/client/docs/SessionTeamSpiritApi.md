@@ -1,20 +1,20 @@
-# \SessionTeamSpiritsApi
+# \SessionTeamSpiritApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessionTeamSpirits**](SessionTeamSpiritsApi.md#CreateSessionTeamSpirits) | **Post** /sessions/{sessionName}/teams/{teamName}/spirits | 
-[**DeleteSessionTeamSpirits**](SessionTeamSpiritsApi.md#DeleteSessionTeamSpirits) | **Delete** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-[**GetSessionTeamSpirits**](SessionTeamSpiritsApi.md#GetSessionTeamSpirits) | **Get** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-[**ListSessionTeamSpirits**](SessionTeamSpiritsApi.md#ListSessionTeamSpirits) | **Get** /sessions/{sessionName}/teams/{teamName}/spirits | 
-[**UpdateSessionTeamSpirits**](SessionTeamSpiritsApi.md#UpdateSessionTeamSpirits) | **Put** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+[**CreateSessionTeamSpirit**](SessionTeamSpiritApi.md#CreateSessionTeamSpirit) | **Post** /sessions/{sessionName}/teams/{teamName}/spirits | 
+[**DeleteSessionTeamSpirit**](SessionTeamSpiritApi.md#DeleteSessionTeamSpirit) | **Delete** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+[**GetSessionTeamSpirit**](SessionTeamSpiritApi.md#GetSessionTeamSpirit) | **Get** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+[**ListSessionTeamSpirits**](SessionTeamSpiritApi.md#ListSessionTeamSpirits) | **Get** /sessions/{sessionName}/teams/{teamName}/spirits | 
+[**UpdateSessionTeamSpirit**](SessionTeamSpiritApi.md#UpdateSessionTeamSpirit) | **Put** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
 
 
 
-## CreateSessionTeamSpirits
+## CreateSessionTeamSpirit
 
-> Spirit CreateSessionTeamSpirits(ctx, sessionName, teamName).Spirit(spirit).Execute()
+> Spirit CreateSessionTeamSpirit(ctx, sessionName, teamName).Spirit(spirit).Execute()
 
 
 
@@ -39,13 +39,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamSpiritsApi.CreateSessionTeamSpirits(context.Background(), sessionName, teamName).Spirit(spirit).Execute()
+    resp, r, err := apiClient.SessionTeamSpiritApi.CreateSessionTeamSpirit(context.Background(), sessionName, teamName).Spirit(spirit).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritsApi.CreateSessionTeamSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritApi.CreateSessionTeamSpirit``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `CreateSessionTeamSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritsApi.CreateSessionTeamSpirits`: %v\n", resp)
+    // response from `CreateSessionTeamSpirit`: Spirit
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritApi.CreateSessionTeamSpirit`: %v\n", resp)
 }
 ```
 
@@ -60,7 +60,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiCreateSessionTeamSpiritsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiCreateSessionTeamSpiritRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -87,9 +87,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## DeleteSessionTeamSpirits
+## DeleteSessionTeamSpirit
 
-> Spirit DeleteSessionTeamSpirits(ctx, sessionName, teamName, spiritName).Execute()
+> Spirit DeleteSessionTeamSpirit(ctx, sessionName, teamName, spiritName).Execute()
 
 
 
@@ -114,13 +114,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamSpiritsApi.DeleteSessionTeamSpirits(context.Background(), sessionName, teamName, spiritName).Execute()
+    resp, r, err := apiClient.SessionTeamSpiritApi.DeleteSessionTeamSpirit(context.Background(), sessionName, teamName, spiritName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritsApi.DeleteSessionTeamSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritApi.DeleteSessionTeamSpirit``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `DeleteSessionTeamSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritsApi.DeleteSessionTeamSpirits`: %v\n", resp)
+    // response from `DeleteSessionTeamSpirit`: Spirit
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritApi.DeleteSessionTeamSpirit`: %v\n", resp)
 }
 ```
 
@@ -136,7 +136,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiDeleteSessionTeamSpiritsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiDeleteSessionTeamSpiritRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -163,9 +163,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## GetSessionTeamSpirits
+## GetSessionTeamSpirit
 
-> Spirit GetSessionTeamSpirits(ctx, sessionName, teamName, spiritName).Execute()
+> Spirit GetSessionTeamSpirit(ctx, sessionName, teamName, spiritName).Execute()
 
 
 
@@ -190,13 +190,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamSpiritsApi.GetSessionTeamSpirits(context.Background(), sessionName, teamName, spiritName).Execute()
+    resp, r, err := apiClient.SessionTeamSpiritApi.GetSessionTeamSpirit(context.Background(), sessionName, teamName, spiritName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritsApi.GetSessionTeamSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritApi.GetSessionTeamSpirit``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetSessionTeamSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritsApi.GetSessionTeamSpirits`: %v\n", resp)
+    // response from `GetSessionTeamSpirit`: Spirit
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritApi.GetSessionTeamSpirit`: %v\n", resp)
 }
 ```
 
@@ -212,7 +212,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSessionTeamSpiritsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSessionTeamSpiritRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -265,13 +265,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamSpiritsApi.ListSessionTeamSpirits(context.Background(), sessionName, teamName).Execute()
+    resp, r, err := apiClient.SessionTeamSpiritApi.ListSessionTeamSpirits(context.Background(), sessionName, teamName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritsApi.ListSessionTeamSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritApi.ListSessionTeamSpirits``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `ListSessionTeamSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritsApi.ListSessionTeamSpirits`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritApi.ListSessionTeamSpirits`: %v\n", resp)
 }
 ```
 
@@ -312,9 +312,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## UpdateSessionTeamSpirits
+## UpdateSessionTeamSpirit
 
-> Spirit UpdateSessionTeamSpirits(ctx, sessionName, teamName, spiritName).Spirit(spirit).Execute()
+> Spirit UpdateSessionTeamSpirit(ctx, sessionName, teamName, spiritName).Spirit(spirit).Execute()
 
 
 
@@ -340,13 +340,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamSpiritsApi.UpdateSessionTeamSpirits(context.Background(), sessionName, teamName, spiritName).Spirit(spirit).Execute()
+    resp, r, err := apiClient.SessionTeamSpiritApi.UpdateSessionTeamSpirit(context.Background(), sessionName, teamName, spiritName).Spirit(spirit).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritsApi.UpdateSessionTeamSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamSpiritApi.UpdateSessionTeamSpirit``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `UpdateSessionTeamSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritsApi.UpdateSessionTeamSpirits`: %v\n", resp)
+    // response from `UpdateSessionTeamSpirit`: Spirit
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamSpiritApi.UpdateSessionTeamSpirit`: %v\n", resp)
 }
 ```
 
@@ -362,7 +362,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiUpdateSessionTeamSpiritsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiUpdateSessionTeamSpiritRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

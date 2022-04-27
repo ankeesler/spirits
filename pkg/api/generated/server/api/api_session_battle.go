@@ -17,25 +17,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SessionBattlesApiController binds http requests to an api service and writes the service results to the http response
-type SessionBattlesApiController struct {
-	service      SessionBattlesApiServicer
+// SessionBattleApiController binds http requests to an api service and writes the service results to the http response
+type SessionBattleApiController struct {
+	service      SessionBattleApiServicer
 	errorHandler ErrorHandler
 }
 
-// SessionBattlesApiOption for how the controller is set up.
-type SessionBattlesApiOption func(*SessionBattlesApiController)
+// SessionBattleApiOption for how the controller is set up.
+type SessionBattleApiOption func(*SessionBattleApiController)
 
-// WithSessionBattlesApiErrorHandler inject ErrorHandler into controller
-func WithSessionBattlesApiErrorHandler(h ErrorHandler) SessionBattlesApiOption {
-	return func(c *SessionBattlesApiController) {
+// WithSessionBattleApiErrorHandler inject ErrorHandler into controller
+func WithSessionBattleApiErrorHandler(h ErrorHandler) SessionBattleApiOption {
+	return func(c *SessionBattleApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewSessionBattlesApiController creates a default api controller
-func NewSessionBattlesApiController(s SessionBattlesApiServicer, opts ...SessionBattlesApiOption) Router {
-	controller := &SessionBattlesApiController{
+// NewSessionBattleApiController creates a default api controller
+func NewSessionBattleApiController(s SessionBattleApiServicer, opts ...SessionBattleApiOption) Router {
+	controller := &SessionBattleApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -47,26 +47,26 @@ func NewSessionBattlesApiController(s SessionBattlesApiServicer, opts ...Session
 	return controller
 }
 
-// Routes returns all the api routes for the SessionBattlesApiController
-func (c *SessionBattlesApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionBattleApiController
+func (c *SessionBattleApiController) Routes() Routes {
 	return Routes{
 		{
-			"CreateSessionBattles",
+			"CreateSessionBattle",
 			strings.ToUpper("Post"),
 			"/sessions/{sessionName}/battles",
-			c.CreateSessionBattles,
+			c.CreateSessionBattle,
 		},
 		{
-			"DeleteSessionBattles",
+			"DeleteSessionBattle",
 			strings.ToUpper("Delete"),
 			"/sessions/{sessionName}/battles/{battleName}",
-			c.DeleteSessionBattles,
+			c.DeleteSessionBattle,
 		},
 		{
-			"GetSessionBattles",
+			"GetSessionBattle",
 			strings.ToUpper("Get"),
 			"/sessions/{sessionName}/battles/{battleName}",
-			c.GetSessionBattles,
+			c.GetSessionBattle,
 		},
 		{
 			"ListSessionBattles",
@@ -77,8 +77,8 @@ func (c *SessionBattlesApiController) Routes() Routes {
 	}
 }
 
-// CreateSessionBattles -
-func (c *SessionBattlesApiController) CreateSessionBattles(w http.ResponseWriter, r *http.Request) {
+// CreateSessionBattle -
+func (c *SessionBattleApiController) CreateSessionBattle(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -93,7 +93,7 @@ func (c *SessionBattlesApiController) CreateSessionBattles(w http.ResponseWriter
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.CreateSessionBattles(r.Context(), sessionNameParam, battleParam)
+	result, err := c.service.CreateSessionBattle(r.Context(), sessionNameParam, battleParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -104,14 +104,14 @@ func (c *SessionBattlesApiController) CreateSessionBattles(w http.ResponseWriter
 
 }
 
-// DeleteSessionBattles -
-func (c *SessionBattlesApiController) DeleteSessionBattles(w http.ResponseWriter, r *http.Request) {
+// DeleteSessionBattle -
+func (c *SessionBattleApiController) DeleteSessionBattle(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
 	battleNameParam := params["battleName"]
 
-	result, err := c.service.DeleteSessionBattles(r.Context(), sessionNameParam, battleNameParam)
+	result, err := c.service.DeleteSessionBattle(r.Context(), sessionNameParam, battleNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -122,14 +122,14 @@ func (c *SessionBattlesApiController) DeleteSessionBattles(w http.ResponseWriter
 
 }
 
-// GetSessionBattles -
-func (c *SessionBattlesApiController) GetSessionBattles(w http.ResponseWriter, r *http.Request) {
+// GetSessionBattle -
+func (c *SessionBattleApiController) GetSessionBattle(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
 	battleNameParam := params["battleName"]
 
-	result, err := c.service.GetSessionBattles(r.Context(), sessionNameParam, battleNameParam)
+	result, err := c.service.GetSessionBattle(r.Context(), sessionNameParam, battleNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -141,7 +141,7 @@ func (c *SessionBattlesApiController) GetSessionBattles(w http.ResponseWriter, r
 }
 
 // ListSessionBattles -
-func (c *SessionBattlesApiController) ListSessionBattles(w http.ResponseWriter, r *http.Request) {
+func (c *SessionBattleApiController) ListSessionBattles(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 

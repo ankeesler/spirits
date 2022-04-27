@@ -24,7 +24,7 @@ func Run() error {
 	defaultAPIController := server.NewDefaultApiController(defaultAPIService)
 
 	sessionsAPIService := sessions.New()
-	sessionsAPIController := server.NewSessionsApiController(sessionsAPIService)
+	sessionsAPIController := server.NewSessionApiController(sessionsAPIService)
 
 	handler := server.NewRouter(
 		defaultAPIController,

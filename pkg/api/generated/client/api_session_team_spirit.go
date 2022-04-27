@@ -20,66 +20,73 @@ import (
 )
 
 
-// SessionTeamsApiService SessionTeamsApi service
-type SessionTeamsApiService service
+// SessionTeamSpiritApiService SessionTeamSpiritApi service
+type SessionTeamSpiritApiService service
 
-type ApiCreateSessionTeamsRequest struct {
+type ApiCreateSessionTeamSpiritRequest struct {
 	ctx context.Context
-	ApiService *SessionTeamsApiService
+	ApiService *SessionTeamSpiritApiService
 	sessionName string
-	team *Team
+	teamName string
+	spirit *Spirit
 }
 
-// Team to create
-func (r ApiCreateSessionTeamsRequest) Team(team Team) ApiCreateSessionTeamsRequest {
-	r.team = &team
+// Spirit to create
+func (r ApiCreateSessionTeamSpiritRequest) Spirit(spirit Spirit) ApiCreateSessionTeamSpiritRequest {
+	r.spirit = &spirit
 	return r
 }
 
-func (r ApiCreateSessionTeamsRequest) Execute() (*Team, *http.Response, error) {
-	return r.ApiService.CreateSessionTeamsExecute(r)
+func (r ApiCreateSessionTeamSpiritRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.CreateSessionTeamSpiritExecute(r)
 }
 
 /*
-CreateSessionTeams Method for CreateSessionTeams
+CreateSessionTeamSpirit Method for CreateSessionTeamSpirit
 
-Create a Team
+Create a Spirit
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Team name
- @return ApiCreateSessionTeamsRequest
+ @param sessionName Spirit name
+ @param teamName Spirit name
+ @return ApiCreateSessionTeamSpiritRequest
 */
-func (a *SessionTeamsApiService) CreateSessionTeams(ctx context.Context, sessionName string) ApiCreateSessionTeamsRequest {
-	return ApiCreateSessionTeamsRequest{
+func (a *SessionTeamSpiritApiService) CreateSessionTeamSpirit(ctx context.Context, sessionName string, teamName string) ApiCreateSessionTeamSpiritRequest {
+	return ApiCreateSessionTeamSpiritRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
+		teamName: teamName,
 	}
 }
 
 // Execute executes the request
-//  @return Team
-func (a *SessionTeamsApiService) CreateSessionTeamsExecute(r ApiCreateSessionTeamsRequest) (*Team, *http.Response, error) {
+//  @return Spirit
+func (a *SessionTeamSpiritApiService) CreateSessionTeamSpiritExecute(r ApiCreateSessionTeamSpiritRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Team
+		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamsApiService.CreateSessionTeams")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamSpiritApiService.CreateSessionTeamSpirit")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}/teams"
+	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}/spirits"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"teamName"+"}", url.PathEscape(parameterToString(r.teamName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 	if strlen(r.sessionName) < 1 {
 		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
+	if strlen(r.teamName) < 1 {
+		return localVarReturnValue, nil, reportError("teamName must have at least 1 elements")
 	}
 
 	// to determine the Content-Type header
@@ -100,7 +107,7 @@ func (a *SessionTeamsApiService) CreateSessionTeamsExecute(r ApiCreateSessionTea
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.team
+	localVarPostBody = r.spirit
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -138,54 +145,58 @@ func (a *SessionTeamsApiService) CreateSessionTeamsExecute(r ApiCreateSessionTea
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteSessionTeamsRequest struct {
+type ApiDeleteSessionTeamSpiritRequest struct {
 	ctx context.Context
-	ApiService *SessionTeamsApiService
+	ApiService *SessionTeamSpiritApiService
 	sessionName string
 	teamName string
+	spiritName string
 }
 
-func (r ApiDeleteSessionTeamsRequest) Execute() (*Team, *http.Response, error) {
-	return r.ApiService.DeleteSessionTeamsExecute(r)
+func (r ApiDeleteSessionTeamSpiritRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.DeleteSessionTeamSpiritExecute(r)
 }
 
 /*
-DeleteSessionTeams Method for DeleteSessionTeams
+DeleteSessionTeamSpirit Method for DeleteSessionTeamSpirit
 
-Watch Team
+Watch Spirit
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Team name
- @param teamName Team name
- @return ApiDeleteSessionTeamsRequest
+ @param sessionName Spirit name
+ @param teamName Spirit name
+ @param spiritName Spirit name
+ @return ApiDeleteSessionTeamSpiritRequest
 */
-func (a *SessionTeamsApiService) DeleteSessionTeams(ctx context.Context, sessionName string, teamName string) ApiDeleteSessionTeamsRequest {
-	return ApiDeleteSessionTeamsRequest{
+func (a *SessionTeamSpiritApiService) DeleteSessionTeamSpirit(ctx context.Context, sessionName string, teamName string, spiritName string) ApiDeleteSessionTeamSpiritRequest {
+	return ApiDeleteSessionTeamSpiritRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
 		teamName: teamName,
+		spiritName: spiritName,
 	}
 }
 
 // Execute executes the request
-//  @return Team
-func (a *SessionTeamsApiService) DeleteSessionTeamsExecute(r ApiDeleteSessionTeamsRequest) (*Team, *http.Response, error) {
+//  @return Spirit
+func (a *SessionTeamSpiritApiService) DeleteSessionTeamSpiritExecute(r ApiDeleteSessionTeamSpiritRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodDelete
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Team
+		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamsApiService.DeleteSessionTeams")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamSpiritApiService.DeleteSessionTeamSpirit")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}"
+	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"teamName"+"}", url.PathEscape(parameterToString(r.teamName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"spiritName"+"}", url.PathEscape(parameterToString(r.spiritName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -195,6 +206,9 @@ func (a *SessionTeamsApiService) DeleteSessionTeamsExecute(r ApiDeleteSessionTea
 	}
 	if strlen(r.teamName) < 1 {
 		return localVarReturnValue, nil, reportError("teamName must have at least 1 elements")
+	}
+	if strlen(r.spiritName) < 1 {
+		return localVarReturnValue, nil, reportError("spiritName must have at least 1 elements")
 	}
 
 	// to determine the Content-Type header
@@ -251,29 +265,149 @@ func (a *SessionTeamsApiService) DeleteSessionTeamsExecute(r ApiDeleteSessionTea
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSessionTeamsRequest struct {
+type ApiGetSessionTeamSpiritRequest struct {
 	ctx context.Context
-	ApiService *SessionTeamsApiService
+	ApiService *SessionTeamSpiritApiService
+	sessionName string
+	teamName string
+	spiritName string
+}
+
+func (r ApiGetSessionTeamSpiritRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.GetSessionTeamSpiritExecute(r)
+}
+
+/*
+GetSessionTeamSpirit Method for GetSessionTeamSpirit
+
+Get Spirit
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param sessionName Spirit name
+ @param teamName Spirit name
+ @param spiritName Spirit name
+ @return ApiGetSessionTeamSpiritRequest
+*/
+func (a *SessionTeamSpiritApiService) GetSessionTeamSpirit(ctx context.Context, sessionName string, teamName string, spiritName string) ApiGetSessionTeamSpiritRequest {
+	return ApiGetSessionTeamSpiritRequest{
+		ApiService: a,
+		ctx: ctx,
+		sessionName: sessionName,
+		teamName: teamName,
+		spiritName: spiritName,
+	}
+}
+
+// Execute executes the request
+//  @return Spirit
+func (a *SessionTeamSpiritApiService) GetSessionTeamSpiritExecute(r ApiGetSessionTeamSpiritRequest) (*Spirit, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *Spirit
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamSpiritApiService.GetSessionTeamSpirit")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}"
+	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"teamName"+"}", url.PathEscape(parameterToString(r.teamName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"spiritName"+"}", url.PathEscape(parameterToString(r.spiritName, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if strlen(r.sessionName) < 1 {
+		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
+	}
+	if strlen(r.teamName) < 1 {
+		return localVarReturnValue, nil, reportError("teamName must have at least 1 elements")
+	}
+	if strlen(r.spiritName) < 1 {
+		return localVarReturnValue, nil, reportError("spiritName must have at least 1 elements")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListSessionTeamSpiritsRequest struct {
+	ctx context.Context
+	ApiService *SessionTeamSpiritApiService
 	sessionName string
 	teamName string
 }
 
-func (r ApiGetSessionTeamsRequest) Execute() (*Team, *http.Response, error) {
-	return r.ApiService.GetSessionTeamsExecute(r)
+func (r ApiListSessionTeamSpiritsRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.ListSessionTeamSpiritsExecute(r)
 }
 
 /*
-GetSessionTeams Method for GetSessionTeams
+ListSessionTeamSpirits Method for ListSessionTeamSpirits
 
-Get Team
+List Spirits
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Team name
- @param teamName Team name
- @return ApiGetSessionTeamsRequest
+ @param sessionName Spirit name
+ @param teamName Spirit name
+ @return ApiListSessionTeamSpiritsRequest
 */
-func (a *SessionTeamsApiService) GetSessionTeams(ctx context.Context, sessionName string, teamName string) ApiGetSessionTeamsRequest {
-	return ApiGetSessionTeamsRequest{
+func (a *SessionTeamSpiritApiService) ListSessionTeamSpirits(ctx context.Context, sessionName string, teamName string) ApiListSessionTeamSpiritsRequest {
+	return ApiListSessionTeamSpiritsRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -282,21 +416,21 @@ func (a *SessionTeamsApiService) GetSessionTeams(ctx context.Context, sessionNam
 }
 
 // Execute executes the request
-//  @return Team
-func (a *SessionTeamsApiService) GetSessionTeamsExecute(r ApiGetSessionTeamsRequest) (*Team, *http.Response, error) {
+//  @return Spirit
+func (a *SessionTeamSpiritApiService) ListSessionTeamSpiritsExecute(r ApiListSessionTeamSpiritsRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Team
+		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamsApiService.GetSessionTeams")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamSpiritApiService.ListSessionTeamSpirits")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}"
+	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}/spirits"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"teamName"+"}", url.PathEscape(parameterToString(r.teamName, "")), -1)
 
@@ -364,167 +498,65 @@ func (a *SessionTeamsApiService) GetSessionTeamsExecute(r ApiGetSessionTeamsRequ
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListSessionTeamsRequest struct {
+type ApiUpdateSessionTeamSpiritRequest struct {
 	ctx context.Context
-	ApiService *SessionTeamsApiService
-	sessionName string
-}
-
-func (r ApiListSessionTeamsRequest) Execute() (*Team, *http.Response, error) {
-	return r.ApiService.ListSessionTeamsExecute(r)
-}
-
-/*
-ListSessionTeams Method for ListSessionTeams
-
-List Teams
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Team name
- @return ApiListSessionTeamsRequest
-*/
-func (a *SessionTeamsApiService) ListSessionTeams(ctx context.Context, sessionName string) ApiListSessionTeamsRequest {
-	return ApiListSessionTeamsRequest{
-		ApiService: a,
-		ctx: ctx,
-		sessionName: sessionName,
-	}
-}
-
-// Execute executes the request
-//  @return Team
-func (a *SessionTeamsApiService) ListSessionTeamsExecute(r ApiListSessionTeamsRequest) (*Team, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *Team
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamsApiService.ListSessionTeams")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/sessions/{sessionName}/teams"
-	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if strlen(r.sessionName) < 1 {
-		return localVarReturnValue, nil, reportError("sessionName must have at least 1 elements")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiUpdateSessionTeamsRequest struct {
-	ctx context.Context
-	ApiService *SessionTeamsApiService
+	ApiService *SessionTeamSpiritApiService
 	sessionName string
 	teamName string
-	team *Team
+	spiritName string
+	spirit *Spirit
 }
 
-// Team to update
-func (r ApiUpdateSessionTeamsRequest) Team(team Team) ApiUpdateSessionTeamsRequest {
-	r.team = &team
+// Spirit to update
+func (r ApiUpdateSessionTeamSpiritRequest) Spirit(spirit Spirit) ApiUpdateSessionTeamSpiritRequest {
+	r.spirit = &spirit
 	return r
 }
 
-func (r ApiUpdateSessionTeamsRequest) Execute() (*Team, *http.Response, error) {
-	return r.ApiService.UpdateSessionTeamsExecute(r)
+func (r ApiUpdateSessionTeamSpiritRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.UpdateSessionTeamSpiritExecute(r)
 }
 
 /*
-UpdateSessionTeams Method for UpdateSessionTeams
+UpdateSessionTeamSpirit Method for UpdateSessionTeamSpirit
 
-Update Team
+Update Spirit
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param sessionName Team name
- @param teamName Team name
- @return ApiUpdateSessionTeamsRequest
+ @param sessionName Spirit name
+ @param teamName Spirit name
+ @param spiritName Spirit name
+ @return ApiUpdateSessionTeamSpiritRequest
 */
-func (a *SessionTeamsApiService) UpdateSessionTeams(ctx context.Context, sessionName string, teamName string) ApiUpdateSessionTeamsRequest {
-	return ApiUpdateSessionTeamsRequest{
+func (a *SessionTeamSpiritApiService) UpdateSessionTeamSpirit(ctx context.Context, sessionName string, teamName string, spiritName string) ApiUpdateSessionTeamSpiritRequest {
+	return ApiUpdateSessionTeamSpiritRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
 		teamName: teamName,
+		spiritName: spiritName,
 	}
 }
 
 // Execute executes the request
-//  @return Team
-func (a *SessionTeamsApiService) UpdateSessionTeamsExecute(r ApiUpdateSessionTeamsRequest) (*Team, *http.Response, error) {
+//  @return Spirit
+func (a *SessionTeamSpiritApiService) UpdateSessionTeamSpiritExecute(r ApiUpdateSessionTeamSpiritRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPut
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Team
+		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamsApiService.UpdateSessionTeams")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionTeamSpiritApiService.UpdateSessionTeamSpirit")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}"
+	localVarPath := localBasePath + "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}"
 	localVarPath = strings.Replace(localVarPath, "{"+"sessionName"+"}", url.PathEscape(parameterToString(r.sessionName, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"teamName"+"}", url.PathEscape(parameterToString(r.teamName, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"spiritName"+"}", url.PathEscape(parameterToString(r.spiritName, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -534,6 +566,9 @@ func (a *SessionTeamsApiService) UpdateSessionTeamsExecute(r ApiUpdateSessionTea
 	}
 	if strlen(r.teamName) < 1 {
 		return localVarReturnValue, nil, reportError("teamName must have at least 1 elements")
+	}
+	if strlen(r.spiritName) < 1 {
+		return localVarReturnValue, nil, reportError("spiritName must have at least 1 elements")
 	}
 
 	// to determine the Content-Type header
@@ -554,7 +589,7 @@ func (a *SessionTeamsApiService) UpdateSessionTeamsExecute(r ApiUpdateSessionTea
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.team
+	localVarPostBody = r.spirit
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

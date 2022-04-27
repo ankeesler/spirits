@@ -51,17 +51,17 @@ type APIClient struct {
 
 	DefaultApi *DefaultApiService
 
-	SessionBattleSpiritActionsApi *SessionBattleSpiritActionsApiService
+	SessionApi *SessionApiService
 
-	SessionBattleSpiritsApi *SessionBattleSpiritsApiService
+	SessionBattleApi *SessionBattleApiService
 
-	SessionBattlesApi *SessionBattlesApiService
+	SessionBattleSpiritApi *SessionBattleSpiritApiService
 
-	SessionTeamSpiritsApi *SessionTeamSpiritsApiService
+	SessionBattleSpiritActionApi *SessionBattleSpiritActionApiService
 
-	SessionTeamsApi *SessionTeamsApiService
+	SessionTeamApi *SessionTeamApiService
 
-	SessionsApi *SessionsApiService
+	SessionTeamSpiritApi *SessionTeamSpiritApiService
 }
 
 type service struct {
@@ -81,12 +81,12 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 
 	// API Services
 	c.DefaultApi = (*DefaultApiService)(&c.common)
-	c.SessionBattleSpiritActionsApi = (*SessionBattleSpiritActionsApiService)(&c.common)
-	c.SessionBattleSpiritsApi = (*SessionBattleSpiritsApiService)(&c.common)
-	c.SessionBattlesApi = (*SessionBattlesApiService)(&c.common)
-	c.SessionTeamSpiritsApi = (*SessionTeamSpiritsApiService)(&c.common)
-	c.SessionTeamsApi = (*SessionTeamsApiService)(&c.common)
-	c.SessionsApi = (*SessionsApiService)(&c.common)
+	c.SessionApi = (*SessionApiService)(&c.common)
+	c.SessionBattleApi = (*SessionBattleApiService)(&c.common)
+	c.SessionBattleSpiritApi = (*SessionBattleSpiritApiService)(&c.common)
+	c.SessionBattleSpiritActionApi = (*SessionBattleSpiritActionApiService)(&c.common)
+	c.SessionTeamApi = (*SessionTeamApiService)(&c.common)
+	c.SessionTeamSpiritApi = (*SessionTeamSpiritApiService)(&c.common)
 
 	return c
 }

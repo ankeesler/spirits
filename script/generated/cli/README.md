@@ -104,28 +104,28 @@ All URIs are relative to **
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *DefaultApi* | [**rootGet**](docs/DefaultApi.md#rootget) | **GET** / | 
-*SessionBattleSpiritActionsApi* | [**createSessionBattleSpiritActions**](docs/SessionBattleSpiritActionsApi.md#createsessionbattlespiritactions) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
-*SessionBattleSpiritsApi* | [**getSessionBattleSpirits**](docs/SessionBattleSpiritsApi.md#getsessionbattlespirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
-*SessionBattleSpiritsApi* | [**listSessionBattleSpirits**](docs/SessionBattleSpiritsApi.md#listsessionbattlespirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits | 
-*SessionBattlesApi* | [**createSessionBattles**](docs/SessionBattlesApi.md#createsessionbattles) | **POST** /sessions/{sessionName}/battles | 
-*SessionBattlesApi* | [**deleteSessionBattles**](docs/SessionBattlesApi.md#deletesessionbattles) | **DELETE** /sessions/{sessionName}/battles/{battleName} | 
-*SessionBattlesApi* | [**getSessionBattles**](docs/SessionBattlesApi.md#getsessionbattles) | **GET** /sessions/{sessionName}/battles/{battleName} | 
-*SessionBattlesApi* | [**listSessionBattles**](docs/SessionBattlesApi.md#listsessionbattles) | **GET** /sessions/{sessionName}/battles | 
-*SessionTeamSpiritsApi* | [**createSessionTeamSpirits**](docs/SessionTeamSpiritsApi.md#createsessionteamspirits) | **POST** /sessions/{sessionName}/teams/{teamName}/spirits | 
-*SessionTeamSpiritsApi* | [**deleteSessionTeamSpirits**](docs/SessionTeamSpiritsApi.md#deletesessionteamspirits) | **DELETE** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-*SessionTeamSpiritsApi* | [**getSessionTeamSpirits**](docs/SessionTeamSpiritsApi.md#getsessionteamspirits) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-*SessionTeamSpiritsApi* | [**listSessionTeamSpirits**](docs/SessionTeamSpiritsApi.md#listsessionteamspirits) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits | 
-*SessionTeamSpiritsApi* | [**updateSessionTeamSpirits**](docs/SessionTeamSpiritsApi.md#updatesessionteamspirits) | **PUT** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-*SessionTeamsApi* | [**createSessionTeams**](docs/SessionTeamsApi.md#createsessionteams) | **POST** /sessions/{sessionName}/teams | 
-*SessionTeamsApi* | [**deleteSessionTeams**](docs/SessionTeamsApi.md#deletesessionteams) | **DELETE** /sessions/{sessionName}/teams/{teamName} | 
-*SessionTeamsApi* | [**getSessionTeams**](docs/SessionTeamsApi.md#getsessionteams) | **GET** /sessions/{sessionName}/teams/{teamName} | 
-*SessionTeamsApi* | [**listSessionTeams**](docs/SessionTeamsApi.md#listsessionteams) | **GET** /sessions/{sessionName}/teams | 
-*SessionTeamsApi* | [**updateSessionTeams**](docs/SessionTeamsApi.md#updatesessionteams) | **PUT** /sessions/{sessionName}/teams/{teamName} | 
-*SessionsApi* | [**createSessions**](docs/SessionsApi.md#createsessions) | **POST** /sessions | 
-*SessionsApi* | [**deleteSessions**](docs/SessionsApi.md#deletesessions) | **DELETE** /sessions/{sessionName} | 
-*SessionsApi* | [**getSessions**](docs/SessionsApi.md#getsessions) | **GET** /sessions/{sessionName} | 
-*SessionsApi* | [**listSessions**](docs/SessionsApi.md#listsessions) | **GET** /sessions | 
-*SessionsApi* | [**updateSessions**](docs/SessionsApi.md#updatesessions) | **PUT** /sessions/{sessionName} | 
+*SessionApi* | [**createSession**](docs/SessionApi.md#createsession) | **POST** /sessions | 
+*SessionApi* | [**deleteSession**](docs/SessionApi.md#deletesession) | **DELETE** /sessions/{sessionName} | 
+*SessionApi* | [**getSession**](docs/SessionApi.md#getsession) | **GET** /sessions/{sessionName} | 
+*SessionApi* | [**listSessions**](docs/SessionApi.md#listsessions) | **GET** /sessions | 
+*SessionApi* | [**updateSession**](docs/SessionApi.md#updatesession) | **PUT** /sessions/{sessionName} | 
+*SessionBattleApi* | [**createSessionBattle**](docs/SessionBattleApi.md#createsessionbattle) | **POST** /sessions/{sessionName}/battles | 
+*SessionBattleApi* | [**deleteSessionBattle**](docs/SessionBattleApi.md#deletesessionbattle) | **DELETE** /sessions/{sessionName}/battles/{battleName} | 
+*SessionBattleApi* | [**getSessionBattle**](docs/SessionBattleApi.md#getsessionbattle) | **GET** /sessions/{sessionName}/battles/{battleName} | 
+*SessionBattleApi* | [**listSessionBattles**](docs/SessionBattleApi.md#listsessionbattles) | **GET** /sessions/{sessionName}/battles | 
+*SessionBattleSpiritApi* | [**getSessionBattleSpirit**](docs/SessionBattleSpiritApi.md#getsessionbattlespirit) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
+*SessionBattleSpiritApi* | [**listSessionBattleSpirits**](docs/SessionBattleSpiritApi.md#listsessionbattlespirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits | 
+*SessionBattleSpiritActionApi* | [**createSessionBattleSpiritAction**](docs/SessionBattleSpiritActionApi.md#createsessionbattlespiritaction) | **POST** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+*SessionTeamApi* | [**createSessionTeam**](docs/SessionTeamApi.md#createsessionteam) | **POST** /sessions/{sessionName}/teams | 
+*SessionTeamApi* | [**deleteSessionTeam**](docs/SessionTeamApi.md#deletesessionteam) | **DELETE** /sessions/{sessionName}/teams/{teamName} | 
+*SessionTeamApi* | [**getSessionTeam**](docs/SessionTeamApi.md#getsessionteam) | **GET** /sessions/{sessionName}/teams/{teamName} | 
+*SessionTeamApi* | [**listSessionTeams**](docs/SessionTeamApi.md#listsessionteams) | **GET** /sessions/{sessionName}/teams | 
+*SessionTeamApi* | [**updateSessionTeam**](docs/SessionTeamApi.md#updatesessionteam) | **PUT** /sessions/{sessionName}/teams/{teamName} | 
+*SessionTeamSpiritApi* | [**createSessionTeamSpirit**](docs/SessionTeamSpiritApi.md#createsessionteamspirit) | **POST** /sessions/{sessionName}/teams/{teamName}/spirits | 
+*SessionTeamSpiritApi* | [**deleteSessionTeamSpirit**](docs/SessionTeamSpiritApi.md#deletesessionteamspirit) | **DELETE** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+*SessionTeamSpiritApi* | [**getSessionTeamSpirit**](docs/SessionTeamSpiritApi.md#getsessionteamspirit) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+*SessionTeamSpiritApi* | [**listSessionTeamSpirits**](docs/SessionTeamSpiritApi.md#listsessionteamspirits) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits | 
+*SessionTeamSpiritApi* | [**updateSessionTeamSpirit**](docs/SessionTeamSpiritApi.md#updatesessionteamspirit) | **PUT** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
 
 
 ## Documentation For Models

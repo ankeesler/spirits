@@ -1,27 +1,26 @@
-# SessionsApi
+# SessionBattleApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createSessions**](SessionsApi.md#createSessions) | **POST** /sessions | 
-[**deleteSessions**](SessionsApi.md#deleteSessions) | **DELETE** /sessions/{sessionName} | 
-[**getSessions**](SessionsApi.md#getSessions) | **GET** /sessions/{sessionName} | 
-[**listSessions**](SessionsApi.md#listSessions) | **GET** /sessions | 
-[**updateSessions**](SessionsApi.md#updateSessions) | **PUT** /sessions/{sessionName} | 
+[**createSessionBattle**](SessionBattleApi.md#createSessionBattle) | **POST** /sessions/{sessionName}/battles | 
+[**deleteSessionBattle**](SessionBattleApi.md#deleteSessionBattle) | **DELETE** /sessions/{sessionName}/battles/{battleName} | 
+[**getSessionBattle**](SessionBattleApi.md#getSessionBattle) | **GET** /sessions/{sessionName}/battles/{battleName} | 
+[**listSessionBattles**](SessionBattleApi.md#listSessionBattles) | **GET** /sessions/{sessionName}/battles | 
 
 
 
-## createSessions
+## createSessionBattle
 
 
 
-Create a Session
+Create a Battle
 
 ### Example
 
 ```bash
- createSessions
+ createSessionBattle sessionName=value
 ```
 
 ### Parameters
@@ -29,11 +28,12 @@ Create a Session
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **session** | [**Session**](Session.md) | Session to create | [optional]
+ **sessionName** | **string** | Battle name | [default to null]
+ **battle** | [**Battle**](Battle.md) | Battle to create | [optional]
 
 ### Return type
 
-[**Session**](Session.md)
+[**Battle**](Battle.md)
 
 ### Authorization
 
@@ -47,16 +47,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## deleteSessions
+## deleteSessionBattle
 
 
 
-Watch Session
+Watch Battle
 
 ### Example
 
 ```bash
- deleteSessions sessionName=value
+ deleteSessionBattle sessionName=value battleName=value
 ```
 
 ### Parameters
@@ -64,11 +64,12 @@ Watch Session
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Session name | [default to null]
+ **sessionName** | **string** | Battle name | [default to null]
+ **battleName** | **string** | Battle name | [default to null]
 
 ### Return type
 
-[**Session**](Session.md)
+[**Battle**](Battle.md)
 
 ### Authorization
 
@@ -82,16 +83,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## getSessions
+## getSessionBattle
 
 
 
-Get Session
+Get Battle
 
 ### Example
 
 ```bash
- getSessions sessionName=value
+ getSessionBattle sessionName=value battleName=value
 ```
 
 ### Parameters
@@ -99,11 +100,12 @@ Get Session
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Session name | [default to null]
+ **sessionName** | **string** | Battle name | [default to null]
+ **battleName** | **string** | Battle name | [default to null]
 
 ### Return type
 
-[**Session**](Session.md)
+[**Battle**](Battle.md)
 
 ### Authorization
 
@@ -117,25 +119,28 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## listSessions
+## listSessionBattles
 
 
 
-List Sessions
+List Battles
 
 ### Example
 
 ```bash
- listSessions
+ listSessionBattles sessionName=value
 ```
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **sessionName** | **string** | Battle name | [default to null]
 
 ### Return type
 
-[**Session**](Session.md)
+[**Battle**](Battle.md)
 
 ### Authorization
 
@@ -144,42 +149,6 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not Applicable
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-
-## updateSessions
-
-
-
-Update Session
-
-### Example
-
-```bash
- updateSessions sessionName=value
-```
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Session name | [default to null]
- **session** | [**Session**](Session.md) | Session to update | [optional]
-
-### Return type
-
-[**Session**](Session.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

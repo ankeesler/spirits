@@ -17,25 +17,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SessionTeamSpiritsApiController binds http requests to an api service and writes the service results to the http response
-type SessionTeamSpiritsApiController struct {
-	service      SessionTeamSpiritsApiServicer
+// SessionTeamSpiritApiController binds http requests to an api service and writes the service results to the http response
+type SessionTeamSpiritApiController struct {
+	service      SessionTeamSpiritApiServicer
 	errorHandler ErrorHandler
 }
 
-// SessionTeamSpiritsApiOption for how the controller is set up.
-type SessionTeamSpiritsApiOption func(*SessionTeamSpiritsApiController)
+// SessionTeamSpiritApiOption for how the controller is set up.
+type SessionTeamSpiritApiOption func(*SessionTeamSpiritApiController)
 
-// WithSessionTeamSpiritsApiErrorHandler inject ErrorHandler into controller
-func WithSessionTeamSpiritsApiErrorHandler(h ErrorHandler) SessionTeamSpiritsApiOption {
-	return func(c *SessionTeamSpiritsApiController) {
+// WithSessionTeamSpiritApiErrorHandler inject ErrorHandler into controller
+func WithSessionTeamSpiritApiErrorHandler(h ErrorHandler) SessionTeamSpiritApiOption {
+	return func(c *SessionTeamSpiritApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewSessionTeamSpiritsApiController creates a default api controller
-func NewSessionTeamSpiritsApiController(s SessionTeamSpiritsApiServicer, opts ...SessionTeamSpiritsApiOption) Router {
-	controller := &SessionTeamSpiritsApiController{
+// NewSessionTeamSpiritApiController creates a default api controller
+func NewSessionTeamSpiritApiController(s SessionTeamSpiritApiServicer, opts ...SessionTeamSpiritApiOption) Router {
+	controller := &SessionTeamSpiritApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -47,26 +47,26 @@ func NewSessionTeamSpiritsApiController(s SessionTeamSpiritsApiServicer, opts ..
 	return controller
 }
 
-// Routes returns all the api routes for the SessionTeamSpiritsApiController
-func (c *SessionTeamSpiritsApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionTeamSpiritApiController
+func (c *SessionTeamSpiritApiController) Routes() Routes {
 	return Routes{
 		{
-			"CreateSessionTeamSpirits",
+			"CreateSessionTeamSpirit",
 			strings.ToUpper("Post"),
 			"/sessions/{sessionName}/teams/{teamName}/spirits",
-			c.CreateSessionTeamSpirits,
+			c.CreateSessionTeamSpirit,
 		},
 		{
-			"DeleteSessionTeamSpirits",
+			"DeleteSessionTeamSpirit",
 			strings.ToUpper("Delete"),
 			"/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}",
-			c.DeleteSessionTeamSpirits,
+			c.DeleteSessionTeamSpirit,
 		},
 		{
-			"GetSessionTeamSpirits",
+			"GetSessionTeamSpirit",
 			strings.ToUpper("Get"),
 			"/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}",
-			c.GetSessionTeamSpirits,
+			c.GetSessionTeamSpirit,
 		},
 		{
 			"ListSessionTeamSpirits",
@@ -75,16 +75,16 @@ func (c *SessionTeamSpiritsApiController) Routes() Routes {
 			c.ListSessionTeamSpirits,
 		},
 		{
-			"UpdateSessionTeamSpirits",
+			"UpdateSessionTeamSpirit",
 			strings.ToUpper("Put"),
 			"/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}",
-			c.UpdateSessionTeamSpirits,
+			c.UpdateSessionTeamSpirit,
 		},
 	}
 }
 
-// CreateSessionTeamSpirits -
-func (c *SessionTeamSpiritsApiController) CreateSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
+// CreateSessionTeamSpirit -
+func (c *SessionTeamSpiritApiController) CreateSessionTeamSpirit(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -101,7 +101,7 @@ func (c *SessionTeamSpiritsApiController) CreateSessionTeamSpirits(w http.Respon
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.CreateSessionTeamSpirits(r.Context(), sessionNameParam, teamNameParam, spiritParam)
+	result, err := c.service.CreateSessionTeamSpirit(r.Context(), sessionNameParam, teamNameParam, spiritParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -112,8 +112,8 @@ func (c *SessionTeamSpiritsApiController) CreateSessionTeamSpirits(w http.Respon
 
 }
 
-// DeleteSessionTeamSpirits -
-func (c *SessionTeamSpiritsApiController) DeleteSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
+// DeleteSessionTeamSpirit -
+func (c *SessionTeamSpiritApiController) DeleteSessionTeamSpirit(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -121,7 +121,7 @@ func (c *SessionTeamSpiritsApiController) DeleteSessionTeamSpirits(w http.Respon
 
 	spiritNameParam := params["spiritName"]
 
-	result, err := c.service.DeleteSessionTeamSpirits(r.Context(), sessionNameParam, teamNameParam, spiritNameParam)
+	result, err := c.service.DeleteSessionTeamSpirit(r.Context(), sessionNameParam, teamNameParam, spiritNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -132,8 +132,8 @@ func (c *SessionTeamSpiritsApiController) DeleteSessionTeamSpirits(w http.Respon
 
 }
 
-// GetSessionTeamSpirits -
-func (c *SessionTeamSpiritsApiController) GetSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
+// GetSessionTeamSpirit -
+func (c *SessionTeamSpiritApiController) GetSessionTeamSpirit(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -141,7 +141,7 @@ func (c *SessionTeamSpiritsApiController) GetSessionTeamSpirits(w http.ResponseW
 
 	spiritNameParam := params["spiritName"]
 
-	result, err := c.service.GetSessionTeamSpirits(r.Context(), sessionNameParam, teamNameParam, spiritNameParam)
+	result, err := c.service.GetSessionTeamSpirit(r.Context(), sessionNameParam, teamNameParam, spiritNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -153,7 +153,7 @@ func (c *SessionTeamSpiritsApiController) GetSessionTeamSpirits(w http.ResponseW
 }
 
 // ListSessionTeamSpirits -
-func (c *SessionTeamSpiritsApiController) ListSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
+func (c *SessionTeamSpiritApiController) ListSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -170,8 +170,8 @@ func (c *SessionTeamSpiritsApiController) ListSessionTeamSpirits(w http.Response
 
 }
 
-// UpdateSessionTeamSpirits -
-func (c *SessionTeamSpiritsApiController) UpdateSessionTeamSpirits(w http.ResponseWriter, r *http.Request) {
+// UpdateSessionTeamSpirit -
+func (c *SessionTeamSpiritApiController) UpdateSessionTeamSpirit(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -190,7 +190,7 @@ func (c *SessionTeamSpiritsApiController) UpdateSessionTeamSpirits(w http.Respon
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.UpdateSessionTeamSpirits(r.Context(), sessionNameParam, teamNameParam, spiritNameParam, spiritParam)
+	result, err := c.service.UpdateSessionTeamSpirit(r.Context(), sessionNameParam, teamNameParam, spiritNameParam, spiritParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

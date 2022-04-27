@@ -20,23 +20,23 @@ import (
 )
 
 
-// SessionBattleSpiritsApiService SessionBattleSpiritsApi service
-type SessionBattleSpiritsApiService service
+// SessionBattleSpiritApiService SessionBattleSpiritApi service
+type SessionBattleSpiritApiService service
 
-type ApiGetSessionBattleSpiritsRequest struct {
+type ApiGetSessionBattleSpiritRequest struct {
 	ctx context.Context
-	ApiService *SessionBattleSpiritsApiService
+	ApiService *SessionBattleSpiritApiService
 	sessionName string
 	battleName string
 	spiritName string
 }
 
-func (r ApiGetSessionBattleSpiritsRequest) Execute() (*Spirit, *http.Response, error) {
-	return r.ApiService.GetSessionBattleSpiritsExecute(r)
+func (r ApiGetSessionBattleSpiritRequest) Execute() (*Spirit, *http.Response, error) {
+	return r.ApiService.GetSessionBattleSpiritExecute(r)
 }
 
 /*
-GetSessionBattleSpirits Method for GetSessionBattleSpirits
+GetSessionBattleSpirit Method for GetSessionBattleSpirit
 
 Get Spirit
 
@@ -44,10 +44,10 @@ Get Spirit
  @param sessionName Spirit name
  @param battleName Spirit name
  @param spiritName Spirit name
- @return ApiGetSessionBattleSpiritsRequest
+ @return ApiGetSessionBattleSpiritRequest
 */
-func (a *SessionBattleSpiritsApiService) GetSessionBattleSpirits(ctx context.Context, sessionName string, battleName string, spiritName string) ApiGetSessionBattleSpiritsRequest {
-	return ApiGetSessionBattleSpiritsRequest{
+func (a *SessionBattleSpiritApiService) GetSessionBattleSpirit(ctx context.Context, sessionName string, battleName string, spiritName string) ApiGetSessionBattleSpiritRequest {
+	return ApiGetSessionBattleSpiritRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -58,7 +58,7 @@ func (a *SessionBattleSpiritsApiService) GetSessionBattleSpirits(ctx context.Con
 
 // Execute executes the request
 //  @return Spirit
-func (a *SessionBattleSpiritsApiService) GetSessionBattleSpiritsExecute(r ApiGetSessionBattleSpiritsRequest) (*Spirit, *http.Response, error) {
+func (a *SessionBattleSpiritApiService) GetSessionBattleSpiritExecute(r ApiGetSessionBattleSpiritRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -66,7 +66,7 @@ func (a *SessionBattleSpiritsApiService) GetSessionBattleSpiritsExecute(r ApiGet
 		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritsApiService.GetSessionBattleSpirits")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritApiService.GetSessionBattleSpirit")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -145,7 +145,7 @@ func (a *SessionBattleSpiritsApiService) GetSessionBattleSpiritsExecute(r ApiGet
 
 type ApiListSessionBattleSpiritsRequest struct {
 	ctx context.Context
-	ApiService *SessionBattleSpiritsApiService
+	ApiService *SessionBattleSpiritApiService
 	sessionName string
 	battleName string
 }
@@ -164,7 +164,7 @@ List Spirits
  @param battleName Spirit name
  @return ApiListSessionBattleSpiritsRequest
 */
-func (a *SessionBattleSpiritsApiService) ListSessionBattleSpirits(ctx context.Context, sessionName string, battleName string) ApiListSessionBattleSpiritsRequest {
+func (a *SessionBattleSpiritApiService) ListSessionBattleSpirits(ctx context.Context, sessionName string, battleName string) ApiListSessionBattleSpiritsRequest {
 	return ApiListSessionBattleSpiritsRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -175,7 +175,7 @@ func (a *SessionBattleSpiritsApiService) ListSessionBattleSpirits(ctx context.Co
 
 // Execute executes the request
 //  @return Spirit
-func (a *SessionBattleSpiritsApiService) ListSessionBattleSpiritsExecute(r ApiListSessionBattleSpiritsRequest) (*Spirit, *http.Response, error) {
+func (a *SessionBattleSpiritApiService) ListSessionBattleSpiritsExecute(r ApiListSessionBattleSpiritsRequest) (*Spirit, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -183,7 +183,7 @@ func (a *SessionBattleSpiritsApiService) ListSessionBattleSpiritsExecute(r ApiLi
 		localVarReturnValue  *Spirit
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritsApiService.ListSessionBattleSpirits")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritApiService.ListSessionBattleSpirits")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

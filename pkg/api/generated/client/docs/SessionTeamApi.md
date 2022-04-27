@@ -1,20 +1,20 @@
-# \SessionTeamsApi
+# \SessionTeamApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessionTeams**](SessionTeamsApi.md#CreateSessionTeams) | **Post** /sessions/{sessionName}/teams | 
-[**DeleteSessionTeams**](SessionTeamsApi.md#DeleteSessionTeams) | **Delete** /sessions/{sessionName}/teams/{teamName} | 
-[**GetSessionTeams**](SessionTeamsApi.md#GetSessionTeams) | **Get** /sessions/{sessionName}/teams/{teamName} | 
-[**ListSessionTeams**](SessionTeamsApi.md#ListSessionTeams) | **Get** /sessions/{sessionName}/teams | 
-[**UpdateSessionTeams**](SessionTeamsApi.md#UpdateSessionTeams) | **Put** /sessions/{sessionName}/teams/{teamName} | 
+[**CreateSessionTeam**](SessionTeamApi.md#CreateSessionTeam) | **Post** /sessions/{sessionName}/teams | 
+[**DeleteSessionTeam**](SessionTeamApi.md#DeleteSessionTeam) | **Delete** /sessions/{sessionName}/teams/{teamName} | 
+[**GetSessionTeam**](SessionTeamApi.md#GetSessionTeam) | **Get** /sessions/{sessionName}/teams/{teamName} | 
+[**ListSessionTeams**](SessionTeamApi.md#ListSessionTeams) | **Get** /sessions/{sessionName}/teams | 
+[**UpdateSessionTeam**](SessionTeamApi.md#UpdateSessionTeam) | **Put** /sessions/{sessionName}/teams/{teamName} | 
 
 
 
-## CreateSessionTeams
+## CreateSessionTeam
 
-> Team CreateSessionTeams(ctx, sessionName).Team(team).Execute()
+> Team CreateSessionTeam(ctx, sessionName).Team(team).Execute()
 
 
 
@@ -38,13 +38,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamsApi.CreateSessionTeams(context.Background(), sessionName).Team(team).Execute()
+    resp, r, err := apiClient.SessionTeamApi.CreateSessionTeam(context.Background(), sessionName).Team(team).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamsApi.CreateSessionTeams``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamApi.CreateSessionTeam``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `CreateSessionTeams`: Team
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamsApi.CreateSessionTeams`: %v\n", resp)
+    // response from `CreateSessionTeam`: Team
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamApi.CreateSessionTeam`: %v\n", resp)
 }
 ```
 
@@ -58,7 +58,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiCreateSessionTeamsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiCreateSessionTeamRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -84,9 +84,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## DeleteSessionTeams
+## DeleteSessionTeam
 
-> Team DeleteSessionTeams(ctx, sessionName, teamName).Execute()
+> Team DeleteSessionTeam(ctx, sessionName, teamName).Execute()
 
 
 
@@ -110,13 +110,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamsApi.DeleteSessionTeams(context.Background(), sessionName, teamName).Execute()
+    resp, r, err := apiClient.SessionTeamApi.DeleteSessionTeam(context.Background(), sessionName, teamName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamsApi.DeleteSessionTeams``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamApi.DeleteSessionTeam``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `DeleteSessionTeams`: Team
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamsApi.DeleteSessionTeams`: %v\n", resp)
+    // response from `DeleteSessionTeam`: Team
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamApi.DeleteSessionTeam`: %v\n", resp)
 }
 ```
 
@@ -131,7 +131,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiDeleteSessionTeamsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiDeleteSessionTeamRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -157,9 +157,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## GetSessionTeams
+## GetSessionTeam
 
-> Team GetSessionTeams(ctx, sessionName, teamName).Execute()
+> Team GetSessionTeam(ctx, sessionName, teamName).Execute()
 
 
 
@@ -183,13 +183,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamsApi.GetSessionTeams(context.Background(), sessionName, teamName).Execute()
+    resp, r, err := apiClient.SessionTeamApi.GetSessionTeam(context.Background(), sessionName, teamName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamsApi.GetSessionTeams``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamApi.GetSessionTeam``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetSessionTeams`: Team
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamsApi.GetSessionTeams`: %v\n", resp)
+    // response from `GetSessionTeam`: Team
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamApi.GetSessionTeam`: %v\n", resp)
 }
 ```
 
@@ -204,7 +204,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSessionTeamsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSessionTeamRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -255,13 +255,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamsApi.ListSessionTeams(context.Background(), sessionName).Execute()
+    resp, r, err := apiClient.SessionTeamApi.ListSessionTeams(context.Background(), sessionName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamsApi.ListSessionTeams``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamApi.ListSessionTeams``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `ListSessionTeams`: Team
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamsApi.ListSessionTeams`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamApi.ListSessionTeams`: %v\n", resp)
 }
 ```
 
@@ -300,9 +300,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## UpdateSessionTeams
+## UpdateSessionTeam
 
-> Team UpdateSessionTeams(ctx, sessionName, teamName).Team(team).Execute()
+> Team UpdateSessionTeam(ctx, sessionName, teamName).Team(team).Execute()
 
 
 
@@ -327,13 +327,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionTeamsApi.UpdateSessionTeams(context.Background(), sessionName, teamName).Team(team).Execute()
+    resp, r, err := apiClient.SessionTeamApi.UpdateSessionTeam(context.Background(), sessionName, teamName).Team(team).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamsApi.UpdateSessionTeams``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionTeamApi.UpdateSessionTeam``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `UpdateSessionTeams`: Team
-    fmt.Fprintf(os.Stdout, "Response from `SessionTeamsApi.UpdateSessionTeams`: %v\n", resp)
+    // response from `UpdateSessionTeam`: Team
+    fmt.Fprintf(os.Stdout, "Response from `SessionTeamApi.UpdateSessionTeam`: %v\n", resp)
 }
 ```
 
@@ -348,7 +348,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiUpdateSessionTeamsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiUpdateSessionTeamRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

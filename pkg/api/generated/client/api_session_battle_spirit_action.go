@@ -20,12 +20,12 @@ import (
 )
 
 
-// SessionBattleSpiritActionsApiService SessionBattleSpiritActionsApi service
-type SessionBattleSpiritActionsApiService service
+// SessionBattleSpiritActionApiService SessionBattleSpiritActionApi service
+type SessionBattleSpiritActionApiService service
 
-type ApiCreateSessionBattleSpiritActionsRequest struct {
+type ApiCreateSessionBattleSpiritActionRequest struct {
 	ctx context.Context
-	ApiService *SessionBattleSpiritActionsApiService
+	ApiService *SessionBattleSpiritActionApiService
 	sessionName string
 	battleName string
 	spiritName string
@@ -33,17 +33,17 @@ type ApiCreateSessionBattleSpiritActionsRequest struct {
 }
 
 // Action to create
-func (r ApiCreateSessionBattleSpiritActionsRequest) Action(action Action) ApiCreateSessionBattleSpiritActionsRequest {
+func (r ApiCreateSessionBattleSpiritActionRequest) Action(action Action) ApiCreateSessionBattleSpiritActionRequest {
 	r.action = &action
 	return r
 }
 
-func (r ApiCreateSessionBattleSpiritActionsRequest) Execute() (*Action, *http.Response, error) {
-	return r.ApiService.CreateSessionBattleSpiritActionsExecute(r)
+func (r ApiCreateSessionBattleSpiritActionRequest) Execute() (*Action, *http.Response, error) {
+	return r.ApiService.CreateSessionBattleSpiritActionExecute(r)
 }
 
 /*
-CreateSessionBattleSpiritActions Method for CreateSessionBattleSpiritActions
+CreateSessionBattleSpiritAction Method for CreateSessionBattleSpiritAction
 
 Create a Action
 
@@ -51,10 +51,10 @@ Create a Action
  @param sessionName Action name
  @param battleName Action name
  @param spiritName Action name
- @return ApiCreateSessionBattleSpiritActionsRequest
+ @return ApiCreateSessionBattleSpiritActionRequest
 */
-func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActions(ctx context.Context, sessionName string, battleName string, spiritName string) ApiCreateSessionBattleSpiritActionsRequest {
-	return ApiCreateSessionBattleSpiritActionsRequest{
+func (a *SessionBattleSpiritActionApiService) CreateSessionBattleSpiritAction(ctx context.Context, sessionName string, battleName string, spiritName string) ApiCreateSessionBattleSpiritActionRequest {
+	return ApiCreateSessionBattleSpiritActionRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -65,7 +65,7 @@ func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActions(
 
 // Execute executes the request
 //  @return Action
-func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActionsExecute(r ApiCreateSessionBattleSpiritActionsRequest) (*Action, *http.Response, error) {
+func (a *SessionBattleSpiritActionApiService) CreateSessionBattleSpiritActionExecute(r ApiCreateSessionBattleSpiritActionRequest) (*Action, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -73,7 +73,7 @@ func (a *SessionBattleSpiritActionsApiService) CreateSessionBattleSpiritActionsE
 		localVarReturnValue  *Action
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritActionsApiService.CreateSessionBattleSpiritActions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleSpiritActionApiService.CreateSessionBattleSpiritAction")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

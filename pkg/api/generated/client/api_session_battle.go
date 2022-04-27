@@ -20,37 +20,37 @@ import (
 )
 
 
-// SessionBattlesApiService SessionBattlesApi service
-type SessionBattlesApiService service
+// SessionBattleApiService SessionBattleApi service
+type SessionBattleApiService service
 
-type ApiCreateSessionBattlesRequest struct {
+type ApiCreateSessionBattleRequest struct {
 	ctx context.Context
-	ApiService *SessionBattlesApiService
+	ApiService *SessionBattleApiService
 	sessionName string
 	battle *Battle
 }
 
 // Battle to create
-func (r ApiCreateSessionBattlesRequest) Battle(battle Battle) ApiCreateSessionBattlesRequest {
+func (r ApiCreateSessionBattleRequest) Battle(battle Battle) ApiCreateSessionBattleRequest {
 	r.battle = &battle
 	return r
 }
 
-func (r ApiCreateSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
-	return r.ApiService.CreateSessionBattlesExecute(r)
+func (r ApiCreateSessionBattleRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.CreateSessionBattleExecute(r)
 }
 
 /*
-CreateSessionBattles Method for CreateSessionBattles
+CreateSessionBattle Method for CreateSessionBattle
 
 Create a Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Battle name
- @return ApiCreateSessionBattlesRequest
+ @return ApiCreateSessionBattleRequest
 */
-func (a *SessionBattlesApiService) CreateSessionBattles(ctx context.Context, sessionName string) ApiCreateSessionBattlesRequest {
-	return ApiCreateSessionBattlesRequest{
+func (a *SessionBattleApiService) CreateSessionBattle(ctx context.Context, sessionName string) ApiCreateSessionBattleRequest {
+	return ApiCreateSessionBattleRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -59,7 +59,7 @@ func (a *SessionBattlesApiService) CreateSessionBattles(ctx context.Context, ses
 
 // Execute executes the request
 //  @return Battle
-func (a *SessionBattlesApiService) CreateSessionBattlesExecute(r ApiCreateSessionBattlesRequest) (*Battle, *http.Response, error) {
+func (a *SessionBattleApiService) CreateSessionBattleExecute(r ApiCreateSessionBattleRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -67,7 +67,7 @@ func (a *SessionBattlesApiService) CreateSessionBattlesExecute(r ApiCreateSessio
 		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.CreateSessionBattles")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleApiService.CreateSessionBattle")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -138,29 +138,29 @@ func (a *SessionBattlesApiService) CreateSessionBattlesExecute(r ApiCreateSessio
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteSessionBattlesRequest struct {
+type ApiDeleteSessionBattleRequest struct {
 	ctx context.Context
-	ApiService *SessionBattlesApiService
+	ApiService *SessionBattleApiService
 	sessionName string
 	battleName string
 }
 
-func (r ApiDeleteSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
-	return r.ApiService.DeleteSessionBattlesExecute(r)
+func (r ApiDeleteSessionBattleRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.DeleteSessionBattleExecute(r)
 }
 
 /*
-DeleteSessionBattles Method for DeleteSessionBattles
+DeleteSessionBattle Method for DeleteSessionBattle
 
 Watch Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Battle name
  @param battleName Battle name
- @return ApiDeleteSessionBattlesRequest
+ @return ApiDeleteSessionBattleRequest
 */
-func (a *SessionBattlesApiService) DeleteSessionBattles(ctx context.Context, sessionName string, battleName string) ApiDeleteSessionBattlesRequest {
-	return ApiDeleteSessionBattlesRequest{
+func (a *SessionBattleApiService) DeleteSessionBattle(ctx context.Context, sessionName string, battleName string) ApiDeleteSessionBattleRequest {
+	return ApiDeleteSessionBattleRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -170,7 +170,7 @@ func (a *SessionBattlesApiService) DeleteSessionBattles(ctx context.Context, ses
 
 // Execute executes the request
 //  @return Battle
-func (a *SessionBattlesApiService) DeleteSessionBattlesExecute(r ApiDeleteSessionBattlesRequest) (*Battle, *http.Response, error) {
+func (a *SessionBattleApiService) DeleteSessionBattleExecute(r ApiDeleteSessionBattleRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodDelete
 		localVarPostBody     interface{}
@@ -178,7 +178,7 @@ func (a *SessionBattlesApiService) DeleteSessionBattlesExecute(r ApiDeleteSessio
 		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.DeleteSessionBattles")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleApiService.DeleteSessionBattle")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -251,29 +251,29 @@ func (a *SessionBattlesApiService) DeleteSessionBattlesExecute(r ApiDeleteSessio
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSessionBattlesRequest struct {
+type ApiGetSessionBattleRequest struct {
 	ctx context.Context
-	ApiService *SessionBattlesApiService
+	ApiService *SessionBattleApiService
 	sessionName string
 	battleName string
 }
 
-func (r ApiGetSessionBattlesRequest) Execute() (*Battle, *http.Response, error) {
-	return r.ApiService.GetSessionBattlesExecute(r)
+func (r ApiGetSessionBattleRequest) Execute() (*Battle, *http.Response, error) {
+	return r.ApiService.GetSessionBattleExecute(r)
 }
 
 /*
-GetSessionBattles Method for GetSessionBattles
+GetSessionBattle Method for GetSessionBattle
 
 Get Battle
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Battle name
  @param battleName Battle name
- @return ApiGetSessionBattlesRequest
+ @return ApiGetSessionBattleRequest
 */
-func (a *SessionBattlesApiService) GetSessionBattles(ctx context.Context, sessionName string, battleName string) ApiGetSessionBattlesRequest {
-	return ApiGetSessionBattlesRequest{
+func (a *SessionBattleApiService) GetSessionBattle(ctx context.Context, sessionName string, battleName string) ApiGetSessionBattleRequest {
+	return ApiGetSessionBattleRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -283,7 +283,7 @@ func (a *SessionBattlesApiService) GetSessionBattles(ctx context.Context, sessio
 
 // Execute executes the request
 //  @return Battle
-func (a *SessionBattlesApiService) GetSessionBattlesExecute(r ApiGetSessionBattlesRequest) (*Battle, *http.Response, error) {
+func (a *SessionBattleApiService) GetSessionBattleExecute(r ApiGetSessionBattleRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -291,7 +291,7 @@ func (a *SessionBattlesApiService) GetSessionBattlesExecute(r ApiGetSessionBattl
 		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.GetSessionBattles")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleApiService.GetSessionBattle")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -366,7 +366,7 @@ func (a *SessionBattlesApiService) GetSessionBattlesExecute(r ApiGetSessionBattl
 
 type ApiListSessionBattlesRequest struct {
 	ctx context.Context
-	ApiService *SessionBattlesApiService
+	ApiService *SessionBattleApiService
 	sessionName string
 }
 
@@ -383,7 +383,7 @@ List Battles
  @param sessionName Battle name
  @return ApiListSessionBattlesRequest
 */
-func (a *SessionBattlesApiService) ListSessionBattles(ctx context.Context, sessionName string) ApiListSessionBattlesRequest {
+func (a *SessionBattleApiService) ListSessionBattles(ctx context.Context, sessionName string) ApiListSessionBattlesRequest {
 	return ApiListSessionBattlesRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -393,7 +393,7 @@ func (a *SessionBattlesApiService) ListSessionBattles(ctx context.Context, sessi
 
 // Execute executes the request
 //  @return Battle
-func (a *SessionBattlesApiService) ListSessionBattlesExecute(r ApiListSessionBattlesRequest) (*Battle, *http.Response, error) {
+func (a *SessionBattleApiService) ListSessionBattlesExecute(r ApiListSessionBattlesRequest) (*Battle, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -401,7 +401,7 @@ func (a *SessionBattlesApiService) ListSessionBattlesExecute(r ApiListSessionBat
 		localVarReturnValue  *Battle
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattlesApiService.ListSessionBattles")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionBattleApiService.ListSessionBattles")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

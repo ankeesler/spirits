@@ -98,14 +98,14 @@ func (p *path) Scopes(read bool) []string {
 	return scopes
 }
 
-func (p *path) OperationIDSuffix() string {
+func (p *path) OperationIDSuffix(singular bool) string {
 	suffix := ""
 	resources := p.resources()
 	for i, resource := range resources {
 		suffix += strings.Title(resource)
 
-		// Every word but the last should be single
-		if len(suffix) > 0 && i != len(resources)-1 {
+		// Every word but the last should be singular (except if we specify singular)
+		if len(suffix) > 0 && (i != len(resources)-1 || singular) {
 			suffix = suffix[:len(suffix)-1]
 		}
 	}

@@ -95,52 +95,52 @@ declare -a result_color_table=( "$WHITE" "$WHITE" "$GREEN" "$YELLOW" "$WHITE" "$
 # 0 - optional
 # 1 - required
 declare -A operation_parameters_minimum_occurrences
-operation_parameters_minimum_occurrences["createSessionBattleSpiritActions:::sessionName"]=1
-operation_parameters_minimum_occurrences["createSessionBattleSpiritActions:::battleName"]=1
-operation_parameters_minimum_occurrences["createSessionBattleSpiritActions:::spiritName"]=1
-operation_parameters_minimum_occurrences["createSessionBattleSpiritActions:::Action"]=0
-operation_parameters_minimum_occurrences["getSessionBattleSpirits:::sessionName"]=1
-operation_parameters_minimum_occurrences["getSessionBattleSpirits:::battleName"]=1
-operation_parameters_minimum_occurrences["getSessionBattleSpirits:::spiritName"]=1
+operation_parameters_minimum_occurrences["createSession:::Session"]=0
+operation_parameters_minimum_occurrences["deleteSession:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSession:::sessionName"]=1
+operation_parameters_minimum_occurrences["updateSession:::sessionName"]=1
+operation_parameters_minimum_occurrences["updateSession:::Session"]=0
+operation_parameters_minimum_occurrences["createSessionBattle:::sessionName"]=1
+operation_parameters_minimum_occurrences["createSessionBattle:::Battle"]=0
+operation_parameters_minimum_occurrences["deleteSessionBattle:::sessionName"]=1
+operation_parameters_minimum_occurrences["deleteSessionBattle:::battleName"]=1
+operation_parameters_minimum_occurrences["getSessionBattle:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSessionBattle:::battleName"]=1
+operation_parameters_minimum_occurrences["listSessionBattles:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSessionBattleSpirit:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSessionBattleSpirit:::battleName"]=1
+operation_parameters_minimum_occurrences["getSessionBattleSpirit:::spiritName"]=1
 operation_parameters_minimum_occurrences["listSessionBattleSpirits:::sessionName"]=1
 operation_parameters_minimum_occurrences["listSessionBattleSpirits:::battleName"]=1
-operation_parameters_minimum_occurrences["createSessionBattles:::sessionName"]=1
-operation_parameters_minimum_occurrences["createSessionBattles:::Battle"]=0
-operation_parameters_minimum_occurrences["deleteSessionBattles:::sessionName"]=1
-operation_parameters_minimum_occurrences["deleteSessionBattles:::battleName"]=1
-operation_parameters_minimum_occurrences["getSessionBattles:::sessionName"]=1
-operation_parameters_minimum_occurrences["getSessionBattles:::battleName"]=1
-operation_parameters_minimum_occurrences["listSessionBattles:::sessionName"]=1
-operation_parameters_minimum_occurrences["createSessionTeamSpirits:::sessionName"]=1
-operation_parameters_minimum_occurrences["createSessionTeamSpirits:::teamName"]=1
-operation_parameters_minimum_occurrences["createSessionTeamSpirits:::Spirit"]=0
-operation_parameters_minimum_occurrences["deleteSessionTeamSpirits:::sessionName"]=1
-operation_parameters_minimum_occurrences["deleteSessionTeamSpirits:::teamName"]=1
-operation_parameters_minimum_occurrences["deleteSessionTeamSpirits:::spiritName"]=1
-operation_parameters_minimum_occurrences["getSessionTeamSpirits:::sessionName"]=1
-operation_parameters_minimum_occurrences["getSessionTeamSpirits:::teamName"]=1
-operation_parameters_minimum_occurrences["getSessionTeamSpirits:::spiritName"]=1
+operation_parameters_minimum_occurrences["createSessionBattleSpiritAction:::sessionName"]=1
+operation_parameters_minimum_occurrences["createSessionBattleSpiritAction:::battleName"]=1
+operation_parameters_minimum_occurrences["createSessionBattleSpiritAction:::spiritName"]=1
+operation_parameters_minimum_occurrences["createSessionBattleSpiritAction:::Action"]=0
+operation_parameters_minimum_occurrences["createSessionTeam:::sessionName"]=1
+operation_parameters_minimum_occurrences["createSessionTeam:::Team"]=0
+operation_parameters_minimum_occurrences["deleteSessionTeam:::sessionName"]=1
+operation_parameters_minimum_occurrences["deleteSessionTeam:::teamName"]=1
+operation_parameters_minimum_occurrences["getSessionTeam:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSessionTeam:::teamName"]=1
+operation_parameters_minimum_occurrences["listSessionTeams:::sessionName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeam:::sessionName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeam:::teamName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeam:::Team"]=0
+operation_parameters_minimum_occurrences["createSessionTeamSpirit:::sessionName"]=1
+operation_parameters_minimum_occurrences["createSessionTeamSpirit:::teamName"]=1
+operation_parameters_minimum_occurrences["createSessionTeamSpirit:::Spirit"]=0
+operation_parameters_minimum_occurrences["deleteSessionTeamSpirit:::sessionName"]=1
+operation_parameters_minimum_occurrences["deleteSessionTeamSpirit:::teamName"]=1
+operation_parameters_minimum_occurrences["deleteSessionTeamSpirit:::spiritName"]=1
+operation_parameters_minimum_occurrences["getSessionTeamSpirit:::sessionName"]=1
+operation_parameters_minimum_occurrences["getSessionTeamSpirit:::teamName"]=1
+operation_parameters_minimum_occurrences["getSessionTeamSpirit:::spiritName"]=1
 operation_parameters_minimum_occurrences["listSessionTeamSpirits:::sessionName"]=1
 operation_parameters_minimum_occurrences["listSessionTeamSpirits:::teamName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeamSpirits:::sessionName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeamSpirits:::teamName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeamSpirits:::spiritName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeamSpirits:::Spirit"]=0
-operation_parameters_minimum_occurrences["createSessionTeams:::sessionName"]=1
-operation_parameters_minimum_occurrences["createSessionTeams:::Team"]=0
-operation_parameters_minimum_occurrences["deleteSessionTeams:::sessionName"]=1
-operation_parameters_minimum_occurrences["deleteSessionTeams:::teamName"]=1
-operation_parameters_minimum_occurrences["getSessionTeams:::sessionName"]=1
-operation_parameters_minimum_occurrences["getSessionTeams:::teamName"]=1
-operation_parameters_minimum_occurrences["listSessionTeams:::sessionName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeams:::sessionName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeams:::teamName"]=1
-operation_parameters_minimum_occurrences["updateSessionTeams:::Team"]=0
-operation_parameters_minimum_occurrences["createSessions:::Session"]=0
-operation_parameters_minimum_occurrences["deleteSessions:::sessionName"]=1
-operation_parameters_minimum_occurrences["getSessions:::sessionName"]=1
-operation_parameters_minimum_occurrences["updateSessions:::sessionName"]=1
-operation_parameters_minimum_occurrences["updateSessions:::Session"]=0
+operation_parameters_minimum_occurrences["updateSessionTeamSpirit:::sessionName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeamSpirit:::teamName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeamSpirit:::spiritName"]=1
+operation_parameters_minimum_occurrences["updateSessionTeamSpirit:::Spirit"]=0
 
 ##
 # This array stores the maximum number of allowed occurrences for parameter
@@ -149,103 +149,103 @@ operation_parameters_minimum_occurrences["updateSessions:::Session"]=0
 # N - N values
 # 0 - unlimited
 declare -A operation_parameters_maximum_occurrences
-operation_parameters_maximum_occurrences["createSessionBattleSpiritActions:::sessionName"]=0
-operation_parameters_maximum_occurrences["createSessionBattleSpiritActions:::battleName"]=0
-operation_parameters_maximum_occurrences["createSessionBattleSpiritActions:::spiritName"]=0
-operation_parameters_maximum_occurrences["createSessionBattleSpiritActions:::Action"]=0
-operation_parameters_maximum_occurrences["getSessionBattleSpirits:::sessionName"]=0
-operation_parameters_maximum_occurrences["getSessionBattleSpirits:::battleName"]=0
-operation_parameters_maximum_occurrences["getSessionBattleSpirits:::spiritName"]=0
+operation_parameters_maximum_occurrences["createSession:::Session"]=0
+operation_parameters_maximum_occurrences["deleteSession:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSession:::sessionName"]=0
+operation_parameters_maximum_occurrences["updateSession:::sessionName"]=0
+operation_parameters_maximum_occurrences["updateSession:::Session"]=0
+operation_parameters_maximum_occurrences["createSessionBattle:::sessionName"]=0
+operation_parameters_maximum_occurrences["createSessionBattle:::Battle"]=0
+operation_parameters_maximum_occurrences["deleteSessionBattle:::sessionName"]=0
+operation_parameters_maximum_occurrences["deleteSessionBattle:::battleName"]=0
+operation_parameters_maximum_occurrences["getSessionBattle:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSessionBattle:::battleName"]=0
+operation_parameters_maximum_occurrences["listSessionBattles:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSessionBattleSpirit:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSessionBattleSpirit:::battleName"]=0
+operation_parameters_maximum_occurrences["getSessionBattleSpirit:::spiritName"]=0
 operation_parameters_maximum_occurrences["listSessionBattleSpirits:::sessionName"]=0
 operation_parameters_maximum_occurrences["listSessionBattleSpirits:::battleName"]=0
-operation_parameters_maximum_occurrences["createSessionBattles:::sessionName"]=0
-operation_parameters_maximum_occurrences["createSessionBattles:::Battle"]=0
-operation_parameters_maximum_occurrences["deleteSessionBattles:::sessionName"]=0
-operation_parameters_maximum_occurrences["deleteSessionBattles:::battleName"]=0
-operation_parameters_maximum_occurrences["getSessionBattles:::sessionName"]=0
-operation_parameters_maximum_occurrences["getSessionBattles:::battleName"]=0
-operation_parameters_maximum_occurrences["listSessionBattles:::sessionName"]=0
-operation_parameters_maximum_occurrences["createSessionTeamSpirits:::sessionName"]=0
-operation_parameters_maximum_occurrences["createSessionTeamSpirits:::teamName"]=0
-operation_parameters_maximum_occurrences["createSessionTeamSpirits:::Spirit"]=0
-operation_parameters_maximum_occurrences["deleteSessionTeamSpirits:::sessionName"]=0
-operation_parameters_maximum_occurrences["deleteSessionTeamSpirits:::teamName"]=0
-operation_parameters_maximum_occurrences["deleteSessionTeamSpirits:::spiritName"]=0
-operation_parameters_maximum_occurrences["getSessionTeamSpirits:::sessionName"]=0
-operation_parameters_maximum_occurrences["getSessionTeamSpirits:::teamName"]=0
-operation_parameters_maximum_occurrences["getSessionTeamSpirits:::spiritName"]=0
+operation_parameters_maximum_occurrences["createSessionBattleSpiritAction:::sessionName"]=0
+operation_parameters_maximum_occurrences["createSessionBattleSpiritAction:::battleName"]=0
+operation_parameters_maximum_occurrences["createSessionBattleSpiritAction:::spiritName"]=0
+operation_parameters_maximum_occurrences["createSessionBattleSpiritAction:::Action"]=0
+operation_parameters_maximum_occurrences["createSessionTeam:::sessionName"]=0
+operation_parameters_maximum_occurrences["createSessionTeam:::Team"]=0
+operation_parameters_maximum_occurrences["deleteSessionTeam:::sessionName"]=0
+operation_parameters_maximum_occurrences["deleteSessionTeam:::teamName"]=0
+operation_parameters_maximum_occurrences["getSessionTeam:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSessionTeam:::teamName"]=0
+operation_parameters_maximum_occurrences["listSessionTeams:::sessionName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeam:::sessionName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeam:::teamName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeam:::Team"]=0
+operation_parameters_maximum_occurrences["createSessionTeamSpirit:::sessionName"]=0
+operation_parameters_maximum_occurrences["createSessionTeamSpirit:::teamName"]=0
+operation_parameters_maximum_occurrences["createSessionTeamSpirit:::Spirit"]=0
+operation_parameters_maximum_occurrences["deleteSessionTeamSpirit:::sessionName"]=0
+operation_parameters_maximum_occurrences["deleteSessionTeamSpirit:::teamName"]=0
+operation_parameters_maximum_occurrences["deleteSessionTeamSpirit:::spiritName"]=0
+operation_parameters_maximum_occurrences["getSessionTeamSpirit:::sessionName"]=0
+operation_parameters_maximum_occurrences["getSessionTeamSpirit:::teamName"]=0
+operation_parameters_maximum_occurrences["getSessionTeamSpirit:::spiritName"]=0
 operation_parameters_maximum_occurrences["listSessionTeamSpirits:::sessionName"]=0
 operation_parameters_maximum_occurrences["listSessionTeamSpirits:::teamName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeamSpirits:::sessionName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeamSpirits:::teamName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeamSpirits:::spiritName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeamSpirits:::Spirit"]=0
-operation_parameters_maximum_occurrences["createSessionTeams:::sessionName"]=0
-operation_parameters_maximum_occurrences["createSessionTeams:::Team"]=0
-operation_parameters_maximum_occurrences["deleteSessionTeams:::sessionName"]=0
-operation_parameters_maximum_occurrences["deleteSessionTeams:::teamName"]=0
-operation_parameters_maximum_occurrences["getSessionTeams:::sessionName"]=0
-operation_parameters_maximum_occurrences["getSessionTeams:::teamName"]=0
-operation_parameters_maximum_occurrences["listSessionTeams:::sessionName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeams:::sessionName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeams:::teamName"]=0
-operation_parameters_maximum_occurrences["updateSessionTeams:::Team"]=0
-operation_parameters_maximum_occurrences["createSessions:::Session"]=0
-operation_parameters_maximum_occurrences["deleteSessions:::sessionName"]=0
-operation_parameters_maximum_occurrences["getSessions:::sessionName"]=0
-operation_parameters_maximum_occurrences["updateSessions:::sessionName"]=0
-operation_parameters_maximum_occurrences["updateSessions:::Session"]=0
+operation_parameters_maximum_occurrences["updateSessionTeamSpirit:::sessionName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeamSpirit:::teamName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeamSpirit:::spiritName"]=0
+operation_parameters_maximum_occurrences["updateSessionTeamSpirit:::Spirit"]=0
 
 ##
 # The type of collection for specifying multiple values for parameter:
 # - multi, csv, ssv, tsv
 declare -A operation_parameters_collection_type
-operation_parameters_collection_type["createSessionBattleSpiritActions:::sessionName"]=""
-operation_parameters_collection_type["createSessionBattleSpiritActions:::battleName"]=""
-operation_parameters_collection_type["createSessionBattleSpiritActions:::spiritName"]=""
-operation_parameters_collection_type["createSessionBattleSpiritActions:::Action"]=""
-operation_parameters_collection_type["getSessionBattleSpirits:::sessionName"]=""
-operation_parameters_collection_type["getSessionBattleSpirits:::battleName"]=""
-operation_parameters_collection_type["getSessionBattleSpirits:::spiritName"]=""
+operation_parameters_collection_type["createSession:::Session"]=""
+operation_parameters_collection_type["deleteSession:::sessionName"]=""
+operation_parameters_collection_type["getSession:::sessionName"]=""
+operation_parameters_collection_type["updateSession:::sessionName"]=""
+operation_parameters_collection_type["updateSession:::Session"]=""
+operation_parameters_collection_type["createSessionBattle:::sessionName"]=""
+operation_parameters_collection_type["createSessionBattle:::Battle"]=""
+operation_parameters_collection_type["deleteSessionBattle:::sessionName"]=""
+operation_parameters_collection_type["deleteSessionBattle:::battleName"]=""
+operation_parameters_collection_type["getSessionBattle:::sessionName"]=""
+operation_parameters_collection_type["getSessionBattle:::battleName"]=""
+operation_parameters_collection_type["listSessionBattles:::sessionName"]=""
+operation_parameters_collection_type["getSessionBattleSpirit:::sessionName"]=""
+operation_parameters_collection_type["getSessionBattleSpirit:::battleName"]=""
+operation_parameters_collection_type["getSessionBattleSpirit:::spiritName"]=""
 operation_parameters_collection_type["listSessionBattleSpirits:::sessionName"]=""
 operation_parameters_collection_type["listSessionBattleSpirits:::battleName"]=""
-operation_parameters_collection_type["createSessionBattles:::sessionName"]=""
-operation_parameters_collection_type["createSessionBattles:::Battle"]=""
-operation_parameters_collection_type["deleteSessionBattles:::sessionName"]=""
-operation_parameters_collection_type["deleteSessionBattles:::battleName"]=""
-operation_parameters_collection_type["getSessionBattles:::sessionName"]=""
-operation_parameters_collection_type["getSessionBattles:::battleName"]=""
-operation_parameters_collection_type["listSessionBattles:::sessionName"]=""
-operation_parameters_collection_type["createSessionTeamSpirits:::sessionName"]=""
-operation_parameters_collection_type["createSessionTeamSpirits:::teamName"]=""
-operation_parameters_collection_type["createSessionTeamSpirits:::Spirit"]=""
-operation_parameters_collection_type["deleteSessionTeamSpirits:::sessionName"]=""
-operation_parameters_collection_type["deleteSessionTeamSpirits:::teamName"]=""
-operation_parameters_collection_type["deleteSessionTeamSpirits:::spiritName"]=""
-operation_parameters_collection_type["getSessionTeamSpirits:::sessionName"]=""
-operation_parameters_collection_type["getSessionTeamSpirits:::teamName"]=""
-operation_parameters_collection_type["getSessionTeamSpirits:::spiritName"]=""
+operation_parameters_collection_type["createSessionBattleSpiritAction:::sessionName"]=""
+operation_parameters_collection_type["createSessionBattleSpiritAction:::battleName"]=""
+operation_parameters_collection_type["createSessionBattleSpiritAction:::spiritName"]=""
+operation_parameters_collection_type["createSessionBattleSpiritAction:::Action"]=""
+operation_parameters_collection_type["createSessionTeam:::sessionName"]=""
+operation_parameters_collection_type["createSessionTeam:::Team"]=""
+operation_parameters_collection_type["deleteSessionTeam:::sessionName"]=""
+operation_parameters_collection_type["deleteSessionTeam:::teamName"]=""
+operation_parameters_collection_type["getSessionTeam:::sessionName"]=""
+operation_parameters_collection_type["getSessionTeam:::teamName"]=""
+operation_parameters_collection_type["listSessionTeams:::sessionName"]=""
+operation_parameters_collection_type["updateSessionTeam:::sessionName"]=""
+operation_parameters_collection_type["updateSessionTeam:::teamName"]=""
+operation_parameters_collection_type["updateSessionTeam:::Team"]=""
+operation_parameters_collection_type["createSessionTeamSpirit:::sessionName"]=""
+operation_parameters_collection_type["createSessionTeamSpirit:::teamName"]=""
+operation_parameters_collection_type["createSessionTeamSpirit:::Spirit"]=""
+operation_parameters_collection_type["deleteSessionTeamSpirit:::sessionName"]=""
+operation_parameters_collection_type["deleteSessionTeamSpirit:::teamName"]=""
+operation_parameters_collection_type["deleteSessionTeamSpirit:::spiritName"]=""
+operation_parameters_collection_type["getSessionTeamSpirit:::sessionName"]=""
+operation_parameters_collection_type["getSessionTeamSpirit:::teamName"]=""
+operation_parameters_collection_type["getSessionTeamSpirit:::spiritName"]=""
 operation_parameters_collection_type["listSessionTeamSpirits:::sessionName"]=""
 operation_parameters_collection_type["listSessionTeamSpirits:::teamName"]=""
-operation_parameters_collection_type["updateSessionTeamSpirits:::sessionName"]=""
-operation_parameters_collection_type["updateSessionTeamSpirits:::teamName"]=""
-operation_parameters_collection_type["updateSessionTeamSpirits:::spiritName"]=""
-operation_parameters_collection_type["updateSessionTeamSpirits:::Spirit"]=""
-operation_parameters_collection_type["createSessionTeams:::sessionName"]=""
-operation_parameters_collection_type["createSessionTeams:::Team"]=""
-operation_parameters_collection_type["deleteSessionTeams:::sessionName"]=""
-operation_parameters_collection_type["deleteSessionTeams:::teamName"]=""
-operation_parameters_collection_type["getSessionTeams:::sessionName"]=""
-operation_parameters_collection_type["getSessionTeams:::teamName"]=""
-operation_parameters_collection_type["listSessionTeams:::sessionName"]=""
-operation_parameters_collection_type["updateSessionTeams:::sessionName"]=""
-operation_parameters_collection_type["updateSessionTeams:::teamName"]=""
-operation_parameters_collection_type["updateSessionTeams:::Team"]=""
-operation_parameters_collection_type["createSessions:::Session"]=""
-operation_parameters_collection_type["deleteSessions:::sessionName"]=""
-operation_parameters_collection_type["getSessions:::sessionName"]=""
-operation_parameters_collection_type["updateSessions:::sessionName"]=""
-operation_parameters_collection_type["updateSessions:::Session"]=""
+operation_parameters_collection_type["updateSessionTeamSpirit:::sessionName"]=""
+operation_parameters_collection_type["updateSessionTeamSpirit:::teamName"]=""
+operation_parameters_collection_type["updateSessionTeamSpirit:::spiritName"]=""
+operation_parameters_collection_type["updateSessionTeamSpirit:::Spirit"]=""
 
 
 ##
@@ -634,55 +634,55 @@ read -r -d '' ops <<EOF
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
-    echo -e "${BOLD}${WHITE}[sessionBattleSpiritActions]${OFF}"
+    echo -e "${BOLD}${WHITE}[session]${OFF}"
 read -r -d '' ops <<EOF
-  ${CYAN}createSessionBattleSpiritActions${OFF};
+  ${CYAN}createSession${OFF};
+  ${CYAN}deleteSession${OFF};
+  ${CYAN}getSession${OFF};
+  ${CYAN}listSessions${OFF};
+  ${CYAN}updateSession${OFF};
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
-    echo -e "${BOLD}${WHITE}[sessionBattleSpirits]${OFF}"
+    echo -e "${BOLD}${WHITE}[sessionBattle]${OFF}"
 read -r -d '' ops <<EOF
-  ${CYAN}getSessionBattleSpirits${OFF};
-  ${CYAN}listSessionBattleSpirits${OFF};
-EOF
-echo "  $ops" | column -t -s ';'
-    echo ""
-    echo -e "${BOLD}${WHITE}[sessionBattles]${OFF}"
-read -r -d '' ops <<EOF
-  ${CYAN}createSessionBattles${OFF};
-  ${CYAN}deleteSessionBattles${OFF};
-  ${CYAN}getSessionBattles${OFF};
+  ${CYAN}createSessionBattle${OFF};
+  ${CYAN}deleteSessionBattle${OFF};
+  ${CYAN}getSessionBattle${OFF};
   ${CYAN}listSessionBattles${OFF};
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
-    echo -e "${BOLD}${WHITE}[sessionTeamSpirits]${OFF}"
+    echo -e "${BOLD}${WHITE}[sessionBattleSpirit]${OFF}"
 read -r -d '' ops <<EOF
-  ${CYAN}createSessionTeamSpirits${OFF};
-  ${CYAN}deleteSessionTeamSpirits${OFF};
-  ${CYAN}getSessionTeamSpirits${OFF};
-  ${CYAN}listSessionTeamSpirits${OFF};
-  ${CYAN}updateSessionTeamSpirits${OFF};
+  ${CYAN}getSessionBattleSpirit${OFF};
+  ${CYAN}listSessionBattleSpirits${OFF};
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
-    echo -e "${BOLD}${WHITE}[sessionTeams]${OFF}"
+    echo -e "${BOLD}${WHITE}[sessionBattleSpiritAction]${OFF}"
 read -r -d '' ops <<EOF
-  ${CYAN}createSessionTeams${OFF};
-  ${CYAN}deleteSessionTeams${OFF};
-  ${CYAN}getSessionTeams${OFF};
+  ${CYAN}createSessionBattleSpiritAction${OFF};
+EOF
+echo "  $ops" | column -t -s ';'
+    echo ""
+    echo -e "${BOLD}${WHITE}[sessionTeam]${OFF}"
+read -r -d '' ops <<EOF
+  ${CYAN}createSessionTeam${OFF};
+  ${CYAN}deleteSessionTeam${OFF};
+  ${CYAN}getSessionTeam${OFF};
   ${CYAN}listSessionTeams${OFF};
-  ${CYAN}updateSessionTeams${OFF};
+  ${CYAN}updateSessionTeam${OFF};
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
-    echo -e "${BOLD}${WHITE}[sessions]${OFF}"
+    echo -e "${BOLD}${WHITE}[sessionTeamSpirit]${OFF}"
 read -r -d '' ops <<EOF
-  ${CYAN}createSessions${OFF};
-  ${CYAN}deleteSessions${OFF};
-  ${CYAN}getSessions${OFF};
-  ${CYAN}listSessions${OFF};
-  ${CYAN}updateSessions${OFF};
+  ${CYAN}createSessionTeamSpirit${OFF};
+  ${CYAN}deleteSessionTeamSpirit${OFF};
+  ${CYAN}getSessionTeamSpirit${OFF};
+  ${CYAN}listSessionTeamSpirits${OFF};
+  ${CYAN}updateSessionTeamSpirit${OFF};
 EOF
 echo "  $ops" | column -t -s ';'
     echo ""
@@ -754,34 +754,179 @@ print_rootGet_help() {
 }
 ##############################################################################
 #
-# Print help for createSessionBattleSpiritActions operation
+# Print help for createSession operation
 #
 ##############################################################################
-print_createSessionBattleSpiritActions_help() {
+print_createSession_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}createSessionBattleSpiritActions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}createSession - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
-    echo -e "Create a Action" | paste -sd' ' | fold -sw 80
+    echo -e "Create a Session" | paste -sd' ' | fold -sw 80
     echo -e ""
     echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}spiritName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: spiritName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Action to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Session to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo ""
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=201
-    echo -e "${result_color_table[${code:0:1}]}  201;Successful Action create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+    echo -e "${result_color_table[${code:0:1}]}  201;Successful Session create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 ##############################################################################
 #
-# Print help for getSessionBattleSpirits operation
+# Print help for deleteSession operation
 #
 ##############################################################################
-print_getSessionBattleSpirits_help() {
+print_deleteSession_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}getSessionBattleSpirits - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}deleteSession - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Watch Session" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for getSession operation
+#
+##############################################################################
+print_getSession_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}getSession - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Get Session" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for listSessions operation
+#
+##############################################################################
+print_listSessions_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}listSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "List Sessions" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Sessions list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for updateSession operation
+#
+##############################################################################
+print_updateSession_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}updateSession - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Update Session" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Session to update" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session update${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for createSessionBattle operation
+#
+##############################################################################
+print_createSessionBattle_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}createSessionBattle - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Create a Battle" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Battle to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=201
+    echo -e "${result_color_table[${code:0:1}]}  201;Successful Battle create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for deleteSessionBattle operation
+#
+##############################################################################
+print_deleteSessionBattle_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}deleteSessionBattle - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Watch Battle" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battle delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for getSessionBattle operation
+#
+##############################################################################
+print_getSessionBattle_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}getSessionBattle - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Get Battle" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battle get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for listSessionBattles operation
+#
+##############################################################################
+print_listSessionBattles_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}listSessionBattles - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "List Battles" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battles list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for getSessionBattleSpirit operation
+#
+##############################################################################
+print_getSessionBattleSpirit_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}getSessionBattleSpirit - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo -e "Get Spirit" | paste -sd' ' | fold -sw 80
     echo -e ""
@@ -815,88 +960,131 @@ print_listSessionBattleSpirits_help() {
 }
 ##############################################################################
 #
-# Print help for createSessionBattles operation
+# Print help for createSessionBattleSpiritAction operation
 #
 ##############################################################################
-print_createSessionBattles_help() {
+print_createSessionBattleSpiritAction_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}createSessionBattles - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}createSessionBattleSpiritAction - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
-    echo -e "Create a Battle" | paste -sd' ' | fold -sw 80
+    echo -e "Create a Action" | paste -sd' ' | fold -sw 80
     echo -e ""
     echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Battle to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}spiritName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Action name ${YELLOW}Specify as: spiritName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Action to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo ""
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=201
-    echo -e "${result_color_table[${code:0:1}]}  201;Successful Battle create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+    echo -e "${result_color_table[${code:0:1}]}  201;Successful Action create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 ##############################################################################
 #
-# Print help for deleteSessionBattles operation
+# Print help for createSessionTeam operation
 #
 ##############################################################################
-print_deleteSessionBattles_help() {
+print_createSessionTeam_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}deleteSessionBattles - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}createSessionTeam - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
-    echo -e "Watch Battle" | paste -sd' ' | fold -sw 80
+    echo -e "Create a Team" | paste -sd' ' | fold -sw 80
     echo -e ""
     echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Team to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=201
+    echo -e "${result_color_table[${code:0:1}]}  201;Successful Team create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for deleteSessionTeam operation
+#
+##############################################################################
+print_deleteSessionTeam_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}deleteSessionTeam - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Watch Team" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo ""
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battle delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 ##############################################################################
 #
-# Print help for getSessionBattles operation
+# Print help for getSessionTeam operation
 #
 ##############################################################################
-print_getSessionBattles_help() {
+print_getSessionTeam_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}getSessionBattles - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}getSessionTeam - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
-    echo -e "Get Battle" | paste -sd' ' | fold -sw 80
+    echo -e "Get Team" | paste -sd' ' | fold -sw 80
     echo -e ""
     echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}battleName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: battleName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo ""
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battle get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 ##############################################################################
 #
-# Print help for listSessionBattles operation
+# Print help for listSessionTeams operation
 #
 ##############################################################################
-print_listSessionBattles_help() {
+print_listSessionTeams_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}listSessionBattles - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}listSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
-    echo -e "List Battles" | paste -sd' ' | fold -sw 80
+    echo -e "List Teams" | paste -sd' ' | fold -sw 80
     echo -e ""
     echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Battle name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo ""
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Battles list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Teams list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 ##############################################################################
 #
-# Print help for createSessionTeamSpirits operation
+# Print help for updateSessionTeam operation
 #
 ##############################################################################
-print_createSessionTeamSpirits_help() {
+print_updateSessionTeam_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}createSessionTeamSpirits - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}updateSessionTeam - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo -e "Update Team" | paste -sd' ' | fold -sw 80
+    echo -e ""
+    echo -e "${BOLD}${WHITE}Parameters${OFF}"
+    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Team to update" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e ""
+    echo ""
+    echo -e "${BOLD}${WHITE}Responses${OFF}"
+    code=200
+    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team update${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
+}
+##############################################################################
+#
+# Print help for createSessionTeamSpirit operation
+#
+##############################################################################
+print_createSessionTeamSpirit_help() {
+    echo ""
+    echo -e "${BOLD}${WHITE}createSessionTeamSpirit - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo -e "Create a Spirit" | paste -sd' ' | fold -sw 80
     echo -e ""
@@ -912,12 +1100,12 @@ print_createSessionTeamSpirits_help() {
 }
 ##############################################################################
 #
-# Print help for deleteSessionTeamSpirits operation
+# Print help for deleteSessionTeamSpirit operation
 #
 ##############################################################################
-print_deleteSessionTeamSpirits_help() {
+print_deleteSessionTeamSpirit_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}deleteSessionTeamSpirits - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}deleteSessionTeamSpirit - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo -e "Watch Spirit" | paste -sd' ' | fold -sw 80
     echo -e ""
@@ -932,12 +1120,12 @@ print_deleteSessionTeamSpirits_help() {
 }
 ##############################################################################
 #
-# Print help for getSessionTeamSpirits operation
+# Print help for getSessionTeamSpirit operation
 #
 ##############################################################################
-print_getSessionTeamSpirits_help() {
+print_getSessionTeamSpirit_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}getSessionTeamSpirits - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}getSessionTeamSpirit - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo -e "Get Spirit" | paste -sd' ' | fold -sw 80
     echo -e ""
@@ -971,12 +1159,12 @@ print_listSessionTeamSpirits_help() {
 }
 ##############################################################################
 #
-# Print help for updateSessionTeamSpirits operation
+# Print help for updateSessionTeamSpirit operation
 #
 ##############################################################################
-print_updateSessionTeamSpirits_help() {
+print_updateSessionTeamSpirit_help() {
     echo ""
-    echo -e "${BOLD}${WHITE}updateSessionTeamSpirits - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
+    echo -e "${BOLD}${WHITE}updateSessionTeamSpirit - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
     echo -e ""
     echo -e "Update Spirit" | paste -sd' ' | fold -sw 80
     echo -e ""
@@ -990,194 +1178,6 @@ print_updateSessionTeamSpirits_help() {
     echo -e "${BOLD}${WHITE}Responses${OFF}"
     code=200
     echo -e "${result_color_table[${code:0:1}]}  200;Successful Spirit update${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for createSessionTeams operation
-#
-##############################################################################
-print_createSessionTeams_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}createSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Create a Team" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Team to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=201
-    echo -e "${result_color_table[${code:0:1}]}  201;Successful Team create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for deleteSessionTeams operation
-#
-##############################################################################
-print_deleteSessionTeams_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}deleteSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Watch Team" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for getSessionTeams operation
-#
-##############################################################################
-print_getSessionTeams_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}getSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Get Team" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for listSessionTeams operation
-#
-##############################################################################
-print_listSessionTeams_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}listSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "List Teams" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Teams list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for updateSessionTeams operation
-#
-##############################################################################
-print_updateSessionTeams_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}updateSessionTeams - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Update Team" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}teamName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Team name ${YELLOW}Specify as: teamName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Team to update" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Team update${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for createSessions operation
-#
-##############################################################################
-print_createSessions_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}createSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Create a Session" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Session to create" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=201
-    echo -e "${result_color_table[${code:0:1}]}  201;Successful Session create${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for deleteSessions operation
-#
-##############################################################################
-print_deleteSessions_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}deleteSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Watch Session" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session delete${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for getSessions operation
-#
-##############################################################################
-print_getSessions_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}getSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Get Session" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session get${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for listSessions operation
-#
-##############################################################################
-print_listSessions_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}listSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "List Sessions" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Sessions list${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
-}
-##############################################################################
-#
-# Print help for updateSessions operation
-#
-##############################################################################
-print_updateSessions_help() {
-    echo ""
-    echo -e "${BOLD}${WHITE}updateSessions - ${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo -e "Update Session" | paste -sd' ' | fold -sw 80
-    echo -e ""
-    echo -e "${BOLD}${WHITE}Parameters${OFF}"
-    echo -e "  * ${GREEN}sessionName${OFF} ${BLUE}[string]${OFF} ${RED}(required)${OFF} ${CYAN}(default: null)${OFF} - Session name ${YELLOW}Specify as: sessionName=value${OFF}" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e "  * ${GREEN}body${OFF} ${BLUE}[application/json]${OFF}${OFF} - Session to update" | paste -sd' ' | fold -sw 80 | sed '2,$s/^/    /'
-    echo -e ""
-    echo ""
-    echo -e "${BOLD}${WHITE}Responses${OFF}"
-    code=200
-    echo -e "${result_color_table[${code:0:1}]}  200;Successful Session update${OFF}" | paste -sd' ' | column -t -s ';' | fold -sw 80 | sed '2,$s/^/       /'
 }
 
 
@@ -1219,10 +1219,532 @@ call_rootGet() {
 
 ##############################################################################
 #
-# Call createSessionBattleSpiritActions operation
+# Call createSession operation
 #
 ##############################################################################
-call_createSessionBattleSpiritActions() {
+call_createSession() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=()
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="POST"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    local body_json_curl=""
+
+    #
+    # Check if the user provided 'Content-type' headers in the
+    # command line. If not try to set them based on the OpenAPI specification
+    # if values produces and consumes are defined unambiguously
+    #
+    if [[ -z $header_content_type ]]; then
+        header_content_type="application/json"
+    fi
+
+
+    if [[ -z $header_content_type && "$force" = false ]]; then
+        :
+        echo "ERROR: Request's content-type not specified!!!"
+        echo "This operation expects content-type in one of the following formats:"
+        echo -e "\\t- application/json"
+        echo ""
+        echo "Use '--content-type' to set proper content type"
+        exit 1
+    else
+        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
+    fi
+
+
+    #
+    # If we have received some body content over pipe, pass it from the
+    # temporary file to cURL
+    #
+    if [[ -n $body_content_temp_file ]]; then
+        if [[ "$print_curl" = true ]]; then
+            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        else
+            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        fi
+        rm "${body_content_temp_file}"
+    #
+    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
+    #
+    else
+        body_json_curl=$(body_parameters_to_json)
+        if [[ "$print_curl" = true ]]; then
+            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        else
+            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        fi
+    fi
+}
+
+##############################################################################
+#
+# Call deleteSession operation
+#
+##############################################################################
+call_deleteSession() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="DELETE"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call getSession operation
+#
+##############################################################################
+call_getSession() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call listSessions operation
+#
+##############################################################################
+call_listSessions() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=()
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call updateSession operation
+#
+##############################################################################
+call_updateSession() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="PUT"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    local body_json_curl=""
+
+    #
+    # Check if the user provided 'Content-type' headers in the
+    # command line. If not try to set them based on the OpenAPI specification
+    # if values produces and consumes are defined unambiguously
+    #
+    if [[ -z $header_content_type ]]; then
+        header_content_type="application/json"
+    fi
+
+
+    if [[ -z $header_content_type && "$force" = false ]]; then
+        :
+        echo "ERROR: Request's content-type not specified!!!"
+        echo "This operation expects content-type in one of the following formats:"
+        echo -e "\\t- application/json"
+        echo ""
+        echo "Use '--content-type' to set proper content type"
+        exit 1
+    else
+        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
+    fi
+
+
+    #
+    # If we have received some body content over pipe, pass it from the
+    # temporary file to cURL
+    #
+    if [[ -n $body_content_temp_file ]]; then
+        if [[ "$print_curl" = true ]]; then
+            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        else
+            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        fi
+        rm "${body_content_temp_file}"
+    #
+    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
+    #
+    else
+        body_json_curl=$(body_parameters_to_json)
+        if [[ "$print_curl" = true ]]; then
+            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        else
+            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        fi
+    fi
+}
+
+##############################################################################
+#
+# Call createSessionBattle operation
+#
+##############################################################################
+call_createSessionBattle() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="POST"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    local body_json_curl=""
+
+    #
+    # Check if the user provided 'Content-type' headers in the
+    # command line. If not try to set them based on the OpenAPI specification
+    # if values produces and consumes are defined unambiguously
+    #
+    if [[ -z $header_content_type ]]; then
+        header_content_type="application/json"
+    fi
+
+
+    if [[ -z $header_content_type && "$force" = false ]]; then
+        :
+        echo "ERROR: Request's content-type not specified!!!"
+        echo "This operation expects content-type in one of the following formats:"
+        echo -e "\\t- application/json"
+        echo ""
+        echo "Use '--content-type' to set proper content type"
+        exit 1
+    else
+        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
+    fi
+
+
+    #
+    # If we have received some body content over pipe, pass it from the
+    # temporary file to cURL
+    #
+    if [[ -n $body_content_temp_file ]]; then
+        if [[ "$print_curl" = true ]]; then
+            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        else
+            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
+        fi
+        rm "${body_content_temp_file}"
+    #
+    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
+    #
+    else
+        body_json_curl=$(body_parameters_to_json)
+        if [[ "$print_curl" = true ]]; then
+            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        else
+            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
+        fi
+    fi
+}
+
+##############################################################################
+#
+# Call deleteSessionBattle operation
+#
+##############################################################################
+call_deleteSessionBattle() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName battleName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="DELETE"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call getSessionBattle operation
+#
+##############################################################################
+call_getSessionBattle() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName battleName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call listSessionBattles operation
+#
+##############################################################################
+call_listSessionBattles() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call getSessionBattleSpirit operation
+#
+##############################################################################
+call_getSessionBattleSpirit() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName battleName spiritName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call listSessionBattleSpirits operation
+#
+##############################################################################
+call_listSessionBattleSpirits() {
+    # ignore error about 'path_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local path_parameter_names=(sessionName battleName)
+    # ignore error about 'query_parameter_names' being unused; passed by reference
+    # shellcheck disable=SC2034
+    local query_parameter_names=()
+    local path
+
+    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}/spirits" path_parameter_names query_parameter_names); then
+        ERROR_MSG=$path
+        exit 1
+    fi
+    local method="GET"
+    local headers_curl
+    headers_curl=$(header_arguments_to_curl)
+    if [[ -n $header_accept ]]; then
+        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
+    fi
+
+    local basic_auth_option=""
+    if [[ -n $basic_auth_credential ]]; then
+        basic_auth_option="-u ${basic_auth_credential}"
+    fi
+    if [[ "$print_curl" = true ]]; then
+        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    else
+        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
+    fi
+}
+
+##############################################################################
+#
+# Call createSessionBattleSpiritAction operation
+#
+##############################################################################
+call_createSessionBattleSpiritAction() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local path_parameter_names=(sessionName battleName spiritName)
@@ -1297,532 +1819,10 @@ call_createSessionBattleSpiritActions() {
 
 ##############################################################################
 #
-# Call getSessionBattleSpirits operation
+# Call createSessionTeam operation
 #
 ##############################################################################
-call_getSessionBattleSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName battleName spiritName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call listSessionBattleSpirits operation
-#
-##############################################################################
-call_listSessionBattleSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName battleName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}/spirits" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call createSessionBattles operation
-#
-##############################################################################
-call_createSessionBattles() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="POST"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    local body_json_curl=""
-
-    #
-    # Check if the user provided 'Content-type' headers in the
-    # command line. If not try to set them based on the OpenAPI specification
-    # if values produces and consumes are defined unambiguously
-    #
-    if [[ -z $header_content_type ]]; then
-        header_content_type="application/json"
-    fi
-
-
-    if [[ -z $header_content_type && "$force" = false ]]; then
-        :
-        echo "ERROR: Request's content-type not specified!!!"
-        echo "This operation expects content-type in one of the following formats:"
-        echo -e "\\t- application/json"
-        echo ""
-        echo "Use '--content-type' to set proper content type"
-        exit 1
-    else
-        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
-    fi
-
-
-    #
-    # If we have received some body content over pipe, pass it from the
-    # temporary file to cURL
-    #
-    if [[ -n $body_content_temp_file ]]; then
-        if [[ "$print_curl" = true ]]; then
-            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        else
-            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        fi
-        rm "${body_content_temp_file}"
-    #
-    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
-    #
-    else
-        body_json_curl=$(body_parameters_to_json)
-        if [[ "$print_curl" = true ]]; then
-            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        else
-            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        fi
-    fi
-}
-
-##############################################################################
-#
-# Call deleteSessionBattles operation
-#
-##############################################################################
-call_deleteSessionBattles() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName battleName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="DELETE"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call getSessionBattles operation
-#
-##############################################################################
-call_getSessionBattles() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName battleName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles/{battleName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call listSessionBattles operation
-#
-##############################################################################
-call_listSessionBattles() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/battles" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call createSessionTeamSpirits operation
-#
-##############################################################################
-call_createSessionTeamSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName teamName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="POST"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    local body_json_curl=""
-
-    #
-    # Check if the user provided 'Content-type' headers in the
-    # command line. If not try to set them based on the OpenAPI specification
-    # if values produces and consumes are defined unambiguously
-    #
-    if [[ -z $header_content_type ]]; then
-        header_content_type="application/json"
-    fi
-
-
-    if [[ -z $header_content_type && "$force" = false ]]; then
-        :
-        echo "ERROR: Request's content-type not specified!!!"
-        echo "This operation expects content-type in one of the following formats:"
-        echo -e "\\t- application/json"
-        echo ""
-        echo "Use '--content-type' to set proper content type"
-        exit 1
-    else
-        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
-    fi
-
-
-    #
-    # If we have received some body content over pipe, pass it from the
-    # temporary file to cURL
-    #
-    if [[ -n $body_content_temp_file ]]; then
-        if [[ "$print_curl" = true ]]; then
-            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        else
-            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        fi
-        rm "${body_content_temp_file}"
-    #
-    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
-    #
-    else
-        body_json_curl=$(body_parameters_to_json)
-        if [[ "$print_curl" = true ]]; then
-            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        else
-            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        fi
-    fi
-}
-
-##############################################################################
-#
-# Call deleteSessionTeamSpirits operation
-#
-##############################################################################
-call_deleteSessionTeamSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName teamName spiritName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="DELETE"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call getSessionTeamSpirits operation
-#
-##############################################################################
-call_getSessionTeamSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName teamName spiritName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call listSessionTeamSpirits operation
-#
-##############################################################################
-call_listSessionTeamSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName teamName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="GET"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    if [[ "$print_curl" = true ]]; then
-        echo "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    else
-        eval "curl -d '' ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\""
-    fi
-}
-
-##############################################################################
-#
-# Call updateSessionTeamSpirits operation
-#
-##############################################################################
-call_updateSessionTeamSpirits() {
-    # ignore error about 'path_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName teamName spiritName)
-    # ignore error about 'query_parameter_names' being unused; passed by reference
-    # shellcheck disable=SC2034
-    local query_parameter_names=()
-    local path
-
-    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
-        ERROR_MSG=$path
-        exit 1
-    fi
-    local method="PUT"
-    local headers_curl
-    headers_curl=$(header_arguments_to_curl)
-    if [[ -n $header_accept ]]; then
-        headers_curl="${headers_curl} -H 'Accept: ${header_accept}'"
-    fi
-
-    local basic_auth_option=""
-    if [[ -n $basic_auth_credential ]]; then
-        basic_auth_option="-u ${basic_auth_credential}"
-    fi
-    local body_json_curl=""
-
-    #
-    # Check if the user provided 'Content-type' headers in the
-    # command line. If not try to set them based on the OpenAPI specification
-    # if values produces and consumes are defined unambiguously
-    #
-    if [[ -z $header_content_type ]]; then
-        header_content_type="application/json"
-    fi
-
-
-    if [[ -z $header_content_type && "$force" = false ]]; then
-        :
-        echo "ERROR: Request's content-type not specified!!!"
-        echo "This operation expects content-type in one of the following formats:"
-        echo -e "\\t- application/json"
-        echo ""
-        echo "Use '--content-type' to set proper content type"
-        exit 1
-    else
-        headers_curl="${headers_curl} -H 'Content-type: ${header_content_type}'"
-    fi
-
-
-    #
-    # If we have received some body content over pipe, pass it from the
-    # temporary file to cURL
-    #
-    if [[ -n $body_content_temp_file ]]; then
-        if [[ "$print_curl" = true ]]; then
-            echo "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        else
-            eval "cat ${body_content_temp_file} | curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} \"${host}${path}\" -d @-"
-        fi
-        rm "${body_content_temp_file}"
-    #
-    # If not, try to build the content body from arguments KEY==VALUE and KEY:=VALUE
-    #
-    else
-        body_json_curl=$(body_parameters_to_json)
-        if [[ "$print_curl" = true ]]; then
-            echo "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        else
-            eval "curl ${basic_auth_option} ${curl_arguments} ${headers_curl} -X ${method} ${body_json_curl} \"${host}${path}\""
-        fi
-    fi
-}
-
-##############################################################################
-#
-# Call createSessionTeams operation
-#
-##############################################################################
-call_createSessionTeams() {
+call_createSessionTeam() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local path_parameter_names=(sessionName)
@@ -1897,10 +1897,10 @@ call_createSessionTeams() {
 
 ##############################################################################
 #
-# Call deleteSessionTeams operation
+# Call deleteSessionTeam operation
 #
 ##############################################################################
-call_deleteSessionTeams() {
+call_deleteSessionTeam() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local path_parameter_names=(sessionName teamName)
@@ -1933,10 +1933,10 @@ call_deleteSessionTeams() {
 
 ##############################################################################
 #
-# Call getSessionTeams operation
+# Call getSessionTeam operation
 #
 ##############################################################################
-call_getSessionTeams() {
+call_getSessionTeam() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local path_parameter_names=(sessionName teamName)
@@ -2005,10 +2005,10 @@ call_listSessionTeams() {
 
 ##############################################################################
 #
-# Call updateSessionTeams operation
+# Call updateSessionTeam operation
 #
 ##############################################################################
-call_updateSessionTeams() {
+call_updateSessionTeam() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local path_parameter_names=(sessionName teamName)
@@ -2083,19 +2083,19 @@ call_updateSessionTeams() {
 
 ##############################################################################
 #
-# Call createSessions operation
+# Call createSessionTeamSpirit operation
 #
 ##############################################################################
-call_createSessions() {
+call_createSessionTeamSpirit() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
-    local path_parameter_names=()
+    local path_parameter_names=(sessionName teamName)
     # ignore error about 'query_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local query_parameter_names=()
     local path
 
-    if ! path=$(build_request_path "/sessions" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi
@@ -2161,19 +2161,19 @@ call_createSessions() {
 
 ##############################################################################
 #
-# Call deleteSessions operation
+# Call deleteSessionTeamSpirit operation
 #
 ##############################################################################
-call_deleteSessions() {
+call_deleteSessionTeamSpirit() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName)
+    local path_parameter_names=(sessionName teamName spiritName)
     # ignore error about 'query_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local query_parameter_names=()
     local path
 
-    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi
@@ -2197,19 +2197,19 @@ call_deleteSessions() {
 
 ##############################################################################
 #
-# Call getSessions operation
+# Call getSessionTeamSpirit operation
 #
 ##############################################################################
-call_getSessions() {
+call_getSessionTeamSpirit() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName)
+    local path_parameter_names=(sessionName teamName spiritName)
     # ignore error about 'query_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local query_parameter_names=()
     local path
 
-    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi
@@ -2233,19 +2233,19 @@ call_getSessions() {
 
 ##############################################################################
 #
-# Call listSessions operation
+# Call listSessionTeamSpirits operation
 #
 ##############################################################################
-call_listSessions() {
+call_listSessionTeamSpirits() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
-    local path_parameter_names=()
+    local path_parameter_names=(sessionName teamName)
     # ignore error about 'query_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local query_parameter_names=()
     local path
 
-    if ! path=$(build_request_path "/sessions" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi
@@ -2269,19 +2269,19 @@ call_listSessions() {
 
 ##############################################################################
 #
-# Call updateSessions operation
+# Call updateSessionTeamSpirit operation
 #
 ##############################################################################
-call_updateSessions() {
+call_updateSessionTeamSpirit() {
     # ignore error about 'path_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
-    local path_parameter_names=(sessionName)
+    local path_parameter_names=(sessionName teamName spiritName)
     # ignore error about 'query_parameter_names' being unused; passed by reference
     # shellcheck disable=SC2034
     local query_parameter_names=()
     local path
 
-    if ! path=$(build_request_path "/sessions/{sessionName}" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "/sessions/{sessionName}/teams/{teamName}/spirits/{spiritName}" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi
@@ -2445,71 +2445,71 @@ case $key in
     rootGet)
     operation="rootGet"
     ;;
-    createSessionBattleSpiritActions)
-    operation="createSessionBattleSpiritActions"
+    createSession)
+    operation="createSession"
     ;;
-    getSessionBattleSpirits)
-    operation="getSessionBattleSpirits"
+    deleteSession)
+    operation="deleteSession"
     ;;
-    listSessionBattleSpirits)
-    operation="listSessionBattleSpirits"
-    ;;
-    createSessionBattles)
-    operation="createSessionBattles"
-    ;;
-    deleteSessionBattles)
-    operation="deleteSessionBattles"
-    ;;
-    getSessionBattles)
-    operation="getSessionBattles"
-    ;;
-    listSessionBattles)
-    operation="listSessionBattles"
-    ;;
-    createSessionTeamSpirits)
-    operation="createSessionTeamSpirits"
-    ;;
-    deleteSessionTeamSpirits)
-    operation="deleteSessionTeamSpirits"
-    ;;
-    getSessionTeamSpirits)
-    operation="getSessionTeamSpirits"
-    ;;
-    listSessionTeamSpirits)
-    operation="listSessionTeamSpirits"
-    ;;
-    updateSessionTeamSpirits)
-    operation="updateSessionTeamSpirits"
-    ;;
-    createSessionTeams)
-    operation="createSessionTeams"
-    ;;
-    deleteSessionTeams)
-    operation="deleteSessionTeams"
-    ;;
-    getSessionTeams)
-    operation="getSessionTeams"
-    ;;
-    listSessionTeams)
-    operation="listSessionTeams"
-    ;;
-    updateSessionTeams)
-    operation="updateSessionTeams"
-    ;;
-    createSessions)
-    operation="createSessions"
-    ;;
-    deleteSessions)
-    operation="deleteSessions"
-    ;;
-    getSessions)
-    operation="getSessions"
+    getSession)
+    operation="getSession"
     ;;
     listSessions)
     operation="listSessions"
     ;;
-    updateSessions)
-    operation="updateSessions"
+    updateSession)
+    operation="updateSession"
+    ;;
+    createSessionBattle)
+    operation="createSessionBattle"
+    ;;
+    deleteSessionBattle)
+    operation="deleteSessionBattle"
+    ;;
+    getSessionBattle)
+    operation="getSessionBattle"
+    ;;
+    listSessionBattles)
+    operation="listSessionBattles"
+    ;;
+    getSessionBattleSpirit)
+    operation="getSessionBattleSpirit"
+    ;;
+    listSessionBattleSpirits)
+    operation="listSessionBattleSpirits"
+    ;;
+    createSessionBattleSpiritAction)
+    operation="createSessionBattleSpiritAction"
+    ;;
+    createSessionTeam)
+    operation="createSessionTeam"
+    ;;
+    deleteSessionTeam)
+    operation="deleteSessionTeam"
+    ;;
+    getSessionTeam)
+    operation="getSessionTeam"
+    ;;
+    listSessionTeams)
+    operation="listSessionTeams"
+    ;;
+    updateSessionTeam)
+    operation="updateSessionTeam"
+    ;;
+    createSessionTeamSpirit)
+    operation="createSessionTeamSpirit"
+    ;;
+    deleteSessionTeamSpirit)
+    operation="deleteSessionTeamSpirit"
+    ;;
+    getSessionTeamSpirit)
+    operation="getSessionTeamSpirit"
+    ;;
+    listSessionTeamSpirits)
+    operation="listSessionTeamSpirits"
+    ;;
+    updateSessionTeamSpirit)
+    operation="updateSessionTeamSpirit"
     ;;
     *==*)
     # Parse body arguments and convert them into top level
@@ -2591,71 +2591,71 @@ case $operation in
     rootGet)
     call_rootGet
     ;;
-    createSessionBattleSpiritActions)
-    call_createSessionBattleSpiritActions
+    createSession)
+    call_createSession
     ;;
-    getSessionBattleSpirits)
-    call_getSessionBattleSpirits
+    deleteSession)
+    call_deleteSession
     ;;
-    listSessionBattleSpirits)
-    call_listSessionBattleSpirits
-    ;;
-    createSessionBattles)
-    call_createSessionBattles
-    ;;
-    deleteSessionBattles)
-    call_deleteSessionBattles
-    ;;
-    getSessionBattles)
-    call_getSessionBattles
-    ;;
-    listSessionBattles)
-    call_listSessionBattles
-    ;;
-    createSessionTeamSpirits)
-    call_createSessionTeamSpirits
-    ;;
-    deleteSessionTeamSpirits)
-    call_deleteSessionTeamSpirits
-    ;;
-    getSessionTeamSpirits)
-    call_getSessionTeamSpirits
-    ;;
-    listSessionTeamSpirits)
-    call_listSessionTeamSpirits
-    ;;
-    updateSessionTeamSpirits)
-    call_updateSessionTeamSpirits
-    ;;
-    createSessionTeams)
-    call_createSessionTeams
-    ;;
-    deleteSessionTeams)
-    call_deleteSessionTeams
-    ;;
-    getSessionTeams)
-    call_getSessionTeams
-    ;;
-    listSessionTeams)
-    call_listSessionTeams
-    ;;
-    updateSessionTeams)
-    call_updateSessionTeams
-    ;;
-    createSessions)
-    call_createSessions
-    ;;
-    deleteSessions)
-    call_deleteSessions
-    ;;
-    getSessions)
-    call_getSessions
+    getSession)
+    call_getSession
     ;;
     listSessions)
     call_listSessions
     ;;
-    updateSessions)
-    call_updateSessions
+    updateSession)
+    call_updateSession
+    ;;
+    createSessionBattle)
+    call_createSessionBattle
+    ;;
+    deleteSessionBattle)
+    call_deleteSessionBattle
+    ;;
+    getSessionBattle)
+    call_getSessionBattle
+    ;;
+    listSessionBattles)
+    call_listSessionBattles
+    ;;
+    getSessionBattleSpirit)
+    call_getSessionBattleSpirit
+    ;;
+    listSessionBattleSpirits)
+    call_listSessionBattleSpirits
+    ;;
+    createSessionBattleSpiritAction)
+    call_createSessionBattleSpiritAction
+    ;;
+    createSessionTeam)
+    call_createSessionTeam
+    ;;
+    deleteSessionTeam)
+    call_deleteSessionTeam
+    ;;
+    getSessionTeam)
+    call_getSessionTeam
+    ;;
+    listSessionTeams)
+    call_listSessionTeams
+    ;;
+    updateSessionTeam)
+    call_updateSessionTeam
+    ;;
+    createSessionTeamSpirit)
+    call_createSessionTeamSpirit
+    ;;
+    deleteSessionTeamSpirit)
+    call_deleteSessionTeamSpirit
+    ;;
+    getSessionTeamSpirit)
+    call_getSessionTeamSpirit
+    ;;
+    listSessionTeamSpirits)
+    call_listSessionTeamSpirits
+    ;;
+    updateSessionTeamSpirit)
+    call_updateSessionTeamSpirit
     ;;
     *)
     ERROR_MSG="ERROR: Unknown operation: $operation"

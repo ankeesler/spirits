@@ -17,25 +17,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SessionsApiController binds http requests to an api service and writes the service results to the http response
-type SessionsApiController struct {
-	service      SessionsApiServicer
+// SessionApiController binds http requests to an api service and writes the service results to the http response
+type SessionApiController struct {
+	service      SessionApiServicer
 	errorHandler ErrorHandler
 }
 
-// SessionsApiOption for how the controller is set up.
-type SessionsApiOption func(*SessionsApiController)
+// SessionApiOption for how the controller is set up.
+type SessionApiOption func(*SessionApiController)
 
-// WithSessionsApiErrorHandler inject ErrorHandler into controller
-func WithSessionsApiErrorHandler(h ErrorHandler) SessionsApiOption {
-	return func(c *SessionsApiController) {
+// WithSessionApiErrorHandler inject ErrorHandler into controller
+func WithSessionApiErrorHandler(h ErrorHandler) SessionApiOption {
+	return func(c *SessionApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewSessionsApiController creates a default api controller
-func NewSessionsApiController(s SessionsApiServicer, opts ...SessionsApiOption) Router {
-	controller := &SessionsApiController{
+// NewSessionApiController creates a default api controller
+func NewSessionApiController(s SessionApiServicer, opts ...SessionApiOption) Router {
+	controller := &SessionApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -47,26 +47,26 @@ func NewSessionsApiController(s SessionsApiServicer, opts ...SessionsApiOption) 
 	return controller
 }
 
-// Routes returns all the api routes for the SessionsApiController
-func (c *SessionsApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionApiController
+func (c *SessionApiController) Routes() Routes {
 	return Routes{
 		{
-			"CreateSessions",
+			"CreateSession",
 			strings.ToUpper("Post"),
 			"/sessions",
-			c.CreateSessions,
+			c.CreateSession,
 		},
 		{
-			"DeleteSessions",
+			"DeleteSession",
 			strings.ToUpper("Delete"),
 			"/sessions/{sessionName}",
-			c.DeleteSessions,
+			c.DeleteSession,
 		},
 		{
-			"GetSessions",
+			"GetSession",
 			strings.ToUpper("Get"),
 			"/sessions/{sessionName}",
-			c.GetSessions,
+			c.GetSession,
 		},
 		{
 			"ListSessions",
@@ -75,16 +75,16 @@ func (c *SessionsApiController) Routes() Routes {
 			c.ListSessions,
 		},
 		{
-			"UpdateSessions",
+			"UpdateSession",
 			strings.ToUpper("Put"),
 			"/sessions/{sessionName}",
-			c.UpdateSessions,
+			c.UpdateSession,
 		},
 	}
 }
 
-// CreateSessions -
-func (c *SessionsApiController) CreateSessions(w http.ResponseWriter, r *http.Request) {
+// CreateSession -
+func (c *SessionApiController) CreateSession(w http.ResponseWriter, r *http.Request) {
 	sessionParam := Session{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
@@ -96,7 +96,7 @@ func (c *SessionsApiController) CreateSessions(w http.ResponseWriter, r *http.Re
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.CreateSessions(r.Context(), sessionParam)
+	result, err := c.service.CreateSession(r.Context(), sessionParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -107,12 +107,12 @@ func (c *SessionsApiController) CreateSessions(w http.ResponseWriter, r *http.Re
 
 }
 
-// DeleteSessions -
-func (c *SessionsApiController) DeleteSessions(w http.ResponseWriter, r *http.Request) {
+// DeleteSession -
+func (c *SessionApiController) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
-	result, err := c.service.DeleteSessions(r.Context(), sessionNameParam)
+	result, err := c.service.DeleteSession(r.Context(), sessionNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -123,12 +123,12 @@ func (c *SessionsApiController) DeleteSessions(w http.ResponseWriter, r *http.Re
 
 }
 
-// GetSessions -
-func (c *SessionsApiController) GetSessions(w http.ResponseWriter, r *http.Request) {
+// GetSession -
+func (c *SessionApiController) GetSession(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
-	result, err := c.service.GetSessions(r.Context(), sessionNameParam)
+	result, err := c.service.GetSession(r.Context(), sessionNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -140,7 +140,7 @@ func (c *SessionsApiController) GetSessions(w http.ResponseWriter, r *http.Reque
 }
 
 // ListSessions -
-func (c *SessionsApiController) ListSessions(w http.ResponseWriter, r *http.Request) {
+func (c *SessionApiController) ListSessions(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.ListSessions(r.Context())
 	// If an error occurred, encode the error with the status code
 	if err != nil {
@@ -152,8 +152,8 @@ func (c *SessionsApiController) ListSessions(w http.ResponseWriter, r *http.Requ
 
 }
 
-// UpdateSessions -
-func (c *SessionsApiController) UpdateSessions(w http.ResponseWriter, r *http.Request) {
+// UpdateSession -
+func (c *SessionApiController) UpdateSession(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -168,7 +168,7 @@ func (c *SessionsApiController) UpdateSessions(w http.ResponseWriter, r *http.Re
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.UpdateSessions(r.Context(), sessionNameParam, sessionParam)
+	result, err := c.service.UpdateSession(r.Context(), sessionNameParam, sessionParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

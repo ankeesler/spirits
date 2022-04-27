@@ -296,23 +296,23 @@ case $state in
   ops)
     # Operations
     _values "Operations" \
-            "rootGet[]"             "createSessionBattleSpiritActions[]"             "getSessionBattleSpirits[]" \
-            "listSessionBattleSpirits[]"             "createSessionBattles[]" \
-            "deleteSessionBattles[]" \
-            "getSessionBattles[]" \
-            "listSessionBattles[]"             "createSessionTeamSpirits[]" \
-            "deleteSessionTeamSpirits[]" \
-            "getSessionTeamSpirits[]" \
-            "listSessionTeamSpirits[]" \
-            "updateSessionTeamSpirits[]"             "createSessionTeams[]" \
-            "deleteSessionTeams[]" \
-            "getSessionTeams[]" \
-            "listSessionTeams[]" \
-            "updateSessionTeams[]"             "createSessions[]" \
-            "deleteSessions[]" \
-            "getSessions[]" \
+            "rootGet[]"             "createSession[]" \
+            "deleteSession[]" \
+            "getSession[]" \
             "listSessions[]" \
-            "updateSessions[]" \
+            "updateSession[]"             "createSessionBattle[]" \
+            "deleteSessionBattle[]" \
+            "getSessionBattle[]" \
+            "listSessionBattles[]"             "getSessionBattleSpirit[]" \
+            "listSessionBattleSpirits[]"             "createSessionBattleSpiritAction[]"             "createSessionTeam[]" \
+            "deleteSessionTeam[]" \
+            "getSessionTeam[]" \
+            "listSessionTeams[]" \
+            "updateSessionTeam[]"             "createSessionTeamSpirit[]" \
+            "deleteSessionTeamSpirit[]" \
+            "getSessionTeamSpirit[]" \
+            "listSessionTeamSpirits[]" \
+            "updateSessionTeamSpirit[]" \
 
     _arguments "(--help)--help[Print information about operation]"
 
@@ -326,16 +326,70 @@ case $state in
                               )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      createSessionBattleSpiritActions)
+      createSession)
         local -a _op_arguments
         _op_arguments=(
-          "sessionName=:[PATH] Action name"
-"battleName=:[PATH] Action name"
-"spiritName=:[PATH] Action name"
+                              )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      deleteSession)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Session name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      getSessionBattleSpirits)
+      getSession)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Session name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      listSessions)
+        local -a _op_arguments
+        _op_arguments=(
+                              )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      updateSession)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Session name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      createSessionBattle)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Battle name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      deleteSessionBattle)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Battle name"
+"battleName=:[PATH] Battle name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      getSessionBattle)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Battle name"
+"battleName=:[PATH] Battle name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      listSessionBattles)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Battle name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      getSessionBattleSpirit)
         local -a _op_arguments
         _op_arguments=(
           "sessionName=:[PATH] Spirit name"
@@ -352,37 +406,54 @@ case $state in
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      createSessionBattles)
+      createSessionBattleSpiritAction)
         local -a _op_arguments
         _op_arguments=(
-          "sessionName=:[PATH] Battle name"
+          "sessionName=:[PATH] Action name"
+"battleName=:[PATH] Action name"
+"spiritName=:[PATH] Action name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      deleteSessionBattles)
+      createSessionTeam)
         local -a _op_arguments
         _op_arguments=(
-          "sessionName=:[PATH] Battle name"
-"battleName=:[PATH] Battle name"
+          "sessionName=:[PATH] Team name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      getSessionBattles)
+      deleteSessionTeam)
         local -a _op_arguments
         _op_arguments=(
-          "sessionName=:[PATH] Battle name"
-"battleName=:[PATH] Battle name"
+          "sessionName=:[PATH] Team name"
+"teamName=:[PATH] Team name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      listSessionBattles)
+      getSessionTeam)
         local -a _op_arguments
         _op_arguments=(
-          "sessionName=:[PATH] Battle name"
+          "sessionName=:[PATH] Team name"
+"teamName=:[PATH] Team name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      createSessionTeamSpirits)
+      listSessionTeams)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Team name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      updateSessionTeam)
+        local -a _op_arguments
+        _op_arguments=(
+          "sessionName=:[PATH] Team name"
+"teamName=:[PATH] Team name"
+                    )
+        _describe -t actions 'operations' _op_arguments -S '' && ret=0
+        ;;
+      createSessionTeamSpirit)
         local -a _op_arguments
         _op_arguments=(
           "sessionName=:[PATH] Spirit name"
@@ -390,7 +461,7 @@ case $state in
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      deleteSessionTeamSpirits)
+      deleteSessionTeamSpirit)
         local -a _op_arguments
         _op_arguments=(
           "sessionName=:[PATH] Spirit name"
@@ -399,7 +470,7 @@ case $state in
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      getSessionTeamSpirits)
+      getSessionTeamSpirit)
         local -a _op_arguments
         _op_arguments=(
           "sessionName=:[PATH] Spirit name"
@@ -416,83 +487,12 @@ case $state in
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;
-      updateSessionTeamSpirits)
+      updateSessionTeamSpirit)
         local -a _op_arguments
         _op_arguments=(
           "sessionName=:[PATH] Spirit name"
 "teamName=:[PATH] Spirit name"
 "spiritName=:[PATH] Spirit name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      createSessionTeams)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Team name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      deleteSessionTeams)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Team name"
-"teamName=:[PATH] Team name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      getSessionTeams)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Team name"
-"teamName=:[PATH] Team name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      listSessionTeams)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Team name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      updateSessionTeams)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Team name"
-"teamName=:[PATH] Team name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      createSessions)
-        local -a _op_arguments
-        _op_arguments=(
-                              )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      deleteSessions)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Session name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      getSessions)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Session name"
-                    )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      listSessions)
-        local -a _op_arguments
-        _op_arguments=(
-                              )
-        _describe -t actions 'operations' _op_arguments -S '' && ret=0
-        ;;
-      updateSessions)
-        local -a _op_arguments
-        _op_arguments=(
-          "sessionName=:[PATH] Session name"
                     )
         _describe -t actions 'operations' _op_arguments -S '' && ret=0
         ;;

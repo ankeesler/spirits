@@ -1,20 +1,20 @@
-# \SessionsApi
+# \SessionApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessions**](SessionsApi.md#CreateSessions) | **Post** /sessions | 
-[**DeleteSessions**](SessionsApi.md#DeleteSessions) | **Delete** /sessions/{sessionName} | 
-[**GetSessions**](SessionsApi.md#GetSessions) | **Get** /sessions/{sessionName} | 
-[**ListSessions**](SessionsApi.md#ListSessions) | **Get** /sessions | 
-[**UpdateSessions**](SessionsApi.md#UpdateSessions) | **Put** /sessions/{sessionName} | 
+[**CreateSession**](SessionApi.md#CreateSession) | **Post** /sessions | 
+[**DeleteSession**](SessionApi.md#DeleteSession) | **Delete** /sessions/{sessionName} | 
+[**GetSession**](SessionApi.md#GetSession) | **Get** /sessions/{sessionName} | 
+[**ListSessions**](SessionApi.md#ListSessions) | **Get** /sessions | 
+[**UpdateSession**](SessionApi.md#UpdateSession) | **Put** /sessions/{sessionName} | 
 
 
 
-## CreateSessions
+## CreateSession
 
-> Session CreateSessions(ctx).Session(session).Execute()
+> Session CreateSession(ctx).Session(session).Execute()
 
 
 
@@ -37,13 +37,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionsApi.CreateSessions(context.Background()).Session(session).Execute()
+    resp, r, err := apiClient.SessionApi.CreateSession(context.Background()).Session(session).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionsApi.CreateSessions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionApi.CreateSession``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `CreateSessions`: Session
-    fmt.Fprintf(os.Stdout, "Response from `SessionsApi.CreateSessions`: %v\n", resp)
+    // response from `CreateSession`: Session
+    fmt.Fprintf(os.Stdout, "Response from `SessionApi.CreateSession`: %v\n", resp)
 }
 ```
 
@@ -53,7 +53,7 @@ func main() {
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiCreateSessionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiCreateSessionRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -78,9 +78,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## DeleteSessions
+## DeleteSession
 
-> Session DeleteSessions(ctx, sessionName).Execute()
+> Session DeleteSession(ctx, sessionName).Execute()
 
 
 
@@ -103,13 +103,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionsApi.DeleteSessions(context.Background(), sessionName).Execute()
+    resp, r, err := apiClient.SessionApi.DeleteSession(context.Background(), sessionName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionsApi.DeleteSessions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionApi.DeleteSession``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `DeleteSessions`: Session
-    fmt.Fprintf(os.Stdout, "Response from `SessionsApi.DeleteSessions`: %v\n", resp)
+    // response from `DeleteSession`: Session
+    fmt.Fprintf(os.Stdout, "Response from `SessionApi.DeleteSession`: %v\n", resp)
 }
 ```
 
@@ -123,7 +123,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiDeleteSessionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiDeleteSessionRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -148,9 +148,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## GetSessions
+## GetSession
 
-> Session GetSessions(ctx, sessionName).Execute()
+> Session GetSession(ctx, sessionName).Execute()
 
 
 
@@ -173,13 +173,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionsApi.GetSessions(context.Background(), sessionName).Execute()
+    resp, r, err := apiClient.SessionApi.GetSession(context.Background(), sessionName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionsApi.GetSessions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionApi.GetSession``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetSessions`: Session
-    fmt.Fprintf(os.Stdout, "Response from `SessionsApi.GetSessions`: %v\n", resp)
+    // response from `GetSession`: Session
+    fmt.Fprintf(os.Stdout, "Response from `SessionApi.GetSession`: %v\n", resp)
 }
 ```
 
@@ -193,7 +193,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSessionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSessionRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -242,13 +242,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionsApi.ListSessions(context.Background()).Execute()
+    resp, r, err := apiClient.SessionApi.ListSessions(context.Background()).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionsApi.ListSessions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionApi.ListSessions``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `ListSessions`: Session
-    fmt.Fprintf(os.Stdout, "Response from `SessionsApi.ListSessions`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionApi.ListSessions`: %v\n", resp)
 }
 ```
 
@@ -279,9 +279,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## UpdateSessions
+## UpdateSession
 
-> Session UpdateSessions(ctx, sessionName).Session(session).Execute()
+> Session UpdateSession(ctx, sessionName).Session(session).Execute()
 
 
 
@@ -305,13 +305,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionsApi.UpdateSessions(context.Background(), sessionName).Session(session).Execute()
+    resp, r, err := apiClient.SessionApi.UpdateSession(context.Background(), sessionName).Session(session).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionsApi.UpdateSessions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionApi.UpdateSession``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `UpdateSessions`: Session
-    fmt.Fprintf(os.Stdout, "Response from `SessionsApi.UpdateSessions`: %v\n", resp)
+    // response from `UpdateSession`: Session
+    fmt.Fprintf(os.Stdout, "Response from `SessionApi.UpdateSession`: %v\n", resp)
 }
 ```
 
@@ -325,7 +325,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiUpdateSessionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiUpdateSessionRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

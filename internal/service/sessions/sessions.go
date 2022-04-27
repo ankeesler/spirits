@@ -3,11 +3,11 @@ package sessions
 import server "github.com/ankeesler/spirits/pkg/api/generated/server/api"
 
 type Service struct {
-	server.SessionsApiServicer
+	server.SessionApiServicer
 }
 
 func New() *Service {
 	return &Service{
-		SessionsApiServicer: server.NewSessionsApiService(),
+		SessionApiServicer: server.NewSessionApiService(),
 	}
 }

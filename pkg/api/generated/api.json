@@ -34,7 +34,7 @@
       "parameters": [],
       "post": {
         "description": "Create a Session",
-        "operationId": "createSessions",
+        "operationId": "createSession",
         "requestBody": {
           "description": "Session to create",
           "content": {
@@ -65,7 +65,7 @@
           }
         ],
         "tags": [
-          "Sessions"
+          "Session"
         ]
       },
       "get": {
@@ -92,7 +92,7 @@
           }
         ],
         "tags": [
-          "Sessions"
+          "Session"
         ]
       }
     },
@@ -112,7 +112,7 @@
       ],
       "put": {
         "description": "Update Session",
-        "operationId": "updateSessions",
+        "operationId": "updateSession",
         "requestBody": {
           "description": "Session to update",
           "content": {
@@ -143,12 +143,12 @@
           }
         ],
         "tags": [
-          "Sessions"
+          "Session"
         ]
       },
       "get": {
         "description": "Get Session",
-        "operationId": "getSessions",
+        "operationId": "getSession",
         "responses": {
           "200": {
             "description": "Successful Session get",
@@ -170,12 +170,12 @@
           }
         ],
         "tags": [
-          "Sessions"
+          "Session"
         ]
       },
       "delete": {
         "description": "Watch Session",
-        "operationId": "deleteSessions",
+        "operationId": "deleteSession",
         "responses": {
           "200": {
             "description": "Successful Session delete",
@@ -196,7 +196,7 @@
           }
         ],
         "tags": [
-          "Sessions"
+          "Session"
         ]
       }
     },
@@ -216,7 +216,7 @@
       ],
       "post": {
         "description": "Create a Team",
-        "operationId": "createSessionTeams",
+        "operationId": "createSessionTeam",
         "requestBody": {
           "description": "Team to create",
           "content": {
@@ -247,7 +247,7 @@
           }
         ],
         "tags": [
-          "SessionTeams"
+          "SessionTeam"
         ]
       },
       "get": {
@@ -274,7 +274,7 @@
           }
         ],
         "tags": [
-          "SessionTeams"
+          "SessionTeam"
         ]
       }
     },
@@ -305,7 +305,7 @@
       ],
       "put": {
         "description": "Update Team",
-        "operationId": "updateSessionTeams",
+        "operationId": "updateSessionTeam",
         "requestBody": {
           "description": "Team to update",
           "content": {
@@ -336,12 +336,12 @@
           }
         ],
         "tags": [
-          "SessionTeams"
+          "SessionTeam"
         ]
       },
       "get": {
         "description": "Get Team",
-        "operationId": "getSessionTeams",
+        "operationId": "getSessionTeam",
         "responses": {
           "200": {
             "description": "Successful Team get",
@@ -363,12 +363,12 @@
           }
         ],
         "tags": [
-          "SessionTeams"
+          "SessionTeam"
         ]
       },
       "delete": {
         "description": "Watch Team",
-        "operationId": "deleteSessionTeams",
+        "operationId": "deleteSessionTeam",
         "responses": {
           "200": {
             "description": "Successful Team delete",
@@ -389,7 +389,7 @@
           }
         ],
         "tags": [
-          "SessionTeams"
+          "SessionTeam"
         ]
       }
     },
@@ -420,7 +420,7 @@
       ],
       "post": {
         "description": "Create a Spirit",
-        "operationId": "createSessionTeamSpirits",
+        "operationId": "createSessionTeamSpirit",
         "requestBody": {
           "description": "Spirit to create",
           "content": {
@@ -451,7 +451,7 @@
           }
         ],
         "tags": [
-          "SessionTeamSpirits"
+          "SessionTeamSpirit"
         ]
       },
       "get": {
@@ -478,7 +478,7 @@
           }
         ],
         "tags": [
-          "SessionTeamSpirits"
+          "SessionTeamSpirit"
         ]
       }
     },
@@ -520,7 +520,7 @@
       ],
       "put": {
         "description": "Update Spirit",
-        "operationId": "updateSessionTeamSpirits",
+        "operationId": "updateSessionTeamSpirit",
         "requestBody": {
           "description": "Spirit to update",
           "content": {
@@ -551,12 +551,12 @@
           }
         ],
         "tags": [
-          "SessionTeamSpirits"
+          "SessionTeamSpirit"
         ]
       },
       "get": {
         "description": "Get Spirit",
-        "operationId": "getSessionTeamSpirits",
+        "operationId": "getSessionTeamSpirit",
         "responses": {
           "200": {
             "description": "Successful Spirit get",
@@ -578,12 +578,12 @@
           }
         ],
         "tags": [
-          "SessionTeamSpirits"
+          "SessionTeamSpirit"
         ]
       },
       "delete": {
         "description": "Watch Spirit",
-        "operationId": "deleteSessionTeamSpirits",
+        "operationId": "deleteSessionTeamSpirit",
         "responses": {
           "200": {
             "description": "Successful Spirit delete",
@@ -604,7 +604,7 @@
           }
         ],
         "tags": [
-          "SessionTeamSpirits"
+          "SessionTeamSpirit"
         ]
       }
     },
@@ -624,7 +624,7 @@
       ],
       "post": {
         "description": "Create a Battle",
-        "operationId": "createSessionBattles",
+        "operationId": "createSessionBattle",
         "requestBody": {
           "description": "Battle to create",
           "content": {
@@ -655,7 +655,7 @@
           }
         ],
         "tags": [
-          "SessionBattles"
+          "SessionBattle"
         ]
       },
       "get": {
@@ -682,7 +682,7 @@
           }
         ],
         "tags": [
-          "SessionBattles"
+          "SessionBattle"
         ]
       }
     },
@@ -713,7 +713,7 @@
       ],
       "get": {
         "description": "Get Battle",
-        "operationId": "getSessionBattles",
+        "operationId": "getSessionBattle",
         "responses": {
           "200": {
             "description": "Successful Battle get",
@@ -735,12 +735,12 @@
           }
         ],
         "tags": [
-          "SessionBattles"
+          "SessionBattle"
         ]
       },
       "delete": {
         "description": "Watch Battle",
-        "operationId": "deleteSessionBattles",
+        "operationId": "deleteSessionBattle",
         "responses": {
           "200": {
             "description": "Successful Battle delete",
@@ -761,7 +761,7 @@
           }
         ],
         "tags": [
-          "SessionBattles"
+          "SessionBattle"
         ]
       }
     },
@@ -814,7 +814,7 @@
           }
         ],
         "tags": [
-          "SessionBattleSpirits"
+          "SessionBattleSpirit"
         ]
       }
     },
@@ -856,7 +856,7 @@
       ],
       "get": {
         "description": "Get Spirit",
-        "operationId": "getSessionBattleSpirits",
+        "operationId": "getSessionBattleSpirit",
         "responses": {
           "200": {
             "description": "Successful Spirit get",
@@ -878,7 +878,7 @@
           }
         ],
         "tags": [
-          "SessionBattleSpirits"
+          "SessionBattleSpirit"
         ]
       }
     },
@@ -920,7 +920,7 @@
       ],
       "post": {
         "description": "Create a Action",
-        "operationId": "createSessionBattleSpiritActions",
+        "operationId": "createSessionBattleSpiritAction",
         "requestBody": {
           "description": "Action to create",
           "content": {
@@ -951,7 +951,7 @@
           }
         ],
         "tags": [
-          "SessionBattleSpiritActions"
+          "SessionBattleSpiritAction"
         ]
       }
     }

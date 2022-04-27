@@ -17,25 +17,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SessionTeamsApiController binds http requests to an api service and writes the service results to the http response
-type SessionTeamsApiController struct {
-	service      SessionTeamsApiServicer
+// SessionTeamApiController binds http requests to an api service and writes the service results to the http response
+type SessionTeamApiController struct {
+	service      SessionTeamApiServicer
 	errorHandler ErrorHandler
 }
 
-// SessionTeamsApiOption for how the controller is set up.
-type SessionTeamsApiOption func(*SessionTeamsApiController)
+// SessionTeamApiOption for how the controller is set up.
+type SessionTeamApiOption func(*SessionTeamApiController)
 
-// WithSessionTeamsApiErrorHandler inject ErrorHandler into controller
-func WithSessionTeamsApiErrorHandler(h ErrorHandler) SessionTeamsApiOption {
-	return func(c *SessionTeamsApiController) {
+// WithSessionTeamApiErrorHandler inject ErrorHandler into controller
+func WithSessionTeamApiErrorHandler(h ErrorHandler) SessionTeamApiOption {
+	return func(c *SessionTeamApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewSessionTeamsApiController creates a default api controller
-func NewSessionTeamsApiController(s SessionTeamsApiServicer, opts ...SessionTeamsApiOption) Router {
-	controller := &SessionTeamsApiController{
+// NewSessionTeamApiController creates a default api controller
+func NewSessionTeamApiController(s SessionTeamApiServicer, opts ...SessionTeamApiOption) Router {
+	controller := &SessionTeamApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -47,26 +47,26 @@ func NewSessionTeamsApiController(s SessionTeamsApiServicer, opts ...SessionTeam
 	return controller
 }
 
-// Routes returns all the api routes for the SessionTeamsApiController
-func (c *SessionTeamsApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionTeamApiController
+func (c *SessionTeamApiController) Routes() Routes {
 	return Routes{
 		{
-			"CreateSessionTeams",
+			"CreateSessionTeam",
 			strings.ToUpper("Post"),
 			"/sessions/{sessionName}/teams",
-			c.CreateSessionTeams,
+			c.CreateSessionTeam,
 		},
 		{
-			"DeleteSessionTeams",
+			"DeleteSessionTeam",
 			strings.ToUpper("Delete"),
 			"/sessions/{sessionName}/teams/{teamName}",
-			c.DeleteSessionTeams,
+			c.DeleteSessionTeam,
 		},
 		{
-			"GetSessionTeams",
+			"GetSessionTeam",
 			strings.ToUpper("Get"),
 			"/sessions/{sessionName}/teams/{teamName}",
-			c.GetSessionTeams,
+			c.GetSessionTeam,
 		},
 		{
 			"ListSessionTeams",
@@ -75,16 +75,16 @@ func (c *SessionTeamsApiController) Routes() Routes {
 			c.ListSessionTeams,
 		},
 		{
-			"UpdateSessionTeams",
+			"UpdateSessionTeam",
 			strings.ToUpper("Put"),
 			"/sessions/{sessionName}/teams/{teamName}",
-			c.UpdateSessionTeams,
+			c.UpdateSessionTeam,
 		},
 	}
 }
 
-// CreateSessionTeams -
-func (c *SessionTeamsApiController) CreateSessionTeams(w http.ResponseWriter, r *http.Request) {
+// CreateSessionTeam -
+func (c *SessionTeamApiController) CreateSessionTeam(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -99,7 +99,7 @@ func (c *SessionTeamsApiController) CreateSessionTeams(w http.ResponseWriter, r 
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.CreateSessionTeams(r.Context(), sessionNameParam, teamParam)
+	result, err := c.service.CreateSessionTeam(r.Context(), sessionNameParam, teamParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -110,14 +110,14 @@ func (c *SessionTeamsApiController) CreateSessionTeams(w http.ResponseWriter, r 
 
 }
 
-// DeleteSessionTeams -
-func (c *SessionTeamsApiController) DeleteSessionTeams(w http.ResponseWriter, r *http.Request) {
+// DeleteSessionTeam -
+func (c *SessionTeamApiController) DeleteSessionTeam(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
 	teamNameParam := params["teamName"]
 
-	result, err := c.service.DeleteSessionTeams(r.Context(), sessionNameParam, teamNameParam)
+	result, err := c.service.DeleteSessionTeam(r.Context(), sessionNameParam, teamNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -128,14 +128,14 @@ func (c *SessionTeamsApiController) DeleteSessionTeams(w http.ResponseWriter, r 
 
 }
 
-// GetSessionTeams -
-func (c *SessionTeamsApiController) GetSessionTeams(w http.ResponseWriter, r *http.Request) {
+// GetSessionTeam -
+func (c *SessionTeamApiController) GetSessionTeam(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
 	teamNameParam := params["teamName"]
 
-	result, err := c.service.GetSessionTeams(r.Context(), sessionNameParam, teamNameParam)
+	result, err := c.service.GetSessionTeam(r.Context(), sessionNameParam, teamNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -147,7 +147,7 @@ func (c *SessionTeamsApiController) GetSessionTeams(w http.ResponseWriter, r *ht
 }
 
 // ListSessionTeams -
-func (c *SessionTeamsApiController) ListSessionTeams(w http.ResponseWriter, r *http.Request) {
+func (c *SessionTeamApiController) ListSessionTeams(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -162,8 +162,8 @@ func (c *SessionTeamsApiController) ListSessionTeams(w http.ResponseWriter, r *h
 
 }
 
-// UpdateSessionTeams -
-func (c *SessionTeamsApiController) UpdateSessionTeams(w http.ResponseWriter, r *http.Request) {
+// UpdateSessionTeam -
+func (c *SessionTeamApiController) UpdateSessionTeam(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -180,7 +180,7 @@ func (c *SessionTeamsApiController) UpdateSessionTeams(w http.ResponseWriter, r 
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.UpdateSessionTeams(r.Context(), sessionNameParam, teamNameParam, teamParam)
+	result, err := c.service.UpdateSessionTeam(r.Context(), sessionNameParam, teamNameParam, teamParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

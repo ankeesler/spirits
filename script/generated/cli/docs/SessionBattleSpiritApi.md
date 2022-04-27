@@ -1,15 +1,15 @@
-# SessionBattleSpiritsApi
+# SessionBattleSpiritApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getSessionBattleSpirits**](SessionBattleSpiritsApi.md#getSessionBattleSpirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
-[**listSessionBattleSpirits**](SessionBattleSpiritsApi.md#listSessionBattleSpirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits | 
+[**getSessionBattleSpirit**](SessionBattleSpiritApi.md#getSessionBattleSpirit) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
+[**listSessionBattleSpirits**](SessionBattleSpiritApi.md#listSessionBattleSpirits) | **GET** /sessions/{sessionName}/battles/{battleName}/spirits | 
 
 
 
-## getSessionBattleSpirits
+## getSessionBattleSpirit
 
 
 
@@ -18,7 +18,7 @@ Get Spirit
 ### Example
 
 ```bash
- getSessionBattleSpirits sessionName=value battleName=value spiritName=value
+ getSessionBattleSpirit sessionName=value battleName=value spiritName=value
 ```
 
 ### Parameters

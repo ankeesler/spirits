@@ -1,27 +1,27 @@
-# SessionTeamsApi
+# SessionApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createSessionTeams**](SessionTeamsApi.md#createSessionTeams) | **POST** /sessions/{sessionName}/teams | 
-[**deleteSessionTeams**](SessionTeamsApi.md#deleteSessionTeams) | **DELETE** /sessions/{sessionName}/teams/{teamName} | 
-[**getSessionTeams**](SessionTeamsApi.md#getSessionTeams) | **GET** /sessions/{sessionName}/teams/{teamName} | 
-[**listSessionTeams**](SessionTeamsApi.md#listSessionTeams) | **GET** /sessions/{sessionName}/teams | 
-[**updateSessionTeams**](SessionTeamsApi.md#updateSessionTeams) | **PUT** /sessions/{sessionName}/teams/{teamName} | 
+[**createSession**](SessionApi.md#createSession) | **POST** /sessions | 
+[**deleteSession**](SessionApi.md#deleteSession) | **DELETE** /sessions/{sessionName} | 
+[**getSession**](SessionApi.md#getSession) | **GET** /sessions/{sessionName} | 
+[**listSessions**](SessionApi.md#listSessions) | **GET** /sessions | 
+[**updateSession**](SessionApi.md#updateSession) | **PUT** /sessions/{sessionName} | 
 
 
 
-## createSessionTeams
+## createSession
 
 
 
-Create a Team
+Create a Session
 
 ### Example
 
 ```bash
- createSessionTeams sessionName=value
+ createSession
 ```
 
 ### Parameters
@@ -29,12 +29,11 @@ Create a Team
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Team name | [default to null]
- **team** | [**Team**](Team.md) | Team to create | [optional]
+ **session** | [**Session**](Session.md) | Session to create | [optional]
 
 ### Return type
 
-[**Team**](Team.md)
+[**Session**](Session.md)
 
 ### Authorization
 
@@ -48,16 +47,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## deleteSessionTeams
+## deleteSession
 
 
 
-Watch Team
+Watch Session
 
 ### Example
 
 ```bash
- deleteSessionTeams sessionName=value teamName=value
+ deleteSession sessionName=value
 ```
 
 ### Parameters
@@ -65,12 +64,11 @@ Watch Team
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Team name | [default to null]
- **teamName** | **string** | Team name | [default to null]
+ **sessionName** | **string** | Session name | [default to null]
 
 ### Return type
 
-[**Team**](Team.md)
+[**Session**](Session.md)
 
 ### Authorization
 
@@ -84,16 +82,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## getSessionTeams
+## getSession
 
 
 
-Get Team
+Get Session
 
 ### Example
 
 ```bash
- getSessionTeams sessionName=value teamName=value
+ getSession sessionName=value
 ```
 
 ### Parameters
@@ -101,12 +99,11 @@ Get Team
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Team name | [default to null]
- **teamName** | **string** | Team name | [default to null]
+ **sessionName** | **string** | Session name | [default to null]
 
 ### Return type
 
-[**Team**](Team.md)
+[**Session**](Session.md)
 
 ### Authorization
 
@@ -120,28 +117,25 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## listSessionTeams
+## listSessions
 
 
 
-List Teams
+List Sessions
 
 ### Example
 
 ```bash
- listSessionTeams sessionName=value
+ listSessions
 ```
 
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Team name | [default to null]
+This endpoint does not need any parameter.
 
 ### Return type
 
-[**Team**](Team.md)
+[**Session**](Session.md)
 
 ### Authorization
 
@@ -155,16 +149,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## updateSessionTeams
+## updateSession
 
 
 
-Update Team
+Update Session
 
 ### Example
 
 ```bash
- updateSessionTeams sessionName=value teamName=value
+ updateSession sessionName=value
 ```
 
 ### Parameters
@@ -172,13 +166,12 @@ Update Team
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Team name | [default to null]
- **teamName** | **string** | Team name | [default to null]
- **team** | [**Team**](Team.md) | Team to update | [optional]
+ **sessionName** | **string** | Session name | [default to null]
+ **session** | [**Session**](Session.md) | Session to update | [optional]
 
 ### Return type
 
-[**Team**](Team.md)
+[**Session**](Session.md)
 
 ### Authorization
 

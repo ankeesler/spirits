@@ -20,35 +20,35 @@ import (
 )
 
 
-// SessionsApiService SessionsApi service
-type SessionsApiService service
+// SessionApiService SessionApi service
+type SessionApiService service
 
-type ApiCreateSessionsRequest struct {
+type ApiCreateSessionRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionApiService
 	session *Session
 }
 
 // Session to create
-func (r ApiCreateSessionsRequest) Session(session Session) ApiCreateSessionsRequest {
+func (r ApiCreateSessionRequest) Session(session Session) ApiCreateSessionRequest {
 	r.session = &session
 	return r
 }
 
-func (r ApiCreateSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.CreateSessionsExecute(r)
+func (r ApiCreateSessionRequest) Execute() (*Session, *http.Response, error) {
+	return r.ApiService.CreateSessionExecute(r)
 }
 
 /*
-CreateSessions Method for CreateSessions
+CreateSession Method for CreateSession
 
 Create a Session
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiCreateSessionsRequest
+ @return ApiCreateSessionRequest
 */
-func (a *SessionsApiService) CreateSessions(ctx context.Context) ApiCreateSessionsRequest {
-	return ApiCreateSessionsRequest{
+func (a *SessionApiService) CreateSession(ctx context.Context) ApiCreateSessionRequest {
+	return ApiCreateSessionRequest{
 		ApiService: a,
 		ctx: ctx,
 	}
@@ -56,7 +56,7 @@ func (a *SessionsApiService) CreateSessions(ctx context.Context) ApiCreateSessio
 
 // Execute executes the request
 //  @return Session
-func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (*Session, *http.Response, error) {
+func (a *SessionApiService) CreateSessionExecute(r ApiCreateSessionRequest) (*Session, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -64,7 +64,7 @@ func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (
 		localVarReturnValue  *Session
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.CreateSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionApiService.CreateSession")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -131,27 +131,27 @@ func (a *SessionsApiService) CreateSessionsExecute(r ApiCreateSessionsRequest) (
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteSessionsRequest struct {
+type ApiDeleteSessionRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionApiService
 	sessionName string
 }
 
-func (r ApiDeleteSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.DeleteSessionsExecute(r)
+func (r ApiDeleteSessionRequest) Execute() (*Session, *http.Response, error) {
+	return r.ApiService.DeleteSessionExecute(r)
 }
 
 /*
-DeleteSessions Method for DeleteSessions
+DeleteSession Method for DeleteSession
 
 Watch Session
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Session name
- @return ApiDeleteSessionsRequest
+ @return ApiDeleteSessionRequest
 */
-func (a *SessionsApiService) DeleteSessions(ctx context.Context, sessionName string) ApiDeleteSessionsRequest {
-	return ApiDeleteSessionsRequest{
+func (a *SessionApiService) DeleteSession(ctx context.Context, sessionName string) ApiDeleteSessionRequest {
+	return ApiDeleteSessionRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -160,7 +160,7 @@ func (a *SessionsApiService) DeleteSessions(ctx context.Context, sessionName str
 
 // Execute executes the request
 //  @return Session
-func (a *SessionsApiService) DeleteSessionsExecute(r ApiDeleteSessionsRequest) (*Session, *http.Response, error) {
+func (a *SessionApiService) DeleteSessionExecute(r ApiDeleteSessionRequest) (*Session, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodDelete
 		localVarPostBody     interface{}
@@ -168,7 +168,7 @@ func (a *SessionsApiService) DeleteSessionsExecute(r ApiDeleteSessionsRequest) (
 		localVarReturnValue  *Session
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.DeleteSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionApiService.DeleteSession")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -237,27 +237,27 @@ func (a *SessionsApiService) DeleteSessionsExecute(r ApiDeleteSessionsRequest) (
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSessionsRequest struct {
+type ApiGetSessionRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionApiService
 	sessionName string
 }
 
-func (r ApiGetSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.GetSessionsExecute(r)
+func (r ApiGetSessionRequest) Execute() (*Session, *http.Response, error) {
+	return r.ApiService.GetSessionExecute(r)
 }
 
 /*
-GetSessions Method for GetSessions
+GetSession Method for GetSession
 
 Get Session
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Session name
- @return ApiGetSessionsRequest
+ @return ApiGetSessionRequest
 */
-func (a *SessionsApiService) GetSessions(ctx context.Context, sessionName string) ApiGetSessionsRequest {
-	return ApiGetSessionsRequest{
+func (a *SessionApiService) GetSession(ctx context.Context, sessionName string) ApiGetSessionRequest {
+	return ApiGetSessionRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -266,7 +266,7 @@ func (a *SessionsApiService) GetSessions(ctx context.Context, sessionName string
 
 // Execute executes the request
 //  @return Session
-func (a *SessionsApiService) GetSessionsExecute(r ApiGetSessionsRequest) (*Session, *http.Response, error) {
+func (a *SessionApiService) GetSessionExecute(r ApiGetSessionRequest) (*Session, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -274,7 +274,7 @@ func (a *SessionsApiService) GetSessionsExecute(r ApiGetSessionsRequest) (*Sessi
 		localVarReturnValue  *Session
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.GetSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionApiService.GetSession")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -345,7 +345,7 @@ func (a *SessionsApiService) GetSessionsExecute(r ApiGetSessionsRequest) (*Sessi
 
 type ApiListSessionsRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionApiService
 }
 
 func (r ApiListSessionsRequest) Execute() (*Session, *http.Response, error) {
@@ -360,7 +360,7 @@ List Sessions
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiListSessionsRequest
 */
-func (a *SessionsApiService) ListSessions(ctx context.Context) ApiListSessionsRequest {
+func (a *SessionApiService) ListSessions(ctx context.Context) ApiListSessionsRequest {
 	return ApiListSessionsRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -369,7 +369,7 @@ func (a *SessionsApiService) ListSessions(ctx context.Context) ApiListSessionsRe
 
 // Execute executes the request
 //  @return Session
-func (a *SessionsApiService) ListSessionsExecute(r ApiListSessionsRequest) (*Session, *http.Response, error) {
+func (a *SessionApiService) ListSessionsExecute(r ApiListSessionsRequest) (*Session, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -377,7 +377,7 @@ func (a *SessionsApiService) ListSessionsExecute(r ApiListSessionsRequest) (*Ses
 		localVarReturnValue  *Session
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.ListSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionApiService.ListSessions")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -442,34 +442,34 @@ func (a *SessionsApiService) ListSessionsExecute(r ApiListSessionsRequest) (*Ses
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiUpdateSessionsRequest struct {
+type ApiUpdateSessionRequest struct {
 	ctx context.Context
-	ApiService *SessionsApiService
+	ApiService *SessionApiService
 	sessionName string
 	session *Session
 }
 
 // Session to update
-func (r ApiUpdateSessionsRequest) Session(session Session) ApiUpdateSessionsRequest {
+func (r ApiUpdateSessionRequest) Session(session Session) ApiUpdateSessionRequest {
 	r.session = &session
 	return r
 }
 
-func (r ApiUpdateSessionsRequest) Execute() (*Session, *http.Response, error) {
-	return r.ApiService.UpdateSessionsExecute(r)
+func (r ApiUpdateSessionRequest) Execute() (*Session, *http.Response, error) {
+	return r.ApiService.UpdateSessionExecute(r)
 }
 
 /*
-UpdateSessions Method for UpdateSessions
+UpdateSession Method for UpdateSession
 
 Update Session
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param sessionName Session name
- @return ApiUpdateSessionsRequest
+ @return ApiUpdateSessionRequest
 */
-func (a *SessionsApiService) UpdateSessions(ctx context.Context, sessionName string) ApiUpdateSessionsRequest {
-	return ApiUpdateSessionsRequest{
+func (a *SessionApiService) UpdateSession(ctx context.Context, sessionName string) ApiUpdateSessionRequest {
+	return ApiUpdateSessionRequest{
 		ApiService: a,
 		ctx: ctx,
 		sessionName: sessionName,
@@ -478,7 +478,7 @@ func (a *SessionsApiService) UpdateSessions(ctx context.Context, sessionName str
 
 // Execute executes the request
 //  @return Session
-func (a *SessionsApiService) UpdateSessionsExecute(r ApiUpdateSessionsRequest) (*Session, *http.Response, error) {
+func (a *SessionApiService) UpdateSessionExecute(r ApiUpdateSessionRequest) (*Session, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPut
 		localVarPostBody     interface{}
@@ -486,7 +486,7 @@ func (a *SessionsApiService) UpdateSessionsExecute(r ApiUpdateSessionsRequest) (
 		localVarReturnValue  *Session
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionsApiService.UpdateSessions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SessionApiService.UpdateSession")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

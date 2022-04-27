@@ -1,16 +1,16 @@
-# \SessionBattleSpiritActionsApi
+# \SessionBattleSpiritActionApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateSessionBattleSpiritActions**](SessionBattleSpiritActionsApi.md#CreateSessionBattleSpiritActions) | **Post** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
+[**CreateSessionBattleSpiritAction**](SessionBattleSpiritActionApi.md#CreateSessionBattleSpiritAction) | **Post** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}/actions | 
 
 
 
-## CreateSessionBattleSpiritActions
+## CreateSessionBattleSpiritAction
 
-> Action CreateSessionBattleSpiritActions(ctx, sessionName, battleName, spiritName).Action(action).Execute()
+> Action CreateSessionBattleSpiritAction(ctx, sessionName, battleName, spiritName).Action(action).Execute()
 
 
 
@@ -36,13 +36,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions(context.Background(), sessionName, battleName, spiritName).Action(action).Execute()
+    resp, r, err := apiClient.SessionBattleSpiritActionApi.CreateSessionBattleSpiritAction(context.Background(), sessionName, battleName, spiritName).Action(action).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritActionApi.CreateSessionBattleSpiritAction``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `CreateSessionBattleSpiritActions`: Action
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritActionsApi.CreateSessionBattleSpiritActions`: %v\n", resp)
+    // response from `CreateSessionBattleSpiritAction`: Action
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritActionApi.CreateSessionBattleSpiritAction`: %v\n", resp)
 }
 ```
 
@@ -58,7 +58,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiCreateSessionBattleSpiritActionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiCreateSessionBattleSpiritActionRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

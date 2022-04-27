@@ -1,27 +1,27 @@
-# SessionTeamSpiritsApi
+# SessionTeamApi
 
 All URIs are relative to **
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createSessionTeamSpirits**](SessionTeamSpiritsApi.md#createSessionTeamSpirits) | **POST** /sessions/{sessionName}/teams/{teamName}/spirits | 
-[**deleteSessionTeamSpirits**](SessionTeamSpiritsApi.md#deleteSessionTeamSpirits) | **DELETE** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-[**getSessionTeamSpirits**](SessionTeamSpiritsApi.md#getSessionTeamSpirits) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
-[**listSessionTeamSpirits**](SessionTeamSpiritsApi.md#listSessionTeamSpirits) | **GET** /sessions/{sessionName}/teams/{teamName}/spirits | 
-[**updateSessionTeamSpirits**](SessionTeamSpiritsApi.md#updateSessionTeamSpirits) | **PUT** /sessions/{sessionName}/teams/{teamName}/spirits/{spiritName} | 
+[**createSessionTeam**](SessionTeamApi.md#createSessionTeam) | **POST** /sessions/{sessionName}/teams | 
+[**deleteSessionTeam**](SessionTeamApi.md#deleteSessionTeam) | **DELETE** /sessions/{sessionName}/teams/{teamName} | 
+[**getSessionTeam**](SessionTeamApi.md#getSessionTeam) | **GET** /sessions/{sessionName}/teams/{teamName} | 
+[**listSessionTeams**](SessionTeamApi.md#listSessionTeams) | **GET** /sessions/{sessionName}/teams | 
+[**updateSessionTeam**](SessionTeamApi.md#updateSessionTeam) | **PUT** /sessions/{sessionName}/teams/{teamName} | 
 
 
 
-## createSessionTeamSpirits
+## createSessionTeam
 
 
 
-Create a Spirit
+Create a Team
 
 ### Example
 
 ```bash
- createSessionTeamSpirits sessionName=value teamName=value
+ createSessionTeam sessionName=value
 ```
 
 ### Parameters
@@ -29,13 +29,12 @@ Create a Spirit
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Spirit name | [default to null]
- **teamName** | **string** | Spirit name | [default to null]
- **spirit** | [**Spirit**](Spirit.md) | Spirit to create | [optional]
+ **sessionName** | **string** | Team name | [default to null]
+ **team** | [**Team**](Team.md) | Team to create | [optional]
 
 ### Return type
 
-[**Spirit**](Spirit.md)
+[**Team**](Team.md)
 
 ### Authorization
 
@@ -49,16 +48,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## deleteSessionTeamSpirits
+## deleteSessionTeam
 
 
 
-Watch Spirit
+Watch Team
 
 ### Example
 
 ```bash
- deleteSessionTeamSpirits sessionName=value teamName=value spiritName=value
+ deleteSessionTeam sessionName=value teamName=value
 ```
 
 ### Parameters
@@ -66,13 +65,12 @@ Watch Spirit
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Spirit name | [default to null]
- **teamName** | **string** | Spirit name | [default to null]
- **spiritName** | **string** | Spirit name | [default to null]
+ **sessionName** | **string** | Team name | [default to null]
+ **teamName** | **string** | Team name | [default to null]
 
 ### Return type
 
-[**Spirit**](Spirit.md)
+[**Team**](Team.md)
 
 ### Authorization
 
@@ -86,16 +84,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## getSessionTeamSpirits
+## getSessionTeam
 
 
 
-Get Spirit
+Get Team
 
 ### Example
 
 ```bash
- getSessionTeamSpirits sessionName=value teamName=value spiritName=value
+ getSessionTeam sessionName=value teamName=value
 ```
 
 ### Parameters
@@ -103,13 +101,12 @@ Get Spirit
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Spirit name | [default to null]
- **teamName** | **string** | Spirit name | [default to null]
- **spiritName** | **string** | Spirit name | [default to null]
+ **sessionName** | **string** | Team name | [default to null]
+ **teamName** | **string** | Team name | [default to null]
 
 ### Return type
 
-[**Spirit**](Spirit.md)
+[**Team**](Team.md)
 
 ### Authorization
 
@@ -123,16 +120,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## listSessionTeamSpirits
+## listSessionTeams
 
 
 
-List Spirits
+List Teams
 
 ### Example
 
 ```bash
- listSessionTeamSpirits sessionName=value teamName=value
+ listSessionTeams sessionName=value
 ```
 
 ### Parameters
@@ -140,12 +137,11 @@ List Spirits
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Spirit name | [default to null]
- **teamName** | **string** | Spirit name | [default to null]
+ **sessionName** | **string** | Team name | [default to null]
 
 ### Return type
 
-[**Spirit**](Spirit.md)
+[**Team**](Team.md)
 
 ### Authorization
 
@@ -159,16 +155,16 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## updateSessionTeamSpirits
+## updateSessionTeam
 
 
 
-Update Spirit
+Update Team
 
 ### Example
 
 ```bash
- updateSessionTeamSpirits sessionName=value teamName=value spiritName=value
+ updateSessionTeam sessionName=value teamName=value
 ```
 
 ### Parameters
@@ -176,14 +172,13 @@ Update Spirit
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionName** | **string** | Spirit name | [default to null]
- **teamName** | **string** | Spirit name | [default to null]
- **spiritName** | **string** | Spirit name | [default to null]
- **spirit** | [**Spirit**](Spirit.md) | Spirit to update | [optional]
+ **sessionName** | **string** | Team name | [default to null]
+ **teamName** | **string** | Team name | [default to null]
+ **team** | [**Team**](Team.md) | Team to update | [optional]
 
 ### Return type
 
-[**Spirit**](Spirit.md)
+[**Team**](Team.md)
 
 ### Authorization
 

@@ -1,17 +1,17 @@
-# \SessionBattleSpiritsApi
+# \SessionBattleSpiritApi
 
 All URIs are relative to *https://oh-great-spirits.herokuapp.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**GetSessionBattleSpirits**](SessionBattleSpiritsApi.md#GetSessionBattleSpirits) | **Get** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
-[**ListSessionBattleSpirits**](SessionBattleSpiritsApi.md#ListSessionBattleSpirits) | **Get** /sessions/{sessionName}/battles/{battleName}/spirits | 
+[**GetSessionBattleSpirit**](SessionBattleSpiritApi.md#GetSessionBattleSpirit) | **Get** /sessions/{sessionName}/battles/{battleName}/spirits/{spiritName} | 
+[**ListSessionBattleSpirits**](SessionBattleSpiritApi.md#ListSessionBattleSpirits) | **Get** /sessions/{sessionName}/battles/{battleName}/spirits | 
 
 
 
-## GetSessionBattleSpirits
+## GetSessionBattleSpirit
 
-> Spirit GetSessionBattleSpirits(ctx, sessionName, battleName, spiritName).Execute()
+> Spirit GetSessionBattleSpirit(ctx, sessionName, battleName, spiritName).Execute()
 
 
 
@@ -36,13 +36,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattleSpiritsApi.GetSessionBattleSpirits(context.Background(), sessionName, battleName, spiritName).Execute()
+    resp, r, err := apiClient.SessionBattleSpiritApi.GetSessionBattleSpirit(context.Background(), sessionName, battleName, spiritName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritsApi.GetSessionBattleSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritApi.GetSessionBattleSpirit``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetSessionBattleSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritsApi.GetSessionBattleSpirits`: %v\n", resp)
+    // response from `GetSessionBattleSpirit`: Spirit
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritApi.GetSessionBattleSpirit`: %v\n", resp)
 }
 ```
 
@@ -58,7 +58,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSessionBattleSpiritsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSessionBattleSpiritRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -111,13 +111,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.SessionBattleSpiritsApi.ListSessionBattleSpirits(context.Background(), sessionName, battleName).Execute()
+    resp, r, err := apiClient.SessionBattleSpiritApi.ListSessionBattleSpirits(context.Background(), sessionName, battleName).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritsApi.ListSessionBattleSpirits``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `SessionBattleSpiritApi.ListSessionBattleSpirits``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
     // response from `ListSessionBattleSpirits`: Spirit
-    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritsApi.ListSessionBattleSpirits`: %v\n", resp)
+    fmt.Fprintf(os.Stdout, "Response from `SessionBattleSpiritApi.ListSessionBattleSpirits`: %v\n", resp)
 }
 ```
 

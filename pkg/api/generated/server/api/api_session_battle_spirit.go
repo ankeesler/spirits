@@ -16,25 +16,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SessionBattleSpiritsApiController binds http requests to an api service and writes the service results to the http response
-type SessionBattleSpiritsApiController struct {
-	service      SessionBattleSpiritsApiServicer
+// SessionBattleSpiritApiController binds http requests to an api service and writes the service results to the http response
+type SessionBattleSpiritApiController struct {
+	service      SessionBattleSpiritApiServicer
 	errorHandler ErrorHandler
 }
 
-// SessionBattleSpiritsApiOption for how the controller is set up.
-type SessionBattleSpiritsApiOption func(*SessionBattleSpiritsApiController)
+// SessionBattleSpiritApiOption for how the controller is set up.
+type SessionBattleSpiritApiOption func(*SessionBattleSpiritApiController)
 
-// WithSessionBattleSpiritsApiErrorHandler inject ErrorHandler into controller
-func WithSessionBattleSpiritsApiErrorHandler(h ErrorHandler) SessionBattleSpiritsApiOption {
-	return func(c *SessionBattleSpiritsApiController) {
+// WithSessionBattleSpiritApiErrorHandler inject ErrorHandler into controller
+func WithSessionBattleSpiritApiErrorHandler(h ErrorHandler) SessionBattleSpiritApiOption {
+	return func(c *SessionBattleSpiritApiController) {
 		c.errorHandler = h
 	}
 }
 
-// NewSessionBattleSpiritsApiController creates a default api controller
-func NewSessionBattleSpiritsApiController(s SessionBattleSpiritsApiServicer, opts ...SessionBattleSpiritsApiOption) Router {
-	controller := &SessionBattleSpiritsApiController{
+// NewSessionBattleSpiritApiController creates a default api controller
+func NewSessionBattleSpiritApiController(s SessionBattleSpiritApiServicer, opts ...SessionBattleSpiritApiOption) Router {
+	controller := &SessionBattleSpiritApiController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
 	}
@@ -46,14 +46,14 @@ func NewSessionBattleSpiritsApiController(s SessionBattleSpiritsApiServicer, opt
 	return controller
 }
 
-// Routes returns all the api routes for the SessionBattleSpiritsApiController
-func (c *SessionBattleSpiritsApiController) Routes() Routes {
+// Routes returns all the api routes for the SessionBattleSpiritApiController
+func (c *SessionBattleSpiritApiController) Routes() Routes {
 	return Routes{
 		{
-			"GetSessionBattleSpirits",
+			"GetSessionBattleSpirit",
 			strings.ToUpper("Get"),
 			"/sessions/{sessionName}/battles/{battleName}/spirits/{spiritName}",
-			c.GetSessionBattleSpirits,
+			c.GetSessionBattleSpirit,
 		},
 		{
 			"ListSessionBattleSpirits",
@@ -64,8 +64,8 @@ func (c *SessionBattleSpiritsApiController) Routes() Routes {
 	}
 }
 
-// GetSessionBattleSpirits -
-func (c *SessionBattleSpiritsApiController) GetSessionBattleSpirits(w http.ResponseWriter, r *http.Request) {
+// GetSessionBattleSpirit -
+func (c *SessionBattleSpiritApiController) GetSessionBattleSpirit(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
@@ -73,7 +73,7 @@ func (c *SessionBattleSpiritsApiController) GetSessionBattleSpirits(w http.Respo
 
 	spiritNameParam := params["spiritName"]
 
-	result, err := c.service.GetSessionBattleSpirits(r.Context(), sessionNameParam, battleNameParam, spiritNameParam)
+	result, err := c.service.GetSessionBattleSpirit(r.Context(), sessionNameParam, battleNameParam, spiritNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -85,7 +85,7 @@ func (c *SessionBattleSpiritsApiController) GetSessionBattleSpirits(w http.Respo
 }
 
 // ListSessionBattleSpirits -
-func (c *SessionBattleSpiritsApiController) ListSessionBattleSpirits(w http.ResponseWriter, r *http.Request) {
+func (c *SessionBattleSpiritApiController) ListSessionBattleSpirits(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionNameParam := params["sessionName"]
 
