@@ -162,3 +162,16 @@ func Delete[FromT any, ToT any](
 		Body: from,
 	}, nil
 }
+
+func Find[T any](ctx context.Context, name string, store *storepkg.Store[T]) (*T, server.ImplResponse, error) {
+	t, err := store.Get(ctx, name)
+	if err != nil {
+		if errors.Is(err, &storepkg.ErrNotFound{}) {
+			return nil, server.ImplResponse{
+				Code: http.StatusNotFound,
+			}, nil
+		}
+		return nil, server.ImplResponse{}, err
+	}
+	return t, server.ImplResponse{}, nil
+}
