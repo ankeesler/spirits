@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -111,40 +112,57 @@ type Repository[T any] interface {
 // so like kube :eye-roll:
 
 func main() {
-	// Service logic
-	sessionService := Service[ExternalSession, InternalSession]{
-		Mapper: nil,
-	}
-	sessionController := Controller[ExternalSession, InternalSession]{
-		Serializer: nil,
-		Service:    &sessionService,
-	}
+	// // Service logic
+	// sessionService := Service[ExternalSession, InternalSession]{
+	// 	Mapper: nil,
+	// }
+	// sessionController := Controller[ExternalSession, InternalSession]{
+	// 	Serializer: nil,
+	// 	Service:    &sessionService,
+	// }
 
-	// Path mux
-	var h http.Handler = &PathMux{
-		Name: "sessions",
-		Handler: MethodMux{
-			http.MethodPost: http.HandlerFunc(sessionController.Create),
-			http.MethodGet:  http.HandlerFunc(sessionController.List),
-		},
-		Children: []*PathMux{
-			{
-				Name:      "sessionName",
-				Collecter: sessionService.CollectStore,
-				Handler: MethodMux{
-					http.MethodPut: authZ(
-						[]string{"spirits:sessions.write"}, http.HandlerFunc(sessionController.Update),
-					),
-					http.MethodGet: authZ(
-						[]string{"spirits:sessions.write", "spirits:sessions.read"}, http.HandlerFunc(sessionController.List),
-					),
-					http.MethodDelete: http.HandlerFunc(sessionController.Delete),
-				},
-			},
-		},
-	}
+	// // Path mux
+	// var h http.Handler = &PathMux{
+	// 	Name: "sessions",
+	// 	Handler: MethodMux{
+	// 		http.MethodPost: http.HandlerFunc(sessionController.Create),
+	// 		http.MethodGet:  http.HandlerFunc(sessionController.List),
+	// 	},
+	// 	Children: []*PathMux{
+	// 		{
+	// 			Name:      "sessionName",
+	// 			Collecter: sessionService.CollectStore,
+	// 			Handler: MethodMux{
+	// 				http.MethodPut: authZ(
+	// 					[]string{"spirits:sessions.write"}, http.HandlerFunc(sessionController.Update),
+	// 				),
+	// 				http.MethodGet: authZ(
+	// 					[]string{"spirits:sessions.write", "spirits:sessions.read"}, http.HandlerFunc(sessionController.List),
+	// 				),
+	// 				http.MethodDelete: http.HandlerFunc(sessionController.Delete),
+	// 			},
+	// 		},
+	// 	},
+	// }
 
-	h = authN(h)
+	// h = authN(h)
+
+	h := http.NewServeMux()
+	h.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("a")
+	})
+	h.HandleFunc("/foo/id", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("b")
+	})
+	h.HandleFunc("/foo/id/bar", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("c")
+	})
+	h.HandleFunc("/foo/id/bar/id", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("d")
+	})
+	h.HandleFunc("/foo/id/bar/nonsense", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("e")
+	})
 
 	panic(http.ListenAndServe(":80", h))
 }
