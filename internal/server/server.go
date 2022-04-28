@@ -14,7 +14,7 @@ func Run(ctx context.Context, addr string, h http.Handler) error {
 		Handler: h,
 	}
 
-	shutdownCtx, cancelShutdownCtx := context.WithCancel(context.TODO())
+	shutdownCtx, cancelShutdownCtx := context.WithCancel(ctx)
 	defer cancelShutdownCtx()
 
 	go func() {
