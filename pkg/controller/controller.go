@@ -6,6 +6,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	inBattleSpiritBattleNameLabel       = "spirits.ankeesler.github.com/battle-name"
+	inBattleSpiritSpiritNameLabel       = "spirits.ankeesler.github.com/spirit-name"
+	inBattleSpiritSpiritGenerationLabel = "spirits.ankeesler.github.com/spirit-generation"
+)
+
 func newCondition(
 	obj metav1.Object,
 	teyep string,

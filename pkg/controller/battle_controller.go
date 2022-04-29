@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,6 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
+	"github.com/ankeesler/spirits/internal/battlerunner"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/go-logr/logr"
 )
@@ -23,7 +25,16 @@ type BattleReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	BattlesCache *sync.Map
+	BattlesCache sync.Map
+}
+
+// SetupWithManager sets up the controller with the Manager.
+func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&spiritsv1alpha1.Battle{}).
+		Owns(&spiritsv1alpha1.Spirit{}).
+		// TODO: also need to watch spirits that are used in a battle...
+		Complete(r)
 }
 
 //+kubebuilder:rbac:groups=ankeesler.github.com,resources=battles,verbs=get;list;watch;create;update;patch;delete
@@ -70,14 +81,124 @@ func (r *BattleReconciler) progressBattle(
 	log logr.Logger,
 	battle *spiritsinternal.Battle,
 ) error {
+	// Get the spirits that are used in this battle
+	inBattleSpirits, err := r.getInBattleSpirits(ctx, log, battle)
+	if err != nil {
+		return fmt.Errorf("get in battle spirits: %w", err)
+	}
+
+	// Go ahead and create a context for the battle, it will be canceled if
+	// not used by the battle
+	ctx, cancel := context.WithCancel(context.Background())
+	cancelAny, exists := r.BattlesCache.LoadOrStore(battle.Name, cancel)
+
+	// If the battle exists...
+	if exists {
+		// ...and it is running with the expected spirits, then we are done
+		if matchingSpirits(inBattleSpirits, battle.Status.InBattleSpirits) {
+			// The context we created is not used by the battle, so trash it
+			cancel()
+			return nil
+		}
+
+		// Otherwise, cancel the current battle
+		cancelAny.(context.CancelFunc)()
+	}
+
+	// Start the battle
+	go battlerunner.Run(ctx, battle, inBattleSpirits, r.battleCallback)
+
 	return nil
 }
 
-// SetupWithManager sets up the controller with the Manager.
-func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&spiritsv1alpha1.Battle{}).
-		Owns(&spiritsv1alpha1.Spirit{}).
-		// TODO: also need to watch spirits that are used in a battle...
-		Complete(r)
+func (r *BattleReconciler) getInBattleSpirits(
+	ctx context.Context,
+	log logr.Logger,
+	battle *spiritsinternal.Battle,
+) ([]*spiritsinternal.Spirit, error) {
+	spirits, err := r.getSpirits(ctx, log, battle)
+	if err != nil {
+		return nil, fmt.Errorf("get spirits: %w", err)
+	}
+
+	var inBattleSpirits []*spiritsinternal.Spirit
+	for _, spirit := range spirits {
+		inBattleSpirit := spiritsinternal.Spirit{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: battle.Namespace,
+				Name:      fmt.Sprintf("%s-%s-%d", battle.Name, spirit.Name, spirit.Generation),
+				Labels: map[string]string{
+					inBattleSpiritBattleNameLabel:       battle.Name,
+					inBattleSpiritSpiritNameLabel:       spirit.Name,
+					inBattleSpiritSpiritGenerationLabel: fmt.Sprintf("%d", spirit.Generation),
+				},
+			},
+			Spec: spirit.Spec,
+		}
+		if err := r.Create(ctx, &inBattleSpirit); err != nil && !k8serrors.IsAlreadyExists(err) {
+			return nil, fmt.Errorf("create in battle spirit: %w", err)
+		}
+	}
+
+	return inBattleSpirits, nil
+}
+
+func (r *BattleReconciler) getSpirits(
+	ctx context.Context,
+	log logr.Logger,
+	battle *spiritsinternal.Battle,
+) ([]*spiritsinternal.Spirit, error) {
+	var spirits []*spiritsinternal.Spirit
+	for _, spiritName := range battle.Spec.Spirits {
+		spirit := spiritsinternal.Spirit{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: battle.Namespace,
+				Name:      spiritName,
+			},
+		}
+		if err := r.Get(ctx, client.ObjectKeyFromObject(&spirit), &spirit); err != nil {
+			return nil, fmt.Errorf("get spirit: %w", err)
+		}
+	}
+	return spirits, nil
+}
+
+func (r *BattleReconciler) battleCallback(
+	battle *spiritsinternal.Battle,
+	spirits []*spiritsinternal.Spirit,
+	err error,
+) {
+	// Set a really long timeout, just in case
+	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
+	defer cancel()
+
+	if err != nil {
+		battle.Status.Phase = spiritsinternal.BattlePhaseError
+		battle.Status.Message = err.Error()
+	} else {
+		battle.Status.Phase = spiritsinternal.BattlePhaseRunning
+	}
+
+	if err := r.Update(ctx, battle); err != nil {
+		log.Log.Error(err, "update battle")
+	}
+	for _, spirit := range spirits {
+		if err := r.Update(ctx, spirit); err != nil {
+			log.Log.Error(err, "update spirit")
+		}
+	}
+}
+
+func matchingSpirits(spirits []*spiritsinternal.Spirit, names []string) bool {
+	if len(spirits) != len(names) {
+		return false
+	}
+
+	for i := range spirits {
+		if spirits[i].Name != names[i] {
+			return false
+		}
+	}
+
+	return true
 }

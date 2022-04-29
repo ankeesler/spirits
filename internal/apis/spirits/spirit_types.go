@@ -51,6 +51,10 @@ type SpiritStats struct {
 	Agility int `json:"agility"`
 }
 
+type SpiritSpecInternal struct {
+	Action Action
+}
+
 // SpiritSpec defines the desired state of Spirit
 type SpiritSpec struct {
 	// Stats are the current statistics that describe this Spirit
@@ -63,6 +67,8 @@ type SpiritSpec struct {
 	// Intelligence describes how a Spirit will select actions to perform
 	// +optional
 	Intelligence SpiritIntelligence `json:"intelligence"`
+
+	Internal SpiritSpecInternal
 }
 
 // SpiritStatus defines the observed state of Spirit

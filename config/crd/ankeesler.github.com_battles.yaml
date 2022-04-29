@@ -133,6 +133,9 @@ spec:
                 items:
                   type: string
                 type: array
+              message:
+                description: Message describes the reason for the Battle's Phase
+                type: string
               phase:
                 default: Pending
                 description: Phase describes what stage of the battle lifecycle this
@@ -145,6 +148,7 @@ spec:
                 type: string
             required:
             - inBattleSpirits
+            - message
             - phase
             type: object
         type: object

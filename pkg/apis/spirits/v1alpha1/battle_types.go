@@ -35,6 +35,9 @@ type BattleStatus struct {
 	// +kubebuilder:validation:Enum=Pending;Running;Finished;Error
 	Phase BattlePhase `json:"phase"`
 
+	// Message describes the reason for the Battle's Phase
+	Message string `json:"message"`
+
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
 	InBattleSpirits []string `json:"inBattleSpirits"`
 }

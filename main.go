@@ -19,7 +19,6 @@ package main
 import (
 	"flag"
 	"os"
-	"sync"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -32,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	"github.com/ankeesler/spirits/internal/actionchannel"
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/ankeesler/spirits/pkg/controller"
@@ -81,19 +81,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	battlesCache := sync.Map{}
+	actionChannel := actionchannel.New()
 
 	if err = (&controller.SpiritReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:  mgr.GetClient(),
+		Scheme:  mgr.GetScheme(),
+		Actions: actionChannel,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)
 	}
 	if err = (&controller.BattleReconciler{
-		Client:       mgr.GetClient(),
-		Scheme:       mgr.GetScheme(),
-		BattlesCache: &battlesCache,
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Battle")
 		os.Exit(1)

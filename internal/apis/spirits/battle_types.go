@@ -28,8 +28,10 @@ type BattleStatus struct {
 	// +listMapKey=type
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 
-	// Phase describes what stage of the battle lifecycle this Battle is in currently.
+	// Phase describes what stage of the battle lifecycle this Battle is in currently
 	Phase BattlePhase `json:"phase"`
+
+	Message string `json:"message"`
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
 	InBattleSpirits []string `json:"inBattleSpirits"`

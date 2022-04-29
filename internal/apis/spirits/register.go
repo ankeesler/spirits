@@ -33,6 +33,5 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&Spirit{},
 		&SpiritList{},
 	)
-
 	return nil
 }
