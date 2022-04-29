@@ -18,6 +18,19 @@ const (
 	SpiritIntelligenceHuman SpiritIntelligence = "Human"
 )
 
+type SpiritPhase string
+
+const (
+	// SpiritPhasePending is the default phase for newly-created resources.
+	SpiritPhasePending SpiritPhase = "Pending"
+
+	// SpiritPhaseReady is the phase for a resource in a healthy state.
+	SpiritPhaseReady SpiritPhase = "Ready"
+
+	// SpiritPhaseError is the phase for a in an unhealthy state.
+	SpiritPhaseError SpiritPhase = "Error"
+)
+
 // SpiritStats are quantitative properties of the Spirit.
 // These are utilized and manipulated throughout the course of a Battle.
 type SpiritStats struct {
@@ -60,17 +73,17 @@ type SpiritSpec struct {
 
 // SpiritStatus defines the observed state of Spirit
 type SpiritStatus struct {
-	// Phase summarizes the overall status of the Spirit
-	// +kubebuilder:default=Pending
-	// +kubebuilder:validation:Enum=Pending;Ready;Error
-	Phase Phase `json:"phase,omitempty"`
-
 	// Conditions represents the observations of a Spirit's current state
 	// +patchMergeKey=type
 	// +patchStrategy=merge
 	// +listType=map
 	// +listMapKey=type
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+
+	// Phase summarizes the overall status of the Spirit
+	// +kubebuilder:default=Pending
+	// +kubebuilder:validation:Enum=Pending;Ready;Error
+	Phase SpiritPhase `json:"phase,omitempty"`
 }
 
 //+kubebuilder:object:root=true

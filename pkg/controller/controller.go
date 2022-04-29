@@ -4,8 +4,6 @@ import (
 	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	spiritapi "github.com/ankeesler/spirits/pkg/apis/spirits"
 )
 
 func newCondition(
@@ -27,13 +25,4 @@ func newCondition(
 		condition.Message = err.Error()
 	}
 	return condition
-}
-
-func getPhase(conditions []metav1.Condition) spiritapi.Phase {
-	for i := range conditions {
-		if conditions[i].Status == metav1.ConditionFalse {
-			return spiritapi.PhaseError
-		}
-	}
-	return spiritapi.PhaseReady
 }

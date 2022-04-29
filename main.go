@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	spiritsinternal "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/ankeesler/spirits/pkg/controller"
 	//+kubebuilder:scaffold:imports

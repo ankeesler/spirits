@@ -30,7 +30,7 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&Battle{},
 		&BattleList{},
 		&Spirit{},
-		// &SpiritList{},
+		&SpiritList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil

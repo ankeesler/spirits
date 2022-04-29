@@ -13,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	spiritsapi "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
 
@@ -33,7 +33,7 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log := log.FromContext(ctx)
 
 	// Get spirit - if it doesn't exist, we don't care.
-	var spirit spiritsapi.Spirit
+	var spirit spiritsinternal.Spirit
 	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
 		if k8serrors.IsNotFound(err) {
 			return ctrl.Result{}, nil
@@ -49,7 +49,7 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		// Update spirit phase
-		spirit.Status.Phase = getPhase(spirit.Status.Conditions)
+		spirit.Status.Phase = getSpiritPhase(spirit.Status.Conditions)
 
 		return nil
 	}); err != nil {
@@ -71,7 +71,16 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *SpiritReconciler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
-	spirit *spiritsapi.Spirit,
+	spirit *spiritsinternal.Spirit,
 ) error {
 	return nil
+}
+
+func getSpiritPhase(conditions []metav1.Condition) spiritsinternal.SpiritPhase {
+	for i := range conditions {
+		if conditions[i].Status == metav1.ConditionFalse {
+			return spiritsinternal.SpiritPhaseError
+		}
+	}
+	return spiritsinternal.SpiritPhaseReady
 }

@@ -13,8 +13,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	spiritsapi "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
+	"github.com/go-logr/logr"
 )
 
 // BattleReconciler reconciles a Battle object
@@ -37,7 +38,7 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log := log.FromContext(ctx)
 
 	// Get battle - if it doesn't exist, then: stop it, delete it from the cache, and return.
-	var battle spiritsapi.Battle
+	var battle spiritsinternal.Battle
 	if err := r.Get(ctx, req.NamespacedName, &battle); err != nil {
 		if k8serrors.IsNotFound(err) {
 			// TODO: cancel battle
@@ -49,10 +50,9 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// Update battle
 	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &battle, func() error {
 		// Update conditions on current battle status
-		battle.Status.Conditions = []metav1.Condition{}
-
-		// Update battle phase
-		battle.Status.Phase = getPhase(battle.Status.Conditions)
+		battle.Status.Conditions = []metav1.Condition{
+			newCondition(&battle, "Progress", r.progressBattle(ctx, log, &battle)),
+		}
 
 		return nil
 	}); err != nil {
@@ -63,6 +63,14 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log.Info("reconciled battle")
 
 	return ctrl.Result{}, nil
+}
+
+func (r *BattleReconciler) progressBattle(
+	ctx context.Context,
+	log logr.Logger,
+	battle *spiritsinternal.Battle,
+) error {
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

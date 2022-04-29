@@ -27,10 +27,12 @@ var (
 
 // Adds the list of known types to the given scheme.
 func addKnownTypes(scheme *runtime.Scheme) error {
-	scheme.AddKnownTypes(SchemeGroupVersion) // &Battle{},
-	// &BattleList{},
-	// &Spirit{},
-	// &SpiritList{},
+	scheme.AddKnownTypes(SchemeGroupVersion,
+		&Battle{},
+		&BattleList{},
+		&Spirit{},
+		&SpiritList{},
+	)
 
 	return nil
 }

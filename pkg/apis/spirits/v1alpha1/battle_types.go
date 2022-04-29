@@ -4,6 +4,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type BattlePhase string
+
+const (
+	BattlePhasePending  BattlePhase = "Pending"
+	BattlePhaseRunning  BattlePhase = "Running"
+	BattlePhaseFinished BattlePhase = "Finished"
+	BattlePhaseError    BattlePhase = "Error"
+)
+
 // BattleSpec defines the desired state of Battle
 type BattleSpec struct {
 	// Spirits are the spirits involved in this Battle
@@ -14,17 +23,17 @@ type BattleSpec struct {
 
 // BattleStatus defines the observed state of Battle
 type BattleStatus struct {
-	// Phase summarizes the overall status of the Battle
-	// +kubebuilder:default=Pending
-	// +kubebuilder:validation:Enum=Pending;Ready;Error
-	Phase Phase `json:"phase,omitempty"`
-
 	// Conditions represents the observations of a Battle's current state
 	// +patchMergeKey=type
 	// +patchStrategy=merge
 	// +listType=map
 	// +listMapKey=type
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+
+	// Phase describes what stage of the battle lifecycle this Battle is in currently.
+	// +kubebuilder:default=Pending
+	// +kubebuilder:validation:Enum=Pending;Running;Finished;Error
+	Phase BattlePhase `json:"phase"`
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
 	InBattleSpirits []string `json:"inBattleSpirits"`

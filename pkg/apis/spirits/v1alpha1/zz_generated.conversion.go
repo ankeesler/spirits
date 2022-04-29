@@ -8,7 +8,7 @@ package v1alpha1
 import (
 	unsafe "unsafe"
 
-	spirits "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spirits "github.com/ankeesler/spirits/internal/apis/spirits"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -189,8 +189,8 @@ func Convert_spirits_BattleSpec_To_v1alpha1_BattleSpec(in *spirits.BattleSpec, o
 }
 
 func autoConvert_v1alpha1_BattleStatus_To_spirits_BattleStatus(in *BattleStatus, out *spirits.BattleStatus, s conversion.Scope) error {
-	out.Phase = spirits.Phase(in.Phase)
 	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Phase = spirits.BattlePhase(in.Phase)
 	out.InBattleSpirits = *(*[]string)(unsafe.Pointer(&in.InBattleSpirits))
 	return nil
 }
@@ -201,8 +201,8 @@ func Convert_v1alpha1_BattleStatus_To_spirits_BattleStatus(in *BattleStatus, out
 }
 
 func autoConvert_spirits_BattleStatus_To_v1alpha1_BattleStatus(in *spirits.BattleStatus, out *BattleStatus, s conversion.Scope) error {
-	out.Phase = Phase(in.Phase)
 	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Phase = BattlePhase(in.Phase)
 	out.InBattleSpirits = *(*[]string)(unsafe.Pointer(&in.InBattleSpirits))
 	return nil
 }
@@ -321,8 +321,8 @@ func Convert_spirits_SpiritStats_To_v1alpha1_SpiritStats(in *spirits.SpiritStats
 }
 
 func autoConvert_v1alpha1_SpiritStatus_To_spirits_SpiritStatus(in *SpiritStatus, out *spirits.SpiritStatus, s conversion.Scope) error {
-	out.Phase = spirits.Phase(in.Phase)
 	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Phase = spirits.SpiritPhase(in.Phase)
 	return nil
 }
 
@@ -332,8 +332,8 @@ func Convert_v1alpha1_SpiritStatus_To_spirits_SpiritStatus(in *SpiritStatus, out
 }
 
 func autoConvert_spirits_SpiritStatus_To_v1alpha1_SpiritStatus(in *spirits.SpiritStatus, out *SpiritStatus, s conversion.Scope) error {
-	out.Phase = Phase(in.Phase)
 	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Phase = SpiritPhase(in.Phase)
 	return nil
 }
 
