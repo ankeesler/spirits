@@ -36,10 +36,12 @@ type BattleStatus struct {
 	Phase BattlePhase `json:"phase"`
 
 	// Message describes the reason for the Battle's Phase
-	Message string `json:"message"`
+	// +optional
+	Message string `json:"message,omitempty"`
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
-	InBattleSpirits []string `json:"inBattleSpirits"`
+	// +optional
+	InBattleSpirits []string `json:"inBattleSpirits,omitempty"`
 }
 
 // Battle is the Schema for the battles API

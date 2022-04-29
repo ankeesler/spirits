@@ -147,8 +147,6 @@ spec:
                 - Error
                 type: string
             required:
-            - inBattleSpirits
-            - message
             - phase
             type: object
         type: object

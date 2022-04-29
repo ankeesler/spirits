@@ -7,17 +7,19 @@ import (
 	"math/rand"
 
 	"github.com/go-logr/logr"
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/ankeesler/spirits/internal/action"
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
+
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/finalizers,verbs=update
 
 type Actions interface {
 	Pend(battleName, spiritName, spiritGeneration string) (string, error)
@@ -35,52 +37,44 @@ type SpiritReconciler struct {
 func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&spiritsv1alpha1.Spirit{}).
-		Complete(r)
+		Complete(&reconciler[*spiritsv1alpha1.Spirit, *spiritsinternal.Spirit]{
+			Client: r.Client,
+			Scheme: r.Scheme,
+			Handler: &spiritHandler{
+				Actions: r.Actions,
+			},
+		})
 }
 
-//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/finalizers,verbs=update
+type spiritHandler struct {
+	Actions Actions
+}
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := log.FromContext(ctx)
+func (h *spiritHandler) NewExternal() *spiritsv1alpha1.Spirit { return &spiritsv1alpha1.Spirit{} }
+func (h *spiritHandler) NewInternal() *spiritsinternal.Spirit { return &spiritsinternal.Spirit{} }
 
-	// Get spirit - if it doesn't exist, we don't care.
-	var externalSpirit spiritsv1alpha1.Spirit
-	if err := r.Get(ctx, req.NamespacedName, &externalSpirit); err != nil {
-		if k8serrors.IsNotFound(err) {
-			return ctrl.Result{}, nil
-		}
-		return ctrl.Result{}, fmt.Errorf("could not get spirit: %w", err)
-	}
+func (h *spiritHandler) OnDelete(context.Context, logr.Logger, ctrl.Request) error {
+	return nil
+}
 
-	var spirit spiritsinternal.Spirit
-	if err := r.Scheme.Convert(&externalSpirit, &spirit, nil); err != nil {
-		return ctrl.Result{}, fmt.Errorf("convert: %w", err)
-	}
-
-	spiritPatch := client.MergeFrom(spirit.DeepCopyObject().(client.Object))
-
+func (h *spiritHandler) OnUpsert(
+	ctx context.Context,
+	log logr.Logger,
+	req ctrl.Request,
+	spirit *spiritsinternal.Spirit,
+) error {
 	// Update conditions on current spirit status
 	spirit.Status.Conditions = []metav1.Condition{
-		newCondition(&spirit, "Ready", r.readySpirit(ctx, log, &spirit)),
+		newCondition(spirit, readyCondition, h.readySpirit(ctx, log, spirit)),
 	}
 
 	// Update spirit phase
 	spirit.Status.Phase = getSpiritPhase(spirit.Status.Conditions)
 
-	if err := r.Patch(ctx, &spirit, spiritPatch); err != nil {
-		return ctrl.Result{}, fmt.Errorf("patch spirit: %w", err)
-	}
-
-	log.Info("reconciled spirit")
-
-	return ctrl.Result{}, nil
+	return nil
 }
 
-func (r *SpiritReconciler) readySpirit(
+func (h *spiritHandler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
 	spirit *spiritsinternal.Spirit,
@@ -89,7 +83,7 @@ func (r *SpiritReconciler) readySpirit(
 	spirit.Spec.Internal.Action, err = getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
-		r.getLazyActionFunc(spirit),
+		h.getLazyActionFunc(spirit),
 	)
 	if err != nil {
 		return fmt.Errorf("get action: %w", err)
@@ -97,7 +91,7 @@ func (r *SpiritReconciler) readySpirit(
 	return nil
 }
 
-func (r *SpiritReconciler) getLazyActionFunc(
+func (h *spiritHandler) getLazyActionFunc(
 	spirit *spiritsinternal.Spirit,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
@@ -116,7 +110,7 @@ func (r *SpiritReconciler) getLazyActionFunc(
 			return nil, errors.New("unknown spirit generation")
 		}
 
-		actionName, err := r.Actions.Pend(battleName, spiritName, spiritGeneration)
+		actionName, err := h.Actions.Pend(battleName, spiritName, spiritGeneration)
 		if err != nil {
 			return nil, fmt.Errorf("pend action: %w", err)
 		}
@@ -152,13 +146,14 @@ func getAction(
 		}
 	}
 
+	// Note: the spirit intelligence should always default to a non-empty string
 	var internalAction spiritsinternal.Action
 	switch intelligence {
-	case "", "roundrobin":
+	case spiritsinternal.SpiritIntelligenceRoundRobin:
 		internalAction = action.RoundRobin(actions)
-	case "random":
+	case spiritsinternal.SpiritIntelligenceRandom:
 		internalAction = action.Random(rand.New(rand.NewSource(0)), actions)
-	case "human":
+	case spiritsinternal.SpiritIntelligenceHuman:
 		if lazyActionFunc == nil {
 			return nil, errors.New("human action is not supported")
 		}

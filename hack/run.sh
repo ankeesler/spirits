@@ -11,4 +11,5 @@ cd "${MY_DIR}/.."
 kubectl apply -f config/crd
 
 # Run the controller
-go run . -zap-devel
+go run . -zap-log-level debug
+

@@ -86,11 +86,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*spirits.SpiritSpec)(nil), (*SpiritSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_spirits_SpiritSpec_To_v1alpha1_SpiritSpec(a.(*spirits.SpiritSpec), b.(*SpiritSpec), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*SpiritStats)(nil), (*spirits.SpiritStats)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_SpiritStats_To_spirits_SpiritStats(a.(*SpiritStats), b.(*spirits.SpiritStats), scope)
 	}); err != nil {
@@ -108,6 +103,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*spirits.SpiritStatus)(nil), (*SpiritStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_spirits_SpiritStatus_To_v1alpha1_SpiritStatus(a.(*spirits.SpiritStatus), b.(*SpiritStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*spirits.SpiritSpec)(nil), (*SpiritSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_spirits_SpiritSpec_To_v1alpha1_SpiritSpec(a.(*spirits.SpiritSpec), b.(*SpiritSpec), scope)
 	}); err != nil {
 		return err
 	}
