@@ -22,7 +22,6 @@ type BattleReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	SpiritsCache *sync.Map
 	BattlesCache *sync.Map
 }
 

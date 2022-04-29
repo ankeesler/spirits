@@ -81,7 +81,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	spiritsCache := sync.Map{}
 	battlesCache := sync.Map{}
 
 	if err = (&controller.SpiritReconciler{
@@ -94,7 +93,6 @@ func main() {
 	if err = (&controller.BattleReconciler{
 		Client:       mgr.GetClient(),
 		Scheme:       mgr.GetScheme(),
-		SpiritsCache: &spiritsCache,
 		BattlesCache: &battlesCache,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Battle")
