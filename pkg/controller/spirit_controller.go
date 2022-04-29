@@ -12,7 +12,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/ankeesler/spirits/internal/action"
@@ -49,27 +48,31 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log := log.FromContext(ctx)
 
 	// Get spirit - if it doesn't exist, we don't care.
-	var spirit spiritsinternal.Spirit
-	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
+	var externalSpirit spiritsv1alpha1.Spirit
+	if err := r.Get(ctx, req.NamespacedName, &externalSpirit); err != nil {
 		if k8serrors.IsNotFound(err) {
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, fmt.Errorf("could not get spirit: %w", err)
 	}
 
-	// Update spirit
-	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, &spirit, func() error {
-		// Update conditions on current spirit status
-		spirit.Status.Conditions = []metav1.Condition{
-			newCondition(&spirit, "Ready", r.readySpirit(ctx, log, &spirit)),
-		}
+	var spirit spiritsinternal.Spirit
+	if err := r.Scheme.Convert(&externalSpirit, &spirit, nil); err != nil {
+		return ctrl.Result{}, fmt.Errorf("convert: %w", err)
+	}
 
-		// Update spirit phase
-		spirit.Status.Phase = getSpiritPhase(spirit.Status.Conditions)
+	spiritPatch := client.MergeFrom(spirit.DeepCopyObject().(client.Object))
 
-		return nil
-	}); err != nil {
-		return ctrl.Result{}, fmt.Errorf("could not patch sprit: %w", err)
+	// Update conditions on current spirit status
+	spirit.Status.Conditions = []metav1.Condition{
+		newCondition(&spirit, "Ready", r.readySpirit(ctx, log, &spirit)),
+	}
+
+	// Update spirit phase
+	spirit.Status.Phase = getSpiritPhase(spirit.Status.Conditions)
+
+	if err := r.Patch(ctx, &spirit, spiritPatch); err != nil {
+		return ctrl.Result{}, fmt.Errorf("patch spirit: %w", err)
 	}
 
 	log.Info("reconciled spirit")
