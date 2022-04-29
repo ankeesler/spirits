@@ -12,27 +12,28 @@ cd "${MY_DIR}/.."
 # Load go environment so we can access go mod cache
 eval "$(go env)"
 go mod download
+go mod tidy
 
 # Run codegen for external types
 echo "running codegen for external types..."
 bash ${GOMODCACHE}/${CODEGENPKG}/generate-groups.sh \
   deepcopy,defaulter,conversion \
-  ${SPIRITSPKG}/pkg/api \
-  ${SPIRITSPKG}/pkg/api \
-  v1alpha1 \
+  ${SPIRITSPKG}/pkg/apis \
+  ${SPIRITSPKG}/pkg/apis \
+  spirits:v1alpha1 \
   --go-header-file hack/boilerplate.go.txt -v 1
 
 # Run codegen for internal types
 echo "running codegen for internal types..."
 bash ${GOMODCACHE}/${CODEGENPKG}/generate-internal-groups.sh \
   deepcopy,defaulter,conversion \
-  ${SPIRITSPKG}/pkg/api \
-  ${SPIRITSPKG}/pkg/api \
-  ${SPIRITSPKG}/pkg/api \
-  v1alpha1 \
+  ${SPIRITSPKG}/pkg/apis \
+  ${SPIRITSPKG}/pkg/apis \
+  ${SPIRITSPKG}/pkg/apis \
+  spirits:v1alpha1 \
   --go-header-file hack/boilerplate.go.txt -v 1
 
 # Generate CRDs
 echo "running codegen for CRDs..."
 go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.7.0 \
-  paths=./pkg/api crd output:crd:artifacts:config=./config
+  paths=./pkg/apis/spirits/v1alpha1 crd output:crd:artifacts:config=./config

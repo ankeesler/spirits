@@ -15,7 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	spiritsdevv1alpha1 "github.com/ankeesler/spirits/pkg/api/v1alpha1"
+	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/go-logr/logr"
 )
 
@@ -28,11 +28,11 @@ type BattleReconciler struct {
 	BattlesCache *sync.Map
 }
 
-//+kubebuilder:rbac:groups=spirits.dev,resources=battles,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=spirits.dev,resources=battles/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=spirits.dev,resources=battles/finalizers,verbs=update
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=battles,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=battles/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=battles/finalizers,verbs=update
 
-//+kubebuilder:rbac:groups=spirits.dev,resources=spirits,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -40,7 +40,7 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log := log.FromContext(ctx)
 
 	// Get battle - if it doesn't exist, then: stop it, delete it from the cache, and return.
-	var battle spiritsdevv1alpha1.Battle
+	var battle spiritsv1alpha1.Battle
 	if err := r.Get(ctx, req.NamespacedName, &battle); err != nil {
 		if k8serrors.IsNotFound(err) {
 			// TODO: cancel battle
@@ -74,8 +74,8 @@ func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // SetupWithManager sets up the controller with the Manager.
 func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&spiritsdevv1alpha1.Battle{}).
-		Owns(&spiritsdevv1alpha1.Spirit{}).
+		For(&spiritsv1alpha1.Battle{}).
+		Owns(&spiritsv1alpha1.Spirit{}).
 		// TODO: also need to watch spirits that are used in a battle...
 		Complete(r)
 }
@@ -83,7 +83,7 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *BattleReconciler) readySpirits(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsdevv1alpha1.Battle,
+	battle *spiritsv1alpha1.Battle,
 ) error {
 	// TODO: what happens if someone changes the model spirit...
 	// TODO: if we change the in-battle spirit, it remains the same...
@@ -116,7 +116,7 @@ func (r *BattleReconciler) readySpirits(
 	// 	}
 
 	// 	// Declare in-battle external spirit
-	// 	externalInBattleSpirit := &spiritsdevv1alpha1.Spirit{
+	// 	externalInBattleSpirit := &spiritsv1alpha1.Spirit{
 	// 		ObjectMeta: metav1.ObjectMeta{
 	// 			Namespace: battle.Namespace,
 	// 			Name:      battle.Status.InBattleSpirits[i],
@@ -133,10 +133,10 @@ func (r *BattleReconciler) readySpirits(
 
 	// // Update the external spirit object so we can track it against this battle
 	// externalInBattleSpirit.ObjectMeta.Labels = map[string]string{
-	// 	"spirits.dev/battle-name": battle.Name,
+	// 	"ankeesler.github.com/battle-name": battle.Name,
 	// }
 	// externalInBattleSpirit.ObjectMeta.OwnerReferences = []metav1.OwnerReference{
-	// 	// *metav1.NewControllerRef(battle, spiritsdevv1alpha1.GroupVersion.WithKind("Battle")),
+	// 	// *metav1.NewControllerRef(battle, spiritsv1alpha1.GroupVersion.WithKind("Battle")),
 	// }
 
 	// return nil
@@ -154,7 +154,7 @@ func (r *BattleReconciler) readySpirits(
 func (r *BattleReconciler) progressBattle(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsdevv1alpha1.Battle,
+	battle *spiritsv1alpha1.Battle,
 ) error {
 	// TODO: if we run a battle and then delete the in-battle spirits, the battle doesn't get run again
 	// Almost like the in-battle internal spirits should be the controller of the in-battle external spirits...
@@ -175,7 +175,7 @@ func (r *BattleReconciler) progressBattle(
 		// 	log.V(1).Info("battle callback", "spirits", internalSpirits, "error", err)
 
 		// 	// Redeclare battle so that we don't hold onto old battle
-		// 	battle := spiritsdevv1alpha1.Battle{
+		// 	battle := spiritsv1alpha1.Battle{
 		// 		ObjectMeta: metav1.ObjectMeta{
 		// 			Namespace: battle.Namespace,
 		// 			Name:      battle.Name,
@@ -190,7 +190,7 @@ func (r *BattleReconciler) progressBattle(
 
 		// 	// Otherwise, update the in-battle external spirits
 		// 	for _, internalSpirit := range internalSpirits {
-		// 		externalSpirit := spiritsdevv1alpha1.Spirit{
+		// 		externalSpirit := spiritsv1alpha1.Spirit{
 		// 			ObjectMeta: metav1.ObjectMeta{
 		// 				Namespace: battle.Namespace,
 		// 				Name:      internalSpirit.Name,
@@ -231,7 +231,7 @@ func (r *BattleReconciler) progressBattle(
 // 	return internalSpirits, found > 0 && found == len(spiritNames)
 // }
 
-func (r *BattleReconciler) loadInternalBattleCancel(battle *spiritsdevv1alpha1.Battle) context.CancelFunc {
+func (r *BattleReconciler) loadInternalBattleCancel(battle *spiritsv1alpha1.Battle) context.CancelFunc {
 	cancel, ok := r.BattlesCache.Load(getBattleCacheKey(battle))
 	if !ok {
 		return nil
@@ -239,14 +239,14 @@ func (r *BattleReconciler) loadInternalBattleCancel(battle *spiritsdevv1alpha1.B
 	return cancel.(context.CancelFunc)
 }
 
-func (r *BattleReconciler) storeInternalBattleCancel(battle *spiritsdevv1alpha1.Battle, cancel context.CancelFunc) {
+func (r *BattleReconciler) storeInternalBattleCancel(battle *spiritsv1alpha1.Battle, cancel context.CancelFunc) {
 	r.BattlesCache.Store(getBattleCacheKey(battle), cancel)
 }
 
 func (r *BattleReconciler) setBattleError(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsdevv1alpha1.Battle,
+	battle *spiritsv1alpha1.Battle,
 	err error,
 ) {
 	log.Error(err, "battle error")
@@ -260,6 +260,6 @@ func (r *BattleReconciler) setBattleError(
 	}
 }
 
-func getBattleCacheKey(battle *spiritsdevv1alpha1.Battle) string {
+func getBattleCacheKey(battle *spiritsv1alpha1.Battle) string {
 	return fmt.Sprintf("%s-%s-%s", battle.Namespace, battle.Name, strings.Join(battle.Status.InBattleSpirits, "-"))
 }

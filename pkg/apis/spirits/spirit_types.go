@@ -1,4 +1,4 @@
-package api
+package spirits
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,21 +23,17 @@ const (
 type SpiritStats struct {
 	// Health is a quantitative representation of the energy of the Spirit.
 	// When this drops to 0, the Spirit is no longer able to participate in a Battle.
-	// +kubebuilder:validation:Minimum=0
 	Health int `json:"health"`
 
 	// Power is a quantitative representation of the attacking ability of the Spirit.
-	// +kubebuilder:validation:Minimum=0
 	// +optional
 	Power int `json:"power"`
 
 	// Armor is a quantitative representation of the defending ability of the Spirit.
-	// +kubebuilder:validation:Minimum=0
 	// +optional
 	Armor int `json:"armor"`
 
 	// Agility is a quantitative representation of the speed of the Spirit.
-	// +kubebuilder:validation:Minimum=0
 	// +optional
 	Agility int `json:"agility"`
 }
@@ -48,12 +44,10 @@ type SpiritSpec struct {
 	Stats SpiritStats `json:"stats"`
 
 	// Actions are the list of actions that this Spirit can perform
-	// +kubebuilder:default={attack}
 	// +optional
 	Actions []string `json:"actions"`
 
 	// Intelligence describes how a Spirit will select actions to perform
-	// +kubebuilder:default=RoundRobin
 	// +optional
 	Intelligence SpiritIntelligence `json:"intelligence"`
 }
@@ -61,8 +55,6 @@ type SpiritSpec struct {
 // SpiritStatus defines the observed state of Spirit
 type SpiritStatus struct {
 	// Phase summarizes the overall status of the Spirit
-	// +kubebuilder:default=Pending
-	// +kubebuilder:validation:Enum=Pending;Ready;Error
 	Phase Phase `json:"phase,omitempty"`
 
 	// Conditions represents the observations of a Spirit's current state
@@ -73,13 +65,7 @@ type SpiritStatus struct {
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-
 // Spirit is the Schema for the spirits API
-// +kubebuilder:resource:categories=spiritsworld
-// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
-// +kubebuilder:printcolumn:name="Health",type=string,JSONPath=`.spec.stats.health`
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type Spirit struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -88,8 +74,6 @@ type Spirit struct {
 	Spec   SpiritSpec   `json:"spec,omitempty"`
 	Status SpiritStatus `json:"status,omitempty"`
 }
-
-//+kubebuilder:object:root=true
 
 // SpiritList contains a list of Spirit
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

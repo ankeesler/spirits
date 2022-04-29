@@ -1,4 +1,4 @@
-package api
+package spirits
 
 type Phase string
 

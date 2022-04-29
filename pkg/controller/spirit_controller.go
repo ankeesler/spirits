@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"sync"
 
 	"github.com/go-logr/logr"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -15,7 +14,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	spiritsdevv1alpha1 "github.com/ankeesler/spirits/pkg/api/v1alpha1"
+	spiritsinternal "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
 
 // SpiritReconciler reconciles a Spirit object
@@ -23,25 +23,22 @@ type SpiritReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	SpiritsCache *sync.Map
-	Rand         *rand.Rand
+	Rand *rand.Rand
 }
 
-//+kubebuilder:rbac:groups=spirits.dev,resources=spirits,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=spirits.dev,resources=spirits/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=spirits.dev,resources=spirits/finalizers,verbs=update
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
-	// Get spirit - if it doesn't exist, then delete it from the cache and return.
-	var spirit spiritsdevv1alpha1.Spirit
+	// Get spirit - if it doesn't exist, we don't care.
+	var spirit spiritsinternal.Spirit
 	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
 		if k8serrors.IsNotFound(err) {
-			// TODO: this doesn't work across namespaces
-			r.SpiritsCache.Delete(req.Name)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, fmt.Errorf("could not get spirit: %w", err)
@@ -70,20 +67,20 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // SetupWithManager sets up the controller with the Manager.
 func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&spiritsdevv1alpha1.Spirit{}).
+		For(&spiritsv1alpha1.Spirit{}).
 		Complete(r)
 }
 
 func (r *SpiritReconciler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
-	spirit *spiritsdevv1alpha1.Spirit,
+	spirit *spiritsv1alpha1.Spirit,
 ) error {
 	// Convert to internal spirit
 	// internalSpirit, err := nil, nil toInternalSpirit(
 	// 	spirit,
 	// 	r.Rand,
-	// 	func(ctx context.Context, s *spiritsdevv1alpha1.Spirit) (spiritpkg.Action, error) {
+	// 	func(ctx context.Context, s *spiritsv1alpha1.Spirit) (spiritpkg.Action, error) {
 	// 		// TODO: implement human intelligence
 	// 		// battleName := battleNameFromContext(ctx)
 	// 		// action, err := r.ActionsCache.Get(battleName, s.Name)

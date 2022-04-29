@@ -6,20 +6,29 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.7.0
   creationTimestamp: null
-  name: battles.spirits.dev
+  name: spirits.ankeesler.github.com
 spec:
-  group: spirits.dev
+  group: ankeesler.github.com
   names:
-    kind: Battle
-    listKind: BattleList
-    plural: battles
-    singular: battle
+    categories:
+    - spiritsworld
+    kind: Spirit
+    listKind: SpiritList
+    plural: spirits
+    singular: spirit
   scope: Namespaced
   versions:
-  - name: api
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    - jsonPath: .spec.stats.health
+      name: Health
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Battle is the Schema for the battles API
+        description: Spirit is the Schema for the spirits API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -34,21 +43,56 @@ spec:
           metadata:
             type: object
           spec:
-            description: BattleSpec defines the desired state of Battle
+            description: SpiritSpec defines the desired state of Spirit
             properties:
-              spirits:
-                description: Spirits are the spirits involved in this Battle
+              actions:
+                default:
+                - attack
+                description: Actions are the list of actions that this Spirit can
+                  perform
                 items:
                   type: string
                 type: array
+              intelligence:
+                default: RoundRobin
+                description: Intelligence describes how a Spirit will select actions
+                  to perform
+                type: string
+              stats:
+                description: Stats are the current statistics that describe this Spirit
+                properties:
+                  agility:
+                    description: Agility is a quantitative representation of the speed
+                      of the Spirit.
+                    minimum: 0
+                    type: integer
+                  armor:
+                    description: Armor is a quantitative representation of the defending
+                      ability of the Spirit.
+                    minimum: 0
+                    type: integer
+                  health:
+                    description: Health is a quantitative representation of the energy
+                      of the Spirit. When this drops to 0, the Spirit is no longer
+                      able to participate in a Battle.
+                    minimum: 0
+                    type: integer
+                  power:
+                    description: Power is a quantitative representation of the attacking
+                      ability of the Spirit.
+                    minimum: 0
+                    type: integer
+                required:
+                - health
+                type: object
             required:
-            - spirits
+            - stats
             type: object
           status:
-            description: BattleStatus defines the observed state of Battle
+            description: SpiritStatus defines the observed state of Spirit
             properties:
               conditions:
-                description: Conditions represents the observations of a Battle's
+                description: Conditions represents the observations of a Spirit's
                   current state
                 items:
                   description: "Condition contains details for one aspect of the current
@@ -121,21 +165,20 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
-              inBattleSpirits:
-                description: InBattleSpirits holds the names of the Spirit's that
-                  are participating in this Battle
-                items:
-                  type: string
-                type: array
               phase:
-                description: Phase summarizes the overall status of the Battle
+                default: Pending
+                description: Phase summarizes the overall status of the Spirit
+                enum:
+                - Pending
+                - Ready
+                - Error
                 type: string
-            required:
-            - inBattleSpirits
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

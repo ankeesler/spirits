@@ -34,7 +34,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	spiritsdevv1alpha1 "github.com/ankeesler/spirits/pkg/api/v1alpha1"
+	spiritsinternal "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/ankeesler/spirits/pkg/controller"
 	//+kubebuilder:scaffold:imports
 )
@@ -47,7 +48,8 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(spiritsdevv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(spiritsinternal.AddToScheme(scheme))
+	utilruntime.Must(spiritsv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -74,7 +76,7 @@ func main() {
 		Port:                   9443,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "62f0cb35.spirits.dev",
+		LeaderElectionID:       "62f0cb35.ankeesler.github.com",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -85,10 +87,9 @@ func main() {
 	battlesCache := sync.Map{}
 
 	if err = (&controller.SpiritReconciler{
-		Client:       mgr.GetClient(),
-		Scheme:       mgr.GetScheme(),
-		SpiritsCache: &spiritsCache,
-		Rand:         rand.New(rand.NewSource(time.Now().Unix())),
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Rand:   rand.New(rand.NewSource(time.Now().Unix())),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)
