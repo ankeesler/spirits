@@ -5,7 +5,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
+	spiritapi "github.com/ankeesler/spirits/pkg/apis/spirits"
 )
 
 func newCondition(
@@ -29,11 +29,11 @@ func newCondition(
 	return condition
 }
 
-func getPhase(conditions []metav1.Condition) spiritsv1alpha1.Phase {
+func getPhase(conditions []metav1.Condition) spiritapi.Phase {
 	for i := range conditions {
 		if conditions[i].Status == metav1.ConditionFalse {
-			return spiritsv1alpha1.PhaseError
+			return spiritapi.PhaseError
 		}
 	}
-	return spiritsv1alpha1.PhaseReady
+	return spiritapi.PhaseReady
 }

@@ -1,0 +1,72 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: spirits-controller-manager
+rules:
+- apiGroups:
+  - ankeesler.github.com
+  resources:
+  - battles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ankeesler.github.com
+  resources:
+  - battles/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ankeesler.github.com
+  resources:
+  - battles/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ankeesler.github.com
+  resources:
+  - spirits
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - spirits.ankeesler.github.com
+  resources:
+  - spirits
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - spirits.ankeesler.github.com
+  resources:
+  - spirits/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - spirits.ankeesler.github.com
+  resources:
+  - spirits/status
+  verbs:
+  - get
+  - patch
+  - update

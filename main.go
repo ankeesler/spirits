@@ -18,10 +18,8 @@ package main
 
 import (
 	"flag"
-	"math/rand"
 	"os"
 	"sync"
-	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -89,7 +87,6 @@ func main() {
 	if err = (&controller.SpiritReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
-		Rand:   rand.New(rand.NewSource(time.Now().Unix())),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)

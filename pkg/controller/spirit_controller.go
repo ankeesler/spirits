@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"math/rand"
 
 	"github.com/go-logr/logr"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -14,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	spiritsinternal "github.com/ankeesler/spirits/pkg/apis/spirits"
+	spiritsapi "github.com/ankeesler/spirits/pkg/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
 
@@ -22,13 +21,11 @@ import (
 type SpiritReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
-
-	Rand *rand.Rand
 }
 
-//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=ankeesler.github.com,resources=spirits/finalizers,verbs=update
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -36,7 +33,7 @@ func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	log := log.FromContext(ctx)
 
 	// Get spirit - if it doesn't exist, we don't care.
-	var spirit spiritsinternal.Spirit
+	var spirit spiritsapi.Spirit
 	if err := r.Get(ctx, req.NamespacedName, &spirit); err != nil {
 		if k8serrors.IsNotFound(err) {
 			return ctrl.Result{}, nil
@@ -74,29 +71,7 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *SpiritReconciler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
-	spirit *spiritsv1alpha1.Spirit,
+	spirit *spiritsapi.Spirit,
 ) error {
-	// Convert to internal spirit
-	// internalSpirit, err := nil, nil toInternalSpirit(
-	// 	spirit,
-	// 	r.Rand,
-	// 	func(ctx context.Context, s *spiritsv1alpha1.Spirit) (spiritpkg.Action, error) {
-	// 		// TODO: implement human intelligence
-	// 		// battleName := battleNameFromContext(ctx)
-	// 		// action, err := r.ActionsCache.Get(battleName, s.Name)
-	// 		// if err != nil {
-	// 		//   return nil, fmt.Errorf("could not get action from cache: %w", err)
-	// 		// }
-	// 		// return action, nil
-	// 		return action.Attack(), nil
-	// 	},
-	// )
-	// if err != nil {
-	// 	return fmt.Errorf("could not convert to internal spirit: %w", err)
-	// }
-
-	// // Store in cache
-	// r.SpiritsCache.Store(spirit.Name, internalSpirit)
-
 	return nil
 }
