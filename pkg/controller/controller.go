@@ -30,7 +30,7 @@ const (
 	progressingCondition = "Progressing"
 )
 
-type ActionsQueue interface {
+type ActionSource interface {
 	Pend(ctx context.Context, battleName, battleGeneration, spiritName, spiritGeneration string) (string, error)
 }
 
@@ -137,7 +137,7 @@ func createOrPatch(
 
 func getLazyActionFunc(
 	spirit *spiritsinternal.Spirit,
-	actionsQueue ActionsQueue,
+	actionsQueue ActionSource,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
 		battleName, ok := spirit.Labels[inBattleSpiritBattleNameLabel]

@@ -29,8 +29,8 @@ import (
 // BattleReconciler reconciles a Battle object
 type BattleReconciler struct {
 	client.Client
-	Scheme       *runtime.Scheme
-	ActionsQueue ActionsQueue
+	Scheme     *runtime.Scheme
+	ActionSink ActionSource
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -42,9 +42,9 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			Client: r.Client,
 			Scheme: r.Scheme,
 			Handler: &battleHandler{
-				Client:       r.Client,
-				Scheme:       r.Scheme,
-				ActionsQueue: r.ActionsQueue,
+				Client:     r.Client,
+				Scheme:     r.Scheme,
+				ActionSink: r.ActionSink,
 			},
 		})
 }
@@ -53,7 +53,7 @@ type battleHandler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	ActionsQueue ActionsQueue
+	ActionSink ActionSource
 
 	Battles sync.Map
 }
@@ -256,7 +256,7 @@ func (h *battleHandler) getSpirit(ctx context.Context, spirit *spiritsinternal.S
 	spirit.Spec.Internal.Action, err = getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
-		getLazyActionFunc(spirit, h.ActionsQueue),
+		getLazyActionFunc(spirit, h.ActionSink),
 	)
 	if err != nil {
 		return fmt.Errorf("get action: %w", err)

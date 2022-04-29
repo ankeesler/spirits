@@ -26,7 +26,7 @@ type SpiritReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	ActionsQueue ActionsQueue
+	ActionSource ActionSource
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -37,13 +37,13 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			Client: r.Client,
 			Scheme: r.Scheme,
 			Handler: &spiritHandler{
-				ActionsQueue: r.ActionsQueue,
+				ActionSource: r.ActionSource,
 			},
 		})
 }
 
 type spiritHandler struct {
-	ActionsQueue ActionsQueue
+	ActionSource ActionSource
 }
 
 func (h *spiritHandler) NewExternal() *spiritsv1alpha1.Spirit { return &spiritsv1alpha1.Spirit{} }
@@ -78,7 +78,7 @@ func (h *spiritHandler) readySpirit(
 	if _, err := getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
-		getLazyActionFunc(spirit, h.ActionsQueue),
+		getLazyActionFunc(spirit, h.ActionSource),
 	); err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}
