@@ -79,13 +79,11 @@ func (h *spiritHandler) readySpirit(
 	log logr.Logger,
 	spirit *spiritsinternal.Spirit,
 ) error {
-	var err error
-	spirit.Spec.Internal.Action, err = getAction(
+	if _, err := getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
 		h.getLazyActionFunc(spirit),
-	)
-	if err != nil {
+	); err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}
 	return nil

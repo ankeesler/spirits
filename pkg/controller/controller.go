@@ -99,3 +99,32 @@ func newCondition(
 	}
 	return condition
 }
+
+func createOrPatch(
+	ctx context.Context,
+	client client.Client,
+	scheme *runtime.Scheme,
+	internalObj, externalObj client.Object,
+	mutateFunc func() error,
+) error {
+	externalObj.SetNamespace(internalObj.GetNamespace())
+	externalObj.SetName(internalObj.GetName())
+	if _, err := controllerutil.CreateOrPatch(ctx, client, externalObj, func() error {
+		if err := scheme.Convert(externalObj, internalObj, nil); err != nil {
+			return fmt.Errorf("convert external object to internal object: %w", err)
+		}
+
+		if err := mutateFunc(); err != nil {
+			return err
+		}
+
+		if err := scheme.Convert(internalObj, externalObj, nil); err != nil {
+			return fmt.Errorf("convert internal object to external object: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}

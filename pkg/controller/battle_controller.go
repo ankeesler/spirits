@@ -77,7 +77,7 @@ func (h *battleHandler) OnUpsert(
 
 	// Force the battle phase to be error, if there is one
 	// Otherwise the battle phase will get updated by the battle callback
-	if meta.IsStatusConditionTrue(battle.Status.Conditions, progressingCondition) {
+	if !meta.IsStatusConditionTrue(battle.Status.Conditions, progressingCondition) {
 		battle.Status.Phase = spiritsinternal.BattlePhaseError
 	}
 
@@ -117,6 +117,7 @@ func (h *battleHandler) progressBattle(
 	go battlerunner.Run(ctx, battle, inBattleSpirits, h.battleCallback)
 
 	// Update the spirits that are running in this battle
+	battle.Status.InBattleSpirits = []string{}
 	for _, inBattleSpirit := range inBattleSpirits {
 		battle.Status.InBattleSpirits = append(battle.Status.InBattleSpirits, inBattleSpirit.Name)
 	}
@@ -148,12 +149,18 @@ func (h *battleHandler) getInBattleSpirits(
 					inBattleSpiritSpiritNameLabel:       spirit.Name,
 					inBattleSpiritSpiritGenerationLabel: fmt.Sprintf("%d", spirit.Generation),
 				},
+				// TODO: set owner ref
+				// OwnerReferences: []metav1.OwnerReference{
+				// 	*metav1.NewControllerRef(battle, battle.GroupVersionKind()),
+				// },
 			},
 			Spec: spirit.Spec,
 		}
 		if err := h.createSpirit(ctx, &inBattleSpirit); err != nil && !k8serrors.IsAlreadyExists(err) {
 			return nil, fmt.Errorf("create in battle spirit: %w", err)
 		}
+
+		inBattleSpirits = append(inBattleSpirits, &inBattleSpirit)
 	}
 
 	return inBattleSpirits, nil
@@ -187,37 +194,44 @@ func (h *battleHandler) getSpirits(
 
 func (h *battleHandler) battleCallback(
 	battle *spiritsinternal.Battle,
-	spirits []*spiritsinternal.Spirit,
+	inBattleSpirits []*spiritsinternal.Spirit,
+	done bool,
 	err error,
 ) {
-	log.Log.V(1).Info("battle callback", "battle", battle, "spirits", spirits, "err", err)
+	log.Log.V(1).Info("battle callback", "battle", battle, "spirits", inBattleSpirits, "err", err)
 
 	// Set a really long timeout, just in case
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 
-	battle.Status.Conditions = []metav1.Condition{
-		newCondition(battle, progressingCondition, err),
-	}
-
-	if err != nil {
-		battle.Status.Phase = spiritsinternal.BattlePhaseError
-		battle.Status.Message = err.Error()
-	} else {
-		battle.Status.Phase = spiritsinternal.BattlePhaseRunning
-	}
-
-	// TODO: how do we know when we are done?
-
 	// Update the battle
-	if err := h.updateBattle(ctx, battle); err != nil {
-		log.Log.Error(err, "update battle")
+	if err := createOrPatch(ctx, h.Client, h.Scheme, battle, &spiritsv1alpha1.Battle{}, func() error {
+		battle.Status.Conditions = []metav1.Condition{
+			newCondition(battle, progressingCondition, err),
+		}
+
+		if err != nil {
+			battle.Status.Phase = spiritsinternal.BattlePhaseError
+			battle.Status.Message = err.Error()
+		} else if done {
+			battle.Status.Phase = spiritsinternal.BattlePhaseFinished
+		} else {
+			battle.Status.Phase = spiritsinternal.BattlePhaseRunning
+		}
+
+		return nil
+	}); err != nil {
+		log.Log.Error(err, "create or patch battle")
 	}
 
 	// Update the spirits
-	for _, spirit := range spirits {
-		if err := h.updateSpirit(ctx, spirit); err != nil {
-			log.Log.Error(err, "update spirit")
+	for _, inBattleSpirit := range inBattleSpirits {
+		spirit := inBattleSpirit.DeepCopy()
+		if err := createOrPatch(ctx, h.Client, h.Scheme, spirit, &spiritsv1alpha1.Spirit{}, func() error {
+			spirit.Spec = inBattleSpirit.Spec
+			return nil
+		}); err != nil {
+			log.Log.Error(err, "create or patch spirit")
 		}
 	}
 }
@@ -234,30 +248,11 @@ func (h *battleHandler) getSpirit(ctx context.Context, spirit *spiritsinternal.S
 		return fmt.Errorf("convert external spirit to internal spirit: %w", err)
 	}
 
-	return nil
-}
-
-func (h *battleHandler) updateBattle(ctx context.Context, battle *spiritsinternal.Battle) error {
-	var externalBattle spiritsv1alpha1.Battle
-	if err := h.Scheme.Convert(battle, &externalBattle, nil); err != nil {
-		return fmt.Errorf("convert internal battle to external battle: %w", err)
-	}
-
-	if err := h.Update(ctx, &externalBattle); err != nil {
-		return fmt.Errorf("update battle: %w", err)
-	}
-
-	return nil
-}
-
-func (h *battleHandler) updateSpirit(ctx context.Context, spirit *spiritsinternal.Spirit) error {
-	var externalSpirit spiritsv1alpha1.Spirit
-	if err := h.Scheme.Convert(spirit, &externalSpirit, nil); err != nil {
-		return fmt.Errorf("convert internal spirit to external spirit: %w", err)
-	}
-
-	if err := h.Update(ctx, &externalSpirit); err != nil {
-		return fmt.Errorf("update spirit: %w", err)
+	// TODO: is this right calling this both places???
+	var err error
+	spirit.Spec.Internal.Action, err = getAction(spirit.Spec.Actions, spirit.Spec.Intelligence, nil)
+	if err != nil {
+		return fmt.Errorf("get action: %w", err)
 	}
 
 	return nil
