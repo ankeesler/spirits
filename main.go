@@ -34,8 +34,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	spiritsdevv1alpha1 "github.com/ankeesler/spirits/api/v1alpha1"
-	"github.com/ankeesler/spirits/controllers"
+	spiritsdevv1alpha1 "github.com/ankeesler/spirits/pkg/api/v1alpha1"
+	"github.com/ankeesler/spirits/pkg/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -84,7 +84,7 @@ func main() {
 	spiritsCache := sync.Map{}
 	battlesCache := sync.Map{}
 
-	if err = (&controllers.SpiritReconciler{
+	if err = (&controller.SpiritReconciler{
 		Client:       mgr.GetClient(),
 		Scheme:       mgr.GetScheme(),
 		SpiritsCache: &spiritsCache,
@@ -93,7 +93,7 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)
 	}
-	if err = (&controllers.BattleReconciler{
+	if err = (&controller.BattleReconciler{
 		Client:       mgr.GetClient(),
 		Scheme:       mgr.GetScheme(),
 		SpiritsCache: &spiritsCache,

@@ -1,7 +1,0 @@
-apiVersion: spirits.dev/v1alpha1
-kind: Spirit
-metadata:
-  name: spirit-sample
-spec:
-  stats:
-    health: 5
