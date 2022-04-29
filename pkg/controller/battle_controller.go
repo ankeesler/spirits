@@ -29,7 +29,8 @@ import (
 // BattleReconciler reconciles a Battle object
 type BattleReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme       *runtime.Scheme
+	ActionsQueue ActionsQueue
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -41,8 +42,9 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			Client: r.Client,
 			Scheme: r.Scheme,
 			Handler: &battleHandler{
-				Client: r.Client,
-				Scheme: r.Scheme,
+				Client:       r.Client,
+				Scheme:       r.Scheme,
+				ActionsQueue: r.ActionsQueue,
 			},
 		})
 }
@@ -50,6 +52,8 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 type battleHandler struct {
 	client.Client
 	Scheme *runtime.Scheme
+
+	ActionsQueue ActionsQueue
 
 	Battles sync.Map
 }
@@ -248,9 +252,12 @@ func (h *battleHandler) getSpirit(ctx context.Context, spirit *spiritsinternal.S
 		return fmt.Errorf("convert external spirit to internal spirit: %w", err)
 	}
 
-	// TODO: is this right calling this both places???
 	var err error
-	spirit.Spec.Internal.Action, err = getAction(spirit.Spec.Actions, spirit.Spec.Intelligence, nil)
+	spirit.Spec.Internal.Action, err = getAction(
+		spirit.Spec.Actions,
+		spirit.Spec.Intelligence,
+		getLazyActionFunc(spirit, h.ActionsQueue),
+	)
 	if err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}

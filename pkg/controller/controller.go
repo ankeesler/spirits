@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -21,12 +22,17 @@ import (
 
 const (
 	inBattleSpiritBattleNameLabel       = "spirits.ankeesler.github.com/battle-name"
+	inBattleSpiritBattleGenerationLabel = "spirits.ankeesler.github.com/battle-generation"
 	inBattleSpiritSpiritNameLabel       = "spirits.ankeesler.github.com/spirit-name"
 	inBattleSpiritSpiritGenerationLabel = "spirits.ankeesler.github.com/spirit-generation"
 
 	readyCondition       = "Ready"
 	progressingCondition = "Progressing"
 )
+
+type ActionsQueue interface {
+	Pend(ctx context.Context, battleName, battleGeneration, spiritName, spiritGeneration string) (string, error)
+}
 
 type handler[ExternalT, InternalT client.Object] interface {
 	NewExternal() ExternalT
@@ -127,4 +133,43 @@ func createOrPatch(
 		return err
 	}
 	return nil
+}
+
+func getLazyActionFunc(
+	spirit *spiritsinternal.Spirit,
+	actionsQueue ActionsQueue,
+) func(ctx context.Context) (spiritsinternal.Action, error) {
+	return func(ctx context.Context) (spiritsinternal.Action, error) {
+		battleName, ok := spirit.Labels[inBattleSpiritBattleNameLabel]
+		if !ok {
+			return nil, errors.New("unknown battle name")
+		}
+
+		battleGeneration, ok := spirit.Labels[inBattleSpiritBattleGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown battle name")
+		}
+
+		spiritName, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown spirit name")
+		}
+
+		spiritGeneration, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown spirit generation")
+		}
+
+		actionName, err := actionsQueue.Pend(ctx, battleName, battleGeneration, spiritName, spiritGeneration)
+		if err != nil {
+			return nil, fmt.Errorf("actions queue pend: %w", err)
+		}
+
+		action, err := getAction([]string{actionName}, "", nil)
+		if err != nil {
+			return nil, fmt.Errorf("get action: %w", err)
+		}
+
+		return action, nil
+	}
 }

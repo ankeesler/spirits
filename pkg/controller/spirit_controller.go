@@ -21,16 +21,12 @@ import (
 //+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/finalizers,verbs=update
 
-type Actions interface {
-	Pend(battleName, spiritName, spiritGeneration string) (string, error)
-}
-
 // SpiritReconciler reconciles a Spirit object
 type SpiritReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	Actions Actions
+	ActionsQueue ActionsQueue
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -41,13 +37,13 @@ func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			Client: r.Client,
 			Scheme: r.Scheme,
 			Handler: &spiritHandler{
-				Actions: r.Actions,
+				ActionsQueue: r.ActionsQueue,
 			},
 		})
 }
 
 type spiritHandler struct {
-	Actions Actions
+	ActionsQueue ActionsQueue
 }
 
 func (h *spiritHandler) NewExternal() *spiritsv1alpha1.Spirit { return &spiritsv1alpha1.Spirit{} }
@@ -82,44 +78,11 @@ func (h *spiritHandler) readySpirit(
 	if _, err := getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
-		h.getLazyActionFunc(spirit),
+		getLazyActionFunc(spirit, h.ActionsQueue),
 	); err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}
 	return nil
-}
-
-func (h *spiritHandler) getLazyActionFunc(
-	spirit *spiritsinternal.Spirit,
-) func(ctx context.Context) (spiritsinternal.Action, error) {
-	return func(ctx context.Context) (spiritsinternal.Action, error) {
-		battleName, ok := spirit.Labels[inBattleSpiritBattleNameLabel]
-		if !ok {
-			return nil, errors.New("unknown battle name")
-		}
-
-		spiritName, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
-		if !ok {
-			return nil, errors.New("unknown spirit name")
-		}
-
-		spiritGeneration, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
-		if !ok {
-			return nil, errors.New("unknown spirit generation")
-		}
-
-		actionName, err := h.Actions.Pend(battleName, spiritName, spiritGeneration)
-		if err != nil {
-			return nil, fmt.Errorf("pend action: %w", err)
-		}
-
-		action, err := getAction([]string{actionName}, "", nil)
-		if err != nil {
-			return nil, fmt.Errorf("get action: %w", err)
-		}
-
-		return action, nil
-	}
 }
 
 func getAction(

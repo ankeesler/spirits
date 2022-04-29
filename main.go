@@ -65,12 +65,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	actionChannel := actionchannel.New()
+	actionChannel := actionchannel.ActionChannel{}
+	defer actionChannel.Close()
 
 	if err = (&controller.SpiritReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Actions: actionChannel,
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		ActionsQueue: &actionChannel,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)
