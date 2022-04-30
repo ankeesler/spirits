@@ -14,7 +14,7 @@ _note() {
 generate_groups() {
   _note "running codegen for external types..."
   bash ${GOMODCACHE}/${CODEGENPKG}/generate-groups.sh \
-    deepcopy,defaulter,conversion \
+    deepcopy,defaulter,conversion,client \
     ${SPIRITSPKG}/pkg/apis \
     ${SPIRITSPKG}/pkg/apis \
     spirits:v1alpha1 \
@@ -55,4 +55,11 @@ eval "$(go env)"
 go mod download
 go mod tidy
 
-"$@"
+if [[ "$#" == "0" ]]; then
+  generate_groups
+  generate_internal_groups
+  generate_crds
+  generate_rbac
+else
+  "$@"
+fi

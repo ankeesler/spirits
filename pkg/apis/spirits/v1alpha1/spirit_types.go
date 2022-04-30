@@ -90,6 +90,7 @@ type SpiritStatus struct {
 //+kubebuilder:subresource:status
 
 // Spirit is the Schema for the spirits API
+// +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:resource:categories=spiritsworld
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`

@@ -42,6 +42,8 @@ type ActionRequestStatus struct {
 }
 
 // ActionRequest is the Schema for the ActionRequest API
+// +genclient
+// +genclient:onlyVerbs=create
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type ActionRequest struct {
 	metav1.TypeMeta   `json:",inline"`
