@@ -12,8 +12,8 @@
 ## Tech Stack
 
 * Infrastructure: [Heroku](https://oh-great-spirits.herokuapp.com/)
-* Backend: [Golang](api)
-* Frontend: [React](web)
+* Backend: Golang
+* Frontend: React
 * Work Tracking: [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2556075)
 * E2E Testing: [Node/Pupeteer](test)
 
