@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/go-logr/logr v1.2.0
+	k8s.io/api v0.23.0
 	k8s.io/apimachinery v0.23.0
 	k8s.io/apiserver v0.23.0
 	k8s.io/client-go v0.23.0
@@ -100,7 +101,6 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/api v0.23.0 // indirect
 	k8s.io/apiextensions-apiserver v0.23.0 // indirect
 	k8s.io/component-base v0.23.0 // indirect
 	k8s.io/gengo v0.0.0-20210813121822-485abfe95c7c // indirect

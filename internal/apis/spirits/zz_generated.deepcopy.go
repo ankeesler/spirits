@@ -6,7 +6,8 @@
 package spirits
 
 import (
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -187,7 +188,7 @@ func (in *BattleSpec) DeepCopyInto(out *BattleSpec) {
 	*out = *in
 	if in.Spirits != nil {
 		in, out := &in.Spirits, &out.Spirits
-		*out = make([]string, len(*in))
+		*out = make([]v1.LocalObjectReference, len(*in))
 		copy(*out, *in)
 	}
 	return
@@ -208,14 +209,14 @@ func (in *BattleStatus) DeepCopyInto(out *BattleStatus) {
 	*out = *in
 	if in.Conditions != nil {
 		in, out := &in.Conditions, &out.Conditions
-		*out = make([]v1.Condition, len(*in))
+		*out = make([]metav1.Condition, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
 	if in.InBattleSpirits != nil {
 		in, out := &in.InBattleSpirits, &out.InBattleSpirits
-		*out = make([]string, len(*in))
+		*out = make([]v1.LocalObjectReference, len(*in))
 		copy(*out, *in)
 	}
 	return
@@ -355,7 +356,7 @@ func (in *SpiritStatus) DeepCopyInto(out *SpiritStatus) {
 	*out = *in
 	if in.Conditions != nil {
 		in, out := &in.Conditions, &out.Conditions
-		*out = make([]v1.Condition, len(*in))
+		*out = make([]metav1.Condition, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}

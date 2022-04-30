@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -122,9 +123,11 @@ func (h *battleHandler) progressBattle(
 	go battlerunner.Run(ctx, battle, inBattleSpirits, h.battleCallback)
 
 	// Update the spirits that are running in this battle
-	battle.Status.InBattleSpirits = []string{}
+	battle.Status.InBattleSpirits = []corev1.LocalObjectReference{}
 	for _, inBattleSpirit := range inBattleSpirits {
-		battle.Status.InBattleSpirits = append(battle.Status.InBattleSpirits, inBattleSpirit.Name)
+		battle.Status.InBattleSpirits = append(battle.Status.InBattleSpirits, corev1.LocalObjectReference{
+			Name: inBattleSpirit.Name,
+		})
 	}
 
 	// TODO: does this work with multiple replicas?
@@ -181,7 +184,7 @@ func (h *battleHandler) getSpirits(
 		spirit := spiritsinternal.Spirit{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: battle.Namespace,
-				Name:      spiritName,
+				Name:      spiritName.Name,
 			},
 		}
 		if err := h.getSpirit(ctx, &spirit); err != nil {
@@ -279,13 +282,13 @@ func (h *battleHandler) createSpirit(ctx context.Context, spirit *spiritsinterna
 	return nil
 }
 
-func matchingSpirits(spirits []*spiritsinternal.Spirit, names []string) bool {
-	if len(spirits) != len(names) {
+func matchingSpirits(spirits []*spiritsinternal.Spirit, spiritNames []corev1.LocalObjectReference) bool {
+	if len(spirits) != len(spiritNames) {
 		return false
 	}
 
 	for i := range spirits {
-		if spirits[i].Name != names[i] {
+		if spirits[i].Name != spiritNames[i].Name {
 			return false
 		}
 	}

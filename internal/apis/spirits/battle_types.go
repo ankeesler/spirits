@@ -1,6 +1,7 @@
 package spirits
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -16,7 +17,7 @@ const (
 // BattleSpec defines the desired state of Battle
 type BattleSpec struct {
 	// Spirits are the spirits involved in this Battle
-	Spirits []string `json:"spirits"`
+	Spirits []corev1.LocalObjectReference `json:"spirits"`
 }
 
 // BattleStatus defines the observed state of Battle
@@ -34,7 +35,7 @@ type BattleStatus struct {
 	Message string `json:"message"`
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
-	InBattleSpirits []string `json:"inBattleSpirits"`
+	InBattleSpirits []corev1.LocalObjectReference `json:"inBattleSpirits,omitempty"`
 }
 
 // Battle is the Schema for the battles API

@@ -9,7 +9,7 @@ def run_all():
     deps=[hack_generate, os.path.join('pkg', 'apis')],
     auto_init=False,
     allow_parallel=True,
-    labels=['build'],
+    labels=['run'],
   )
 
   local_resource(
@@ -18,7 +18,7 @@ def run_all():
     deps=[hack_generate, os.path.join('pkg', 'controller')],
     auto_init=False,
     allow_parallel=True,
-    labels=['build'],
+    labels=['run'],
   )
 
   k8s_yaml(

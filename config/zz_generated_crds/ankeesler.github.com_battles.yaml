@@ -42,10 +42,16 @@ spec:
             description: BattleSpec defines the desired state of Battle
             properties:
               spirits:
-                description: 'Spirits are the spirits involved in this Battle TODO:
-                  this should be a LocalObjectReference'
+                description: Spirits are the spirits involved in this Battle
                 items:
-                  type: string
+                  description: LocalObjectReference contains enough information to
+                    let you locate the referenced object inside the same namespace.
+                  properties:
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                        TODO: Add other useful fields. apiVersion, kind, uid?'
+                      type: string
+                  type: object
                 maxItems: 2
                 minItems: 2
                 type: array
@@ -129,10 +135,17 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               inBattleSpirits:
-                description: 'InBattleSpirits holds the names of the Spirit''s that
-                  are participating in this Battle TODO: this should be a LocalObjectReference'
+                description: InBattleSpirits holds the names of the Spirit's that
+                  are participating in this Battle
                 items:
-                  type: string
+                  description: LocalObjectReference contains enough information to
+                    let you locate the referenced object inside the same namespace.
+                  properties:
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                        TODO: Add other useful fields. apiVersion, kind, uid?'
+                      type: string
+                  type: object
                 type: array
               message:
                 description: Message describes the reason for the Battle's Phase

@@ -9,7 +9,8 @@ import (
 	unsafe "unsafe"
 
 	spirits "github.com/ankeesler/spirits/internal/apis/spirits"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -349,7 +350,7 @@ func Convert_spirits_BattleList_To_v1alpha1_BattleList(in *spirits.BattleList, o
 }
 
 func autoConvert_v1alpha1_BattleSpec_To_spirits_BattleSpec(in *BattleSpec, out *spirits.BattleSpec, s conversion.Scope) error {
-	out.Spirits = *(*[]string)(unsafe.Pointer(&in.Spirits))
+	out.Spirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.Spirits))
 	return nil
 }
 
@@ -359,7 +360,7 @@ func Convert_v1alpha1_BattleSpec_To_spirits_BattleSpec(in *BattleSpec, out *spir
 }
 
 func autoConvert_spirits_BattleSpec_To_v1alpha1_BattleSpec(in *spirits.BattleSpec, out *BattleSpec, s conversion.Scope) error {
-	out.Spirits = *(*[]string)(unsafe.Pointer(&in.Spirits))
+	out.Spirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.Spirits))
 	return nil
 }
 
@@ -369,10 +370,10 @@ func Convert_spirits_BattleSpec_To_v1alpha1_BattleSpec(in *spirits.BattleSpec, o
 }
 
 func autoConvert_v1alpha1_BattleStatus_To_spirits_BattleStatus(in *BattleStatus, out *spirits.BattleStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Conditions = *(*[]metav1.Condition)(unsafe.Pointer(&in.Conditions))
 	out.Phase = spirits.BattlePhase(in.Phase)
 	out.Message = in.Message
-	out.InBattleSpirits = *(*[]string)(unsafe.Pointer(&in.InBattleSpirits))
+	out.InBattleSpirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.InBattleSpirits))
 	return nil
 }
 
@@ -382,10 +383,10 @@ func Convert_v1alpha1_BattleStatus_To_spirits_BattleStatus(in *BattleStatus, out
 }
 
 func autoConvert_spirits_BattleStatus_To_v1alpha1_BattleStatus(in *spirits.BattleStatus, out *BattleStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Conditions = *(*[]metav1.Condition)(unsafe.Pointer(&in.Conditions))
 	out.Phase = BattlePhase(in.Phase)
 	out.Message = in.Message
-	out.InBattleSpirits = *(*[]string)(unsafe.Pointer(&in.InBattleSpirits))
+	out.InBattleSpirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.InBattleSpirits))
 	return nil
 }
 
@@ -519,7 +520,7 @@ func Convert_spirits_SpiritStats_To_v1alpha1_SpiritStats(in *spirits.SpiritStats
 }
 
 func autoConvert_v1alpha1_SpiritStatus_To_spirits_SpiritStatus(in *SpiritStatus, out *spirits.SpiritStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Conditions = *(*[]metav1.Condition)(unsafe.Pointer(&in.Conditions))
 	out.Phase = spirits.SpiritPhase(in.Phase)
 	return nil
 }
@@ -530,7 +531,7 @@ func Convert_v1alpha1_SpiritStatus_To_spirits_SpiritStatus(in *SpiritStatus, out
 }
 
 func autoConvert_spirits_SpiritStatus_To_v1alpha1_SpiritStatus(in *spirits.SpiritStatus, out *SpiritStatus, s conversion.Scope) error {
-	out.Conditions = *(*[]v1.Condition)(unsafe.Pointer(&in.Conditions))
+	out.Conditions = *(*[]metav1.Condition)(unsafe.Pointer(&in.Conditions))
 	out.Phase = SpiritPhase(in.Phase)
 	return nil
 }
