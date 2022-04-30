@@ -1,63 +1,34 @@
-load('./globals.star', 'go_srcs')
+load('./globals.star', 'go_srcs', 'hack_generate')
 
-go_external_api_src=os.path.join('pkg', 'apis')
-go_internal_api_src=os.path.join('internal', 'apis')
-
-spirits_go_pkg_bash='$(awk \'/^module / {print $2}\' <go.mod)'
-codegen_go_pkg_bash='$(awk \'/k8s.io.code-generator/ {gsub(" ", "@"); gsub("\t", ""); print}\' <go.mod)'
+_go_external_api_src=os.path.join('pkg', 'apis')
+_go_internal_api_src=os.path.join('internal', 'apis')
 
 def _join(l):
-  s = ''
-  for e in l:
+  if len(l) == 0:
+    return ''
+
+  s = l[0]
+  for e in l[1:]:
     s += ' ' + e
+
   return s
 
 def build_all():
   local_resource(
-    'external-api',
-    [
-      'bash',
-      '-c',
-      _join([
-        'eval',
-        '"$(go env)"',
-        '&&',
-        os.path.join('${GOMODCACHE}', codegen_go_pkg_bash, 'generate-internal-groups.sh'),
-        'deepcopy,defaulter,conversion',
-        os.path.join(spirits_go_pkg_bash, go_internal_api_src),
-        os.path.join(spirits_go_pkg_bash, go_internal_api_src),
-        os.path.join(spirits_go_pkg_bash, go_external_api_src),
-        'spirits:v1alpha1',
-        '--go-header-file', 'hack/boilerplate.go.txt',
-        '-v', '1',
-      ]),
-    ],
-    deps=[go_external_api_src],
+    'go-api',
+    [hack_generate, 'generate_groups'],
+    deps=[hack_generate, _go_external_api_src],
+    ignore=['**zz_generated**'],
     auto_init=False,
     allow_parallel=True,
     labels=['build'],
   )
 
   local_resource(
-    'internal-api',
-    [
-      'bash',
-      '-c',
-      _join([
-        'eval',
-        '"$(go env)"',
-        '&&',
-        os.path.join('${GOMODCACHE}', codegen_go_pkg_bash, 'generate-internal-groups.sh'),
-        'deepcopy,defaulter,conversion',
-        os.path.join(spirits_go_pkg_bash, go_internal_api_src),
-        os.path.join(spirits_go_pkg_bash, go_internal_api_src),
-        os.path.join(spirits_go_pkg_bash, go_external_api_src),
-        'spirits:v1alpha1',
-        '--go-header-file', 'hack/boilerplate.go.txt',
-        '-v', '1',
-      ]),
-    ],
-    deps=[go_internal_api_src],
+    'internal-go-api',
+    [hack_generate, 'generate_internal_groups'],
+    deps=[hack_generate, _go_external_api_src, _go_internal_api_src],
+    ignore=['**zz_generated**'],
     auto_init=False,
     allow_parallel=True,
     labels=['build'],

@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: spirits-controller-manager
+  name: spirits-manager
 rules:
 - apiGroups:
   - ankeesler.github.com

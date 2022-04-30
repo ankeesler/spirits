@@ -15,3 +15,6 @@ test
 
 # kubernetes config directory
 config
+
+# tilt config
+tilt

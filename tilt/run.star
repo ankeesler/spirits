@@ -1,17 +1,12 @@
-load('./globals.star', 'go_srcs')
+load('./globals.star', 'go_srcs', 'hack_generate')
+
+_controller_gen_pkg='sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0'
 
 def run_all():
   local_resource(
     'crds',
-    [
-      'go',
-      'run',
-      'sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0',
-      'paths=./pkg/apis',
-      'crd',
-      'output:crd:artifacts:config=./config/zz_generated_crd'
-    ],
-    deps=[os.path.join('pkg', 'controller')],
+    [hack_generate, 'generate_crds'],
+    deps=[hack_generate, os.path.join('pkg', 'apis')],
     auto_init=False,
     allow_parallel=True,
     labels=['build'],
@@ -19,15 +14,8 @@ def run_all():
 
   local_resource(
     'rbac',
-    [
-      'go',
-      'run',
-      'sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0',
-      'paths=./pkg/controller',
-      '+rbac:roleName=zz-generated-spirits-manager',
-      'output:rbac:dir=./config',
-    ],
-    deps=[os.path.join('pkg', 'controller')],
+    [hack_generate, 'generate_rbac'],
+    deps=[hack_generate, os.path.join('pkg', 'controller')],
     auto_init=False,
     allow_parallel=True,
     labels=['build'],
