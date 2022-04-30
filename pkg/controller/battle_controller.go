@@ -29,7 +29,8 @@ import (
 // BattleReconciler reconciles a Battle object
 type BattleReconciler struct {
 	client.Client
-	Scheme     *runtime.Scheme
+	Scheme *runtime.Scheme
+
 	ActionSink ActionSource
 }
 

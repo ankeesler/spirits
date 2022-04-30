@@ -16,6 +16,7 @@ const (
 // BattleSpec defines the desired state of Battle
 type BattleSpec struct {
 	// Spirits are the spirits involved in this Battle
+	// TODO: this should be a LocalObjectReference
 	// +kubebuilder:validation:MinItems=2
 	// +kubebuilder:validation:MaxItems=2
 	Spirits []string `json:"spirits"`
@@ -40,6 +41,7 @@ type BattleStatus struct {
 	Message string `json:"message,omitempty"`
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
+	// TODO: this should be a LocalObjectReference
 	// +optional
 	InBattleSpirits []string `json:"inBattleSpirits,omitempty"`
 }

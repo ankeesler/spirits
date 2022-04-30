@@ -2,3 +2,12 @@
 # Ignore build and test binaries.
 bin/
 testbin/
+
+# scripts directory
+hack
+
+# test directory
+test
+
+# kubernetes config directory
+config

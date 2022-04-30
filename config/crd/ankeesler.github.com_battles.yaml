@@ -42,7 +42,8 @@ spec:
             description: BattleSpec defines the desired state of Battle
             properties:
               spirits:
-                description: Spirits are the spirits involved in this Battle
+                description: 'Spirits are the spirits involved in this Battle TODO:
+                  this should be a LocalObjectReference'
                 items:
                   type: string
                 maxItems: 2
@@ -128,8 +129,8 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               inBattleSpirits:
-                description: InBattleSpirits holds the names of the Spirit's that
-                  are participating in this Battle
+                description: 'InBattleSpirits holds the names of the Spirit''s that
+                  are participating in this Battle TODO: this should be a LocalObjectReference'
                 items:
                   type: string
                 type: array

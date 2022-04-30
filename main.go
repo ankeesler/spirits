@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -17,9 +18,9 @@ import (
 
 	"github.com/ankeesler/spirits/internal/actionchannel"
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
-	"github.com/ankeesler/spirits/pkg/aggregatedapi"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/ankeesler/spirits/pkg/controller"
+	"github.com/go-logr/logr"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -98,14 +99,35 @@ func main() {
 
 	ctx := ctrl.SetupSignalHandler()
 
-	setupLog.Info("starting aggregated api")
-	(&aggregatedapi.Manager{
-		ActionSink: &actionChannel,
-	}).Start(ctx)
-
-	setupLog.Info("starting controller manager")
+	setupLog.Info("starting apiserver")
+	// if err := (&apiserver.APIServer{
+	// 	Port:       9444,
+	// 	DNSName:    getDNSName(setupLog),
+	// 	ActionSink: &actionChannel,
+	// 	PostStartHook: func() error {
+	// 		go func() {
+	setupLog.Info("starting manager")
 	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+	// 		}()
+	// 		return nil
+	// 	},
+	// }).Start(ctx); err != nil {
+	// 	setupLog.Error(err, "problem running apiserver")
+	// 	os.Exit(1)
+	// }
+}
+
+func getDNSName(log logr.Logger) string {
+	namespace := os.Getenv("POD_NAMESPACE")
+	if len(namespace) == 0 {
+		namespace = "default"
+	}
+	name := os.Getenv("POD_NAME")
+	if len(name) == 0 {
+		name = "spirits-controller-manager"
+	}
+	return fmt.Sprintf("%s.%s.svc.cluster.internal", name, namespace)
 }

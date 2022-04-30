@@ -28,9 +28,7 @@ roleRef:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
-  labels:
-    app: spirits-controller-manager
+  namespace: spirits
   name: spirits-controller-manager
 spec:
   replicas: 1
@@ -44,7 +42,37 @@ spec:
       labels:
         app: spirits-controller-manager
     spec:
+      serviceAccount: spirits-controller-manager
       containers:
-      - image: spirits-controller-manager:latest
+      - image: spirits-controller-manager
         name: spirits-controller-manager
-        serviceAccount: spirits-controller-manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: spirits
+  name: spirits-apiserver
+spec:
+  type: ClusterIP
+  selector:
+    app: spirits-controller-manager
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 9444
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1alpha1.spirits.ankeesler.github.com
+spec:
+  version: v1alpha1
+  group: spirits.ankeesler.github.com
+  groupPriorityMinimum: 9900
+  versionPriority: 15
+  #! TODO: caBundle
+  insecureSkipTLSVerify: true
+  service:
+    name: spirits-apiserver
+    namespace: spirits
+    port: 443  

@@ -38,8 +38,9 @@ bash ${GOMODCACHE}/${CODEGENPKG}/generate-internal-groups.sh \
   --go-header-file hack/boilerplate.go.txt -v 1
 
 # Generate CRDs
+# TODO: put this into a generated directory
 note "running codegen for CRDs..."
-go run sigs.k8s.io/controller-tools/cmd/controller-gen \
+go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
   paths=./pkg/apis/spirits/v1alpha1 crd output:crd:artifacts:config=./config/crd
 
 # Generate RBAC

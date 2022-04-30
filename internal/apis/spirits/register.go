@@ -32,6 +32,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&BattleList{},
 		&Spirit{},
 		&SpiritList{},
+		&ActionRequest{},
+		&ActionRequestList{},
 	)
 	return nil
 }
