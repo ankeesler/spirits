@@ -48,6 +48,11 @@ spec:
       containers:
       - image: spirits-manager
         name: spirits-manager
+
+# TODO: we should create these in apiserver.Start().
+# We should be able to get the Service namespace from inside the pod.
+# We can get the Service name from...will have to think.
+# We can just Create() from the apiserver and check that the error is nil or AlreadyExists.
 ---
 apiVersion: v1
 kind: Service
@@ -72,7 +77,6 @@ spec:
   group: spirits.ankeesler.github.com
   groupPriorityMinimum: 9900
   versionPriority: 15
-  #! TODO: caBundle
   insecureSkipTLSVerify: true
   service:
     name: spirits-apiserver
