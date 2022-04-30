@@ -3,6 +3,10 @@
 bin/
 testbin/
 
+# root files
+README.md
+Tiltfile
+
 # scripts directory
 hack
 

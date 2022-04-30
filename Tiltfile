@@ -1,6 +1,11 @@
-docker_build('spirits-controller-manager', '.', dockerfile='Dockerfile')
-k8s_yaml('config/deployment.yaml')
-k8s_resource('spirits-controller-manager', port_forwards=8000)
+load('./tilt/infra.star', 'infra_all')
+infra_all()
 
-load('ext://tests/golang', 'test_go')
-test_go('unit-tests', '.', '.', recursive=True)
+load('./tilt/build.star', 'build_all')
+build_all()
+
+load('./tilt/run.star', 'run_all')
+run_all()
+
+load('./tilt/test.star', 'test_all')
+test_all()

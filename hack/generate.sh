@@ -45,6 +45,6 @@ go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
 
 # Generate RBAC
 note "running codegen for RBAC..."
-go run sigs.k8s.io/controller-tools/cmd/controller-gen \
+go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
   paths=./pkg/controller +rbac:roleName=spirits-controller-manager output:rbac:dir=./config
 mv config/role.yaml config/zz_generated.role.yaml

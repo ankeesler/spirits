@@ -4,7 +4,11 @@ FROM golang:1.18 as builder
 WORKDIR /workspace
 
 # Copy the source
-COPY . .
+COPY go.mod go.mod
+COPY go.sum go.sum
+COPY main.go main.go
+COPY pkg/ pkg/
+COPY internal/ internal/
 
 # Build
 RUN \

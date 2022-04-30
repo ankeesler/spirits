@@ -2,6 +2,7 @@
 apiVersion: ankeesler.github.com/v1alpha1
 kind: Spirit
 metadata:
+  namespace: spirits
   name: spirit-a
 spec:
   stats:
@@ -11,6 +12,7 @@ spec:
 apiVersion: ankeesler.github.com/v1alpha1
 kind: Spirit
 metadata:
+  namespace: spirits
   name: spirit-b
 spec:
   stats:

@@ -106,7 +106,7 @@ func main() {
 	// 	ActionSink: &actionChannel,
 	// 	PostStartHook: func() error {
 	// 		go func() {
-	setupLog.Info("starting manager")
+	setupLog.Info("starting managers")
 	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)

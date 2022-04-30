@@ -9,43 +9,45 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: spirits
-  name: spirits-controller-manager
+  name: spirits-manager
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   namespace: spirits
-  name: spirits-controller-manager:spirits-controller-manager
+  name: spirits-manager:spirits-manager
 subjects:
 - kind: ServiceAccount
-  name: spirits-controller-manager
+  name: spirits-manager
   namespace: spirits
 roleRef:
   kind: ClusterRole
-  name: spirits-controller-manager
+  name: spirits-manager
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: spirits
-  name: spirits-controller-manager
+  name: spirits-manager
+  annotations:
+    a: b
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spirits-controller-manager
+      app: spirits-manager
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: spirits-controller-manager
+        app: spirits-manager
     spec:
-      serviceAccount: spirits-controller-manager
+      serviceAccount: spirits-manager
       containers:
-      - image: spirits-controller-manager
-        name: spirits-controller-manager
+      - image: spirits-manager
+        name: spirits-manager
 ---
 apiVersion: v1
 kind: Service
@@ -55,7 +57,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: spirits-controller-manager
+    app: spirits-manager
   ports:
     - protocol: TCP
       port: 443
