@@ -8,15 +8,15 @@ import (
 )
 
 func Spirit(r *rand.Rand, spirit *spiritsinternal.Spirit, actionNames []string) string {
-	spirit.Spec.Stats = spiritsinternal.SpiritSpec{
+	spirit.Spec = spiritsinternal.SpiritSpec{
 		Stats: spiritsinternal.SpiritStats{
 			Health:  generateStat(r) * 2,
 			Power:   generateStat(r) / 2,
 			Agility: generateStat(r),
 			Armor:   generateStat(r) / 4,
 		},
+		Actions: generateActions(r, actionNames),
 	}
-	spirit.Spec.Actions = generateActions(r, actionNames)
 	return generateName(r)
 }
 

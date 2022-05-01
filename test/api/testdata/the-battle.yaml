@@ -2,7 +2,6 @@
 apiVersion: ankeesler.github.com/v1alpha1
 kind: Battle
 metadata:
-  namespace: spirits
   name: the-battle
 spec:
   spirits:

@@ -34,7 +34,9 @@ func init() {
 }
 
 func TestAPI(t *testing.T) {
-	ctx, cancel := context.WithTimeout(time.Minute * 30)
+	t.Skip("not ready for CI yet")
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*3)
 	defer cancel()
 
 	// Read test fixtures
@@ -55,6 +57,9 @@ func TestAPI(t *testing.T) {
 	namespace, err = coreClientset.CoreV1().Namespaces().Create(ctx, namespace, metav1.CreateOptions{})
 	require.NoError(t, err)
 	t.Cleanup(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+
 		if err := coreClientset.CoreV1().Namespaces().Delete(ctx, namespace.Name, metav1.DeleteOptions{}); err != nil {
 			t.Log("could not delete namespace:", err.Error())
 		}

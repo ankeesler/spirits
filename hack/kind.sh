@@ -25,7 +25,7 @@ up() {
     - |-
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
         endpoint = ["http://${REG_NAME}:5000"]
-  EOF
+EOF
   fi
   
   # connect the registry to the cluster network if not already connected
@@ -45,7 +45,7 @@ up() {
     localRegistryHosting.v1: |
       host: "localhost:${reg_port}"
       help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
-  EOF
+EOF
 }
 
 down() {
@@ -54,4 +54,8 @@ down() {
   docker rm "$REG_NAME"
 }
 
-"$@"
+if [[ "$#" == "0" ]]; then
+  up
+else
+  "$@"
+fi
