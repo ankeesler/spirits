@@ -61,6 +61,15 @@ spec:
           status:
             description: BattleStatus defines the observed state of Battle
             properties:
+              actingSpirit:
+                description: ActingSpirit holds the name of the Spirit that is currently
+                  acting in this Battle
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
               conditions:
                 description: Conditions represents the observations of a Battle's
                   current state

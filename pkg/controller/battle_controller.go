@@ -223,6 +223,7 @@ func (r *BattleReconciler) battleCallback(
 		} else {
 			battle.Status.Phase = spiritsinternal.BattlePhaseRunning
 		}
+		battle.Status.ActingSpirit = corev1.LocalObjectReference{}
 
 		return nil
 	}); err != nil {
@@ -261,7 +262,7 @@ func (r *BattleReconciler) convertToInternalBattle(
 		internalSpirit.Spec.Internal.Action, err = getAction(
 			spirit.Spec.Actions,
 			spirit.Spec.Intelligence,
-			r.getLazyActionFunc(battle, spirit),
+			r.getLazyActionFunc(battle.DeepCopy(), spirit.DeepCopy()),
 		)
 		if err != nil {
 			return nil, nil, fmt.Errorf("get action: %w", err)
@@ -278,6 +279,14 @@ func (r *BattleReconciler) getLazyActionFunc(
 	spirit *spiritsv1alpha1.Spirit,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
+		if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
+			battle.Status.ActingSpirit = corev1.LocalObjectReference{Name: spirit.Name}
+			battle.Status.Phase = spiritsv1alpha1.BattlePhaseAwaitingAction
+			return nil
+		}); err != nil {
+			return nil, fmt.Errorf("create or patch: %w", err)
+		}
+
 		battleName, ok := spirit.Labels[inBattleSpiritBattleNameLabel]
 		if !ok {
 			return nil, errors.New("unknown battle name")

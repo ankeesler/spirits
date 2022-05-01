@@ -219,6 +219,7 @@ func (in *BattleStatus) DeepCopyInto(out *BattleStatus) {
 		*out = make([]v1.LocalObjectReference, len(*in))
 		copy(*out, *in)
 	}
+	out.ActingSpirit = in.ActingSpirit
 	return
 }
 

@@ -8,10 +8,11 @@ import (
 type BattlePhase string
 
 const (
-	BattlePhasePending  BattlePhase = "Pending"
-	BattlePhaseRunning  BattlePhase = "Running"
-	BattlePhaseFinished BattlePhase = "Finished"
-	BattlePhaseError    BattlePhase = "Error"
+	BattlePhasePending        BattlePhase = "Pending"
+	BattlePhaseRunning        BattlePhase = "Running"
+	BattlePhaseAwaitingAction BattlePhase = "AwaitingAction"
+	BattlePhaseFinished       BattlePhase = "Finished"
+	BattlePhaseError          BattlePhase = "Error"
 )
 
 // BattleSpec defines the desired state of Battle
@@ -43,6 +44,10 @@ type BattleStatus struct {
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
 	// +optional
 	InBattleSpirits []corev1.LocalObjectReference `json:"inBattleSpirits,omitempty"`
+
+	// ActingSpirit holds the name of the Spirit that is currently acting in this Battle
+	// +optional
+	ActingSpirit corev1.LocalObjectReference `json:"actingSpirit,omitempty"`
 }
 
 // Battle is the Schema for the battles API

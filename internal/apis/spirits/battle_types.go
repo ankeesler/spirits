@@ -36,6 +36,8 @@ type BattleStatus struct {
 
 	// InBattleSpirits holds the names of the Spirit's that are participating in this Battle
 	InBattleSpirits []corev1.LocalObjectReference `json:"inBattleSpirits,omitempty"`
+
+	ActingSpirit corev1.LocalObjectReference `json:"actingSpirit,omitempty"`
 }
 
 // Battle is the Schema for the battles API

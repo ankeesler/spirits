@@ -1,0 +1,10 @@
+---
+apiVersion: ankeesler.github.com/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits
+  name: spirit-b
+spec:
+  stats:
+    health: 5
+    power: 2

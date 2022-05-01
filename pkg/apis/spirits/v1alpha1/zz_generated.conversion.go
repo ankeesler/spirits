@@ -374,6 +374,7 @@ func autoConvert_v1alpha1_BattleStatus_To_spirits_BattleStatus(in *BattleStatus,
 	out.Phase = spirits.BattlePhase(in.Phase)
 	out.Message = in.Message
 	out.InBattleSpirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.InBattleSpirits))
+	out.ActingSpirit = in.ActingSpirit
 	return nil
 }
 
@@ -387,6 +388,7 @@ func autoConvert_spirits_BattleStatus_To_v1alpha1_BattleStatus(in *spirits.Battl
 	out.Phase = BattlePhase(in.Phase)
 	out.Message = in.Message
 	out.InBattleSpirits = *(*[]v1.LocalObjectReference)(unsafe.Pointer(&in.InBattleSpirits))
+	out.ActingSpirit = in.ActingSpirit
 	return nil
 }
 
