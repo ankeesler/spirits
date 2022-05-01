@@ -60,7 +60,9 @@ type SpiritStats struct {
 // SpiritSpec defines the desired state of Spirit
 type SpiritSpec struct {
 	// Stats are the current statistics that describe this Spirit
-	Stats SpiritStats `json:"stats"`
+	// +kubebuilder:default={health: 1}
+	// +optional
+	Stats SpiritStats `json:"stats,omitempty"`
 
 	// Actions are the list of actions that this Spirit can perform
 	// +kubebuilder:default={attack}
