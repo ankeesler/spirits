@@ -1,3 +1,5 @@
+load('ext://restart_process', 'docker_build_with_restart')
+
 load(
   './globals.star',
   'go_srcs',
@@ -45,10 +47,11 @@ def build_all():
     labels=['build'],
   )
 
-  docker_build(
+  docker_build_with_restart(
     'spirits-manager',
     '.',
     dockerfile='tilt/Dockerfile',
+    entrypoint='/manager',
     live_update=[
       sync('manager', '/manager'),
     ],

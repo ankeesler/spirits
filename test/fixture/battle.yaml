@@ -5,4 +5,6 @@ metadata:
   namespace: spirits
   name: the-battle
 spec:
-  spirits: ["spirit-a", "spirit-b"]
+  spirits:
+  - name: spirit-a
+  - name: spirit-b

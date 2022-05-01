@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand"
 
 	"github.com/go-logr/logr"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,7 +11,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/ankeesler/spirits/internal/action"
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
@@ -25,43 +23,33 @@ import (
 type SpiritReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
-
-	ActionSource ActionSource
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&spiritsv1alpha1.Spirit{}).
-		Complete(&reconciler[*spiritsv1alpha1.Spirit, *spiritsinternal.Spirit]{
-			Client: r.Client,
-			Scheme: r.Scheme,
-			Handler: &spiritHandler{
-				ActionSource: r.ActionSource,
-			},
-		})
+		Complete(r)
 }
 
-type spiritHandler struct {
-	ActionSource ActionSource
+func (r *SpiritReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	var spirit spiritsv1alpha1.Spirit
+	return reconcile(ctx, req, &reconcileHelper[*spiritsv1alpha1.Spirit]{
+		Client:   r.Client,
+		Object:   &spirit,
+		OnUpsert: r.onUpsert,
+	})
 }
 
-func (h *spiritHandler) NewExternal() *spiritsv1alpha1.Spirit { return &spiritsv1alpha1.Spirit{} }
-func (h *spiritHandler) NewInternal() *spiritsinternal.Spirit { return &spiritsinternal.Spirit{} }
-
-func (h *spiritHandler) OnDelete(context.Context, logr.Logger, ctrl.Request) error {
-	return nil
-}
-
-func (h *spiritHandler) OnUpsert(
+func (r *SpiritReconciler) onUpsert(
 	ctx context.Context,
 	log logr.Logger,
 	req ctrl.Request,
-	spirit *spiritsinternal.Spirit,
+	spirit *spiritsv1alpha1.Spirit,
 ) error {
 	// Update conditions on current spirit status
 	spirit.Status.Conditions = []metav1.Condition{
-		newCondition(spirit, readyCondition, h.readySpirit(ctx, log, spirit)),
+		newCondition(spirit, readyCondition, r.readySpirit(ctx, log, spirit)),
 	}
 
 	// Update spirit phase
@@ -70,67 +58,28 @@ func (h *spiritHandler) OnUpsert(
 	return nil
 }
 
-func (h *spiritHandler) readySpirit(
+func (r *SpiritReconciler) readySpirit(
 	ctx context.Context,
 	log logr.Logger,
-	spirit *spiritsinternal.Spirit,
+	spirit *spiritsv1alpha1.Spirit,
 ) error {
 	if _, err := getAction(
 		spirit.Spec.Actions,
 		spirit.Spec.Intelligence,
-		getLazyActionFunc(spirit, h.ActionSource),
+		func(ctx context.Context) (spiritsinternal.Action, error) {
+			return nil, errors.New("this was a placeholder function meant for spirit validation")
+		},
 	); err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}
 	return nil
 }
 
-func getAction(
-	actionNames []string,
-	intelligence spiritsinternal.SpiritIntelligence,
-	lazyActionFunc func(ctx context.Context) (spiritsinternal.Action, error),
-) (spiritsinternal.Action, error) {
-	// Note: the spirit actions should always be at least of length 1 thanks to defaulting
-	var actions []spiritsinternal.Action
-	for _, actionName := range actionNames {
-		switch actionName {
-		case "", "attack":
-			actions = append(actions, action.Attack())
-		case "bolster":
-			actions = append(actions, action.Bolster())
-		case "drain":
-			actions = append(actions, action.Drain())
-		case "charge":
-			actions = append(actions, action.Charge())
-		default:
-			return nil, fmt.Errorf("unrecognized action: %q", actionName)
-		}
-	}
-
-	// Note: the spirit intelligence should always default to a non-empty string
-	var internalAction spiritsinternal.Action
-	switch intelligence {
-	case spiritsinternal.SpiritIntelligenceRoundRobin:
-		internalAction = action.RoundRobin(actions)
-	case spiritsinternal.SpiritIntelligenceRandom:
-		internalAction = action.Random(rand.New(rand.NewSource(0)), actions)
-	case spiritsinternal.SpiritIntelligenceHuman:
-		if lazyActionFunc == nil {
-			return nil, errors.New("human action is not supported")
-		}
-		internalAction = action.Lazy(lazyActionFunc)
-	default:
-		return nil, fmt.Errorf("unrecognized intelligence: %q", intelligence)
-	}
-
-	return internalAction, nil
-}
-
-func getSpiritPhase(conditions []metav1.Condition) spiritsinternal.SpiritPhase {
+func getSpiritPhase(conditions []metav1.Condition) spiritsv1alpha1.SpiritPhase {
 	for i := range conditions {
 		if conditions[i].Status == metav1.ConditionFalse {
-			return spiritsinternal.SpiritPhaseError
+			return spiritsv1alpha1.SpiritPhaseError
 		}
 	}
-	return spiritsinternal.SpiritPhaseReady
+	return spiritsv1alpha1.SpiritPhaseReady
 }

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
@@ -32,7 +34,8 @@ type BattleReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	ActionSink ActionSource
+	ActionSource     ActionSource
+	BattleCancelFuns sync.Map
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -40,63 +43,53 @@ func (r *BattleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&spiritsv1alpha1.Battle{}).
 		Owns(&spiritsv1alpha1.Spirit{}).
-		Complete(&reconciler[*spiritsv1alpha1.Battle, *spiritsinternal.Battle]{
-			Client: r.Client,
-			Scheme: r.Scheme,
-			Handler: &battleHandler{
-				Client:     r.Client,
-				Scheme:     r.Scheme,
-				ActionSink: r.ActionSink,
-			},
-		})
+		Complete(r)
 }
 
-type battleHandler struct {
-	client.Client
-	Scheme *runtime.Scheme
-
-	ActionSink ActionSource
-
-	Battles sync.Map
+func (r *BattleReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	var battle spiritsv1alpha1.Battle
+	return reconcile(ctx, req, &reconcileHelper[*spiritsv1alpha1.Battle]{
+		Client:   r.Client,
+		Object:   &battle,
+		OnDelete: r.onDelete,
+		OnUpsert: r.onUpsert,
+	})
 }
 
-func (h *battleHandler) NewExternal() *spiritsv1alpha1.Battle { return &spiritsv1alpha1.Battle{} }
-func (h *battleHandler) NewInternal() *spiritsinternal.Battle { return &spiritsinternal.Battle{} }
-
-func (h *battleHandler) OnDelete(ctx context.Context, log logr.Logger, req ctrl.Request) error {
-	if cancel, ok := h.Battles.LoadAndDelete(req.NamespacedName.String()); ok {
+func (r *BattleReconciler) onDelete(ctx context.Context, log logr.Logger, req ctrl.Request) error {
+	if cancel, ok := r.BattleCancelFuns.LoadAndDelete(req.NamespacedName.String()); ok {
 		cancel.(context.CancelFunc)()
 	}
 	return nil
 }
 
-func (h *battleHandler) OnUpsert(
+func (r *BattleReconciler) onUpsert(
 	ctx context.Context,
 	log logr.Logger,
 	req ctrl.Request,
-	battle *spiritsinternal.Battle,
+	battle *spiritsv1alpha1.Battle,
 ) error {
 	// Update conditions on current battle status
 	battle.Status.Conditions = []metav1.Condition{
-		newCondition(battle, progressingCondition, h.progressBattle(ctx, log, battle)),
+		newCondition(battle, progressingCondition, r.progressBattle(ctx, log, battle)),
 	}
 
 	// Force the battle phase to be error, if there is one
 	// Otherwise the battle phase will get updated by the battle callback
 	if !meta.IsStatusConditionTrue(battle.Status.Conditions, progressingCondition) {
-		battle.Status.Phase = spiritsinternal.BattlePhaseError
+		battle.Status.Phase = spiritsv1alpha1.BattlePhaseError
 	}
 
 	return nil
 }
 
-func (h *battleHandler) progressBattle(
+func (r *BattleReconciler) progressBattle(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsinternal.Battle,
+	battle *spiritsv1alpha1.Battle,
 ) error {
 	// Get the spirits that are used in this battle
-	inBattleSpirits, err := h.getInBattleSpirits(ctx, log, battle)
+	inBattleSpirits, err := r.getInBattleSpirits(ctx, log, battle)
 	if err != nil {
 		return fmt.Errorf("get in battle spirits: %w", err)
 	}
@@ -104,7 +97,7 @@ func (h *battleHandler) progressBattle(
 	// Go ahead and create a context for the battle, it will be canceled if
 	// not used by the battle
 	ctx, cancel := context.WithCancel(context.Background())
-	cancelAny, exists := h.Battles.LoadOrStore(client.ObjectKeyFromObject(battle).String(), cancel)
+	cancelAny, exists := r.BattleCancelFuns.LoadOrStore(client.ObjectKeyFromObject(battle).String(), cancel)
 
 	// If the battle exists...
 	if exists {
@@ -120,7 +113,11 @@ func (h *battleHandler) progressBattle(
 	}
 
 	// Start the battle
-	go battlerunner.Run(ctx, battle, inBattleSpirits, h.battleCallback)
+	internalBattle, internalInBattleSpirits, err := r.convertToInternalBattle(battle, inBattleSpirits)
+	if err != nil {
+		return fmt.Errorf("convert to internal battle: %w", err)
+	}
+	go battlerunner.Run(ctx, internalBattle, internalInBattleSpirits, r.battleCallback)
 
 	// Update the spirits that are running in this battle
 	battle.Status.InBattleSpirits = []corev1.LocalObjectReference{}
@@ -136,19 +133,20 @@ func (h *battleHandler) progressBattle(
 	return nil
 }
 
-func (h *battleHandler) getInBattleSpirits(
+func (r *BattleReconciler) getInBattleSpirits(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsinternal.Battle,
-) ([]*spiritsinternal.Spirit, error) {
-	spirits, err := h.getSpirits(ctx, log, battle)
+	battle *spiritsv1alpha1.Battle,
+) ([]*spiritsv1alpha1.Spirit, error) {
+	spirits, err := r.getSpirits(ctx, log, battle)
 	if err != nil {
 		return nil, fmt.Errorf("get spirits: %w", err)
 	}
 
-	var inBattleSpirits []*spiritsinternal.Spirit
+	var inBattleSpirits []*spiritsv1alpha1.Spirit
 	for _, spirit := range spirits {
-		inBattleSpirit := spiritsinternal.Spirit{
+		// Get in-battle external spirit
+		inBattleSpirit := spiritsv1alpha1.Spirit{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: battle.Namespace,
 				Name:      fmt.Sprintf("%s-%s-%d", battle.Name, spirit.Name, spirit.Generation),
@@ -157,14 +155,13 @@ func (h *battleHandler) getInBattleSpirits(
 					inBattleSpiritSpiritNameLabel:       spirit.Name,
 					inBattleSpiritSpiritGenerationLabel: fmt.Sprintf("%d", spirit.Generation),
 				},
-				// TODO: set owner ref
-				// OwnerReferences: []metav1.OwnerReference{
-				// 	*metav1.NewControllerRef(battle, battle.GroupVersionKind()),
-				// },
+				OwnerReferences: []metav1.OwnerReference{
+					*metav1.NewControllerRef(battle, battle.GroupVersionKind()),
+				},
 			},
 			Spec: spirit.Spec,
 		}
-		if err := h.createSpirit(ctx, &inBattleSpirit); err != nil && !k8serrors.IsAlreadyExists(err) {
+		if err := r.Create(ctx, &inBattleSpirit); err != nil && !k8serrors.IsAlreadyExists(err) {
 			return nil, fmt.Errorf("create in battle spirit: %w", err)
 		}
 
@@ -174,20 +171,20 @@ func (h *battleHandler) getInBattleSpirits(
 	return inBattleSpirits, nil
 }
 
-func (h *battleHandler) getSpirits(
+func (r *BattleReconciler) getSpirits(
 	ctx context.Context,
 	log logr.Logger,
-	battle *spiritsinternal.Battle,
-) ([]*spiritsinternal.Spirit, error) {
-	var spirits []*spiritsinternal.Spirit
+	battle *spiritsv1alpha1.Battle,
+) ([]*spiritsv1alpha1.Spirit, error) {
+	var spirits []*spiritsv1alpha1.Spirit
 	for _, spiritName := range battle.Spec.Spirits {
-		spirit := spiritsinternal.Spirit{
+		spirit := spiritsv1alpha1.Spirit{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: battle.Namespace,
 				Name:      spiritName.Name,
 			},
 		}
-		if err := h.getSpirit(ctx, &spirit); err != nil {
+		if err := r.Get(ctx, client.ObjectKeyFromObject(&spirit), &spirit); err != nil {
 			return nil, fmt.Errorf("get spirit: %w", err)
 		}
 
@@ -200,7 +197,7 @@ func (h *battleHandler) getSpirits(
 	return spirits, nil
 }
 
-func (h *battleHandler) battleCallback(
+func (r *BattleReconciler) battleCallback(
 	battle *spiritsinternal.Battle,
 	inBattleSpirits []*spiritsinternal.Spirit,
 	done bool,
@@ -213,7 +210,7 @@ func (h *battleHandler) battleCallback(
 	defer cancel()
 
 	// Update the battle
-	if err := createOrPatch(ctx, h.Client, h.Scheme, battle, &spiritsv1alpha1.Battle{}, func() error {
+	if err := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
 		battle.Status.Conditions = []metav1.Condition{
 			newCondition(battle, progressingCondition, err),
 		}
@@ -235,7 +232,7 @@ func (h *battleHandler) battleCallback(
 	// Update the spirits
 	for _, inBattleSpirit := range inBattleSpirits {
 		spirit := inBattleSpirit.DeepCopy()
-		if err := createOrPatch(ctx, h.Client, h.Scheme, spirit, &spiritsv1alpha1.Spirit{}, func() error {
+		if err := r.convertAndCreateOrPatch(ctx, spirit, &spiritsv1alpha1.Spirit{}, func() error {
 			spirit.Spec = inBattleSpirit.Spec
 			return nil
 		}); err != nil {
@@ -244,45 +241,114 @@ func (h *battleHandler) battleCallback(
 	}
 }
 
-// TODO: we shoudl generic-ify these functions
-
-func (h *battleHandler) getSpirit(ctx context.Context, spirit *spiritsinternal.Spirit) error {
-	var externalSpirit spiritsv1alpha1.Spirit
-	if err := h.Get(ctx, client.ObjectKeyFromObject(spirit), &externalSpirit); err != nil {
-		return fmt.Errorf("get spirit: %w", err)
+func (r *BattleReconciler) convertToInternalBattle(
+	battle *spiritsv1alpha1.Battle,
+	spirits []*spiritsv1alpha1.Spirit,
+) (*spiritsinternal.Battle, []*spiritsinternal.Spirit, error) {
+	var internalBattle spiritsinternal.Battle
+	if err := r.Scheme.Convert(battle, &internalBattle, nil); err != nil {
+		return nil, nil, fmt.Errorf("convert external battle to internal battle: %w", err)
 	}
 
-	if err := h.Scheme.Convert(&externalSpirit, spirit, nil); err != nil {
-		return fmt.Errorf("convert external spirit to internal spirit: %w", err)
+	internalSpirits := []*spiritsinternal.Spirit{}
+	for _, spirit := range spirits {
+		var internalSpirit spiritsinternal.Spirit
+		if err := r.Scheme.Convert(&internalSpirit, spirit, nil); err != nil {
+			return nil, nil, fmt.Errorf("convert external spirit to internal spirit: %w", err)
+		}
+
+		var err error
+		internalSpirit.Spec.Internal.Action, err = getAction(
+			spirit.Spec.Actions,
+			spirit.Spec.Intelligence,
+			r.getLazyActionFunc(battle, spirit),
+		)
+		if err != nil {
+			return nil, nil, fmt.Errorf("get action: %w", err)
+		}
+
+		internalSpirits = append(internalSpirits, &internalSpirit)
 	}
 
-	var err error
-	spirit.Spec.Internal.Action, err = getAction(
-		spirit.Spec.Actions,
-		spirit.Spec.Intelligence,
-		getLazyActionFunc(spirit, h.ActionSink),
-	)
-	if err != nil {
-		return fmt.Errorf("get action: %w", err)
-	}
+	return &internalBattle, internalSpirits, nil
+}
 
+func (r *BattleReconciler) getLazyActionFunc(
+	battle *spiritsv1alpha1.Battle,
+	spirit *spiritsv1alpha1.Spirit,
+) func(ctx context.Context) (spiritsinternal.Action, error) {
+	return func(ctx context.Context) (spiritsinternal.Action, error) {
+		battleName, ok := spirit.Labels[inBattleSpiritBattleNameLabel]
+		if !ok {
+			return nil, errors.New("unknown battle name")
+		}
+
+		battleGeneration, ok := spirit.Labels[inBattleSpiritBattleGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown battle name")
+		}
+
+		spiritName, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown spirit name")
+		}
+
+		spiritGeneration, ok := spirit.Labels[inBattleSpiritSpiritGenerationLabel]
+		if !ok {
+			return nil, errors.New("unknown spirit generation")
+		}
+
+		actionName, err := r.ActionSource.Pend(
+			ctx,
+			spirit.Namespace,
+			battleName,
+			battleGeneration,
+			spiritName,
+			spiritGeneration,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("actions queue pend: %w", err)
+		}
+
+		action, err := getAction([]string{actionName}, "", nil)
+		if err != nil {
+			return nil, fmt.Errorf("get action: %w", err)
+		}
+
+		return action, nil
+	}
+}
+
+func (r *BattleReconciler) convertAndCreateOrPatch(
+	ctx context.Context,
+	internalObj, externalObj client.Object,
+	mutateFunc func() error,
+) error {
+	externalObj.SetNamespace(internalObj.GetNamespace())
+	externalObj.SetName(internalObj.GetName())
+	externalObj.SetLabels(internalObj.GetLabels())
+	externalObj.SetOwnerReferences(internalObj.GetOwnerReferences())
+	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalObj, func() error {
+		if err := r.Scheme.Convert(externalObj, internalObj, nil); err != nil {
+			return fmt.Errorf("convert external object to internal object: %w", err)
+		}
+
+		if err := mutateFunc(); err != nil {
+			return err
+		}
+
+		if err := r.Scheme.Convert(internalObj, externalObj, nil); err != nil {
+			return fmt.Errorf("convert internal object to external object: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (h *battleHandler) createSpirit(ctx context.Context, spirit *spiritsinternal.Spirit) error {
-	var externalSpirit spiritsv1alpha1.Spirit
-	if err := h.Scheme.Convert(spirit, &externalSpirit, nil); err != nil {
-		return fmt.Errorf("convert internal spirit to external spirit: %w", err)
-	}
-
-	if err := h.Create(ctx, &externalSpirit); err != nil {
-		return fmt.Errorf("update spirit: %w", err)
-	}
-
-	return nil
-}
-
-func matchingSpirits(spirits []*spiritsinternal.Spirit, spiritNames []corev1.LocalObjectReference) bool {
+func matchingSpirits(spirits []*spiritsv1alpha1.Spirit, spiritNames []corev1.LocalObjectReference) bool {
 	if len(spirits) != len(spiritNames) {
 		return false
 	}
