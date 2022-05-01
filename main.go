@@ -20,6 +20,7 @@ import (
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	"github.com/ankeesler/spirits/pkg/controller"
+	"github.com/ankeesler/spirits/pkg/webhook"
 	"github.com/go-logr/logr"
 	//+kubebuilder:scaffold:imports
 )
@@ -86,6 +87,11 @@ func main() {
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
+
+	if err = (&webhook.SpiritWebhook{}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Spirit")
+		os.Exit(1)
+	}
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")

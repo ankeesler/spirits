@@ -36,7 +36,9 @@ const (
 type SpiritStats struct {
 	// Health is a quantitative representation of the energy of the Spirit.
 	// When this drops to 0, the Spirit is no longer able to participate in a Battle.
-	// +kubebuilder:validation:Minimum=0
+	// +kubebuilder:default=1
+	// +kubebuilder:validation:Minimum=1
+	// +optional
 	Health int `json:"health"`
 
 	// Power is a quantitative representation of the attacking ability of the Spirit.

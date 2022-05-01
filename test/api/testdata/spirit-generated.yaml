@@ -1,0 +1,10 @@
+---
+apiVersion: ankeesler.github.com/v1alpha1
+kind: Spirit
+metadata:
+  namespace: spirits
+  name: spirit-generated
+  annotations:
+    spirits.ankeesler.github.com/generate: ""
+    spirits.ankeesler.github.com/generate-seed: "88"
+spec: {}
