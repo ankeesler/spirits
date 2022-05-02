@@ -71,14 +71,12 @@ func main() {
 
 	if err = (&controller.SpiritReconciler{
 		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Spirit")
 		os.Exit(1)
 	}
 	if err = (&controller.BattleReconciler{
 		Client:       mgr.GetClient(),
-		Scheme:       mgr.GetScheme(),
 		ActionSource: &actionChannel,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Battle")

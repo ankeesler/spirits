@@ -11,11 +11,9 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	"github.com/ankeesler/spirits/internal/battlerunner"
@@ -26,7 +24,6 @@ import (
 // BattleReconciler reconciles a Battle object
 type BattleReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
 
 	ActionSource      ActionSource
 	BattleCancelFuncs sync.Map
@@ -202,7 +199,7 @@ func (r *BattleReconciler) battleCallback(
 	done bool,
 	err error,
 ) {
-	log.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", inBattleSpirits, "err", err)
+	ctrl.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", inBattleSpirits, "err", err)
 
 	// Set a really long timeout, just in case
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
@@ -226,7 +223,7 @@ func (r *BattleReconciler) battleCallback(
 
 		return nil
 	}); err != nil {
-		log.Log.Error(err, "create or patch battle")
+		ctrl.Log.Error(err, "create or patch battle")
 	}
 
 	// Update the spirits
@@ -236,7 +233,7 @@ func (r *BattleReconciler) battleCallback(
 			internalSpirit.Spec = inBattleSpirit.Spec
 			return nil
 		}); err != nil {
-			log.Log.Error(err, "create or patch spirit")
+			ctrl.Log.Error(err, "create or patch spirit")
 		}
 	}
 }
@@ -246,18 +243,18 @@ func (r *BattleReconciler) convertToInternalBattle(
 	spirits []*spiritsv1alpha1.Spirit,
 ) (*spiritsinternal.Battle, []*spiritsinternal.Spirit, error) {
 	var internalBattle spiritsinternal.Battle
-	if err := r.Scheme.Convert(battle, &internalBattle, nil); err != nil {
+	if err := r.Client.Scheme().Convert(battle, &internalBattle, nil); err != nil {
 		return nil, nil, fmt.Errorf("convert external battle to internal battle: %w", err)
 	}
-	log.Log.V(2).Info("convert external battle to internal battle", "external battle", battle, "internal battle", internalBattle)
+	ctrl.Log.V(2).Info("convert external battle to internal battle", "external battle", battle, "internal battle", internalBattle)
 
 	internalSpirits := []*spiritsinternal.Spirit{}
 	for _, spirit := range spirits {
 		var internalSpirit spiritsinternal.Spirit
-		if err := r.Scheme.Convert(spirit, &internalSpirit, nil); err != nil {
+		if err := r.Client.Scheme().Convert(spirit, &internalSpirit, nil); err != nil {
 			return nil, nil, fmt.Errorf("convert external spirit to internal spirit: %w", err)
 		}
-		log.Log.V(2).Info("convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
+		ctrl.Log.V(2).Info("convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
 
 		var err error
 		internalSpirit.Spec.Internal.Action, err = getAction(
@@ -280,7 +277,7 @@ func (r *BattleReconciler) getLazyActionFunc(
 	inBattleSpirit *spiritsv1alpha1.Spirit,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
-		log.Log.V(1).Info("lazy action func", "battle", battle, "inBattleSpirit", inBattleSpirit)
+		ctrl.Log.V(1).Info("lazy action func", "battle", battle, "inBattleSpirit", inBattleSpirit)
 
 		if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
 			battle.Status.ActingSpirit = corev1.LocalObjectReference{Name: inBattleSpirit.Name}
@@ -341,25 +338,25 @@ func (r *BattleReconciler) convertAndCreateOrPatch(
 	externalObj.SetLabels(internalObj.GetLabels())
 	externalObj.SetOwnerReferences(internalObj.GetOwnerReferences())
 	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalObj, func() error {
-		log.Log.V(2).Info("convert and create or patch: pre-external-to-internal-convert", "internal object", internalObj, "external object", externalObj)
+		ctrl.Log.V(2).Info("convert and create or patch: pre-external-to-internal-convert", "internal object", internalObj, "external object", externalObj)
 
-		if err := r.Scheme.Convert(externalObj, internalObj, nil); err != nil {
+		if err := r.Client.Scheme().Convert(externalObj, internalObj, nil); err != nil {
 			return fmt.Errorf("convert external object to internal object: %w", err)
 		}
 
-		log.Log.V(2).Info("convert and create or patch: pre-mutate", "internal object", internalObj, "external object", externalObj)
+		ctrl.Log.V(2).Info("convert and create or patch: pre-mutate", "internal object", internalObj, "external object", externalObj)
 
 		if err := mutateFunc(); err != nil {
 			return err
 		}
 
-		log.Log.V(2).Info("convert and create or patch: post-mutate", "internal object", internalObj, "external object", externalObj)
+		ctrl.Log.V(2).Info("convert and create or patch: post-mutate", "internal object", internalObj, "external object", externalObj)
 
-		if err := r.Scheme.Convert(internalObj, externalObj, nil); err != nil {
+		if err := r.Client.Scheme().Convert(internalObj, externalObj, nil); err != nil {
 			return fmt.Errorf("convert internal object to external object: %w", err)
 		}
 
-		log.Log.V(2).Info("convert and create or patch: post-internal-to-external-convert", "internal object", internalObj, "external object", externalObj)
+		ctrl.Log.V(2).Info("convert and create or patch: post-internal-to-external-convert", "internal object", internalObj, "external object", externalObj)
 
 		return nil
 	}); err != nil {

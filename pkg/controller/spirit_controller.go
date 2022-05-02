@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-logr/logr"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -18,7 +17,6 @@ import (
 // SpiritReconciler reconciles a Spirit object
 type SpiritReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
 }
 
 // SetupWithManager sets up the controller with the Manager.

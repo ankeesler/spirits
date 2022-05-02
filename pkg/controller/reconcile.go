@@ -49,7 +49,6 @@ func reconcile[T client.Object](
 				return fmt.Errorf("handle upsert: %w", err)
 			}
 		}
-
 		return nil
 	}); err != nil {
 		return ctrl.Result{}, fmt.Errorf("create or patch %w", err)
