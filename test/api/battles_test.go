@@ -68,8 +68,8 @@ func TestNonHumanIntelligenceBattle(t *testing.T) {
 	require.NoError(t, err)
 	gotInBattleSpiritsStats := getInBattleSpiritStats(t, ctx, tc.spiritsClientset, battle)
 	require.Len(t, gotInBattleSpiritsStats, 2)
-	require.Equal(t, 0, gotInBattleSpiritsStats["the-battle-spirit-a-1"].Health)
-	require.Equal(t, 1, gotInBattleSpiritsStats["the-battle-spirit-b-1"].Health)
+	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-spirit-a-1"].Health)
+	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-battle-spirit-b-1"].Health)
 }
 
 func TestInvalidBattles(t *testing.T) {
