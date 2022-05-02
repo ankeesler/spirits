@@ -477,6 +477,7 @@ func autoConvert_v1alpha1_SpiritSpec_To_spirits_SpiritSpec(in *SpiritSpec, out *
 	}
 	out.Actions = *(*[]string)(unsafe.Pointer(&in.Actions))
 	out.Intelligence = spirits.SpiritIntelligence(in.Intelligence)
+	out.Attributes = *(*map[string]string)(unsafe.Pointer(&in.Attributes))
 	return nil
 }
 
@@ -491,6 +492,7 @@ func autoConvert_spirits_SpiritSpec_To_v1alpha1_SpiritSpec(in *spirits.SpiritSpe
 	}
 	out.Actions = *(*[]string)(unsafe.Pointer(&in.Actions))
 	out.Intelligence = SpiritIntelligence(in.Intelligence)
+	out.Attributes = *(*map[string]string)(unsafe.Pointer(&in.Attributes))
 	// WARNING: in.Internal requires manual conversion: does not exist in peer-type
 	return nil
 }

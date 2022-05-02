@@ -303,6 +303,13 @@ func (in *SpiritSpec) DeepCopyInto(out *SpiritSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.Attributes != nil {
+		in, out := &in.Attributes, &out.Attributes
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	return
 }
 

@@ -52,6 +52,11 @@ spec:
                 items:
                   type: string
                 type: array
+              attributes:
+                additionalProperties:
+                  type: string
+                description: Attributes are generic properties for a Spirit
+                type: object
               intelligence:
                 default: RoundRobin
                 description: Intelligence describes how a Spirit will select actions

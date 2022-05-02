@@ -68,6 +68,8 @@ type SpiritSpec struct {
 	// +optional
 	Intelligence SpiritIntelligence `json:"intelligence"`
 
+	Attributes map[string]string `json:"attributes,omitempty"`
+
 	Internal SpiritSpecInternal
 }
 

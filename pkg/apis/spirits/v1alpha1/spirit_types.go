@@ -73,6 +73,10 @@ type SpiritSpec struct {
 	// +kubebuilder:default=RoundRobin
 	// +optional
 	Intelligence SpiritIntelligence `json:"intelligence"`
+
+	// Attributes are generic properties for a Spirit
+	// +optional
+	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // SpiritStatus defines the observed state of Spirit
