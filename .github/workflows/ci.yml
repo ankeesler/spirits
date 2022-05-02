@@ -58,6 +58,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1.2.0
+    - run: kubectl apply -f config -f config/zz_generated_crd -f config/zz_generated_rbac
     - run: go test -v ./test/...
       env:
         SPIRITS_TEST_INTEGRATION: 1
