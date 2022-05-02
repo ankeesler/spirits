@@ -46,7 +46,7 @@ def build_all():
   )
 
   docker_build_with_restart(
-    'spirits-manager',
+    'ankeesler/spirits-manager',
     '.',
     dockerfile='tilt/Dockerfile',
     entrypoint='/manager',

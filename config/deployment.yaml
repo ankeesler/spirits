@@ -44,7 +44,7 @@ spec:
     spec:
       serviceAccount: spirits-manager
       containers:
-      - image: spirits-manager
+      - image: ankeesler/spirits-manager
         name: spirits-manager
 
 # TODO: we should create these in apiserver.Start().
