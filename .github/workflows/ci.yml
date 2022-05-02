@@ -51,29 +51,19 @@ jobs:
           push: true
           tags: ankeesler/spirits:latest
 
-  test-e2e:
+  test-integration:
     needs: [build]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: test
-    services:
-      spirits:
-        image: ankeesler/spirits:latest
-        ports:
-        - 12345:12345
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-    - run: npm install
-    - run: echo npm run test-e2e
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1.2.0
+    - run: go test -v ./test/...
       env:
-        SPIRITS_TEST_URL: http://localhost:12345
-
+        SPIRITS_TEST_INTEGRATION: 1
+      
   deploy:
-    needs: [test-e2e]
+    needs: [test-integration]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
