@@ -44,8 +44,10 @@ func reconcile[T client.Object](
 	}
 
 	if _, err := controllerutil.CreateOrPatch(ctx, reconcileHelper.Client, reconcileHelper.Object, func() error {
-		if err := reconcileHelper.OnUpsert(ctx, log, req, reconcileHelper.Object); err != nil {
-			return fmt.Errorf("handle upsert: %w", err)
+		if reconcileHelper.OnUpsert != nil {
+			if err := reconcileHelper.OnUpsert(ctx, log, req, reconcileHelper.Object); err != nil {
+				return fmt.Errorf("handle upsert: %w", err)
+			}
 		}
 
 		return nil

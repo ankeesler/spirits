@@ -30,7 +30,7 @@ type actionRequests struct {
 }
 
 // newActionRequests returns a ActionRequests
-func newActionRequests(c *AnkeeslerV1alpha1Client, namespace string) *actionRequests {
+func newActionRequests(c *SpiritsV1alpha1Client, namespace string) *actionRequests {
 	return &actionRequests{
 		client: c.RESTClient(),
 		ns:     namespace,

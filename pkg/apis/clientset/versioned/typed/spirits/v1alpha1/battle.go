@@ -41,7 +41,7 @@ type battles struct {
 }
 
 // newBattles returns a Battles
-func newBattles(c *AnkeeslerV1alpha1Client, namespace string) *battles {
+func newBattles(c *SpiritsV1alpha1Client, namespace string) *battles {
 	return &battles{
 		client: c.RESTClient(),
 		ns:     namespace,

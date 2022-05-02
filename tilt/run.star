@@ -8,7 +8,6 @@ def run_all():
     [hack_generate, 'generate_crds'],
     deps=[hack_generate, os.path.join('pkg', 'apis')],
     auto_init=False,
-    allow_parallel=True,
     labels=['run'],
   )
 
@@ -17,7 +16,6 @@ def run_all():
     [hack_generate, 'generate_rbac'],
     deps=[hack_generate, os.path.join('pkg', 'controller')],
     auto_init=False,
-    allow_parallel=True,
     labels=['run'],
   )
 

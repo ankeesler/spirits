@@ -6,7 +6,7 @@ metadata:
   name: spirits-manager
 rules:
 - apiGroups:
-  - ankeesler.github.com
+  - spirits.ankeesler.github.com
   resources:
   - battles
   verbs:
@@ -18,31 +18,19 @@ rules:
   - update
   - watch
 - apiGroups:
-  - ankeesler.github.com
+  - spirits.ankeesler.github.com
   resources:
   - battles/finalizers
   verbs:
   - update
 - apiGroups:
-  - ankeesler.github.com
+  - spirits.ankeesler.github.com
   resources:
   - battles/status
   verbs:
   - get
   - patch
   - update
-- apiGroups:
-  - ankeesler.github.com
-  resources:
-  - spirits
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - spirits.ankeesler.github.com
   resources:

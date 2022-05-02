@@ -41,7 +41,7 @@ type spirits struct {
 }
 
 // newSpirits returns a Spirits
-func newSpirits(c *AnkeeslerV1alpha1Client, namespace string) *spirits {
+func newSpirits(c *SpiritsV1alpha1Client, namespace string) *spirits {
 	return &spirits{
 		client: c.RESTClient(),
 		ns:     namespace,

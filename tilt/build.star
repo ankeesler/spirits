@@ -26,7 +26,6 @@ def build_all():
     deps=[hack_generate, _go_external_api_src],
     ignore=['**zz_generated**'],
     auto_init=False,
-    allow_parallel=True,
     labels=['build'],
   )
 
@@ -36,7 +35,6 @@ def build_all():
     deps=[hack_generate, _go_external_api_src, _go_internal_api_src],
     ignore=['**zz_generated**'],
     auto_init=False,
-    allow_parallel=True,
     labels=['build'],
   )
 

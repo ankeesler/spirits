@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: spirits.ankeesler.github.com
+  name: spirits.spirits.ankeesler.github.com
 spec:
-  group: ankeesler.github.com
+  group: spirits.ankeesler.github.com
   names:
     categories:
     - spiritsworld

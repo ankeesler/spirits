@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	ankeeslerv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/spirits/v1alpha1"
+	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/spirits/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -14,19 +14,19 @@ import (
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
-	AnkeeslerV1alpha1() ankeeslerv1alpha1.AnkeeslerV1alpha1Interface
+	SpiritsV1alpha1() spiritsv1alpha1.SpiritsV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
 // version included in a Clientset.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	ankeeslerV1alpha1 *ankeeslerv1alpha1.AnkeeslerV1alpha1Client
+	spiritsV1alpha1 *spiritsv1alpha1.SpiritsV1alpha1Client
 }
 
-// AnkeeslerV1alpha1 retrieves the AnkeeslerV1alpha1Client
-func (c *Clientset) AnkeeslerV1alpha1() ankeeslerv1alpha1.AnkeeslerV1alpha1Interface {
-	return c.ankeeslerV1alpha1
+// SpiritsV1alpha1 retrieves the SpiritsV1alpha1Client
+func (c *Clientset) SpiritsV1alpha1() spiritsv1alpha1.SpiritsV1alpha1Interface {
+	return c.spiritsV1alpha1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -69,7 +69,7 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
-	cs.ankeeslerV1alpha1, err = ankeeslerv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	cs.spiritsV1alpha1, err = spiritsv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
-	cs.ankeeslerV1alpha1 = ankeeslerv1alpha1.New(c)
+	cs.spiritsV1alpha1 = spiritsv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

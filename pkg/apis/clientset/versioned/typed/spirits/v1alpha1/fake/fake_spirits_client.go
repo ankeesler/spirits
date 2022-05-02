@@ -8,25 +8,25 @@ import (
 	testing "k8s.io/client-go/testing"
 )
 
-type FakeAnkeeslerV1alpha1 struct {
+type FakeSpiritsV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeAnkeeslerV1alpha1) ActionRequests(namespace string) v1alpha1.ActionRequestInterface {
+func (c *FakeSpiritsV1alpha1) ActionRequests(namespace string) v1alpha1.ActionRequestInterface {
 	return &FakeActionRequests{c, namespace}
 }
 
-func (c *FakeAnkeeslerV1alpha1) Battles(namespace string) v1alpha1.BattleInterface {
+func (c *FakeSpiritsV1alpha1) Battles(namespace string) v1alpha1.BattleInterface {
 	return &FakeBattles{c, namespace}
 }
 
-func (c *FakeAnkeeslerV1alpha1) Spirits(namespace string) v1alpha1.SpiritInterface {
+func (c *FakeSpiritsV1alpha1) Spirits(namespace string) v1alpha1.SpiritInterface {
 	return &FakeSpirits{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *FakeAnkeeslerV1alpha1) RESTClient() rest.Interface {
+func (c *FakeSpiritsV1alpha1) RESTClient() rest.Interface {
 	var ret *rest.RESTClient
 	return ret
 }

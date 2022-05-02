@@ -30,8 +30,6 @@ kind: Deployment
 metadata:
   namespace: spirits
   name: spirits-manager
-  annotations:
-    a: b
 spec:
   replicas: 1
   selector:
@@ -53,32 +51,32 @@ spec:
 # We should be able to get the Service namespace from inside the pod.
 # We can get the Service name from...will have to think.
 # We can just Create() from the apiserver and check that the error is nil or AlreadyExists.
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: spirits
-  name: spirits-apiserver
-spec:
-  type: ClusterIP
-  selector:
-    app: spirits-manager
-  ports:
-    - protocol: TCP
-      port: 443
-      targetPort: 9444
----
-apiVersion: apiregistration.k8s.io/v1
-kind: APIService
-metadata:
-  name: v1alpha1.spirits.ankeesler.github.com
-spec:
-  version: v1alpha1
-  group: spirits.ankeesler.github.com
-  groupPriorityMinimum: 9900
-  versionPriority: 15
-  insecureSkipTLSVerify: true
-  service:
-    name: spirits-apiserver
-    namespace: spirits
-    port: 443  
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   namespace: spirits
+#   name: spirits-apiserver
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: spirits-manager
+#   ports:
+#     - protocol: TCP
+#       port: 443
+#       targetPort: 9444
+# ---
+# apiVersion: apiregistration.k8s.io/v1
+# kind: APIService
+# metadata:
+#   name: v1alpha1.spirits.ankeesler.github.com
+# spec:
+#   version: v1alpha1
+#   group: spirits.ankeesler.github.com
+#   groupPriorityMinimum: 9900
+#   versionPriority: 15
+#   insecureSkipTLSVerify: true
+#   service:
+#     name: spirits-apiserver
+#     namespace: spirits
+#     port: 443  

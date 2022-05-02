@@ -7,10 +7,20 @@ _go_tests = ['test/api']
 
 def test_all():
   local_resource(
-    'go-test',
-    'go test ./...',
+    'go-test-unit',
+    'go test -v ./...',
+    deps=go_srcs,
+    labels=['test'],
+  )
+
+  local_resource(
+    'go-test-integration',
+    'go test -v ./test/...',
     deps=go_srcs + _go_tests,
-    allow_parallel=True,
+    trigger_mode=TRIGGER_MODE_MANUAL,
+    env={
+      'SPIRITS_TEST_INTEGRATION': '',
+    },
     labels=['test'],
   )
 
@@ -18,6 +28,5 @@ def test_all():
     'go-vet',
     'go vet ./...',
     deps=go_srcs + _go_tests,
-    allow_parallel=True,
     labels=['test'],
   )

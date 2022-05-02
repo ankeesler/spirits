@@ -7,6 +7,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -60,7 +61,7 @@ func main() {
 		Port:                   9443,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "62f0cb35.ankeesler.github.com",
+		LeaderElectionID:       "62f0cb35.spirits.ankeesler.github.com",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

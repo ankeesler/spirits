@@ -13,13 +13,13 @@ import (
 
 // FakeActionRequests implements ActionRequestInterface
 type FakeActionRequests struct {
-	Fake *FakeAnkeeslerV1alpha1
+	Fake *FakeSpiritsV1alpha1
 	ns   string
 }
 
-var actionrequestsResource = schema.GroupVersionResource{Group: "ankeesler.github.com", Version: "v1alpha1", Resource: "actionrequests"}
+var actionrequestsResource = schema.GroupVersionResource{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Resource: "actionrequests"}
 
-var actionrequestsKind = schema.GroupVersionKind{Group: "ankeesler.github.com", Version: "v1alpha1", Kind: "ActionRequest"}
+var actionrequestsKind = schema.GroupVersionKind{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Kind: "ActionRequest"}
 
 // Create takes the representation of a actionRequest and creates it.  Returns the server's representation of the actionRequest, and an error, if there is any.
 func (c *FakeActionRequests) Create(ctx context.Context, actionRequest *v1alpha1.ActionRequest, opts v1.CreateOptions) (result *v1alpha1.ActionRequest, err error) {

@@ -1,5 +1,5 @@
 ---
-apiVersion: ankeesler.github.com/v1alpha1
+apiVersion: spirits.ankeesler.github.com/v1alpha1
 kind: Spirit
 metadata:
   name: spirit-a
@@ -7,3 +7,5 @@ spec:
   stats:
     health: 7
     power: 1
+  # TODO: why do we have to set this? Shouldn't it default?
+  intelligence: RoundRobin

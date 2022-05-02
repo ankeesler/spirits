@@ -1,4 +1,4 @@
 // +k8s:deepcopy-gen=package
-// +groupName=ankeesler.github.com
+// +groupName=spirits.ankeesler.github.com
 
 package spirits

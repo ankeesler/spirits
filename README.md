@@ -21,6 +21,6 @@
 
 Current known list of development dependencies:
 * `go`
-* `kubectl` (optional, but used in [`hack/kind-up-with-registry.sh`](hack/kind-up-with-registry.sh)
-* `kind` (optional, used in [`hack/kind-up-with-registry.sh`](hack/kind-up-with-registry.sh)
+* `kubectl` (optional, but used in [`hack/kind-up-with-registry.sh`](hack/kind-up-with-registry.sh))
+* `kind` (optional, used in [`hack/kind-up-with-registry.sh`](hack/kind-up-with-registry.sh))
 * `tilt` (optional, but used for development environment)

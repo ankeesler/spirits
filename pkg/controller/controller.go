@@ -6,6 +6,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=spirits/finalizers,verbs=update
+
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=battles,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=battles/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=spirits.ankeesler.github.com,resources=battles/finalizers,verbs=update
+
 const (
 	inBattleSpiritBattleNameLabel       = "spirits.ankeesler.github.com/battle-name"
 	inBattleSpiritBattleGenerationLabel = "spirits.ankeesler.github.com/battle-generation"
