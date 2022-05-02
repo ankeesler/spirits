@@ -1,4 +1,9 @@
-load('./globals.star', 'go_srcs', 'hack_generate')
+load(
+  './globals.star',
+  'go_srcs',
+  'hack_generate',
+  'spirits_manager_resource',
+)
 
 _controller_gen_pkg='sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0'
 
@@ -24,6 +29,6 @@ def run_all():
   )
 
   k8s_resource(
-    'spirits-manager',
+    spirits_manager_resource,
     labels=['run'],
   )

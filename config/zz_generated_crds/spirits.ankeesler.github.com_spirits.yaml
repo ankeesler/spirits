@@ -82,7 +82,7 @@ spec:
                     description: Health is a quantitative representation of the energy
                       of the Spirit. When this drops to 0, the Spirit is no longer
                       able to participate in a Battle.
-                    minimum: 1
+                    minimum: 0
                     type: integer
                   power:
                     description: Power is a quantitative representation of the attacking

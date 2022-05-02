@@ -231,9 +231,9 @@ func (r *BattleReconciler) battleCallback(
 
 	// Update the spirits
 	for _, inBattleSpirit := range inBattleSpirits {
-		spirit := inBattleSpirit.DeepCopy()
-		if err := r.convertAndCreateOrPatch(ctx, spirit, &spiritsv1alpha1.Spirit{}, func() error {
-			spirit.Spec = inBattleSpirit.Spec
+		internalSpirit := inBattleSpirit.DeepCopy()
+		if err := r.convertAndCreateOrPatch(ctx, internalSpirit, &spiritsv1alpha1.Spirit{}, func() error {
+			internalSpirit.Spec = inBattleSpirit.Spec
 			return nil
 		}); err != nil {
 			log.Log.Error(err, "create or patch spirit")
@@ -341,17 +341,25 @@ func (r *BattleReconciler) convertAndCreateOrPatch(
 	externalObj.SetLabels(internalObj.GetLabels())
 	externalObj.SetOwnerReferences(internalObj.GetOwnerReferences())
 	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalObj, func() error {
+		log.Log.Info("2: convert and create or patch: pre-external-to-internal-convert", "internal object", internalObj, "external object", externalObj)
+
 		if err := r.Scheme.Convert(externalObj, internalObj, nil); err != nil {
 			return fmt.Errorf("convert external object to internal object: %w", err)
 		}
+
+		log.Log.Info("2: convert and create or patch: pre-mutate", "internal object", internalObj, "external object", externalObj)
 
 		if err := mutateFunc(); err != nil {
 			return err
 		}
 
+		log.Log.Info("2: convert and create or patch: post-mutate", "internal object", internalObj, "external object", externalObj)
+
 		if err := r.Scheme.Convert(internalObj, externalObj, nil); err != nil {
 			return fmt.Errorf("convert internal object to external object: %w", err)
 		}
+
+		log.Log.Info("2: convert and create or patch: post-internal-to-external-convert", "internal object", internalObj, "external object", externalObj)
 
 		return nil
 	}); err != nil {

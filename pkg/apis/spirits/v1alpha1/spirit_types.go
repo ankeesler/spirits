@@ -37,7 +37,7 @@ type SpiritStats struct {
 	// Health is a quantitative representation of the energy of the Spirit.
 	// When this drops to 0, the Spirit is no longer able to participate in a Battle.
 	// +kubebuilder:default=1
-	// +kubebuilder:validation:Minimum=1
+	// +kubebuilder:validation:Minimum=0
 	// +optional
 	Health int `json:"health"`
 
