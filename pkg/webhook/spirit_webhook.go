@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	generateSpiritAnnotation     = "spirits.ankeesler.github.com/generate"
-	generateSeedSpiritAnnotation = "spirits.ankeesler.github.com/generate-seed"
+	GenerateSpiritAnnotation     = "spirits.ankeesler.github.com/generate"
+	GenerateSeedSpiritAnnotation = "spirits.ankeesler.github.com/generate-seed"
 
-	generatedNicknameSpiritAnnotation = "spirits.ankeesler.github.com/generated-nickname"
+	GeneratedNicknameSpiritAnnotation = "spirits.ankeesler.github.com/generated-nickname"
 )
 
 // SpiritWebhook handles Spirit object requests
@@ -45,13 +45,13 @@ func (w *SpiritWebhook) Default(ctx context.Context, obj runtime.Object) error {
 		return fmt.Errorf("expected object to be %T, got %T", &spiritsv1alpha1.Spirit{}, obj)
 	}
 
-	if _, generate := spirit.Annotations[generateSpiritAnnotation]; !generate {
+	if _, generate := spirit.Annotations[GenerateSpiritAnnotation]; !generate {
 		log.V(1).Info("spirit %q will not be generated", client.ObjectKeyFromObject(spirit).String)
 		return nil
 	}
 
 	seed := int(time.Now().Unix())
-	if seedString, ok := spirit.Annotations[generateSeedSpiritAnnotation]; ok {
+	if seedString, ok := spirit.Annotations[GenerateSeedSpiritAnnotation]; ok {
 		var err error
 		seed, err = strconv.Atoi(seedString)
 		if err != nil {
@@ -61,7 +61,7 @@ func (w *SpiritWebhook) Default(ctx context.Context, obj runtime.Object) error {
 
 	r := rand.New(rand.NewSource(int64(seed)))
 	if err := w.withInternalSpirit(spirit, func(internalSpirit *spiritsinternal.Spirit) {
-		spirit.Annotations[generatedNicknameSpiritAnnotation] = generate.Spirit(r, internalSpirit, []string{})
+		spirit.Annotations[GeneratedNicknameSpiritAnnotation] = generate.Spirit(r, internalSpirit, []string{})
 	}); err != nil {
 		return fmt.Errorf("with internal spirit: %w", err)
 	}

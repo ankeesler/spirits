@@ -12,7 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 
-	spiritsv1alpha1clientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
+	spiritsclientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
 
@@ -31,7 +31,7 @@ func readObject(t *testing.T, path string) runtime.Object {
 func getInBattleSpiritStats(
 	t *testing.T,
 	ctx context.Context,
-	spiritsClientset spiritsv1alpha1clientset.Interface,
+	spiritsClientset spiritsclientset.Interface,
 	battle *spiritsv1alpha1.Battle,
 ) map[string]*spiritsv1alpha1.SpiritStats {
 	inBattleSpirits := make(map[string]*spiritsv1alpha1.SpiritStats)

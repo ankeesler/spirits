@@ -61,8 +61,9 @@ func (r *BattleReconciler) onUpsert(
 	battle *spiritsv1alpha1.Battle,
 ) error {
 	// Update conditions on current battle status
+	err := r.progressBattle(ctx, log, battle)
 	battle.Status.Conditions = []metav1.Condition{
-		newCondition(battle, progressingCondition, r.progressBattle(ctx, log, battle)),
+		newCondition(battle, progressingCondition, err),
 	}
 
 	// Force the battle phase to be error, if there is one
@@ -70,6 +71,7 @@ func (r *BattleReconciler) onUpsert(
 	if !meta.IsStatusConditionTrue(battle.Status.Conditions, progressingCondition) {
 		log.V(2).Info("setting the phase as error")
 		battle.Status.Phase = spiritsv1alpha1.BattlePhaseError
+		battle.Status.Message = err.Error()
 	}
 
 	return nil

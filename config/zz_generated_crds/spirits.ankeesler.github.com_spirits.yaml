@@ -70,11 +70,13 @@ spec:
                   agility:
                     description: Agility is a quantitative representation of the speed
                       of the Spirit.
+                    format: int64
                     minimum: 0
                     type: integer
                   armor:
                     description: Armor is a quantitative representation of the defending
                       ability of the Spirit.
+                    format: int64
                     minimum: 0
                     type: integer
                   health:
@@ -82,11 +84,13 @@ spec:
                     description: Health is a quantitative representation of the energy
                       of the Spirit. When this drops to 0, the Spirit is no longer
                       able to participate in a Battle.
+                    format: int64
                     minimum: 0
                     type: integer
                   power:
                     description: Power is a quantitative representation of the attacking
                       ability of the Spirit.
+                    format: int64
                     minimum: 0
                     type: integer
                 type: object

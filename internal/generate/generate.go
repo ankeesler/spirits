@@ -26,7 +26,7 @@ func generateName(r *rand.Rand) string {
 	return fmt.Sprintf("%s-%s", words[i], words[j])
 }
 
-func generateStat(r *rand.Rand) int {
+func generateStat(r *rand.Rand) int64 {
 	// These constants should make it so that 99.9% of values in [2, 18].
 	const (
 		desiredMean   = 10
@@ -37,7 +37,7 @@ func generateStat(r *rand.Rand) int {
 	if stat < 0 {
 		stat = 1
 	}
-	return int(stat)
+	return int64(stat)
 }
 
 func generateActions(r *rand.Rand, actionNames []string) []string {

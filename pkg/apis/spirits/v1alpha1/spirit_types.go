@@ -39,22 +39,22 @@ type SpiritStats struct {
 	// +kubebuilder:default=1
 	// +kubebuilder:validation:Minimum=0
 	// +optional
-	Health int `json:"health"`
+	Health int64 `json:"health"`
 
 	// Power is a quantitative representation of the attacking ability of the Spirit.
 	// +kubebuilder:validation:Minimum=0
 	// +optional
-	Power int `json:"power"`
+	Power int64 `json:"power"`
 
 	// Armor is a quantitative representation of the defending ability of the Spirit.
 	// +kubebuilder:validation:Minimum=0
 	// +optional
-	Armor int `json:"armor"`
+	Armor int64 `json:"armor"`
 
 	// Agility is a quantitative representation of the speed of the Spirit.
 	// +kubebuilder:validation:Minimum=0
 	// +optional
-	Agility int `json:"agility"`
+	Agility int64 `json:"agility"`
 }
 
 // SpiritSpec defines the desired state of Spirit

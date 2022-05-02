@@ -17,7 +17,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/clientcmd"
 
-	spiritsv1alpha1clientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
+	spiritsclientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
 
@@ -28,16 +28,14 @@ var (
 	tc = struct {
 		ctx              context.Context
 		coreClientset    kubernetes.Interface
-		spiritsClientset spiritsv1alpha1clientset.Interface
+		spiritsClientset spiritsclientset.Interface
 		namespace        *corev1.Namespace
 	}{}
 )
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
 	utilruntime.Must(spiritsv1alpha1.AddToScheme(scheme))
-	//+kubebuilder:scaffold:scheme
 }
 
 func TestMain(m *testing.M) {
@@ -89,7 +87,7 @@ func setTestConfig(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("create kubernetes clientset: %w", err)
 	}
-	spiritsClientset, err := spiritsv1alpha1clientset.NewForConfig(config)
+	spiritsClientset, err := spiritsclientset.NewForConfig(config)
 	if err != nil {
 		return fmt.Errorf("create spirits clientset: %w", err)
 	}

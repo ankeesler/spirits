@@ -21,10 +21,10 @@ const (
 )
 
 type SpiritStats struct {
-	Health  int
-	Power   int
-	Armor   int
-	Agility int
+	Health  int64
+	Power   int64
+	Armor   int64
+	Agility int64
 }
 
 type SpiritSpecInternal struct {
