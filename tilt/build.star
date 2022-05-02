@@ -49,7 +49,7 @@ def build_all():
     'ankeesler/spirits-manager',
     '.',
     dockerfile='tilt/Dockerfile',
-    entrypoint='/manager',
+    entrypoint=['/manager', '-v=2', '-logtostderr'],
     live_update=[
       sync('manager', '/manager'),
     ],

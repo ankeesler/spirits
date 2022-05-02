@@ -16,7 +16,7 @@ def test_all():
 
   local_resource(
     'go-test-integration',
-    'go test -v ./test/...',
+    'go test -count 1 -v ./test/...',
     deps=go_srcs + _go_tests,
     trigger_mode=TRIGGER_MODE_MANUAL,
     resource_deps=[spirits_manager_resource],

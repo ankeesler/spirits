@@ -71,7 +71,7 @@ func (r *BattleReconciler) onUpsert(
 	// Force the battle phase to be error, if there is one
 	// Otherwise the battle phase will get updated by the battle callback
 	if !meta.IsStatusConditionTrue(battle.Status.Conditions, progressingCondition) {
-		log.Info("2: setting the phase as error")
+		log.V(2).Info("setting the phase as error")
 		battle.Status.Phase = spiritsv1alpha1.BattlePhaseError
 	}
 
@@ -88,7 +88,7 @@ func (r *BattleReconciler) progressBattle(
 	if err != nil {
 		return fmt.Errorf("get in battle spirits: %w", err)
 	}
-	log.Info("2: get in battle spirits", "in battle spirits", inBattleSpirits)
+	log.V(2).Info("get in battle spirits", "in battle spirits", inBattleSpirits)
 
 	// Go ahead and create a context for the battle, it will be canceled if
 	// not used by the battle
@@ -139,7 +139,7 @@ func (r *BattleReconciler) getInBattleSpirits(
 	if err != nil {
 		return nil, fmt.Errorf("get spirits: %w", err)
 	}
-	log.Info("2: get spirits", "spirits", spirits)
+	log.V(2).Info("get spirits", "spirits", spirits)
 
 	var inBattleSpirits []*spiritsv1alpha1.Spirit
 	for _, spirit := range spirits {
@@ -185,7 +185,7 @@ func (r *BattleReconciler) getSpirits(
 		if err := r.Get(ctx, client.ObjectKeyFromObject(&spirit), &spirit); err != nil {
 			return nil, fmt.Errorf("get spirit: %w", err)
 		}
-		log.Info("2: get spirit", "spirit", spirit, "name", spiritRef)
+		log.V(2).Info("get spirit", "spirit", spirit, "name", spiritRef)
 
 		if !meta.IsStatusConditionTrue(spirit.Status.Conditions, readyCondition) {
 			return nil, fmt.Errorf("spirit %s not ready", client.ObjectKeyFromObject(&spirit))
@@ -202,7 +202,7 @@ func (r *BattleReconciler) battleCallback(
 	done bool,
 	err error,
 ) {
-	log.Log.Info("1: battle callback", "battle", battle, "inBattleSpirits", inBattleSpirits, "err", err)
+	log.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", inBattleSpirits, "err", err)
 
 	// Set a really long timeout, just in case
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
@@ -249,7 +249,7 @@ func (r *BattleReconciler) convertToInternalBattle(
 	if err := r.Scheme.Convert(battle, &internalBattle, nil); err != nil {
 		return nil, nil, fmt.Errorf("convert external battle to internal battle: %w", err)
 	}
-	log.Log.Info("2: convert external battle to internal battle", "external battle", battle, "internal battle", internalBattle)
+	log.Log.V(2).Info("convert external battle to internal battle", "external battle", battle, "internal battle", internalBattle)
 
 	internalSpirits := []*spiritsinternal.Spirit{}
 	for _, spirit := range spirits {
@@ -257,7 +257,7 @@ func (r *BattleReconciler) convertToInternalBattle(
 		if err := r.Scheme.Convert(spirit, &internalSpirit, nil); err != nil {
 			return nil, nil, fmt.Errorf("convert external spirit to internal spirit: %w", err)
 		}
-		log.Log.Info("2: convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
+		log.Log.V(2).Info("convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
 
 		var err error
 		internalSpirit.Spec.Internal.Action, err = getAction(
@@ -280,7 +280,7 @@ func (r *BattleReconciler) getLazyActionFunc(
 	inBattleSpirit *spiritsv1alpha1.Spirit,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
-		log.Log.Info("1: lazy action func", "battle", battle, "inBattleSpirit", inBattleSpirit)
+		log.Log.V(1).Info("lazy action func", "battle", battle, "inBattleSpirit", inBattleSpirit)
 
 		if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
 			battle.Status.ActingSpirit = corev1.LocalObjectReference{Name: inBattleSpirit.Name}
@@ -341,25 +341,25 @@ func (r *BattleReconciler) convertAndCreateOrPatch(
 	externalObj.SetLabels(internalObj.GetLabels())
 	externalObj.SetOwnerReferences(internalObj.GetOwnerReferences())
 	if _, err := controllerutil.CreateOrPatch(ctx, r.Client, externalObj, func() error {
-		log.Log.Info("2: convert and create or patch: pre-external-to-internal-convert", "internal object", internalObj, "external object", externalObj)
+		log.Log.V(2).Info("convert and create or patch: pre-external-to-internal-convert", "internal object", internalObj, "external object", externalObj)
 
 		if err := r.Scheme.Convert(externalObj, internalObj, nil); err != nil {
 			return fmt.Errorf("convert external object to internal object: %w", err)
 		}
 
-		log.Log.Info("2: convert and create or patch: pre-mutate", "internal object", internalObj, "external object", externalObj)
+		log.Log.V(2).Info("convert and create or patch: pre-mutate", "internal object", internalObj, "external object", externalObj)
 
 		if err := mutateFunc(); err != nil {
 			return err
 		}
 
-		log.Log.Info("2: convert and create or patch: post-mutate", "internal object", internalObj, "external object", externalObj)
+		log.Log.V(2).Info("convert and create or patch: post-mutate", "internal object", internalObj, "external object", externalObj)
 
 		if err := r.Scheme.Convert(internalObj, externalObj, nil); err != nil {
 			return fmt.Errorf("convert internal object to external object: %w", err)
 		}
 
-		log.Log.Info("2: convert and create or patch: post-internal-to-external-convert", "internal object", internalObj, "external object", externalObj)
+		log.Log.V(2).Info("convert and create or patch: post-internal-to-external-convert", "internal object", internalObj, "external object", externalObj)
 
 		return nil
 	}); err != nil {
