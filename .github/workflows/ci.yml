@@ -61,7 +61,7 @@ jobs:
     - name: Deploy
       run: kubectl apply -f config -f config/zz_generated_crds -f config/zz_generated_rbac
     - name: Check Deploy
-      run: kubectl wait -n spirits deploy spirits-manager --for condition=Ready
+      run: kubectl wait -n spirits deploy spirits-manager --for condition=Available -v 10
     - name: Mod
       run: go mod download
     - name: Test
