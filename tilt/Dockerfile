@@ -1,4 +1,4 @@
 FROM alpine
-COPY manager /manager
+COPY manager-linux-amd64 /manager
 ENTRYPOINT ["/manager"]
 

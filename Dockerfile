@@ -6,7 +6,7 @@ WORKDIR /workspace
 # Copy the source
 COPY go.mod go.mod
 COPY go.sum go.sum
-COPY main.go main.go
+COPY cmd/ cmd/
 COPY pkg/ pkg/
 COPY internal/ internal/
 
@@ -19,7 +19,7 @@ RUN \
   CGO_ENABLED=0 \
   GOOS=linux \
   GOARCH=amd64 \
-  go build -a -o manager main.go
+  go build -a -o manager ./cmd/manager
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details

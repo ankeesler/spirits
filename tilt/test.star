@@ -8,6 +8,13 @@ _go_tests = ['test/api']
 
 def test_all():
   local_resource(
+    'go-vet',
+    'go vet ./...',
+    deps=go_srcs + _go_tests,
+    labels=['test'],
+  )
+
+  local_resource(
     'go-test-unit',
     'go test -v ./...',
     deps=go_srcs,
@@ -23,12 +30,5 @@ def test_all():
     env={
       'SPIRITS_TEST_INTEGRATION': '',
     },
-    labels=['test'],
-  )
-
-  local_resource(
-    'go-vet',
-    'go vet ./...',
-    deps=go_srcs + _go_tests,
     labels=['test'],
   )

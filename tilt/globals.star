@@ -1,4 +1,4 @@
-go_srcs=['go.mod', 'go.sum', 'main.go', 'pkg', 'internal']
+go_srcs=['go.mod', 'go.sum', 'cmd', 'pkg', 'internal']
 
 hack_generate=os.path.join('hack', 'generate.sh')
 

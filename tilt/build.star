@@ -40,7 +40,7 @@ def build_all():
 
   local_resource(
     'spirits-manager-compile',
-    'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o manager .',
+    'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o manager-linux-amd64 ./cmd/manager',
     deps=go_srcs,
     labels=['build'],
   )
@@ -51,9 +51,9 @@ def build_all():
     dockerfile='tilt/Dockerfile',
     entrypoint=['/manager', '-v=2', '-logtostderr'],
     live_update=[
-      sync('manager', '/manager'),
+      sync('manager-linux-amd64', '/manager'),
     ],
     only=[
-      'manager',
+      'manager-linux-amd64',
     ],
   )
