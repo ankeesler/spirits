@@ -4,7 +4,7 @@ load(
   'spirits_server_resource',
 )
 
-_go_tests = ['test/api']
+_go_tests = [os.path.join('test', 'api')]
 
 def test_all():
   local_resource(
