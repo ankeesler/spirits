@@ -49,7 +49,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ankeesler/spirits-manager:latest
+          tags: ankeesler/spirits-server:latest
 
   test-integration:
     needs: [build]
@@ -61,7 +61,7 @@ jobs:
     - name: Deploy
       run: kubectl apply -f config -f config/zz_generated_crds -f config/zz_generated_rbac
     - name: Check Deploy
-      run: kubectl wait -n spirits deploy spirits-manager --for condition=Available -v 10
+      run: kubectl wait -n spirits deploy spirits-server --for condition=Available -v 10
     - name: Mod
       run: go mod download
     - name: Test

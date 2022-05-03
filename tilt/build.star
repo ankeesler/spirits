@@ -39,21 +39,21 @@ def build_all():
   )
 
   local_resource(
-    'spirits-manager-compile',
-    'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o manager-linux-amd64 ./cmd/manager',
+    'spirits-server-compile',
+    'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server-linux-amd64 ./cmd/server',
     deps=go_srcs,
     labels=['build'],
   )
 
   docker_build_with_restart(
-    'ankeesler/spirits-manager',
+    'ankeesler/spirits-server',
     '.',
     dockerfile='tilt/Dockerfile',
-    entrypoint=['/manager', '-v=2', '-logtostderr'],
+    entrypoint=['/server', '-v=2', '-logtostderr'],
     live_update=[
-      sync('manager-linux-amd64', '/manager'),
+      sync('server-linux-amd64', '/server'),
     ],
     only=[
-      'manager-linux-amd64',
+      'server-linux-amd64',
     ],
   )

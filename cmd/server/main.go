@@ -128,7 +128,7 @@ func getDNSName(log logr.Logger) string {
 	}
 	name := os.Getenv("POD_NAME")
 	if len(name) == 0 {
-		name = "spirits-controller-manager"
+		name = "xxx"
 	}
 	return fmt.Sprintf("%s.%s.svc.cluster.internal", name, namespace)
 }

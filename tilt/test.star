@@ -1,7 +1,7 @@
 load(
   './globals.star',
   'go_srcs',
-  'spirits_manager_resource',
+  'spirits_server_resource',
 )
 
 _go_tests = ['test/api']
@@ -26,7 +26,7 @@ def test_all():
     'go test -count 1 -v ./test/...',
     deps=go_srcs + _go_tests,
     trigger_mode=TRIGGER_MODE_MANUAL,
-    resource_deps=[spirits_manager_resource],
+    resource_deps=[spirits_server_resource],
     env={
       'SPIRITS_TEST_INTEGRATION': '',
     },

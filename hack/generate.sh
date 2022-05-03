@@ -44,7 +44,7 @@ generate_crds() {
 generate_rbac() {
   _note "running codegen for RBAC..."
   go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
-    paths=./pkg/controller +rbac:roleName=spirits-manager output:rbac:dir=./config/zz_generated_rbac
+    paths=./pkg/controller +rbac:roleName=spirits-server output:rbac:dir=./config/zz_generated_rbac
 }
 
 # Run from root of repo
