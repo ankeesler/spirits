@@ -36,8 +36,8 @@ func TestNonHumanIntelligenceBattle(t *testing.T) {
 	// Assert battle eventually fininshes
 	gotInBattleSpiritsStats := requireBattleFinishes(t, ctx, battle)
 	require.Len(t, gotInBattleSpiritsStats, 2)
-	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-spirit-a-1"].Health)
-	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-battle-spirit-b-1"].Health)
+	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-1-spirit-a-1"].Health)
+	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-battle-1-spirit-b-1"].Health)
 
 	// Update one of the spirits
 	spirits[0], err = tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Get(ctx, spirits[0].Name, metav1.GetOptions{})
@@ -50,8 +50,8 @@ func TestNonHumanIntelligenceBattle(t *testing.T) {
 	gotInBattleSpiritsStats = requireBattleFinishes(t, ctx, battle)
 	t.Log(gotInBattleSpiritsStats)
 	require.Len(t, gotInBattleSpiritsStats, 2)
-	require.Equal(t, int64(3), gotInBattleSpiritsStats["the-battle-spirit-a-2"].Health)
-	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-spirit-b-1"].Health)
+	require.Equal(t, int64(3), gotInBattleSpiritsStats["the-battle-1-spirit-a-2"].Health)
+	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-1-spirit-b-1"].Health)
 
 	// Make sure there are only 2 spirits for that battle
 	spiritsList, err := tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).List(ctx, metav1.ListOptions{

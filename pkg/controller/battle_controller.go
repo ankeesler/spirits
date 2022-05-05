@@ -146,9 +146,10 @@ func (r *BattleReconciler) getInBattleSpirits(
 		inBattleSpirit := spiritsv1alpha1.Spirit{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: battle.Namespace,
-				Name:      fmt.Sprintf("%s-%s-%d", battle.Name, spirit.Name, spirit.Generation),
+				Name:      fmt.Sprintf("%s-%d-%s-%d", battle.Name, battle.Generation, spirit.Name, spirit.Generation),
 				Labels: map[string]string{
 					inBattleSpiritBattleNameLabel:       battle.Name,
+					inBattleSpiritBattleGenerationLabel: fmt.Sprintf("%d", battle.Generation),
 					inBattleSpiritSpiritNameLabel:       spirit.Name,
 					inBattleSpiritSpiritGenerationLabel: fmt.Sprintf("%d", spirit.Generation),
 				},
