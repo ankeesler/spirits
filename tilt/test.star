@@ -5,30 +5,22 @@ load(
 )
 
 _go_tests = [os.path.join('test', 'api')]
+_hack_test_unit = [os.path.join('hack', 'test-unit.sh')]
+_hack_test_integration = [os.path.join('hack', 'test-integration.sh')]
 
 def test_all():
   local_resource(
-    'go-vet',
-    'go vet ./...',
-    deps=go_srcs + _go_tests,
+    'test-unit',
+    _hack_test_unit,
+    deps=go_srcs + _hack_test_unit,
     labels=['test'],
   )
 
   local_resource(
-    'go-test-unit',
-    'go test -v ./...',
-    deps=go_srcs,
-    labels=['test'],
-  )
-
-  local_resource(
-    'go-test-integration',
-    'go test -count 1 -v ./test/...',
-    deps=go_srcs + _go_tests,
+    'test-integration',
+    _hack_test_integration,
+    deps=go_srcs + _go_tests + _hack_test_integration,
     trigger_mode=TRIGGER_MODE_MANUAL,
     resource_deps=[spirits_server_resource],
-    env={
-      'SPIRITS_TEST_INTEGRATION': '',
-    },
     labels=['test'],
   )

@@ -1,6 +1,11 @@
 # spirits
 
-`spirits` is a turn-based battle royale game.
+`spirits` is a turn-based battle royale framework.
+
+To run:
+```sh
+$ ./hack/run.sh
+```
 
 ## Muses
 
