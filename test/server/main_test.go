@@ -93,7 +93,8 @@ func setTestConfig(ctx context.Context) error {
 	}
 
 	// Create namespace
-	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{GenerateName: "spirits-api-test-"}}
+	// TODO: this is kinda broken - it doesn't delete on failure
+	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{GenerateName: "spirits-api-test-", Labels: map[string]string{"spirits.ankeesler.github.io/test-namespace": ""}}}
 	namespace, err = coreClientset.CoreV1().Namespaces().Create(ctx, namespace, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("create test namespace: %w", err)
