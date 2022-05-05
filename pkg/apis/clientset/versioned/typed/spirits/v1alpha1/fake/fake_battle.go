@@ -20,9 +20,9 @@ type FakeBattles struct {
 	ns   string
 }
 
-var battlesResource = schema.GroupVersionResource{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Resource: "battles"}
+var battlesResource = schema.GroupVersionResource{Group: "spirits.ankeesler.github.io", Version: "v1alpha1", Resource: "battles"}
 
-var battlesKind = schema.GroupVersionKind{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Kind: "Battle"}
+var battlesKind = schema.GroupVersionKind{Group: "spirits.ankeesler.github.io", Version: "v1alpha1", Kind: "Battle"}
 
 // Get takes name of the battle, and returns the corresponding battle object, and an error if there is any.
 func (c *FakeBattles) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Battle, err error) {

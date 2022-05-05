@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	GenerateSpiritAnnotation     = "spirits.ankeesler.github.com/generate"
-	GenerateSeedSpiritAnnotation = "spirits.ankeesler.github.com/generate-seed"
+	GenerateSpiritAnnotation     = "spirits.ankeesler.github.io/generate"
+	GenerateSeedSpiritAnnotation = "spirits.ankeesler.github.io/generate-seed"
 
-	GeneratedNicknameSpiritAnnotation = "spirits.ankeesler.github.com/generated-nickname"
+	GeneratedNicknameSpiritAnnotation = "spirits.ankeesler.github.io/generated-nickname"
 )
 
 // SpiritWebhook handles Spirit object requests

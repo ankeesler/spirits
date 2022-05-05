@@ -17,7 +17,7 @@ type SpiritsV1alpha1Interface interface {
 	SpiritsGetter
 }
 
-// SpiritsV1alpha1Client is used to interact with features provided by the spirits.ankeesler.github.com group.
+// SpiritsV1alpha1Client is used to interact with features provided by the spirits.ankeesler.github.io group.
 type SpiritsV1alpha1Client struct {
 	restClient rest.Interface
 }

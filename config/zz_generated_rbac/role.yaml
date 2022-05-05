@@ -6,7 +6,7 @@ metadata:
   name: spirits-server
 rules:
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - battles
   verbs:
@@ -18,13 +18,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - battles/finalizers
   verbs:
   - update
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - battles/status
   verbs:
@@ -32,7 +32,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - spirits
   verbs:
@@ -44,13 +44,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - spirits/finalizers
   verbs:
   - update
 - apiGroups:
-  - spirits.ankeesler.github.com
+  - spirits.ankeesler.github.io
   resources:
   - spirits/status
   verbs:

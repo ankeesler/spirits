@@ -20,9 +20,9 @@ type FakeSpirits struct {
 	ns   string
 }
 
-var spiritsResource = schema.GroupVersionResource{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Resource: "spirits"}
+var spiritsResource = schema.GroupVersionResource{Group: "spirits.ankeesler.github.io", Version: "v1alpha1", Resource: "spirits"}
 
-var spiritsKind = schema.GroupVersionKind{Group: "spirits.ankeesler.github.com", Version: "v1alpha1", Kind: "Spirit"}
+var spiritsKind = schema.GroupVersionKind{Group: "spirits.ankeesler.github.io", Version: "v1alpha1", Kind: "Spirit"}
 
 // Get takes name of the spirit, and returns the corresponding spirit object, and an error if there is any.
 func (c *FakeSpirits) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Spirit, err error) {

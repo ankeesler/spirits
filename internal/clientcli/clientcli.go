@@ -20,7 +20,7 @@ import (
 const (
 	namespace = "default"
 
-	createdBySpiritsClientLabelKey   = "spirits.ankeesler.github.com/created-by"
+	createdBySpiritsClientLabelKey   = "spirits.ankeesler.github.io/created-by"
 	createdBySpiritsClientLabelValue = "clientcli"
 )
 
