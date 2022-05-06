@@ -91,21 +91,23 @@ func (r *BattleReconciler) progressBattle(
 
 	// Go ahead and create a context for the battle, it will be canceled if
 	// not used by the battle
-	ctx, cancel := context.WithCancel(context.Background())
-	cancelAny, exists := r.BattleCancelFuncs.LoadOrStore(client.ObjectKeyFromObject(battle).String(), cancel)
+	battleCtx, battleCancel := context.WithCancel(context.Background())
+	existingBattleCancel, exists := r.BattleCancelFuncs.LoadOrStore(client.ObjectKeyFromObject(battle).String(), battleCancel)
 
-	// If the battle exists...
-	if exists {
+	// TODO: what if the state is error here - shouldn't we try to run again? But we don't want to get into a forever loop between error and running
+	// If the battle exists or if we claim to be finished...
+	if exists || battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished {
 		// ...and it is running with the expected spirits, then we are done
 		if matchingSpirits(inBattleSpirits, battle.Status.InBattleSpirits) {
 			// The context we created is not used by the battle, so trash it
 			log.Info("in battle spirits match expected")
-			cancel()
+			battleCancel()
 			return nil
 		}
 
-		// Otherwise, cancel the current battle
-		cancelAny.(context.CancelFunc)()
+		// Otherwise, cancel the current battle, and let's start a new one
+		// TODO: don't cancel this unless it exists
+		existingBattleCancel.(context.CancelFunc)()
 	}
 
 	// Start the battle
@@ -113,7 +115,7 @@ func (r *BattleReconciler) progressBattle(
 	if err != nil {
 		return fmt.Errorf("convert to internal battle: %w", err)
 	}
-	go battlerunner.Run(ctx, internalBattle, internalInBattleSpirits, r.battleCallback)
+	go r.runBattle(battleCtx, internalBattle, internalInBattleSpirits)
 
 	// Update the spirits that are running in this battle
 	battle.Status.InBattleSpirits = []corev1.LocalObjectReference{}
@@ -196,6 +198,30 @@ func (r *BattleReconciler) getSpirits(
 	return spirits, nil
 }
 
+func (r *BattleReconciler) runBattle(
+	ctx context.Context,
+	battle *spiritsinternal.Battle,
+	inBattleSpirits []*spiritsinternal.Spirit,
+) {
+	ctrl.Log.V(1).Info("battle starting", "battle", battle, "inBattleSpirits", inBattleSpirits)
+
+	// Run the battle
+	battlerunner.Run(ctx, battle, inBattleSpirits, r.battleCallback)
+
+	ctrl.Log.V(1).Info("battle finished", "battle", battle, "inBattleSpirits", inBattleSpirits)
+
+	// After the battle is over, update the status and clear it from the cache
+	if err := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
+		battle.Status.Phase = spiritsinternal.BattlePhaseFinished
+		return nil
+	}); err != nil {
+		ctrl.Log.Error(err, "convert and create or patch")
+	}
+	if cancel, ok := r.BattleCancelFuncs.LoadAndDelete(client.ObjectKeyFromObject(battle).String()); ok {
+		cancel.(context.CancelFunc)()
+	}
+}
+
 func (r *BattleReconciler) battleCallback(
 	battle *spiritsinternal.Battle,
 	inBattleSpirits []*spiritsinternal.Spirit,
@@ -209,24 +235,22 @@ func (r *BattleReconciler) battleCallback(
 	defer cancel()
 
 	// Update the battle
-	if err := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
+	if createOrPatchErr := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
 		battle.Status.Conditions = []metav1.Condition{
 			newCondition(battle, progressingCondition, err),
 		}
 
+		battle.Status.Phase = spiritsinternal.BattlePhaseRunning
+		battle.Status.ActingSpirit = corev1.LocalObjectReference{}
+		battle.Status.Message = ""
 		if err != nil {
 			battle.Status.Phase = spiritsinternal.BattlePhaseError
 			battle.Status.Message = err.Error()
-		} else if done {
-			battle.Status.Phase = spiritsinternal.BattlePhaseFinished
-		} else {
-			battle.Status.Phase = spiritsinternal.BattlePhaseRunning
 		}
-		battle.Status.ActingSpirit = corev1.LocalObjectReference{}
 
 		return nil
-	}); err != nil {
-		ctrl.Log.Error(err, "create or patch battle")
+	}); createOrPatchErr != nil {
+		ctrl.Log.Error(createOrPatchErr, "create or patch battle")
 	}
 
 	// Update the spirits
@@ -295,7 +319,7 @@ func (r *BattleReconciler) getLazyActionFunc(
 			return nil, errors.New("unknown battle name")
 		}
 
-		spiritName, ok := inBattleSpirit.Labels[inBattleSpiritSpiritGenerationLabel]
+		spiritName, ok := inBattleSpirit.Labels[inBattleSpiritSpiritNameLabel]
 		if !ok {
 			return nil, errors.New("unknown spirit name")
 		}
@@ -310,7 +334,7 @@ func (r *BattleReconciler) getLazyActionFunc(
 			return nil, fmt.Errorf("actions queue pend: %w", err)
 		}
 
-		action, err := getAction([]string{actionName}, "", nil)
+		action, err := getAction([]string{actionName}, spiritsv1alpha1.SpiritIntelligenceRoundRobin, nil)
 		if err != nil {
 			return nil, fmt.Errorf("get action: %w", err)
 		}

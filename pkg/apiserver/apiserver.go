@@ -52,7 +52,7 @@ func (m *APIServer) Start(ctx context.Context) error {
 	actionCallGVR := inputv1alpha1.SchemeGroupVersion.WithResource("actioncalls")
 	apiGroup := genericapiserver.NewDefaultAPIGroupInfo(actionCallGVR.Group, scheme, metav1.ParameterCodec, codecFactory)
 	apiGroup.VersionedResourcesStorageMap[actionCallGVR.Version] = map[string]rest.Storage{
-		actionCallGVR.Resource: &actionRequestHandler{ActionSink: m.ActionSink},
+		actionCallGVR.Resource: &actionCallHandler{ActionSink: m.ActionSink},
 	}
 	if err := apiServer.InstallAPIGroup(&apiGroup); err != nil {
 		return fmt.Errorf("install api group: %w", err)

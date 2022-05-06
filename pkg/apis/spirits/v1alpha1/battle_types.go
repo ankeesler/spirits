@@ -34,7 +34,7 @@ type BattleStatus struct {
 
 	// Phase describes what stage of the battle lifecycle this Battle is in currently.
 	// +kubebuilder:default=Pending
-	// +kubebuilder:validation:Enum=Pending;Running;Finished;Error
+	// +kubebuilder:validation:Enum=Pending;Running;AwaitingAction;Finished;Error
 	Phase BattlePhase `json:"phase"`
 
 	// Message describes the reason for the Battle's Phase
@@ -55,6 +55,7 @@ type BattleStatus struct {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:resource:categories=spiritsworld
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
+// +kubebuilder:printcolumn:name="ActingSpirit",type=string,JSONPath=`.status.actingSpirit.name`
 // +kubebuilder:subresource:status
 type Battle struct {
 	metav1.TypeMeta   `json:",inline"`

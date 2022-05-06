@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"sync"
+
+	"k8s.io/klog/v2"
 )
 
 type ActionChannel struct {
@@ -29,6 +31,7 @@ func (ac *ActionChannel) Pend(
 	ctx context.Context,
 	namespace, battleName, spiritName string,
 ) (string, error) {
+	klog.V(1).InfoS("actionchannel pend", "namespace", namespace, "battleName", battleName, "spiritName", spiritName)
 	select {
 	case actionName, ok := <-ac.c(namespace, battleName, spiritName):
 		if !ok {

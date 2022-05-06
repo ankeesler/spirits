@@ -49,7 +49,7 @@ def build_all():
     'ankeesler/spirits-server',
     '.',
     dockerfile='tilt/Dockerfile',
-    entrypoint=['/server', '-v=2', '-logtostderr'],
+    entrypoint=['/server', '-v=1', '-logtostderr'],
     live_update=[
       sync('server-linux-amd64', '/server'),
     ],

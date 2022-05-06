@@ -21,6 +21,9 @@ spec:
     - jsonPath: .status.phase
       name: Phase
       type: string
+    - jsonPath: .status.actingSpirit.name
+      name: ActingSpirit
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -166,6 +169,7 @@ spec:
                 enum:
                 - Pending
                 - Running
+                - AwaitingAction
                 - Finished
                 - Error
                 type: string

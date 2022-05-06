@@ -14,7 +14,7 @@ import (
 	inputinternal "github.com/ankeesler/spirits/internal/apis/spirits/input"
 )
 
-type actionRequestHandler struct {
+type actionCallHandler struct {
 	ActionSink ActionSink
 }
 
@@ -27,17 +27,17 @@ var _ interface {
 	// Not sure why/if we need these (2 of them are the same)...
 	rest.NamespaceScopedStrategy
 	rest.Scoper
-} = (*actionRequestHandler)(nil)
+} = (*actionCallHandler)(nil)
 
-func (h *actionRequestHandler) New() runtime.Object {
+func (h *actionCallHandler) New() runtime.Object {
 	return &inputinternal.ActionCall{}
 }
 
-func (h *actionRequestHandler) NamespaceScoped() bool {
+func (h *actionCallHandler) NamespaceScoped() bool {
 	return true
 }
 
-func (h *actionRequestHandler) Create(
+func (h *actionCallHandler) Create(
 	ctx context.Context,
 	obj runtime.Object,
 	createValidation rest.ValidateObjectFunc,
@@ -45,7 +45,7 @@ func (h *actionRequestHandler) Create(
 ) (runtime.Object, error) {
 	t := trace.FromContext(ctx).Nest("create", trace.Field{
 		Key:   "kind",
-		Value: "ActionRequest",
+		Value: "ActionCall",
 	})
 	defer t.Log()
 
@@ -68,8 +68,8 @@ func (h *actionRequestHandler) Create(
 	message := ""
 	if err := h.ActionSink.Post(
 		genericrequest.NamespaceValue(ctx),
-		actionCall.Spec.Spirit.Name,
 		actionCall.Spec.Battle.Name,
+		actionCall.Spec.Spirit.Name,
 		actionCall.Spec.ActionName,
 	); err != nil {
 		result = inputinternal.ActionCallResultRejected
