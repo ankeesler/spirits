@@ -14,7 +14,7 @@ import (
 type ActionSource interface {
 	Pend(
 		ctx context.Context,
-		namespace, battleName, battleGeneration, spiritName, spiritGeneration string,
+		namespace, battleName, spiritName string,
 	) (string, error)
 }
 

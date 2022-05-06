@@ -295,28 +295,16 @@ func (r *BattleReconciler) getLazyActionFunc(
 			return nil, errors.New("unknown battle name")
 		}
 
-		battleGeneration, ok := inBattleSpirit.Labels[inBattleSpiritBattleGenerationLabel]
-		if !ok {
-			return nil, errors.New("unknown battle name")
-		}
-
 		spiritName, ok := inBattleSpirit.Labels[inBattleSpiritSpiritGenerationLabel]
 		if !ok {
 			return nil, errors.New("unknown spirit name")
-		}
-
-		spiritGeneration, ok := inBattleSpirit.Labels[inBattleSpiritSpiritGenerationLabel]
-		if !ok {
-			return nil, errors.New("unknown spirit generation")
 		}
 
 		actionName, err := r.ActionSource.Pend(
 			ctx,
 			inBattleSpirit.Namespace,
 			battleName,
-			battleGeneration,
 			spiritName,
-			spiritGeneration,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("actions queue pend: %w", err)

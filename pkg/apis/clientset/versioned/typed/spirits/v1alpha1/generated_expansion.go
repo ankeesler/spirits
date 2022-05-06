@@ -2,8 +2,6 @@
 
 package v1alpha1
 
-type ActionRequestExpansion interface{}
-
 type BattleExpansion interface{}
 
 type SpiritExpansion interface{}

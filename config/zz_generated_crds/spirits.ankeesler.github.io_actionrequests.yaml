@@ -87,8 +87,6 @@ spec:
                 - Accepted
                 - Rejected
                 type: string
-            required:
-            - result
             type: object
         type: object
     served: true

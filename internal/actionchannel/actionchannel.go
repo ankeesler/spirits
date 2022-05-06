@@ -11,17 +11,15 @@ type ActionChannel struct {
 }
 
 func (ac *ActionChannel) Post(
-	namespace, battleName, battleGeneration, spiritName, spiritGeneration, actionName string,
+	namespace, battleName, spiritName, actionName string,
 ) error {
 	select {
-	case ac.c(namespace, battleName, battleGeneration, spiritName, spiritGeneration) <- actionName:
+	case ac.c(namespace, battleName, spiritName) <- actionName:
 	default:
 		return fmt.Errorf(
-			"no one listening for battleName %q battleGeneration %q spiritName %q spiritGeneration %q actions",
+			"no one listening for battleName %q spiritName %q actions",
 			battleName,
-			battleGeneration,
 			spiritName,
-			spiritGeneration,
 		)
 	}
 	return nil
@@ -29,29 +27,25 @@ func (ac *ActionChannel) Post(
 
 func (ac *ActionChannel) Pend(
 	ctx context.Context,
-	namespace, battleName, battleGeneration, spiritName, spiritGeneration string,
+	namespace, battleName, spiritName string,
 ) (string, error) {
 	select {
-	case actionName, ok := <-ac.c(namespace, battleName, battleGeneration, spiritName, spiritGeneration):
+	case actionName, ok := <-ac.c(namespace, battleName, spiritName):
 		if !ok {
 			return "", fmt.Errorf(
-				"channel closed for namespace %q battleName %q battleGeneration %q spiritName %q spiritGeneration %q actions",
+				"channel closed for namespace %q battleName %q spiritName %q actions",
 				namespace,
 				battleName,
-				battleGeneration,
 				spiritName,
-				spiritGeneration,
 			)
 		}
 		return actionName, nil
 	case <-ctx.Done():
 		return "", fmt.Errorf(
-			"context canceled for namespace %q battleName %q battleGeneration %q spiritName %q spiritGeneration %q actions",
+			"context canceled for namespace %q battleName %q spiritName %q actions",
 			namespace,
 			battleName,
-			battleGeneration,
 			spiritName,
-			spiritGeneration,
 		)
 	}
 }
@@ -63,17 +57,8 @@ func (ac *ActionChannel) Close() {
 	})
 }
 
-func (ac *ActionChannel) c(
-	namespace, battleName, battleGeneration, spiritName, spiritGeneration string,
-) chan string {
-	key := fmt.Sprintf(
-		"%s-%s-%s-%s-%s",
-		namespace,
-		battleName,
-		battleGeneration,
-		spiritName,
-		spiritGeneration,
-	)
+func (ac *ActionChannel) c(namespace, battleName, spiritName string) chan string {
+	key := fmt.Sprintf("%s-%s-%s", namespace, battleName, spiritName)
 	c := make(chan string)
 	cc, exists := ac.m.LoadOrStore(key, c)
 	if exists {

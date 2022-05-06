@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	inputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/input/v1alpha1"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/spirits/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
@@ -14,6 +15,7 @@ import (
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
+	InputV1alpha1() inputv1alpha1.InputV1alpha1Interface
 	SpiritsV1alpha1() spiritsv1alpha1.SpiritsV1alpha1Interface
 }
 
@@ -21,7 +23,13 @@ type Interface interface {
 // version included in a Clientset.
 type Clientset struct {
 	*discovery.DiscoveryClient
+	inputV1alpha1   *inputv1alpha1.InputV1alpha1Client
 	spiritsV1alpha1 *spiritsv1alpha1.SpiritsV1alpha1Client
+}
+
+// InputV1alpha1 retrieves the InputV1alpha1Client
+func (c *Clientset) InputV1alpha1() inputv1alpha1.InputV1alpha1Interface {
+	return c.inputV1alpha1
 }
 
 // SpiritsV1alpha1 retrieves the SpiritsV1alpha1Client
@@ -69,6 +77,10 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
+	cs.inputV1alpha1, err = inputv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	if err != nil {
+		return nil, err
+	}
 	cs.spiritsV1alpha1, err = spiritsv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
@@ -94,6 +106,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
+	cs.inputV1alpha1 = inputv1alpha1.New(c)
 	cs.spiritsV1alpha1 = spiritsv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)

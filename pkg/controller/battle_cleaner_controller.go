@@ -29,6 +29,7 @@ func (r *BattleCleanerReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 		Client:   r.Client,
 		Object:   &spirit,
 		OnUpsert: r.onUpsert,
+		OnDelete: r.onDelete,
 	})
 }
 
@@ -58,10 +59,8 @@ func (r *BattleCleanerReconciler) onDelete(
 	ctx context.Context,
 	log logr.Logger,
 	req ctrl.Request,
-	spirit *spiritsv1alpha1.Spirit,
 ) error {
 	// Delete all in-battle spirits with this spirit's name (because it is getting deleted too)
-	// TODO: could we do this with an owner reference on the spirit?
 	inBattleSpiritsList, err := r.listInBattleSpirits(ctx, log, req)
 	if err != nil {
 		return fmt.Errorf("list in battle spirits: %w", err)

@@ -12,10 +12,6 @@ type FakeSpiritsV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeSpiritsV1alpha1) ActionRequests(namespace string) v1alpha1.ActionRequestInterface {
-	return &FakeActionRequests{c, namespace}
-}
-
 func (c *FakeSpiritsV1alpha1) Battles(namespace string) v1alpha1.BattleInterface {
 	return &FakeBattles{c, namespace}
 }

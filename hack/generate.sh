@@ -17,7 +17,7 @@ generate_groups() {
     deepcopy,defaulter,conversion,client \
     ${SPIRITSPKG}/pkg/apis \
     ${SPIRITSPKG}/pkg/apis \
-    spirits:v1alpha1 \
+    "spirits:v1alpha1 spirits/input:v1alpha1" \
     --go-header-file hack/boilerplate.go.txt -v 1
 }
 
@@ -29,7 +29,7 @@ generate_internal_groups() {
     ${SPIRITSPKG}/internal/apis \
     ${SPIRITSPKG}/internal/apis \
     ${SPIRITSPKG}/pkg/apis \
-    spirits:v1alpha1 \
+    "spirits:v1alpha1 spirits/input:v1alpha1" \
     --go-header-file hack/boilerplate.go.txt -v 1
 }
 

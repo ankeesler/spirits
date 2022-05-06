@@ -5,5 +5,5 @@ metadata:
   name: the-human-battle
 spec:
   spirits:
-  - name: spirit-a
-  - name: spirit-b
+  - name: spirit-human
+  - name: spirit-c

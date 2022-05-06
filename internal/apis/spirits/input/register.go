@@ -1,11 +1,11 @@
-package spirits
+package input
 
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-const GroupName = "spirits.ankeesler.github.io"
+const GroupName = "input.spirits.ankeesler.github.io"
 
 // SchemeGroupVersion is group version used to register these objects.
 var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: runtime.APIVersionInternal}
@@ -18,10 +18,8 @@ var (
 // Adds the list of known types to the given scheme.
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
-		&Battle{},
-		&BattleList{},
-		&Spirit{},
-		&SpiritList{},
+		&ActionCall{},
+		&ActionCallList{},
 	)
 	return nil
 }

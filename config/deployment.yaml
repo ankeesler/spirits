@@ -47,36 +47,91 @@ spec:
       - image: ankeesler/spirits-server
         name: spirits-server
 
-# TODO: we should create these in apiserver.Start().
-# We should be able to get the Service namespace from inside the pod.
-# We can get the Service name from...will have to think.
-# We can just Create() from the apiserver and check that the error is nil or AlreadyExists.
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   namespace: spirits
-#   name: spirits-apiserver
-# spec:
-#   type: ClusterIP
-#   selector:
-#     app: spirits-server
-#   ports:
-#     - protocol: TCP
-#       port: 443
-#       targetPort: 9444
-# ---
-# apiVersion: apiregistration.k8s.io/v1
-# kind: APIService
-# metadata:
-#   name: v1alpha1.spirits.ankeesler.github.io
-# spec:
-#   version: v1alpha1
-#   group: spirits.ankeesler.github.io
-#   groupPriorityMinimum: 9900
-#   versionPriority: 15
-#   insecureSkipTLSVerify: true
-#   service:
-#     name: spirits-apiserver
-#     namespace: spirits
-#     port: 443  
+# spirits-apiserver stuff
+# See #182087996 for cleaning this up
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: spirits
+  name: spirits-apiserver
+spec:
+  type: ClusterIP
+  selector:
+    app: spirits-server
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 9444
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1alpha1.input.spirits.ankeesler.github.io
+spec:
+  version: v1alpha1
+  group: input.spirits.ankeesler.github.io
+  groupPriorityMinimum: 9900
+  versionPriority: 15
+  # See #182087996 for cleaning this up
+  insecureSkipTLSVerify: true
+  service:
+    name: spirits-apiserver
+    namespace: spirits
+    port: 443  
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spirits-server:extension-apiserver-authentication-reader
+  namespace: kube-system
+subjects:
+- kind: ServiceAccount
+  name: spirits-server
+  namespace: spirits
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: extension-apiserver-authentication-reader
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spirits-server:system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: spirits-server
+    namespace: spirits
+roleRef:
+  kind: ClusterRole
+  name: system:auth-delegator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spirits-apiserver
+rules:
+- apiGroups: [ "" ]
+  resources: [ namespaces ]
+  verbs: [ get, list, watch ]
+- apiGroups: [ admissionregistration.k8s.io ]
+  resources: [ validatingwebhookconfigurations, mutatingwebhookconfigurations ]
+  verbs: [ get, list, watch ]
+- apiGroups: [ flowcontrol.apiserver.k8s.io ]
+  resources: [ flowschemas, prioritylevelconfigurations ]
+  verbs: [ get, list, watch ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spirits-server:spirits-apiserver
+  namespace: kube-system
+subjects:
+- kind: ServiceAccount
+  name: spirits-server
+  namespace: spirits
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: spirits-apiserver

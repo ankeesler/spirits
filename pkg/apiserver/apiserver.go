@@ -8,14 +8,19 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
+	"k8s.io/apiserver/pkg/server/dynamiccertificates"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
+	certutil "k8s.io/client-go/util/cert"
 
-	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
+	inputinternal "github.com/ankeesler/spirits/internal/apis/spirits/input"
+	inputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/input/v1alpha1"
 )
 
 type ActionSink interface {
-	Post(namespace, battleName, battleGeneration, spiritName, spiritGeneration, actionName string) error
+	Post(namespace, battleName, spiritName, actionName string) error
 }
 
 type APIServer struct {
@@ -44,11 +49,13 @@ func (m *APIServer) Start(ctx context.Context) error {
 		return fmt.Errorf("new apiserver: %w", err)
 	}
 
-	actionRequestGVR := spiritsv1alpha1.SchemeGroupVersion.WithResource("actionrequests")
-	apiGroup := genericapiserver.NewDefaultAPIGroupInfo(actionRequestGVR.Group, scheme, metav1.ParameterCodec, codecFactory)
-	apiGroup.VersionedResourcesStorageMap[actionRequestGVR.Version][actionRequestGVR.Resource] = &actionRequestHandler{ActionSink: m.ActionSink}
+	actionCallGVR := inputv1alpha1.SchemeGroupVersion.WithResource("actioncalls")
+	apiGroup := genericapiserver.NewDefaultAPIGroupInfo(actionCallGVR.Group, scheme, metav1.ParameterCodec, codecFactory)
+	apiGroup.VersionedResourcesStorageMap[actionCallGVR.Version] = map[string]rest.Storage{
+		actionCallGVR.Resource: &actionRequestHandler{ActionSink: m.ActionSink},
+	}
 	if err := apiServer.InstallAPIGroup(&apiGroup); err != nil {
-		return fmt.Errorf("install api group")
+		return fmt.Errorf("install api group: %w", err)
 	}
 
 	if m.PostStartHook != nil {
@@ -67,19 +74,22 @@ func (m *APIServer) Start(ctx context.Context) error {
 
 func (m *APIServer) getConfig(codecFactory serializer.CodecFactory) (*genericapiserver.RecommendedConfig, error) {
 	// Create new recommended set of apiserver options
-	options := genericoptions.NewRecommendedOptions("", codecFactory.LegacyCodec(spiritsv1alpha1.SchemeGroupVersion))
+	options := genericoptions.NewRecommendedOptions("", codecFactory.LegacyCodec(inputv1alpha1.SchemeGroupVersion))
 
 	// Set serving port
 	options.SecureServing.BindPort = m.Port
 
 	// Setup self-signed certs for the apiserver
-	if err := options.SecureServing.MaybeDefaultWithSelfSignedCerts(
-		"spirits-apiserver",
-		[]string{m.DNSName},
-		[]net.IP{},
-	); err != nil {
-		return nil, fmt.Errorf("default with signed certs: %w", err)
+	// #182087996: this is obviously not ok, need to add real apiserver certs support
+	cert, key, err := certutil.GenerateSelfSignedCertKey("xxx", []net.IP{}, []string{m.DNSName})
+	if err != nil {
+		return nil, fmt.Errorf("generate cert: %w", err)
 	}
+	dynamicCert, err := dynamiccertificates.NewStaticCertKeyContent("xxx", cert, key)
+	if err != nil {
+		return nil, fmt.Errorf("create dynamic cert: %w", err)
+	}
+	options.SecureServing.SecureServingOptions.ServerCert.GeneratedCert = dynamicCert
 
 	// Don't need to talk to etcd - our handling is done in memory
 	options.Etcd = nil
@@ -95,11 +105,11 @@ func (m *APIServer) getConfig(codecFactory serializer.CodecFactory) (*genericapi
 
 func getScheme() *runtime.Scheme {
 	scheme := runtime.NewScheme()
-	scheme.AddKnownTypes(
-		spiritsv1alpha1.SchemeGroupVersion,
-		&spiritsv1alpha1.ActionRequest{},
-		&spiritsv1alpha1.ActionRequestList{},
+	metav1.AddToGroupVersion(scheme, metav1.Unversioned)
+	schemeBuilder := runtime.NewSchemeBuilder(
+		inputv1alpha1.AddToScheme,
+		inputinternal.AddToScheme,
 	)
-	metav1.AddToGroupVersion(scheme, spiritsv1alpha1.SchemeGroupVersion)
+	utilruntime.Must(schemeBuilder.AddToScheme(scheme))
 	return scheme
 }

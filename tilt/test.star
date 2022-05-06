@@ -13,6 +13,7 @@ def test_all():
     'test-unit',
     _hack_test_unit,
     deps=go_srcs + _hack_test_unit,
+    trigger_mode=TRIGGER_MODE_MANUAL,
     labels=['test'],
   )
 

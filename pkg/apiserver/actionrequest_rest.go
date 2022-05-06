@@ -11,7 +11,7 @@ import (
 	"k8s.io/apiserver/pkg/registry/rest"
 	"k8s.io/utils/trace"
 
-	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
+	inputinternal "github.com/ankeesler/spirits/internal/apis/spirits/input"
 )
 
 type actionRequestHandler struct {
@@ -30,7 +30,7 @@ var _ interface {
 } = (*actionRequestHandler)(nil)
 
 func (h *actionRequestHandler) New() runtime.Object {
-	return &spiritsinternal.ActionRequest{}
+	return &inputinternal.ActionCall{}
 }
 
 func (h *actionRequestHandler) NamespaceScoped() bool {
@@ -58,30 +58,28 @@ func (h *actionRequestHandler) Create(
 	}
 
 	// Cast the input object
-	actionReq, ok := obj.(*spiritsinternal.ActionRequest)
+	actionCall, ok := obj.(*inputinternal.ActionCall)
 	if !ok {
 		return nil, apierrors.NewBadRequest(fmt.Sprintf("not an ActionRequest: %#v", obj))
 	}
 
 	// Post to the actions sink and return the result
-	result := spiritsinternal.ActionRequestResultAccepted
+	result := inputinternal.ActionCallResultAccepted
 	message := ""
 	if err := h.ActionSink.Post(
 		genericrequest.NamespaceValue(ctx),
-		actionReq.Spec.Spirit.Name,
-		fmt.Sprintf("%d", actionReq.Spec.Spirit.Generation),
-		actionReq.Spec.Battle.Name,
-		fmt.Sprintf("%d", actionReq.Spec.Battle.Generation),
-		actionReq.Spec.ActionName,
+		actionCall.Spec.Spirit.Name,
+		actionCall.Spec.Battle.Name,
+		actionCall.Spec.ActionName,
 	); err != nil {
-		result = spiritsinternal.ActionRequestResultRejected
+		result = inputinternal.ActionCallResultRejected
 		message = err.Error()
 		traceFailure(t, message)
 	} else {
 		traceSuccess(t)
 	}
-	return &spiritsinternal.ActionRequest{
-		Status: spiritsinternal.ActionRequestStatus{
+	return &inputinternal.ActionCall{
+		Status: inputinternal.ActionCallStatus{
 			Result:  result,
 			Message: message,
 		},
