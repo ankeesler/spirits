@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -87,26 +88,31 @@ func (r *BattleReconciler) progressBattle(
 	if err != nil {
 		return fmt.Errorf("get in battle spirits: %w", err)
 	}
-	log.V(2).Info("get in battle spirits", "in battle spirits", inBattleSpirits)
+	log.V(2).Info("get in battle spirits", "battle", battle, "inBattleSpirits", inBattleSpirits)
 
 	// Go ahead and create a context for the battle, it will be canceled if
 	// not used by the battle
 	battleCtx, battleCancel := context.WithCancel(context.Background())
-	existingBattleCancel, exists := r.BattleCancelFuncs.LoadOrStore(client.ObjectKeyFromObject(battle).String(), battleCancel)
+	existingBattleCancel, battleExists := r.BattleCancelFuncs.LoadOrStore(client.ObjectKeyFromObject(battle).String(), battleCancel)
+	log.Info("andrew", "battleExists", battleExists, "battle", battle)
 
-	// TODO: what if the state is error here - shouldn't we try to run again? But we don't want to get into a forever loop between error and running
-	// If the battle exists or if we claim to be finished...
-	if exists || battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished {
-		// ...and it is running with the expected spirits, then we are done
-		if matchingSpirits(inBattleSpirits, battle.Status.InBattleSpirits) {
-			// The context we created is not used by the battle, so trash it
-			log.Info("in battle spirits match expected")
-			battleCancel()
-			return nil
-		}
+	// If no battle is running, and the battle state is finished, then no need to start a new battle
+	if !battleExists && battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished {
+		log.Info("battle is finished")
+		battleCancel()
+		return nil
+	}
 
-		// Otherwise, cancel the current battle, and let's start a new one
-		// TODO: don't cancel this unless it exists
+	// If a battle is running, and the in-battle spirits are the same as what we would expect,
+	// then no need to start a new battle
+	if battleExists && matchingSpirits(inBattleSpirits, battle.Status.InBattleSpirits) {
+		log.Info("in battle spirits match expected")
+		battleCancel()
+		return nil
+	}
+
+	// Otherwise, cancel the current battle (if there is one), and let's start a new battle
+	if battleExists {
 		existingBattleCancel.(context.CancelFunc)()
 	}
 
@@ -124,9 +130,6 @@ func (r *BattleReconciler) progressBattle(
 			Name: inBattleSpirit.Name,
 		})
 	}
-
-	// TODO: does this work with multiple replicas?
-	// TODO: what happens if multiple goroutines are running?
 
 	return nil
 }
@@ -203,19 +206,19 @@ func (r *BattleReconciler) runBattle(
 	battle *spiritsinternal.Battle,
 	inBattleSpirits []*spiritsinternal.Spirit,
 ) {
-	ctrl.Log.V(1).Info("battle starting", "battle", battle, "inBattleSpirits", inBattleSpirits)
+	ctrl.Log.V(1).Info("battle starting", "battle", battle, "inBattleSpirits", spiritsString(inBattleSpirits))
 
 	// Run the battle
 	battlerunner.Run(ctx, battle, inBattleSpirits, r.battleCallback)
 
-	ctrl.Log.V(1).Info("battle finished", "battle", battle, "inBattleSpirits", inBattleSpirits)
+	ctrl.Log.V(1).Info("battle finished", "battle", battle, "inBattleSpirits", spiritsString(inBattleSpirits))
 
 	// After the battle is over, update the status and clear it from the cache
 	if err := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
 		battle.Status.Phase = spiritsinternal.BattlePhaseFinished
 		return nil
 	}); err != nil {
-		ctrl.Log.Error(err, "convert and create or patch")
+		ctrl.Log.Error(err, "run battle: convert and create or patch")
 	}
 	if cancel, ok := r.BattleCancelFuncs.LoadAndDelete(client.ObjectKeyFromObject(battle).String()); ok {
 		cancel.(context.CancelFunc)()
@@ -228,7 +231,7 @@ func (r *BattleReconciler) battleCallback(
 	done bool,
 	err error,
 ) {
-	ctrl.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", inBattleSpirits, "err", err)
+	ctrl.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", spiritsString(inBattleSpirits), "err", err)
 
 	// Set a really long timeout, just in case
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
@@ -392,4 +395,12 @@ func matchingSpirits(spirits []*spiritsv1alpha1.Spirit, spiritRefs []corev1.Loca
 	}
 
 	return true
+}
+
+func spiritsString(spirits []*spiritsinternal.Spirit) string {
+	s := strings.Builder{}
+	for _, spirit := range spirits {
+		s.WriteString(fmt.Sprintf("%#v ", spirit))
+	}
+	return s.String()
 }

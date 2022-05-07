@@ -1,0 +1,9 @@
+---
+apiVersion: input.spirits.ankeesler.github.io/v1alpha1
+kind: ActionCall
+metadata:
+  name: attack-action
+spec:
+  battle: {name: the-human-battle}
+  spirit: {name: spirit-human}
+  actionName: attack
