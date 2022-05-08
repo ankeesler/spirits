@@ -148,12 +148,15 @@ func (r *BattleReconciler) progressBattle(
 			"desired", maybeNewBattleContext.spiritsRefs,
 			"actual", currentBattleContext.spiritsRefs,
 		)
+
 		currentBattleContext.cancel(fmt.Sprintf(
 			"desired in battle spirits %s do not match actual in battle spirits %s",
 			maybeNewBattleContext.spiritsRefs,
 			currentBattleContext.spiritsRefs,
 		))
 		currentBattleContext = maybeNewBattleContext
+		r.BattleCache.Store(client.ObjectKeyFromObject(battle).String(), currentBattleContext)
+
 		doStartNewBattle = true
 	}
 
