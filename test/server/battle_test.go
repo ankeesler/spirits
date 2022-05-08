@@ -37,6 +37,7 @@ func TestNonHumanIntelligenceBattle(t *testing.T) {
 
 	// Assert battle eventually fininshes
 	gotInBattleSpiritsStats := requireBattleFinishes(t, ctx, battle)
+	t.Log(gotInBattleSpiritsStats)
 	require.Len(t, gotInBattleSpiritsStats, 2)
 	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-1-spirit-a-1"].Health)
 	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-battle-1-spirit-b-1"].Health)
@@ -142,8 +143,8 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 	gotInBattleSpiritsStats := requireBattleFinishes(t, ctx, battle)
 	t.Log(gotInBattleSpiritsStats)
 	require.Len(t, gotInBattleSpiritsStats, 2)
-	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-battle-1-spirit-human-1"].Health)
-	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-battle-1-spirit-c-1"].Health)
+	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-human-battle-1-spirit-human-1"].Health)
+	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-human-battle-1-spirit-c-1"].Health)
 }
 
 func TestInvalidBattles(t *testing.T) {
@@ -192,8 +193,6 @@ func TestUnsolicitedActionCall(t *testing.T) {
 }
 
 func requireBattleFinishes(t *testing.T, ctx context.Context, battle *spiritsv1alpha1.Battle) map[string]*spiritsv1alpha1.SpiritStats {
-	t.Helper()
-
 	// Read spirits
 	var spirits []*spiritsv1alpha1.Spirit
 	for _, spiritRef := range battle.Spec.Spirits {
@@ -204,32 +203,17 @@ func requireBattleFinishes(t *testing.T, ctx context.Context, battle *spiritsv1a
 
 	// Assert spirits and battle are happy
 	for i := range spirits {
-		requireEventuallyConsistent(t, func() (bool, error) {
-			spirit, err := tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Get(ctx, spirits[i].Name, metav1.GetOptions{})
-			if err != nil {
-				return false, fmt.Errorf("get: %w", err)
-			}
-			t.Logf("got spirit %q conditions: %#v", spirit.Name, spirit.Status.Conditions)
-			return meta.IsStatusConditionTrue(spirit.Status.Conditions, "Ready"), nil
+		requireEventuallyConsistentSpirit(t, ctx, spirits[i].Name, func(spirit *spiritsv1alpha1.Spirit) bool {
+			return meta.IsStatusConditionTrue(spirit.Status.Conditions, "Ready")
 		})
 	}
-	requireEventuallyConsistent(t, func() (bool, error) {
-		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, battle.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, fmt.Errorf("get: %w", err)
-		}
-		t.Logf("got battle %q conditions: %#v", battle.Name, battle.Status.Conditions)
-		return meta.IsStatusConditionTrue(battle.Status.Conditions, "Progressing"), nil
+	requireEventuallyConsistentBattle(t, ctx, battle.Name, func(battle *spiritsv1alpha1.Battle) bool {
+		return meta.IsStatusConditionTrue(battle.Status.Conditions, "Progressing")
 	})
 
 	// Assert battle finished
-	requireEventuallyConsistent(t, func() (bool, error) {
-		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, battle.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, fmt.Errorf("get: %w", err)
-		}
-		t.Logf("got battle %q phase: %q", battle.Name, battle.Status.Phase)
-		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished, nil
+	requireEventuallyConsistentBattle(t, ctx, battle.Name, func(battle *spiritsv1alpha1.Battle) bool {
+		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished
 	})
 
 	// Assert spirit stats at end of battle

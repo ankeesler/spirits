@@ -40,7 +40,10 @@ func newBattleContext(spiritsRefs []corev1.LocalObjectReference) *battleContext 
 }
 
 func (bc *battleContext) Err() error {
-	return fmt.Errorf("%s: %w", bc.cancelReasons, bc.Context.Err())
+	if bc.Context.Err() != nil {
+		return fmt.Errorf("%w (%s)", bc.Context.Err(), strings.Join(bc.cancelReasons, ","))
+	}
+	return nil
 }
 
 func (bc *battleContext) cancel(reason string) {
@@ -133,12 +136,18 @@ func (r *BattleReconciler) progressBattle(
 
 	// If no battle exists, we will need to start a new battle
 	if !battleExists {
+		log.V(1).Info("starting new battle: one does not exist")
 		doStartNewBattle = true
 	}
 
 	// If there is an existing battle, and the existing battle is running with different spirits than we expect,
 	// then we cancel the old battle context and use the new one
-	if battleExists && equality.Semantic.DeepEqual(maybeNewBattleContext.spiritsRefs, currentBattleContext.spiritsRefs) {
+	if battleExists && !equality.Semantic.DeepEqual(maybeNewBattleContext.spiritsRefs, currentBattleContext.spiritsRefs) {
+		log.V(1).Info(
+			"starting new battle: desired in battle spirits do not match actual spirits",
+			"desired", maybeNewBattleContext.spiritsRefs,
+			"actual", currentBattleContext.spiritsRefs,
+		)
 		currentBattleContext.cancel(fmt.Sprintf(
 			"desired in battle spirits %s do not match actual in battle spirits %s",
 			maybeNewBattleContext.spiritsRefs,
@@ -154,7 +163,7 @@ func (r *BattleReconciler) progressBattle(
 		if err != nil {
 			return fmt.Errorf("convert to internal battle: %w", err)
 		}
-		go r.runBattle(maybeNewBattleContext.Context, internalBattle, internalInBattleSpirits)
+		go r.runBattle(currentBattleContext, internalBattle, internalInBattleSpirits)
 	}
 
 	// Update the external battle in-battle spirits
@@ -251,7 +260,7 @@ func (r *BattleReconciler) runBattle(
 	}); err != nil {
 		ctrl.Log.Error(err, "run battle: convert and create or patch")
 	}
-	if battleContextAny, ok := r.BattleCache.LoadAndDelete(client.ObjectKeyFromObject(battle).String()); ok {
+	if battleContextAny, ok := r.BattleCache.Load(client.ObjectKeyFromObject(battle).String()); ok {
 		battleContextAny.(*battleContext).cancel("battle finished")
 	}
 }
@@ -320,7 +329,7 @@ func (r *BattleReconciler) convertToInternalBattle(
 		internalSpirit.Spec.Internal.Action, err = getAction(
 			spirit.Spec.Actions,
 			spirit.Spec.Intelligence,
-			r.getLazyActionFunc(battle, spirit.Name),
+			r.getLazyActionFunc(battle, spirit),
 		)
 		if err != nil {
 			return nil, nil, fmt.Errorf("get action: %w", err)
@@ -334,23 +343,37 @@ func (r *BattleReconciler) convertToInternalBattle(
 
 func (r *BattleReconciler) getLazyActionFunc(
 	battle *spiritsv1alpha1.Battle,
-	spiritName string,
+	inBattleSpirit *spiritsv1alpha1.Spirit,
 ) func(ctx context.Context) (spiritsinternal.Action, error) {
 	return func(ctx context.Context) (spiritsinternal.Action, error) {
-		ctrl.Log.V(1).Info("lazy action func", "battle", battle, "inBattleSpiritName", spiritName)
+		ctrl.Log.V(1).Info("lazy action func", "battle", battle, "inBattleSpirit", inBattleSpirit)
 
 		if _, err := controllerutil.CreateOrPatch(ctx, r.Client, battle, func() error {
-			battle.Status.ActingSpirit = corev1.LocalObjectReference{Name: spiritName}
+			battle.Status.ActingSpirit = corev1.LocalObjectReference{Name: inBattleSpirit.Name}
 			battle.Status.Phase = spiritsv1alpha1.BattlePhaseAwaitingAction
 			return nil
 		}); err != nil {
 			return nil, fmt.Errorf("create or patch battle during lazy action: %w", err)
 		}
 
+		battleName, ok := inBattleSpirit.Labels[inBattleSpiritBattleNameLabel]
+		if !ok {
+			return nil, fmt.Errorf("missing battle name from spirit %q", client.ObjectKeyFromObject(inBattleSpirit).String())
+		}
+
+		spiritName, ok := inBattleSpirit.Labels[inBattleSpiritSpiritNameLabel]
+		if !ok {
+			return nil, fmt.Errorf("missing spirit name from spirit %q", client.ObjectKeyFromObject(inBattleSpirit).String())
+		}
+
+		if battle.Name != battleName {
+			return nil, fmt.Errorf("battle name from battle %q does not battle name from spirit %q", battle.Name, battleName)
+		}
+
 		actionName, err := r.ActionSource.Pend(
 			ctx,
 			battle.Namespace,
-			battle.Name,
+			battleName,
 			spiritName,
 		)
 		if err != nil {
@@ -403,20 +426,6 @@ func (r *BattleReconciler) convertAndCreateOrPatch(
 	return nil
 }
 
-func matchingSpirits(spirits []*spiritsv1alpha1.Spirit, spiritRefs []corev1.LocalObjectReference) bool {
-	if len(spirits) != len(spiritRefs) {
-		return false
-	}
-
-	for i := range spirits {
-		if spirits[i].Name != spiritRefs[i].Name {
-			return false
-		}
-	}
-
-	return true
-}
-
 func getSpiritsRefs(spirits []*spiritsv1alpha1.Spirit) []corev1.LocalObjectReference {
 	var refs []corev1.LocalObjectReference
 	for _, spirit := range spirits {
@@ -428,7 +437,7 @@ func getSpiritsRefs(spirits []*spiritsv1alpha1.Spirit) []corev1.LocalObjectRefer
 func spiritsString(spirits []*spiritsinternal.Spirit) string {
 	s := strings.Builder{}
 	for _, spirit := range spirits {
-		s.WriteString(fmt.Sprintf("%q ", spirit.Name))
+		s.WriteString(fmt.Sprintf("%s@%d ", spirit.Name, spirit.Spec.Stats.Health))
 	}
 	return s.String()
 }

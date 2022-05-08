@@ -15,6 +15,13 @@ type ActionChannel struct {
 func (ac *ActionChannel) Post(
 	namespace, battleName, spiritName, actionName string,
 ) error {
+	klog.V(1).InfoS(
+		"actionchannel post",
+		"namespace", namespace,
+		"battleName", battleName,
+		"spiritName", spiritName,
+		"actionName", actionName,
+	)
 	select {
 	case ac.c(namespace, battleName, spiritName) <- actionName:
 	default:
@@ -31,7 +38,12 @@ func (ac *ActionChannel) Pend(
 	ctx context.Context,
 	namespace, battleName, spiritName string,
 ) (string, error) {
-	klog.V(1).InfoS("actionchannel pend", "namespace", namespace, "battleName", battleName, "spiritName", spiritName)
+	klog.V(1).InfoS(
+		"actionchannel pend",
+		"namespace", namespace,
+		"battleName", battleName,
+		"spiritName", spiritName,
+	)
 	select {
 	case actionName, ok := <-ac.c(namespace, battleName, spiritName):
 		if !ok {

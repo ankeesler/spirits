@@ -23,19 +23,34 @@ func Run(
 	callback(battle, spirits, nil)
 
 	s := newStrategy(spirits)
-	for s.hasNext() {
+	for {
+		// Make sure the context has not been cancelled
+		select {
+		case <-ctx.Done():
+			callback(battle, spirits, fmt.Errorf("context canceled: %w", ctx.Err()))
+		default:
+		}
+
+		// Make sure we aren't infinite-looping
 		turns++
 		if turns >= maxTurns {
 			callback(battle, spirits, errors.New("too many turns"))
-			return
+			break
 		}
 		from, to := s.next()
 
-		if err := from.Spec.Internal.Action.Run(ctx, from, to); err != nil {
-			callback(battle, spirits, fmt.Errorf("action errored: %w", err))
-			return
+		// Make sure there is a next spirit to run
+		if !s.hasNext() {
+			break
 		}
 
+		// Run the next action
+		if err := from.Spec.Internal.Action.Run(ctx, from, to); err != nil {
+			callback(battle, spirits, fmt.Errorf("action errored: %w", err))
+			break
+		}
+
+		// Call the callback to alert the caller of the new turn
 		callback(battle, spirits, nil)
 	}
 }

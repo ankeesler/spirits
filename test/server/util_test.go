@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/util/wait"
 
 	spiritsclientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
@@ -47,18 +46,46 @@ func getInBattleSpiritStats(
 func requireEventuallyConsistent(t *testing.T, conditionFunc func() (bool, error)) {
 	t.Helper()
 
-	const interval, duration = time.Second * 1, time.Second * 5
+	const interval, duration = time.Second * 1, time.Second * 10
 
-	// Wait for the condition to be met
-	require.NoError(t, wait.PollImmediate(interval, duration, func() (bool, error) {
-		return conditionFunc()
-	}))
+	// Wait until we see the conditionFunc return 3 times in a row with the same result
+	deadline := time.Now().Add(duration)
+	successesLeft := 3
+	for time.Now().Before(deadline) {
+		condition, err := conditionFunc()
+		require.NoError(t, err)
 
-	// Make sure the condition stays consistent
-	require.Equal(t, wait.ErrWaitTimeout, wait.PollImmediate(interval, duration, func() (bool, error) {
-		met, err := conditionFunc()
-		return !met, err
-	}))
+		if condition {
+			successesLeft--
+			if successesLeft == 0 {
+				return
+			}
+		} else {
+			successesLeft = 3
+		}
+
+		time.Sleep(interval)
+	}
+
+	require.Fail(t, "condition failed to be eventually consistent")
+}
+
+func requireEventuallyConsistentSpirit(
+	t *testing.T,
+	ctx context.Context,
+	name string,
+	conditionFunc func(*spiritsv1alpha1.Spirit) bool,
+) {
+	t.Helper()
+	requireEventuallyConsistent(t, func() (bool, error) {
+		spirit, err := tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Get(ctx, name, metav1.GetOptions{})
+		if err != nil {
+			return false, fmt.Errorf("get: %w", err)
+		}
+		t.Logf("got spirit %q status: %+v", spirit.Name, spirit.Status)
+		return conditionFunc(spirit), nil
+	})
+	t.Log("spirit is consistent")
 }
 
 func requireEventuallyConsistentBattle(
@@ -76,4 +103,5 @@ func requireEventuallyConsistentBattle(
 		t.Logf("got battle %q status: %+v", battle.Name, battle.Status)
 		return conditionFunc(battle), nil
 	})
+	t.Log("battle is consistent")
 }

@@ -4,16 +4,20 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os"
+	"path/filepath"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/apiserver/pkg/registry/rest"
+	apiserverrest "k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	"k8s.io/apiserver/pkg/server/dynamiccertificates"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
+	"k8s.io/client-go/rest"
 	certutil "k8s.io/client-go/util/cert"
+	"k8s.io/klog/v2"
 
 	inputinternal "github.com/ankeesler/spirits/internal/apis/spirits/input"
 	inputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/input/v1alpha1"
@@ -51,7 +55,7 @@ func (m *APIServer) Start(ctx context.Context) error {
 
 	actionCallGVR := inputv1alpha1.SchemeGroupVersion.WithResource("actioncalls")
 	apiGroup := genericapiserver.NewDefaultAPIGroupInfo(actionCallGVR.Group, scheme, metav1.ParameterCodec, codecFactory)
-	apiGroup.VersionedResourcesStorageMap[actionCallGVR.Version] = map[string]rest.Storage{
+	apiGroup.VersionedResourcesStorageMap[actionCallGVR.Version] = map[string]apiserverrest.Storage{
 		actionCallGVR.Resource: &actionCallHandler{ActionSink: m.ActionSink},
 	}
 	if err := apiServer.InstallAPIGroup(&apiGroup); err != nil {
@@ -78,6 +82,9 @@ func (m *APIServer) getConfig(codecFactory serializer.CodecFactory) (*genericapi
 
 	// Set serving port
 	options.SecureServing.BindPort = m.Port
+
+	// Support for running outside of a cluster (e.g., debugging on a local machine)
+	maybeSetKubeconfigPath(options)
 
 	// Setup self-signed certs for the apiserver
 	// #182087996: this is obviously not ok, need to add real apiserver certs support
@@ -112,4 +119,18 @@ func getScheme() *runtime.Scheme {
 	)
 	utilruntime.Must(schemeBuilder.AddToScheme(scheme))
 	return scheme
+}
+
+func maybeSetKubeconfigPath(options *genericoptions.RecommendedOptions) {
+	// Assume that if we can get an in-cluster rest.Config, then we don't need to set a kubeconfig path
+	_, err := rest.InClusterConfig()
+	if err == nil {
+		return
+	}
+
+	path := filepath.Join(os.Getenv("HOME"), ".kube", "config")
+	klog.InfoS("using kubeconfig path for spirits apiserver", "path", path)
+	options.Authentication.RemoteKubeConfigFile = path
+	options.Authorization.RemoteKubeConfigFile = path
+	options.CoreAPI.CoreAPIKubeconfigPath = path
 }
