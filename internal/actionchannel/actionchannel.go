@@ -45,10 +45,11 @@ func (ac *ActionChannel) Pend(
 		return actionName, nil
 	case <-ctx.Done():
 		return "", fmt.Errorf(
-			"context canceled for namespace %q battleName %q spiritName %q actions",
+			"context canceled for namespace %q battleName %q spiritName %q actions: %q",
 			namespace,
 			battleName,
 			spiritName,
+			ctx.Err().Error(),
 		)
 	}
 }

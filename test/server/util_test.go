@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -46,14 +47,33 @@ func getInBattleSpiritStats(
 func requireEventuallyConsistent(t *testing.T, conditionFunc func() (bool, error)) {
 	t.Helper()
 
+	const interval, duration = time.Second * 1, time.Second * 5
+
 	// Wait for the condition to be met
-	require.NoError(t, wait.PollImmediate(time.Second*1, time.Second*5, func() (bool, error) {
+	require.NoError(t, wait.PollImmediate(interval, duration, func() (bool, error) {
 		return conditionFunc()
 	}))
 
 	// Make sure the condition stays consistent
-	require.Equal(t, wait.ErrWaitTimeout, wait.PollImmediate(time.Second*1, time.Second*5, func() (bool, error) {
+	require.Equal(t, wait.ErrWaitTimeout, wait.PollImmediate(interval, duration, func() (bool, error) {
 		met, err := conditionFunc()
 		return !met, err
 	}))
+}
+
+func requireEventuallyConsistentBattle(
+	t *testing.T,
+	ctx context.Context,
+	name string,
+	conditionFunc func(*spiritsv1alpha1.Battle) bool,
+) {
+	t.Helper()
+	requireEventuallyConsistent(t, func() (bool, error) {
+		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, name, metav1.GetOptions{})
+		if err != nil {
+			return false, fmt.Errorf("get: %w", err)
+		}
+		t.Logf("got battle %q status: %+v", battle.Name, battle.Status)
+		return conditionFunc(battle), nil
+	})
 }

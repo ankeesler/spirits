@@ -23,6 +23,7 @@ type SpiritReconciler struct {
 func (r *SpiritReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&spiritsv1alpha1.Spirit{}).
+		Named("spirit").
 		Complete(r)
 }
 

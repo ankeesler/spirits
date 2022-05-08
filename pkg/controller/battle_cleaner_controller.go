@@ -20,6 +20,7 @@ type BattleCleanerReconciler struct {
 func (r *BattleCleanerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&spiritsv1alpha1.Spirit{}).
+		Named("battlecleaner").
 		Complete(r)
 }
 

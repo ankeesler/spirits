@@ -85,23 +85,13 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 	require.NoError(t, err)
 
 	// Assert battle is happy
-	requireEventuallyConsistent(t, func() (bool, error) {
-		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, battle.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, fmt.Errorf("get: %w", err)
-		}
-		t.Logf("got battle %q conditions: %#v", battle.Name, battle.Status.Conditions)
-		return meta.IsStatusConditionTrue(battle.Status.Conditions, "Progressing"), nil
+	requireEventuallyConsistentBattle(t, ctx, battle.Name, func(battle *spiritsv1alpha1.Battle) bool {
+		return meta.IsStatusConditionTrue(battle.Status.Conditions, "Progressing")
 	})
 
 	// Assert battle eventually requests an action
-	requireEventuallyConsistent(t, func() (bool, error) {
-		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, battle.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, fmt.Errorf("get: %w", err)
-		}
-		t.Logf("got battle %q phase: %q", battle.Name, battle.Status.Phase)
-		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseAwaitingAction, nil
+	requireEventuallyConsistentBattle(t, ctx, battle.Name, func(battle *spiritsv1alpha1.Battle) bool {
+		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseAwaitingAction
 	})
 
 	// Submit action
@@ -118,13 +108,8 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 	require.Equal(t, inputv1alpha1.ActionCallResultAccepted, actionCall.Status.Result, actionCall.Status.Message)
 
 	// Assert battle eventually requests another action
-	requireEventuallyConsistent(t, func() (bool, error) {
-		battle, err := tc.spiritsClientset.SpiritsV1alpha1().Battles(tc.namespace.Name).Get(ctx, battle.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, fmt.Errorf("get: %w", err)
-		}
-		t.Logf("got battle %q phase: %q", battle.Name, battle.Status.Phase)
-		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseAwaitingAction, nil
+	requireEventuallyConsistentBattle(t, ctx, battle.Name, func(battle *spiritsv1alpha1.Battle) bool {
+		return battle.Status.Phase == spiritsv1alpha1.BattlePhaseAwaitingAction
 	})
 
 	// Submit the wrong action
