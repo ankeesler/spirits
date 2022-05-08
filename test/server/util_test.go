@@ -38,7 +38,7 @@ func getInBattleSpiritStats(
 	for _, inBattleSpiritRef := range battle.Status.InBattleSpirits {
 		inBattleSpirit, err := spiritsClientset.SpiritsV1alpha1().Spirits(battle.Namespace).Get(ctx, inBattleSpiritRef.Name, metav1.GetOptions{})
 		require.NoError(t, err)
-		inBattleSpirits[inBattleSpirit.Name] = &inBattleSpirit.Spec.Stats
+		inBattleSpirits[inBattleSpirit.Name] = &inBattleSpirit.Spec.Attributes.Stats
 	}
 	return inBattleSpirits
 }

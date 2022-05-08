@@ -45,6 +45,11 @@ func (w *SpiritWebhook) Default(ctx context.Context, obj runtime.Object) error {
 		return fmt.Errorf("expected object to be %T, got %T", &spiritsv1alpha1.Spirit{}, obj)
 	}
 
+	// Make sure health is non-zero
+	if spirit.Spec.Attributes.Stats.Health == 0 {
+		spirit.Spec.Attributes.Stats.Health = 1
+	}
+
 	if _, generate := spirit.Annotations[GenerateSpiritAnnotation]; !generate {
 		log.V(1).Info("spirit %q will not be generated", client.ObjectKeyFromObject(spirit).String)
 		return nil

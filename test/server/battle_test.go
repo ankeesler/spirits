@@ -45,7 +45,7 @@ func TestNonHumanIntelligenceBattle(t *testing.T) {
 	// Update one of the spirits
 	spirits[0], err = tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Get(ctx, spirits[0].Name, metav1.GetOptions{})
 	require.NoError(t, err)
-	spirits[0].Spec.Stats.Power = 2
+	spirits[0].Spec.Attributes.Stats.Power = 2
 	spirits[0], err = tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Update(ctx, spirits[0], metav1.UpdateOptions{})
 	require.NoError(t, err)
 

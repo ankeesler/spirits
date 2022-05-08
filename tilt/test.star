@@ -13,7 +13,7 @@ def test_all():
     'test-unit',
     _hack_test_unit,
     deps=go_srcs + _hack_test_unit,
-    trigger_mode=TRIGGER_MODE_MANUAL,
+    auto_init=False,
     labels=['test'],
   )
 
@@ -21,6 +21,7 @@ def test_all():
     'test-integration',
     _hack_test_integration,
     deps=go_srcs + _go_tests + _hack_test_integration,
+    auto_init=False,
     trigger_mode=TRIGGER_MODE_MANUAL,
     resource_deps=[spirits_server_resource],
     labels=['test'],

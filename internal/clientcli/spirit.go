@@ -51,18 +51,18 @@ func runSpirit(c *config) error {
 
 	if err := createOrPatch(c, &spirit, func() error {
 		if health != 0 {
-			spirit.Spec.Stats.Health = health
+			spirit.Spec.Attributes.Stats.Health = health
 		}
 		if power != 0 {
-			spirit.Spec.Stats.Power = power
+			spirit.Spec.Attributes.Stats.Power = power
 		}
 		if armor != 0 {
-			spirit.Spec.Stats.Armor = armor
+			spirit.Spec.Attributes.Stats.Armor = armor
 		}
 		if agility != 0 {
-			spirit.Spec.Stats.Agility = agility
+			spirit.Spec.Attributes.Stats.Agility = agility
 		}
-		if !reflect.DeepEqual(spirit.Spec.Stats, reflect.Zero(reflect.TypeOf(spirit.Spec.Stats))) {
+		if !reflect.DeepEqual(spirit.Spec.Attributes.Stats, reflect.Zero(reflect.TypeOf(spirit.Spec.Attributes.Stats))) {
 			delete(spirit.Annotations, webhook.GenerateSpiritAnnotation)
 		}
 		return nil
@@ -79,11 +79,10 @@ func printSpirit(c *config, spirit *spiritsv1alpha1.Spirit, indent string) {
 	fmt.Fprintf(c.out, "%skind: %s\n", indent, reflect.ValueOf(spirit).Type().String())
 	fmt.Fprintf(c.out, "%sname: %s\n", indent, spirit.Name)
 	fmt.Fprintf(c.out, "%sstats\n", indent)
-	fmt.Fprintf(c.out, "%s  health: %d\n", indent, spirit.Spec.Stats.Health)
-	fmt.Fprintf(c.out, "%s  power: %d\n", indent, spirit.Spec.Stats.Power)
-	fmt.Fprintf(c.out, "%s  armor: %d\n", indent, spirit.Spec.Stats.Armor)
-	fmt.Fprintf(c.out, "%s  agility: %d\n", indent, spirit.Spec.Stats.Agility)
+	fmt.Fprintf(c.out, "%s  health: %d\n", indent, spirit.Spec.Attributes.Stats.Health)
+	fmt.Fprintf(c.out, "%s  power: %d\n", indent, spirit.Spec.Attributes.Stats.Power)
+	fmt.Fprintf(c.out, "%s  armor: %d\n", indent, spirit.Spec.Attributes.Stats.Armor)
+	fmt.Fprintf(c.out, "%s  agility: %d\n", indent, spirit.Spec.Attributes.Stats.Agility)
 	fmt.Fprintf(c.out, "%sactions: %s\n", indent, spirit.Spec.Actions)
-	fmt.Fprintf(c.out, "%sattributes: %s\n", indent, spirit.Spec.Attributes)
 	fmt.Fprintf(c.out, "%sready: %t\n", indent, meta.IsStatusConditionTrue(spirit.Status.Conditions, "Ready"))
 }

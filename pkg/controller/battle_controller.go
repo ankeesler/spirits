@@ -440,7 +440,7 @@ func getSpiritsRefs(spirits []*spiritsv1alpha1.Spirit) []corev1.LocalObjectRefer
 func spiritsString(spirits []*spiritsinternal.Spirit) string {
 	s := strings.Builder{}
 	for _, spirit := range spirits {
-		s.WriteString(fmt.Sprintf("%s@%d ", spirit.Name, spirit.Spec.Stats.Health))
+		s.WriteString(fmt.Sprintf("%s@%d ", spirit.Name, spirit.Spec.Attributes.Stats.Health))
 	}
 	return s.String()
 }

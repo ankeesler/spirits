@@ -6,8 +6,15 @@ load(
   'hack_generate',
 )
 
-_go_external_api_src=os.path.join('pkg', 'apis')
-_go_internal_api_src=os.path.join('internal', 'apis')
+def _get_non_generated_files(files):
+  non_generated_files = []
+  for file in files:
+    if "zz_generated" not in file:
+      non_generated_files += file
+  return non_generated_files
+
+_go_external_api_src=_get_non_generated_files(listdir(os.path.join('pkg', 'apis')))
+_go_internal_api_src=_get_non_generated_files(listdir(os.path.join('internal', 'apis')))
 
 def _join(l):
   if len(l) == 0:
@@ -23,7 +30,7 @@ def build_all():
   local_resource(
     'go-api',
     [hack_generate, 'generate_groups'],
-    deps=[hack_generate, _go_external_api_src],
+    deps=[hack_generate] + _go_external_api_src,
     ignore=['**zz_generated**'],
     auto_init=False,
     labels=['build'],
@@ -32,7 +39,7 @@ def build_all():
   local_resource(
     'go-internal-api',
     [hack_generate, 'generate_internal_groups'],
-    deps=[hack_generate, _go_external_api_src, _go_internal_api_src],
+    deps=[hack_generate] + _go_external_api_src + _go_internal_api_src,
     ignore=['**zz_generated**'],
     auto_init=False,
     labels=['build'],

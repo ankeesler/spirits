@@ -53,54 +53,52 @@ spec:
                   type: string
                 type: array
               attributes:
-                additionalProperties:
-                  type: string
-                description: Attributes are generic properties for a Spirit
+                description: Attributes describe the in-battle spirit's qualities
+                properties:
+                  stats:
+                    description: Stats are the current statistics that describe this
+                      Spirit
+                    properties:
+                      agility:
+                        description: Agility is a quantitative representation of the
+                          speed of the Spirit.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      armor:
+                        description: Armor is a quantitative representation of the
+                          defending ability of the Spirit.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      health:
+                        default: 1
+                        description: Health is a quantitative representation of the
+                          energy of the Spirit. When this drops to 0, the Spirit is
+                          no longer able to participate in a Battle.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      power:
+                        description: Power is a quantitative representation of the
+                          attacking ability of the Spirit.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                    type: object
                 type: object
               intelligence:
                 default: RoundRobin
                 description: Intelligence describes how a Spirit will select actions
                   to perform
                 type: string
-              stats:
-                default:
-                  health: 1
-                description: Stats are the current statistics that describe this Spirit
-                properties:
-                  agility:
-                    description: Agility is a quantitative representation of the speed
-                      of the Spirit.
-                    format: int64
-                    minimum: 0
-                    type: integer
-                  armor:
-                    description: Armor is a quantitative representation of the defending
-                      ability of the Spirit.
-                    format: int64
-                    minimum: 0
-                    type: integer
-                  health:
-                    default: 1
-                    description: Health is a quantitative representation of the energy
-                      of the Spirit. When this drops to 0, the Spirit is no longer
-                      able to participate in a Battle.
-                    format: int64
-                    minimum: 0
-                    type: integer
-                  power:
-                    description: Power is a quantitative representation of the attacking
-                      ability of the Spirit.
-                    format: int64
-                    minimum: 0
-                    type: integer
-                type: object
             type: object
           status:
             description: SpiritStatus defines the observed state of Spirit
             properties:
               conditions:
                 description: Conditions represents the observations of a Spirit's
-                  current state
+                  current in-API state
                 items:
                   description: "Condition contains details for one aspect of the current
                     state of this API Resource. --- This struct is intended for direct
@@ -173,7 +171,8 @@ spec:
                 x-kubernetes-list-type: map
               phase:
                 default: Pending
-                description: Phase summarizes the overall status of the Spirit
+                description: Phase summarizes the overall status of the Spirit API
+                  object
                 enum:
                 - Pending
                 - Ready

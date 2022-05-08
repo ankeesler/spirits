@@ -36,7 +36,6 @@ const (
 type SpiritStats struct {
 	// Health is a quantitative representation of the energy of the Spirit.
 	// When this drops to 0, the Spirit is no longer able to participate in a Battle.
-	// +kubebuilder:default=1
 	// +kubebuilder:validation:Minimum=0
 	// +optional
 	Health int64 `json:"health"`
@@ -57,12 +56,18 @@ type SpiritStats struct {
 	Agility int64 `json:"agility"`
 }
 
-// SpiritSpec defines the desired state of Spirit
-type SpiritSpec struct {
+// SpiritAttributes are the list of qualities of a Spirit
+type SpiritAttributes struct {
 	// Stats are the current statistics that describe this Spirit
-	// +kubebuilder:default={health: 1}
 	// +optional
 	Stats SpiritStats `json:"stats,omitempty"`
+}
+
+// SpiritSpec defines the desired state of Spirit
+type SpiritSpec struct {
+	// Attributes describe the in-battle spirit's qualities
+	// +optional
+	Attributes SpiritAttributes `json:"attributes,omitempty"`
 
 	// Actions are the list of actions that this Spirit can perform
 	// +kubebuilder:default={attack}
@@ -73,22 +78,18 @@ type SpiritSpec struct {
 	// +kubebuilder:default=RoundRobin
 	// +optional
 	Intelligence SpiritIntelligence `json:"intelligence"`
-
-	// Attributes are generic properties for a Spirit
-	// +optional
-	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // SpiritStatus defines the observed state of Spirit
 type SpiritStatus struct {
-	// Conditions represents the observations of a Spirit's current state
+	// Conditions represents the observations of a Spirit's current in-API state
 	// +patchMergeKey=type
 	// +patchStrategy=merge
 	// +listType=map
 	// +listMapKey=type
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 
-	// Phase summarizes the overall status of the Spirit
+	// Phase summarizes the overall status of the Spirit API object
 	// +kubebuilder:default=Pending
 	// +kubebuilder:validation:Enum=Pending;Ready;Error
 	Phase SpiritPhase `json:"phase,omitempty"`

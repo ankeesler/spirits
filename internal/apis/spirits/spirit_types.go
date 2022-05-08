@@ -27,15 +27,18 @@ type SpiritStats struct {
 	Agility int64
 }
 
+type SpiritAttributes struct {
+	Stats SpiritStats `json:"stats,omitempty"`
+}
+
 type SpiritSpecInternal struct {
 	Action Action
 }
 
 type SpiritSpec struct {
-	Stats        SpiritStats
+	Attributes   SpiritAttributes
 	Actions      []string
 	Intelligence SpiritIntelligence
-	Attributes   map[string]string
 	Internal     SpiritSpecInternal
 }
 

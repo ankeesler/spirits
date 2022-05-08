@@ -5,6 +5,7 @@ set -euo pipefail
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SPIRITSPKG="$(grep '^module' go.mod | awk '{print $2}')"
 CODEGENPKG="$(grep k8s.io/code-generator go.mod | tr " " "@" | tr -d " \t")"
+CONTROLLERGENPKG="sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0"
 
 _note() {
   echo "generate.sh > $@"
@@ -36,14 +37,14 @@ generate_internal_groups() {
 # Generate CRDs
 generate_crds() {
   _note "running codegen for CRDs..."
-  go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
+  go run "$CONTROLLERGENPKG" \
     paths=./pkg/apis/spirits/v1alpha1 crd output:crd:artifacts:config=./config/zz_generated_crds
 }
 
 # Generate RBAC
 generate_rbac() {
   _note "running codegen for RBAC..."
-  go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
+  go run "$CONTROLLERGENPKG" \
     paths=./pkg/controller +rbac:roleName=spirits-server output:rbac:dir=./config/zz_generated_rbac
 }
 

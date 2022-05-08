@@ -22,7 +22,7 @@ func newStrategy(spirits []*spiritsinternal.Spirit) *strategy {
 func (s *strategy) hasNext() bool {
 	spiritsAlive := 0
 	for _, spirit := range s.spirits {
-		if spirit.Spec.Stats.Health > 0 {
+		if spirit.Spec.Attributes.Stats.Health > 0 {
 			spiritsAlive++
 		}
 	}
@@ -47,7 +47,7 @@ func (h speedHeap) Less(i, j int) bool {
 	// This is so that "s(1.1.1.1)" will only go half as many times as "s(1.1.1.2)" (consider their
 	// speeds are 1.0 and 0.5, respectively).
 	if h[i].ticks == h[j].ticks {
-		return h[i].s.Spec.Stats.Agility > h[j].s.Spec.Stats.Agility
+		return h[i].s.Spec.Attributes.Stats.Agility > h[j].s.Spec.Attributes.Stats.Agility
 	}
 
 	return false
@@ -118,5 +118,5 @@ type speedState struct {
 }
 
 func newSpeedState(s *spiritsinternal.Spirit) *speedState {
-	return &speedState{s: s, ticks: float64(1) / float64(s.Spec.Stats.Agility)}
+	return &speedState{s: s, ticks: float64(1) / float64(s.Spec.Attributes.Stats.Agility)}
 }
