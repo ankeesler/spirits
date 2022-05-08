@@ -90,18 +90,17 @@ func (r *BattleReconciler) progressBattle(
 	}
 	log.V(2).Info("get in battle spirits", "battle", battle, "inBattleSpirits", inBattleSpirits)
 
+	// If the battle has finished with the spirits we expect, then no need to run again
+	if battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished && matchingSpirits(inBattleSpirits, battle.Status.InBattleSpirits) {
+		log.Info("battle is finished")
+		return nil
+	}
+
 	// Go ahead and create a context for the battle, it will be canceled if
 	// not used by the battle
 	battleCtx, battleCancel := context.WithCancel(context.Background())
 	existingBattleCancel, battleExists := r.BattleCancelFuncs.LoadOrStore(client.ObjectKeyFromObject(battle).String(), battleCancel)
-	log.Info("andrew", "battleExists", battleExists, "battle", battle)
-
-	// If no battle is running, and the battle state is finished, then no need to start a new battle
-	if !battleExists && battle.Status.Phase == spiritsv1alpha1.BattlePhaseFinished {
-		log.Info("battle is finished")
-		battleCancel()
-		return nil
-	}
+	log.Info("andrew", "battleExists", battleExists, "battlePhase", battle.Status.Phase, "battleInBattleSpirits", battle.Status.InBattleSpirits)
 
 	// If a battle is running, and the in-battle spirits are the same as what we would expect,
 	// then no need to start a new battle
@@ -213,22 +212,22 @@ func (r *BattleReconciler) runBattle(
 
 	ctrl.Log.V(1).Info("battle finished", "battle", battle, "inBattleSpirits", spiritsString(inBattleSpirits))
 
-	// After the battle is over, update the status and clear it from the cache
+	// After the battle is over, update the status
+	// Don't clear it from the cache
 	if err := r.convertAndCreateOrPatch(ctx, battle, &spiritsv1alpha1.Battle{}, func() error {
 		battle.Status.Phase = spiritsinternal.BattlePhaseFinished
 		return nil
 	}); err != nil {
 		ctrl.Log.Error(err, "run battle: convert and create or patch")
 	}
-	if cancel, ok := r.BattleCancelFuncs.LoadAndDelete(client.ObjectKeyFromObject(battle).String()); ok {
-		cancel.(context.CancelFunc)()
-	}
+	// if cancel, ok := r.BattleCancelFuncs.LoadAndDelete(client.ObjectKeyFromObject(battle).String()); ok {
+	// 	cancel.(context.CancelFunc)()
+	// }
 }
 
 func (r *BattleReconciler) battleCallback(
 	battle *spiritsinternal.Battle,
 	inBattleSpirits []*spiritsinternal.Spirit,
-	done bool,
 	err error,
 ) {
 	ctrl.Log.V(1).Info("battle callback", "battle", battle, "inBattleSpirits", spiritsString(inBattleSpirits), "err", err)
@@ -400,7 +399,7 @@ func matchingSpirits(spirits []*spiritsv1alpha1.Spirit, spiritRefs []corev1.Loca
 func spiritsString(spirits []*spiritsinternal.Spirit) string {
 	s := strings.Builder{}
 	for _, spirit := range spirits {
-		s.WriteString(fmt.Sprintf("%#v ", spirit))
+		s.WriteString(fmt.Sprintf("%q ", spirit.Name))
 	}
 	return s.String()
 }

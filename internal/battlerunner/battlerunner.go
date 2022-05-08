@@ -10,7 +10,7 @@ import (
 
 const maxTurns = 100
 
-type Callback func(*spiritsinternal.Battle, []*spiritsinternal.Spirit, bool, error)
+type Callback func(*spiritsinternal.Battle, []*spiritsinternal.Spirit, error)
 
 func Run(
 	ctx context.Context,
@@ -20,22 +20,22 @@ func Run(
 ) {
 	turns := 0
 
-	callback(battle, spirits, false, nil)
+	callback(battle, spirits, nil)
 
 	s := newStrategy(spirits)
 	for s.hasNext() {
 		turns++
 		if turns >= maxTurns {
-			callback(battle, spirits, true, errors.New("too many turns"))
+			callback(battle, spirits, errors.New("too many turns"))
 			return
 		}
 		from, to := s.next()
 
 		if err := from.Spec.Internal.Action.Run(ctx, from, to); err != nil {
-			callback(battle, spirits, false, fmt.Errorf("action errored: %w", err))
+			callback(battle, spirits, fmt.Errorf("action errored: %w", err))
 			return
 		}
 
-		callback(battle, spirits, true, nil)
+		callback(battle, spirits, nil)
 	}
 }
