@@ -44,11 +44,3 @@ type ActionCall struct {
 	Spec   ActionCallSpec   `json:"spec,omitempty"`
 	Status ActionCallStatus `json:"status,omitempty"`
 }
-
-// ActionCallList contains a list of ActionCall's
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-type ActionCallList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ActionCall `json:"items"`
-}

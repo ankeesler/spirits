@@ -7,7 +7,8 @@ import (
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 )
 
-func Spirit(r *rand.Rand, spirit *spiritsinternal.Spirit, actionNames []string) string {
+func Spirit(r *rand.Rand, spirit *spiritsinternal.Spirit) string {
+	action := spiritsinternal.SpiritWellKnownActionAttack
 	spirit.Spec = spiritsinternal.SpiritSpec{
 		Attributes: spiritsinternal.SpiritAttributes{
 			Stats: spiritsinternal.SpiritStats{
@@ -17,7 +18,9 @@ func Spirit(r *rand.Rand, spirit *spiritsinternal.Spirit, actionNames []string) 
 				Armor:   generateStat(r) / 4,
 			},
 		},
-		Actions: generateActions(r, actionNames),
+		Action: spiritsinternal.SpiritAction{
+			WellKnown: &action,
+		},
 	}
 	return generateName(r)
 }
@@ -40,15 +43,6 @@ func generateStat(r *rand.Rand) int64 {
 		stat = 1
 	}
 	return int64(stat)
-}
-
-func generateActions(r *rand.Rand, actionNames []string) []string {
-	numActions := r.Intn(3) + 1
-	var generatedActionNames []string
-	for i := 0; i < numActions; i++ {
-		generatedActionNames = append(generatedActionNames, actionNames[r.Intn(len(actionNames))])
-	}
-	return generatedActionNames
 }
 
 func randomWords() []string {

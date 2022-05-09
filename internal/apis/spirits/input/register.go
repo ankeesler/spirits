@@ -19,7 +19,6 @@ var (
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&ActionCall{},
-		&ActionCallList{},
 	)
 	return nil
 }

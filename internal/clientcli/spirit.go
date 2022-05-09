@@ -83,6 +83,6 @@ func printSpirit(c *config, spirit *spiritsv1alpha1.Spirit, indent string) {
 	fmt.Fprintf(c.out, "%s  power: %d\n", indent, spirit.Spec.Attributes.Stats.Power)
 	fmt.Fprintf(c.out, "%s  armor: %d\n", indent, spirit.Spec.Attributes.Stats.Armor)
 	fmt.Fprintf(c.out, "%s  agility: %d\n", indent, spirit.Spec.Attributes.Stats.Agility)
-	fmt.Fprintf(c.out, "%sactions: %s\n", indent, spirit.Spec.Actions)
+	// fmt.Fprintf(c.out, "%sactions: %s\n", indent, spirit.Spec.Actions)
 	fmt.Fprintf(c.out, "%sready: %t\n", indent, meta.IsStatusConditionTrue(spirit.Status.Conditions, "Ready"))
 }

@@ -66,7 +66,7 @@ func (w *SpiritWebhook) Default(ctx context.Context, obj runtime.Object) error {
 
 	r := rand.New(rand.NewSource(int64(seed)))
 	if err := w.withInternalSpirit(spirit, func(internalSpirit *spiritsinternal.Spirit) {
-		spirit.Annotations[GeneratedNicknameSpiritAnnotation] = generate.Spirit(r, internalSpirit, []string{})
+		spirit.Annotations[GeneratedNicknameSpiritAnnotation] = generate.Spirit(r, internalSpirit)
 	}); err != nil {
 		return fmt.Errorf("with internal spirit: %w", err)
 	}
