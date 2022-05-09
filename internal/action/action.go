@@ -30,6 +30,10 @@ func Attack() spiritsinternal.Action {
 	})
 }
 
+func Noop() spiritsinternal.Action {
+	return actionFunc(func(ctx context.Context, from, to *spiritsinternal.Spirit) error { return nil })
+}
+
 func Bolster() spiritsinternal.Action {
 	return actionFunc(func(ctx context.Context, from, to *spiritsinternal.Spirit) error {
 		netPower := ((from.Spec.Attributes.Stats.Power / 2) - to.Spec.Attributes.Stats.Armor)

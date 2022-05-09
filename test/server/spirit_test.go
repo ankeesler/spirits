@@ -17,13 +17,28 @@ func TestInvalidSpirits(t *testing.T) {
 	defer cancel()
 
 	// Read test fixtures
-	var err error
-	for _, path := range []string{
-		"spirit-bad-intelligence.yaml",
+	for _, test := range []struct {
+		path            string
+		passesAdmission bool
+	}{
+		{
+			path:            "spirit-bad-intelligence.yaml",
+			passesAdmission: true,
+		},
+		{
+			path:            "spirit-too-many-actions.yaml",
+			passesAdmission: false,
+		},
 	} {
-		t.Run(path, func(t *testing.T) {
-			spirit := readObject(t, path).(*spiritsv1alpha1.Spirit)
+		test := test
+		t.Run(test.path, func(t *testing.T) {
+			spirit := readObject(t, test.path).(*spiritsv1alpha1.Spirit)
+			var err error
 			spirit, err = tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Create(ctx, spirit, metav1.CreateOptions{})
+			if !test.passesAdmission {
+				require.Error(t, err)
+				return
+			}
 			require.NoError(t, err)
 
 			// Assert spirit is errored

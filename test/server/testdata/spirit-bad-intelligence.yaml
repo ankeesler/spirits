@@ -4,7 +4,14 @@ kind: Spirit
 metadata:
   name: spirit-bad-intelligence
 spec:
-  stats:
-    health: 7
-    power: 1
-  intelligence: Bad
+  attributes:
+    stats:
+      health: 7
+      power: 1
+  action:
+    choices:
+      intelligence: Bad
+      actions:
+      - name: attack
+        action:
+          wellKnown: attack

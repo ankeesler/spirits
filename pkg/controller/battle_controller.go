@@ -329,11 +329,7 @@ func (r *BattleReconciler) convertToInternalBattle(
 		ctrl.Log.V(2).Info("convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
 
 		var err error
-		internalSpirit.Spec.Internal.Action, err = getAction(
-			spirit.Spec.Actions,
-			spirit.Spec.Intelligence,
-			r.getLazyActionFunc(battle, spirit),
-		)
+		internalSpirit.Spec.Internal.Action, err = getAction(&spirit.Spec.Action, r.getLazyActionFunc(battle, spirit))
 		if err != nil {
 			return nil, nil, fmt.Errorf("get action: %w", err)
 		}
@@ -383,12 +379,24 @@ func (r *BattleReconciler) getLazyActionFunc(
 			return nil, fmt.Errorf("actions queue pend: %w", err)
 		}
 
-		action, err := getAction([]string{actionName}, spiritsv1alpha1.SpiritIntelligenceRoundRobin, nil)
+		// TODO: this would be easier if we had a map instead of a list here...use internal type? And move to internal go package?
+		var action *spiritsv1alpha1.SpiritAction
+		for _, namedAction := range inBattleSpirit.Spec.Action.Choices.Actions {
+			if namedAction.Name == actionName {
+				action = &namedAction.Action
+				break
+			}
+		}
+		if action == nil {
+			return nil, fmt.Errorf("actions queue pend: unknown action for name: %q", actionName)
+		}
+
+		internalAction, err := getAction(action, r.getLazyActionFunc(battle, inBattleSpirit))
 		if err != nil {
 			return nil, fmt.Errorf("get action: %w", err)
 		}
 
-		return action, nil
+		return internalAction, nil
 	}
 }
 

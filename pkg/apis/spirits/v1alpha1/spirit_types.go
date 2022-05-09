@@ -4,18 +4,29 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type SpiritIntelligence string
+type SpiritWellKnownAction string
 
 const (
-	// SpiritIntelligenceRoundRobin is the default intelligence for a Spirit.
-	// It describes a Spirit that performs actions in a sequential, deterministic order.
-	SpiritIntelligenceRoundRobin SpiritIntelligence = "RoundRobin"
+	// SpiritWellKnownActionAttack uses the Spirit's Power, less the opponent's Armor,
+	// to decrement the opponent's Health, i.e., to.health -= from.power - to.armor
+	SpiritWellKnownActionAttack SpiritWellKnownAction = "Attack"
 
-	// SpiritIntelligenceRandom describes a Spirit that performs actions in a random order.
-	SpiritIntelligenceRandom SpiritIntelligence = "Random"
+	// SpiritWellKnownActionNoop does nothing
+	SpiritWellKnownActionNoop SpiritWellKnownAction = "Noop"
+)
 
-	// SpiritIntelligenceHuman describes a Spirit whose actions are driven by human interaction.
-	SpiritIntelligenceHuman SpiritIntelligence = "Human"
+type SpiritActionChoicesIntelligence string
+
+const (
+	// SpiritActionChoicesIntelligenceRoundRobin is the default intelligence for a Spirit.
+	// It describes a Spirit that performs actions in a sequential, deterministic order
+	SpiritActionChoicesIntelligenceRoundRobin SpiritActionChoicesIntelligence = "RoundRobin"
+
+	// SpiritActionChoicesIntelligenceRandom describes a Spirit that performs actions in a random order
+	SpiritActionChoicesIntelligenceRandom SpiritActionChoicesIntelligence = "Random"
+
+	// SpiritActionChoicesIntelligenceHuman describes a Spirit whose actions are driven by human interaction
+	SpiritActionChoicesIntelligenceHuman SpiritActionChoicesIntelligence = "Human"
 )
 
 type SpiritPhase string
@@ -60,7 +71,54 @@ type SpiritStats struct {
 type SpiritAttributes struct {
 	// Stats are the current statistics that describe this Spirit
 	// +optional
-	Stats SpiritStats `json:"stats,omitempty"`
+	Stats SpiritStats `json:"stats"`
+}
+
+// NamedSpiritAction is a type holding an Action and a unique name used to reference that Action
+type NamedSpiritAction struct {
+	// Name is a unique name used to reference this Action
+	Name string `json:"name"`
+
+	// Action is the SpiritAction describing this Action
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	Action SpiritAction `json:"action"`
+}
+
+// SpiritActionChoices is a list of SpiritAction's that a Spirit could chose to perform;
+// A Spirit choses one of them to perform for their Action
+type SpiritActionChoices struct {
+	// Intelligence holds the strategy via which one of the below Action's will be chosen
+	Intelligence SpiritActionChoicesIntelligence `json:"intelligence"`
+
+	// Actions are the SpiritAction's from which the Spirit can chose
+	// +patchMergeKey=name
+	// +patchStrategy=merge
+	// +listType=map
+	// +listMapKey=name
+	Actions []NamedSpiritAction `json:"actions" patchStrategy:"merge" patchMergeKey:"name"`
+}
+
+// SpiritAction describes the Action that a Spirit performs
+// +kubebuilder:validation:MaxProperties=1
+// +kubebuilder:validation:MinProperties=1
+type SpiritAction struct {
+	// WellKnown is a string identifying a well-known (builtin) Action
+	// +kubebuilder:validation:Enum=Attack;Noop
+	// +optional
+	WellKnown *SpiritWellKnownAction `json:"wellKnown,omitempty"`
+
+	// Choices specify a list of Action's a Spirit could potentially perform
+	// +optional
+	Choices *SpiritActionChoices `json:"choices,omitempty"`
+
+	// Script holds the source of a script used to implement a Spirit's Action
+	// +optional
+	Script *Script `json:"script,omitempty"`
+
+	// Registry holds the HTTP information to GET an Action
+	// +optional
+	Registry *HTTP `json:"registry,omitempty"`
 }
 
 // SpiritSpec defines the desired state of Spirit
@@ -69,15 +127,8 @@ type SpiritSpec struct {
 	// +optional
 	Attributes SpiritAttributes `json:"attributes,omitempty"`
 
-	// Actions are the list of actions that this Spirit can perform
-	// +kubebuilder:default={attack}
-	// +optional
-	Actions []string `json:"actions"`
-
-	// Intelligence describes how a Spirit will select actions to perform
-	// +kubebuilder:default=RoundRobin
-	// +optional
-	Intelligence SpiritIntelligence `json:"intelligence"`
+	// Action contains the description of the Action this Spirit performs
+	Action SpiritAction `json:"action"`
 }
 
 // SpiritStatus defines the observed state of Spirit
@@ -103,7 +154,7 @@ type SpiritStatus struct {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:resource:categories=spiritsworld
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
-// +kubebuilder:printcolumn:name="Health",type=string,JSONPath=`.spec.stats.health`
+// +kubebuilder:printcolumn:name="Health",type=integer,JSONPath=`.spec.attributes.stats.health`
 // +kubebuilder:subresource:status
 type Spirit struct {
 	metav1.TypeMeta   `json:",inline"`

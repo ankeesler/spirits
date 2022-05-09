@@ -4,12 +4,19 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type SpiritIntelligence string
+type SpiritWellKnownAction string
 
 const (
-	SpiritIntelligenceRoundRobin SpiritIntelligence = "RoundRobin"
-	SpiritIntelligenceRandom     SpiritIntelligence = "Random"
-	SpiritIntelligenceHuman      SpiritIntelligence = "Human"
+	SpiritWellKnownActionAttack SpiritWellKnownAction = "Attack"
+	SpiritWellKnownActionNoop   SpiritWellKnownAction = "Noop"
+)
+
+type SpiritActionChoicesIntelligence string
+
+const (
+	SpiritActionChoicesIntelligenceRoundRobin SpiritActionChoicesIntelligence = "RoundRobin"
+	SpiritActionChoicesIntelligenceRandom     SpiritActionChoicesIntelligence = "Random"
+	SpiritActionChoicesIntelligenceHuman      SpiritActionChoicesIntelligence = "Human"
 )
 
 type SpiritPhase string
@@ -31,15 +38,26 @@ type SpiritAttributes struct {
 	Stats SpiritStats `json:"stats,omitempty"`
 }
 
+type SpiritActionChoices struct {
+	Intelligence SpiritActionChoicesIntelligence `json:"intelligence"`
+	Actions      map[string]*SpiritAction        `json:"action"`
+}
+
+type SpiritAction struct {
+	WellKnown *SpiritWellKnownAction `json:"wellKnown,omitempty"`
+	Choices   *SpiritActionChoices   `json:"choices,omitempty"`
+	Script    *Script                `json:"script,omitempty"`
+	Registry  *HTTP                  `json:"registry,omitempty"`
+}
+
 type SpiritSpecInternal struct {
 	Action Action
 }
 
 type SpiritSpec struct {
-	Attributes   SpiritAttributes
-	Actions      []string
-	Intelligence SpiritIntelligence
-	Internal     SpiritSpecInternal
+	Attributes SpiritAttributes
+	Action     SpiritAction
+	Internal   SpiritSpecInternal
 }
 
 type SpiritStatus struct {

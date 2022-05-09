@@ -119,7 +119,7 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 		Spec: inputv1alpha1.ActionCallSpec{
 			Battle:     corev1.LocalObjectReference{Name: battle.Name},
 			Spirit:     corev1.LocalObjectReference{Name: spirits[1].Name},
-			ActionName: "attack",
+			ActionName: "charge",
 		},
 	}
 	actionCall, err = tc.spiritsClientset.InputV1alpha1().ActionCalls(tc.namespace.Name).Create(ctx, actionCall, metav1.CreateOptions{})
@@ -132,7 +132,7 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 		Spec: inputv1alpha1.ActionCallSpec{
 			Battle:     corev1.LocalObjectReference{Name: battle.Name},
 			Spirit:     corev1.LocalObjectReference{Name: spirits[0].Name},
-			ActionName: "charge",
+			ActionName: "noop",
 		},
 	}
 	actionCall, err = tc.spiritsClientset.InputV1alpha1().ActionCalls(tc.namespace.Name).Create(ctx, actionCall, metav1.CreateOptions{})
@@ -143,8 +143,8 @@ func TestHumanIntelligenceBattle(t *testing.T) {
 	gotInBattleSpiritsStats := requireBattleFinishes(t, ctx, battle)
 	t.Log(gotInBattleSpiritsStats)
 	require.Len(t, gotInBattleSpiritsStats, 2)
-	require.Equal(t, int64(1), gotInBattleSpiritsStats["the-human-battle-1-spirit-human-1"].Health)
-	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-human-battle-1-spirit-c-1"].Health)
+	require.Equal(t, int64(0), gotInBattleSpiritsStats["the-human-battle-1-spirit-human-1"].Health)
+	require.Equal(t, int64(3), gotInBattleSpiritsStats["the-human-battle-1-spirit-c-1"].Health)
 }
 
 func TestInvalidBattles(t *testing.T) {

@@ -4,8 +4,9 @@ kind: Spirit
 metadata:
   name: spirit-a
 spec:
-  stats:
-    health: 7
-    power: 1
-  # TODO: why do we have to set this? Shouldn't it default?
-  intelligence: RoundRobin
+  attributes:
+    stats:
+      health: 7
+      power: 1
+  action:
+    wellKnown: Attack

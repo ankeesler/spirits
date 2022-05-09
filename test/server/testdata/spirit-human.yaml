@@ -4,8 +4,17 @@ kind: Spirit
 metadata:
   name: spirit-human
 spec:
-  stats:
-    health: 7
-    power: 2
-  intelligence: Human
-  actions: ["attack", "charge"]
+  attributes:
+    stats:
+      health: 7
+      power: 2
+  action:
+    choices:
+      intelligence: Human
+      actions:
+      - name: attack
+        action:
+          wellKnown: Attack
+      - name: noop
+        action:
+          wellKnown: Noop

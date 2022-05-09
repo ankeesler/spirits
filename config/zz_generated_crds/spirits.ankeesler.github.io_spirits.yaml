@@ -21,9 +21,9 @@ spec:
     - jsonPath: .status.phase
       name: Phase
       type: string
-    - jsonPath: .spec.stats.health
+    - jsonPath: .spec.attributes.stats.health
       name: Health
-      type: string
+      type: integer
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -44,14 +44,82 @@ spec:
           spec:
             description: SpiritSpec defines the desired state of Spirit
             properties:
-              actions:
-                default:
-                - attack
-                description: Actions are the list of actions that this Spirit can
-                  perform
-                items:
-                  type: string
-                type: array
+              action:
+                description: Action contains the description of the Action this Spirit
+                  performs
+                maxProperties: 1
+                minProperties: 1
+                properties:
+                  choices:
+                    description: Choices specify a list of Action's a Spirit could
+                      potentially perform
+                    properties:
+                      actions:
+                        description: Actions are the SpiritAction's from which the
+                          Spirit can chose
+                        items:
+                          description: NamedSpiritAction is a type holding an Action
+                            and a unique name used to reference that Action
+                          properties:
+                            action:
+                              description: Action is the SpiritAction describing this
+                                Action
+                              x-kubernetes-preserve-unknown-fields: true
+                            name:
+                              description: Name is a unique name used to reference
+                                this Action
+                              type: string
+                          required:
+                          - action
+                          - name
+                          type: object
+                        type: array
+                        x-kubernetes-list-map-keys:
+                        - name
+                        x-kubernetes-list-type: map
+                      intelligence:
+                        description: Intelligence holds the strategy via which one
+                          of the below Action's will be chosen
+                        type: string
+                    required:
+                    - actions
+                    - intelligence
+                    type: object
+                  registry:
+                    description: Registry holds the HTTP information to GET an Action
+                    properties:
+                      certificateAuthorityData:
+                        description: CertificateAuthorityData holds the optional CA
+                          bundle data used to validate TLS connections to the URL
+                        format: byte
+                        type: string
+                      url:
+                        description: URL holds the location of the HTTP endpoint;
+                          the endpoint must use HTTPS
+                        minLength: 1
+                        pattern: ^https://
+                        type: string
+                    required:
+                    - url
+                    type: object
+                  script:
+                    description: Script holds the source of a script used to implement
+                      a Spirit's Action
+                    properties:
+                      text:
+                        description: Text holds the text of the script
+                        type: string
+                    required:
+                    - text
+                    type: object
+                  wellKnown:
+                    description: WellKnown is a string identifying a well-known (builtin)
+                      Action
+                    enum:
+                    - Attack
+                    - Noop
+                    type: string
+                type: object
               attributes:
                 description: Attributes describe the in-battle spirit's qualities
                 properties:
@@ -72,7 +140,6 @@ spec:
                         minimum: 0
                         type: integer
                       health:
-                        default: 1
                         description: Health is a quantitative representation of the
                           energy of the Spirit. When this drops to 0, the Spirit is
                           no longer able to participate in a Battle.
@@ -87,11 +154,8 @@ spec:
                         type: integer
                     type: object
                 type: object
-              intelligence:
-                default: RoundRobin
-                description: Intelligence describes how a Spirit will select actions
-                  to perform
-                type: string
+            required:
+            - action
             type: object
           status:
             description: SpiritStatus defines the observed state of Spirit

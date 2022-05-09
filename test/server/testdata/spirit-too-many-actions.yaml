@@ -2,11 +2,12 @@
 apiVersion: spirits.ankeesler.github.io/v1alpha1
 kind: Spirit
 metadata:
-  name: spirit-b
+  name: spirit-too-many-actions
 spec:
   attributes:
     stats:
-      health: 5
-      power: 2
+      health: 1
   action:
-    wellKnown: Attack
+    wellKnown: noop
+    script:
+      text: foo

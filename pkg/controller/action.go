@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/ankeesler/spirits/internal/action"
+	actioninternal "github.com/ankeesler/spirits/internal/action"
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 )
@@ -19,42 +19,49 @@ type ActionSource interface {
 }
 
 func getAction(
-	actionNames []string,
-	intelligence spiritsv1alpha1.SpiritIntelligence,
+	action *spiritsv1alpha1.SpiritAction,
 	lazyActionFunc func(context.Context) (spiritsinternal.Action, error),
 ) (spiritsinternal.Action, error) {
-	// Note: the spirit actions should always be at least of length 1 thanks to defaulting
-	var actions []spiritsinternal.Action
-	for _, actionName := range actionNames {
-		switch actionName {
-		case "", "attack":
-			actions = append(actions, action.Attack())
-		case "bolster":
-			actions = append(actions, action.Bolster())
-		case "drain":
-			actions = append(actions, action.Drain())
-		case "charge":
-			actions = append(actions, action.Charge())
+	// TODO: check to make sure validation of one field happens at admission
+
+	// Well-known actions
+	if action.WellKnown != nil {
+		switch *action.WellKnown {
+		case spiritsv1alpha1.SpiritWellKnownActionAttack:
+			return actioninternal.Attack(), nil
+		case spiritsv1alpha1.SpiritWellKnownActionNoop:
+			return actioninternal.Noop(), nil
 		default:
-			return nil, fmt.Errorf("unrecognized action: %q", actionName)
+			return nil, fmt.Errorf("unrecognized action: %q", *action.WellKnown)
 		}
 	}
 
-	// Note: the spirit intelligence should always default to a non-empty string
-	var internalAction spiritsinternal.Action
-	switch intelligence {
-	case spiritsv1alpha1.SpiritIntelligenceRoundRobin:
-		internalAction = action.RoundRobin(actions)
-	case spiritsv1alpha1.SpiritIntelligenceRandom:
-		internalAction = action.Random(rand.New(rand.NewSource(0)), actions)
-	case spiritsv1alpha1.SpiritIntelligenceHuman:
-		if lazyActionFunc == nil {
-			return nil, errors.New("human action is not supported")
+	// Action choices
+	if action.Choices != nil {
+		var internalActions []spiritsinternal.Action
+		for _, namedAction := range action.Choices.Actions {
+			internalAction, err := getAction(&namedAction.Action, lazyActionFunc)
+			if err != nil {
+				return nil, fmt.Errorf("invalid action choice %q: %w", namedAction.Name, err)
+			}
+			internalActions = append(internalActions, internalAction)
 		}
-		internalAction = action.Lazy(lazyActionFunc)
-	default:
-		return nil, fmt.Errorf("unrecognized intelligence: %q", intelligence)
+		switch action.Choices.Intelligence {
+		case spiritsv1alpha1.SpiritActionChoicesIntelligenceRoundRobin:
+			return actioninternal.RoundRobin(internalActions), nil
+		case spiritsv1alpha1.SpiritActionChoicesIntelligenceRandom:
+			return actioninternal.Random(rand.New(rand.NewSource(0)), internalActions), nil
+		case spiritsv1alpha1.SpiritActionChoicesIntelligenceHuman:
+			if lazyActionFunc == nil {
+				return nil, errors.New("human action is not supported")
+			}
+			return actioninternal.Lazy(lazyActionFunc), nil
+		default:
+			return nil, fmt.Errorf("unrecognized intelligence: %q", action.Choices.Intelligence)
+		}
 	}
 
-	return internalAction, nil
+	// TODO: other action types
+
+	return nil, fmt.Errorf("unsupported action")
 }
