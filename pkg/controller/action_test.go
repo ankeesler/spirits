@@ -48,13 +48,16 @@ func TestAction(t *testing.T) {
 			wantTo:   deltaHealth(spirit, -(spirit.Spec.Attributes.Stats.Power - spirit.Spec.Attributes.Stats.Armor)),
 		},
 		{
-			name: "good script",
+			name: "script resolve",
 			action: spiritsv1alpha1.SpiritAction{
 				Script: &spiritsv1alpha1.Script{
 					APIVersion: "plugin.spirits.ankeesler.github.io/v1alpha1",
 					Text: `
 print(apiVersion)
 print(spec)
+print(dir(spec))
+#spec.from.attributes.stats.health += spec.from.attributes.stats.armor
+#spec.to.attributes.stats.health -= spec.from.attributes.stats.power
 status = spec
 `,
 				},
@@ -63,6 +66,20 @@ status = spec
 			to:       spirit,
 			wantFrom: deltaHealth(spirit, spirit.Spec.Attributes.Stats.Armor),
 			wantTo:   deltaHealth(spirit, -spirit.Spec.Attributes.Stats.Power),
+		},
+		{
+			name: "script reject",
+			action: spiritsv1alpha1.SpiritAction{
+				Script: &spiritsv1alpha1.Script{
+					APIVersion: "plugin.spirits.ankeesler.github.io/v1alpha1",
+					Text: `
+reject('some error')
+`,
+				},
+			},
+			from:               spirit,
+			to:                 spirit,
+			wantRunActionError: `some error`,
 		},
 		{
 			name: "bad script api version",

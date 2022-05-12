@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math/rand"
 	"reflect"
 
 	"go.starlark.net/starlark"
@@ -18,7 +19,23 @@ import (
 	spiritsinternal "github.com/ankeesler/spirits/internal/apis/spirits"
 	plugininternal "github.com/ankeesler/spirits/internal/apis/spirits/plugin"
 	"github.com/ankeesler/spirits/internal/loadcache"
+	fuzz "github.com/google/gofuzz"
 )
+
+var actionRunWithAllFieldsSet plugininternal.ActionRun
+
+func init() {
+	fuzz.
+		New().
+		RandSource(rand.NewSource(0)).
+		NilChance(0).
+		NumElements(1, 1).
+		// TODO: use same value as max action depth in the API
+		MaxDepth(10).
+		// Skip fuzzing Action implementation - the script shouldn't touch this field
+		Funcs(func(_ *spiritsinternal.Action, c fuzz.Continue) {}).
+		Fuzz(&actionRunWithAllFieldsSet)
+}
 
 type script struct {
 	codec runtime.Codec
@@ -49,13 +66,7 @@ func Script(apiVersion, source string, scheme *runtime.Scheme) (spiritsinternal.
 		return nil, fmt.Errorf("new starlark codec: %w", err)
 	}
 
-	// TODO: fuzz in all fields?
-	predeclared, err := s.getPredeclared(&plugininternal.ActionRun{
-		Spec: plugininternal.ActionRunSpec{
-			From: spiritsinternal.SpiritSpec{},
-			To:   spiritsinternal.SpiritSpec{},
-		},
-	})
+	predeclared, err := s.getPredeclared(&actionRunWithAllFieldsSet)
 	if err != nil {
 		return nil, fmt.Errorf("get script predeclared symbols for compile: %w", err)
 	}
@@ -131,6 +142,26 @@ func (s *script) DeepCopyAction() spiritsinternal.Action {
 }
 
 func (s *script) getPredeclared(actionRun *plugininternal.ActionRun) (starlark.StringDict, error) {
+	resolveStarlarkBuiltin := starlark.NewBuiltin("resolve", func(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+		var v starlark.Value
+		if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 1, &v); err != nil {
+			return nil, err
+		}
+		thread.SetLocal("resolve", "yep")
+		thread.Cancel(fmt.Sprintf("resolve() called with message: %q", v.String()))
+		return starlark.None, nil
+	})
+
+	rejectStarlarkBuiltin := starlark.NewBuiltin("reject", func(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+		var v starlark.Value
+		if err := starlark.UnpackPositionalArgs(b.Name(), args, kwargs, 1, &v); err != nil {
+			return nil, err
+		}
+		thread.SetLocal("reject", "yep")
+		thread.Cancel(fmt.Sprintf("reject() called with message: %q", v.String()))
+		return starlark.None, nil
+	})
+
 	actionRunJSON, err := runtime.Encode(s.codec, actionRun)
 	if err != nil {
 		return nil, fmt.Errorf("encode ActionRun to JSON: %w", err)
@@ -166,6 +197,8 @@ func (s *script) getPredeclared(actionRun *plugininternal.ActionRun) (starlark.S
 	return starlark.StringDict{
 		"apiVersion": apiVersionStarlarkValue,
 		"spec":       specStarlarkValue,
+		"resolve":    resolveStarlarkBuiltin,
+		"reject":     rejectStarlarkBuiltin,
 	}, nil
 }
 
@@ -183,7 +216,7 @@ func (s *script) run(
 	go func() {
 		globals, err := s.program.Init(thread, predeclared)
 		if err != nil {
-			err = fmt.Errorf("script failed: %w", err)
+			err = fmt.Errorf("script failed: %w (%s, %s)", err, thread.Local("resolve"), thread.Local("reject"))
 		}
 		done <- &starlarkInitRet{globals: globals, err: err}
 	}()
