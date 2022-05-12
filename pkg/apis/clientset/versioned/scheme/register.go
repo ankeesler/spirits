@@ -4,6 +4,7 @@ package scheme
 
 import (
 	inputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/input/v1alpha1"
+	pluginv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/plugin/v1alpha1"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -17,6 +18,7 @@ var Codecs = serializer.NewCodecFactory(Scheme)
 var ParameterCodec = runtime.NewParameterCodec(Scheme)
 var localSchemeBuilder = runtime.SchemeBuilder{
 	inputv1alpha1.AddToScheme,
+	pluginv1alpha1.AddToScheme,
 	spiritsv1alpha1.AddToScheme,
 }
 

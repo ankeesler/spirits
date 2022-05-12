@@ -329,7 +329,11 @@ func (r *BattleReconciler) convertToInternalBattle(
 		ctrl.Log.V(2).Info("convert external spirit to internal spirit", "external spirit", spirit, "internal battle", internalSpirit)
 
 		var err error
-		internalSpirit.Spec.Internal.Action, err = getAction(&spirit.Spec.Action, r.getLazyActionFunc(battle, spirit))
+		internalSpirit.Spec.Internal.Action, err = getAction(
+			&spirit.Spec.Action,
+			r.getLazyActionFunc(battle, spirit),
+			r.Client.Scheme(),
+		)
 		if err != nil {
 			return nil, nil, fmt.Errorf("get action: %w", err)
 		}
@@ -391,7 +395,11 @@ func (r *BattleReconciler) getLazyActionFunc(
 			return nil, fmt.Errorf("actions queue pend: unknown action for name: %q", actionName)
 		}
 
-		internalAction, err := getAction(action, r.getLazyActionFunc(battle, inBattleSpirit))
+		internalAction, err := getAction(
+			action,
+			r.getLazyActionFunc(battle, inBattleSpirit),
+			r.Client.Scheme(),
+		)
 		if err != nil {
 			return nil, fmt.Errorf("get action: %w", err)
 		}

@@ -60,7 +60,7 @@ func (r *SpiritReconciler) readySpirit(
 ) error {
 	if _, err := getAction(&spirit.Spec.Action, func(ctx context.Context) (spiritsinternal.Action, error) {
 		return nil, errors.New("this was a placeholder function meant for spirit validation")
-	}); err != nil {
+	}, r.Client.Scheme()); err != nil {
 		return fmt.Errorf("get action: %w", err)
 	}
 	return nil

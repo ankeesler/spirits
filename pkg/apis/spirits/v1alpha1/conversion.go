@@ -8,6 +8,20 @@ import (
 	conversion "k8s.io/apimachinery/pkg/conversion"
 )
 
+// func autoConvert_v1alpha1_SpiritSpec_To_spirits_SpiritSpec(in *SpiritSpec, out *spirits.SpiritSpec, s conversion.Scope) error {
+// 	if err := Convert_v1alpha1_SpiritAttributes_To_spirits_SpiritAttributes(&in.Attributes, &out.Attributes, s); err != nil {
+// 		return err
+// 	}
+// 	if err := Convert_v1alpha1_SpiritAction_To_spirits_SpiritAction(&in.Action, &out.Action, s); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// func Convert_v1alpha1_SpiritSpec_To_spirits_SpiritSpec(in *SpiritSpec, out *spirits.SpiritSpec, s conversion.Scope) error {
+// 	return autoConvert_v1alpha1_SpiritSpec_To_spirits_SpiritSpec(in, out, s)
+// }
+
 func Convert_spirits_SpiritSpec_To_v1alpha1_SpiritSpec(in *spirits.SpiritSpec, out *SpiritSpec, s conversion.Scope) error {
 	return autoConvert_spirits_SpiritSpec_To_v1alpha1_SpiritSpec(in, out, s)
 }

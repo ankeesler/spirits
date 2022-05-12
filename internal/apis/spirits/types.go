@@ -1,7 +1,8 @@
 package spirits
 
 type Script struct {
-	Text string `json:"text"`
+	APIVersion string `json:"apiVersion"`
+	Text       string `json:"text"`
 }
 
 type HTTP struct {

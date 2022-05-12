@@ -6,6 +6,8 @@ import (
 	clientset "github.com/ankeesler/spirits/pkg/apis/clientset/versioned"
 	inputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/input/v1alpha1"
 	fakeinputv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/input/v1alpha1/fake"
+	pluginv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/plugin/v1alpha1"
+	fakepluginv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/plugin/v1alpha1/fake"
 	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/spirits/v1alpha1"
 	fakespiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/clientset/versioned/typed/spirits/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -68,6 +70,11 @@ var (
 // InputV1alpha1 retrieves the InputV1alpha1Client
 func (c *Clientset) InputV1alpha1() inputv1alpha1.InputV1alpha1Interface {
 	return &fakeinputv1alpha1.FakeInputV1alpha1{Fake: &c.Fake}
+}
+
+// PluginV1alpha1 retrieves the PluginV1alpha1Client
+func (c *Clientset) PluginV1alpha1() pluginv1alpha1.PluginV1alpha1Interface {
+	return &fakepluginv1alpha1.FakePluginV1alpha1{Fake: &c.Fake}
 }
 
 // SpiritsV1alpha1 retrieves the SpiritsV1alpha1Client

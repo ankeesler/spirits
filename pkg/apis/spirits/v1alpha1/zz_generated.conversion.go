@@ -300,6 +300,7 @@ func Convert_spirits_HTTP_To_v1alpha1_HTTP(in *spirits.HTTP, out *HTTP, s conver
 }
 
 func autoConvert_v1alpha1_Script_To_spirits_Script(in *Script, out *spirits.Script, s conversion.Scope) error {
+	out.APIVersion = in.APIVersion
 	out.Text = in.Text
 	return nil
 }
@@ -310,6 +311,7 @@ func Convert_v1alpha1_Script_To_spirits_Script(in *Script, out *spirits.Script, 
 }
 
 func autoConvert_spirits_Script_To_v1alpha1_Script(in *spirits.Script, out *Script, s conversion.Scope) error {
+	out.APIVersion = in.APIVersion
 	out.Text = in.Text
 	return nil
 }

@@ -2,6 +2,9 @@ package v1alpha1
 
 // Script holds the source lines of a script to be used in the context of the spirits API
 type Script struct {
+	// APIVersion is the API version that that script source expects for serializing script input/output
+	APIVersion string `json:"apiVersion"`
+
 	// Text holds the text of the script
 	Text string `json:"text"`
 }
