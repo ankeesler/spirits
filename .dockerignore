@@ -2,16 +2,6 @@
 
 # root files
 README.md
-Tiltfile
-
-# scripts directory
-hack
 
 # test directory
 test
-
-# kubernetes config directory
-config
-
-# tilt config
-tilt

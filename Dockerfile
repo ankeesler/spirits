@@ -1,5 +1,5 @@
 # Build the server binary
-FROM golang:1.18 as builder
+FROM golang:1.19 as builder
 
 WORKDIR /workspace
 
@@ -7,8 +7,8 @@ WORKDIR /workspace
 COPY go.mod go.mod
 COPY go.sum go.sum
 COPY cmd/ cmd/
-COPY pkg/ pkg/
 COPY internal/ internal/
+COPY api/builtin builtin/
 
 # Build
 RUN \
@@ -26,6 +26,8 @@ RUN \
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 COPY --from=builder /workspace/server .
+COPY --from=builder /workspace/builtin/ /etc/spirits/builtin/
 USER 65532:65532
 
 ENTRYPOINT ["/server"]
+CMD ["-spirit-builtin-dir", "/etc/spirits/builtin/spirit", "-action-builtin-dir", "/etc/spirits/builtin/action"]

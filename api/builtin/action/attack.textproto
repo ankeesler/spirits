@@ -1,0 +1,5 @@
+meta {
+  id: "attack"
+}
+description: "Perform basic attack on one or more Spirit's"
+script: "def main():\n\tfor target in action.targets:\n\t\ttarget.stats.set_health(target.stats.health() - (action.source.stats.physical_power() - target.stats.physical_constitution()))\n\nmain()\n"

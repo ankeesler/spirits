@@ -1,0 +1,18 @@
+meta {
+}
+name: "zombie"
+stats {
+  health: 5
+  physical_power: 1
+  physical_constitution: 0
+  mental_power: 1
+  mental_constitution: 0
+  agility: 1
+}
+actions {
+  name: "attack"
+  inline: {
+    description: "Perform basic attack on one or more Spirit's"
+    script: "def main():\n\tfor target in action.targets:\n\t\ttarget.stats.set_health(target.stats.health() - (action.source.stats.physical_power() - target.stats.physical_constitution()))\n\nmain()\n"
+  }
+}

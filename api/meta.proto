@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package spirits.meta;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ankeesler/spirits0/internal/api";
+
+// Meta holds auxillary information about a resource.
+message Meta {
+  // The unique identifier for the resource.
+  string id = 1;
+
+  // The time at which the resource was created.
+  google.protobuf.Timestamp created_time = 2;
+
+  // The identity that created the resource.
+  Identity created_by = 3;
+
+  // The time at which the resource was last updated.
+  google.protobuf.Timestamp updated_time = 4;
+}
+
+// Identity describes some sort of actor doing something (e.g., a human creating
+// a spirits.spirit.Spirit, a machine cancelling a spirits.spirit.Battle, etc.).
+message Identity {
+  string principle = 1;
+}

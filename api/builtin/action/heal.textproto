@@ -1,0 +1,5 @@
+meta {
+  id: "heal"
+}
+description: "Perform basic heal on one or more Spirit's"
+script: "bar"

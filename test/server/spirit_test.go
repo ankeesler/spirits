@@ -1,55 +1,118 @@
-package server
+package test
 
 import (
 	"context"
-	"fmt"
+	"reflect"
 	"testing"
-	"time"
 
-	spiritsv1alpha1 "github.com/ankeesler/spirits/pkg/apis/spirits/v1alpha1"
-	"github.com/stretchr/testify/require"
-	"k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/ankeesler/spirits0/internal/api"
+	"github.com/google/go-cmp/cmp"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/testing/protocmp"
 )
 
-func TestInvalidSpirits(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*3)
-	defer cancel()
+func TestCreateSpirit(t *testing.T) {
+	clients := startServer(t)
 
-	// Read test fixtures
-	for _, test := range []struct {
-		path            string
-		passesAdmission bool
-	}{
-		{
-			path:            "spirit-bad-intelligence.yaml",
-			passesAdmission: true,
+	spirit := &api.Spirit{
+		Name: "some-name",
+		Stats: &api.SpiritStats{
+			Health:  1,
+			Agility: 2,
 		},
-		{
-			path:            "spirit-too-many-actions.yaml",
-			passesAdmission: false,
-		},
-	} {
-		test := test
-		t.Run(test.path, func(t *testing.T) {
-			spirit := readObject(t, test.path).(*spiritsv1alpha1.Spirit)
-			var err error
-			spirit, err = tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Create(ctx, spirit, metav1.CreateOptions{})
-			if !test.passesAdmission {
-				require.Error(t, err)
-				return
-			}
-			require.NoError(t, err)
-
-			// Assert spirit is errored
-			requireEventuallyConsistent(t, func() (bool, error) {
-				spirit, err := tc.spiritsClientset.SpiritsV1alpha1().Spirits(tc.namespace.Name).Get(ctx, spirit.Name, metav1.GetOptions{})
-				if err != nil {
-					return false, fmt.Errorf("get: %w", err)
-				}
-				t.Logf("got spirit %q conditions: %#v", spirit.Name, spirit.Status.Conditions)
-				return meta.IsStatusConditionFalse(spirit.Status.Conditions, "Ready"), nil
-			})
-		})
+	}
+	rsp, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	if err != nil {
+		t.Fatal("create spirit", err)
+	}
+	if len(rsp.GetSpirit().GetMeta().GetId()) == 0 {
+		t.Error("got empty id")
+	}
+	if rsp.GetSpirit().GetMeta().GetCreatedTime().AsTime().IsZero() {
+		t.Error("got empty created time")
+	}
+	if rsp.GetSpirit().GetMeta().GetUpdatedTime().AsTime().IsZero() {
+		t.Error("got empty updated time")
+	}
+	if created, updated := rsp.GetSpirit().GetMeta().GetCreatedTime().AsTime(), rsp.GetSpirit().GetMeta().GetUpdatedTime().AsTime(); created != updated {
+		t.Errorf("created/updated time mismatch: %s/%s", created, updated)
+	}
+	if diff := cmp.Diff(spirit, noMeta(rsp.GetSpirit()), protocmp.Transform()); len(diff) > 0 {
+		t.Errorf("unexpected spirit, -want, +got:\n%s", diff)
 	}
 }
+
+func TestUpdateSpirit(t *testing.T) {
+	clients := startServer(t)
+
+	spirit := &api.Spirit{
+		Name: "some-name",
+		Stats: &api.SpiritStats{
+			Health:  1,
+			Agility: 2,
+		},
+	}
+	createRsp, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	if err != nil {
+		t.Error("update spirit", err)
+	}
+
+	createRsp.GetSpirit().Name = "some-other-name"
+	spirit.Name = createRsp.GetSpirit().Name
+	createRsp.GetSpirit().GetStats().Agility += 1
+	spirit.Stats.Agility = createRsp.GetSpirit().GetStats().Agility
+	updateRsp, err := clients.spirit.UpdateSpirit(context.Background(), &api.UpdateSpiritRequest{Spirit: createRsp.GetSpirit()})
+	if err != nil {
+		t.Fatal("update spirit", err)
+	}
+	if created, updated := updateRsp.GetSpirit().GetMeta().GetCreatedTime().AsTime(), updateRsp.GetSpirit().GetMeta().GetUpdatedTime().AsTime(); created.After(updated) {
+		t.Errorf("created time is after updated time: %s/%s", created, updated)
+	}
+	if diff := cmp.Diff(spirit, noMeta(updateRsp.GetSpirit()), protocmp.Transform()); len(diff) > 0 {
+		t.Errorf("unexpected spirit, -want, +got:\n%s", diff)
+	}
+}
+
+func TestUpdateSpiritNotFound(t *testing.T) {
+	clients := startServer(t)
+
+	spirit := &api.Spirit{Meta: &api.Meta{Id: "tuna"}}
+	_, err := clients.spirit.UpdateSpirit(context.Background(), &api.UpdateSpiritRequest{Spirit: spirit})
+	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
+		t.Errorf("want %v, got %v", want, got)
+	}
+}
+
+func TestGetSpiritNotFound(t *testing.T) {
+	clients := startServer(t)
+
+	_, err := clients.spirit.GetSpirit(context.Background(), &api.GetSpiritRequest{Id: "foo"})
+	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
+		t.Errorf("want %v, got %v", want, got)
+	}
+}
+
+func TestBuiltin(t *testing.T) {
+	clients := startServer(t)
+
+	rsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+		Name: stringPtr("i"),
+	})
+	if err != nil {
+		t.Fatal("get spirit", err)
+	}
+
+	if want, got := 1, len(rsp.Spirits); want != got {
+		t.Errorf("wanted %d spirit, got %d", want, got)
+	}
+}
+
+func noMeta(spirit *api.Spirit) *api.Spirit {
+	spirit = proto.Clone(spirit).(*api.Spirit)
+	spirit.Meta = nil
+	return spirit
+}
+
+func stringPtr(s string) *string { return &s }

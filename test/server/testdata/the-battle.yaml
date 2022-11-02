@@ -1,9 +1,0 @@
----
-apiVersion: spirits.ankeesler.github.io/v1alpha1
-kind: Battle
-metadata:
-  name: the-battle
-spec:
-  spirits:
-  - name: spirit-a
-  - name: spirit-b

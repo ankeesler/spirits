@@ -2,19 +2,19 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, grpc ]
 
 jobs:
-  test-api:
+  test-server:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.18
+        go-version: 1.19
     - name: Test
-      run: ./hack/test-unit.sh
+      run: go test -v ./...
 
   test-web:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
     - run: echo TODO
 
   build:
-    needs: [test-web, test-api]
+    needs: [test-web, test-server]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -50,34 +50,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Create Kind Cluster
-      uses: helm/kind-action@v1.2.0
-    - name: Deploy
-      run: kubectl apply -f config -f config/zz_generated_crds -f config/zz_generated_rbac
-    - name: Check Deploy
-      run: kubectl wait -n spirits deploy spirits-server --for condition=Available -v 10
-    - name: Test
-      run: ./hack/test-integration.sh
+    - name: TODO
+      run: echo TODO
 
   deploy:
     needs: [test-integration]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-#     - uses: akhileshns/heroku-deploy@v3.12.12
-#       with:
-#         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-#         heroku_app_name: oh-great-spirits
-#         heroku_email: ankeesler1@gmail.com
-#         healthcheck: "https://oh-great-spirits.herokuapp.com"
-#         rollbackonhealthcheckfailed: true
-#         usedocker: true
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-    - run: npm install
-      working-directory: test
-    - run: echo npm test
-      working-directory: test
-      env: 
-        SPIRITS_TEST_URL: "https://oh-great-spirits.herokuapp.com"
+    - name: TODO
+      run: echo TODO
