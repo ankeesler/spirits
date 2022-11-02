@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package spirits;
 
+import "action.proto";
 import "meta.proto";
 
 option go_package = "github.com/ankeesler/spirits0/internal/api";
@@ -36,6 +37,8 @@ message GetSpiritResponse {
 }
 
 message ListSpiritsRequest {
+  // An optional name to use as a filter.
+  optional string name = 1;
 }
 
 message ListSpiritsResponse {
@@ -93,6 +96,11 @@ message SpiritAction {
   // The name of this SpiritAction.
   string name = 1;
 
-  // The ID of the Action.
-  string action_id = 2;
+  oneof definition {
+    // The ID of the Action.
+    string action_id = 2;
+
+    // An inline definition of the Action.
+    Action inline = 3;
+  }
 }

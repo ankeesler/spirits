@@ -36,7 +36,6 @@ func init() {
 		}).
 		Funcs(func(action **api.SpiritAction, c fuzz.Continue) {
 			*action = &api.SpiritAction{}
-			c.Fuzz(*action)
 		}).
 		// Skip fuzzing Action implementation - the script shouldn't touch this field
 		Funcs(func(_ *spirit.Action, c fuzz.Continue) {}).

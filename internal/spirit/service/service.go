@@ -10,9 +10,10 @@ import (
 type Repo interface {
 	Create(context.Context, *api.Spirit, func(*api.Spirit) error) (*api.Spirit, error)
 	Get(context.Context, string) (*api.Spirit, error)
-	List(context.Context) ([]*api.Spirit, error)
 	Update(context.Context, *api.Spirit, func(*api.Spirit) error) (*api.Spirit, error)
 	Delete(context.Context, string) (*api.Spirit, error)
+
+	ListSpirits(context.Context, *string) ([]*api.Spirit, error)
 }
 
 type Service struct {
@@ -58,7 +59,11 @@ func (s *Service) ListSpirits(
 	ctx context.Context,
 	req *api.ListSpiritsRequest,
 ) (*api.ListSpiritsResponse, error) {
-	spirits, err := s.repo.List(ctx)
+	var name *string
+	if req.Name != nil {
+		name = stringPtr(req.GetName())
+	}
+	spirits, err := s.repo.ListSpirits(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -89,3 +94,5 @@ func (s *Service) DeleteSpirit(
 	}
 	return &api.DeleteSpiritResponse{Spirit: spirit}, nil
 }
+
+func stringPtr(s string) *string { return &s }

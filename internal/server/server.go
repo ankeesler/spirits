@@ -20,6 +20,7 @@ import (
 	"github.com/ankeesler/spirits0/internal/builtin"
 	spiritpkg "github.com/ankeesler/spirits0/internal/spirit"
 	spiritservice "github.com/ankeesler/spirits0/internal/spirit/service"
+	spiritmemory "github.com/ankeesler/spirits0/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits0/internal/storage/memory"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -39,7 +40,7 @@ type Server struct {
 
 func Wire(c *Config) (*Server, error) {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-	spiritRepo := memory.New[*api.Spirit](r)
+	spiritRepo := spiritmemory.New(r)
 	spiritService := spiritservice.New(spiritRepo)
 
 	actionRepo := memory.New[*api.Action](r)

@@ -56,7 +56,7 @@ func TestUpdateSpirit(t *testing.T) {
 	}
 	createRsp, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
 	if err != nil {
-		t.Error("create spirit", err)
+		t.Error("update spirit", err)
 	}
 
 	createRsp.GetSpirit().Name = "some-other-name"
@@ -97,9 +97,15 @@ func TestGetSpiritNotFound(t *testing.T) {
 func TestBuiltin(t *testing.T) {
 	clients := startServer(t)
 
-	_, err := clients.spirit.GetSpirit(context.Background(), &api.GetSpiritRequest{Id: "i"})
+	rsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+		Name: stringPtr("i"),
+	})
 	if err != nil {
 		t.Fatal("get spirit", err)
+	}
+
+	if want, got := 1, len(rsp.Spirits); want != got {
+		t.Errorf("wanted %d spirit, got %d", want, got)
 	}
 }
 
@@ -108,3 +114,5 @@ func noMeta(spirit *api.Spirit) *api.Spirit {
 	spirit.Meta = nil
 	return spirit
 }
+
+func stringPtr(s string) *string { return &s }

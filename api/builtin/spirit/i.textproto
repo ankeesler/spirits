@@ -1,5 +1,4 @@
 meta {
-  id: "i"
 }
 name: "i"
 stats {
@@ -11,6 +10,9 @@ stats {
   agility: 1
 }
 actions {
-  name: "attack"
-  action_id: "TODO"
+  name: "flail"
+  inline {
+    description: "Do nothing"
+    script: ""
+  }
 }

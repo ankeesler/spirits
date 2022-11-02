@@ -18,27 +18,37 @@ type clients struct {
 }
 
 func startServer(t *testing.T) *clients {
-	const port = 12345
-	server, err := server.Wire(&server.Config{
-		Port:             port,
-		SpiritBuiltinDir: os.DirFS("../../api/builtin/spirit"),
-		ActionBuiltinDir: os.DirFS("../../api/builtin/action"),
-	})
-	if err != nil {
-		t.Fatal(err)
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "12345"
+		os.Setenv("PORT", port)
+
+		server, err := server.Wire(&server.Config{
+			SpiritBuiltinDir: os.DirFS("../../api/builtin/spirit"),
+			ActionBuiltinDir: os.DirFS("../../api/builtin/action"),
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		ctx, cancel := context.WithCancel(context.Background())
+		go func() {
+			if err := server.Serve(ctx); err != nil {
+				t.Errorf("server exited with error: %v", err)
+			}
+		}()
+
+		t.Cleanup(func() {
+			cancel()
+
+			if !ok {
+				os.Unsetenv("PORT")
+			}
+		})
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		if err := server.Serve(ctx); err != nil {
-			t.Errorf("server exited with error: %v", err)
-		}
-	}()
-
-	t.Cleanup(cancel)
-
 	conn, err := grpc.Dial(
-		fmt.Sprintf(":%d", port),
+		fmt.Sprintf(":%s", port),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
