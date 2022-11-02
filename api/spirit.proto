@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package spirits;
+
+import "meta.proto";
+
+option go_package = "github.com/ankeesler/spirits0/internal/api";
+
+// SpiritService provides a simple CRUD API for Spirit's.
+service SpiritService {
+  rpc CreateSpirit(CreateSpiritRequest) returns (CreateSpiritResponse) {}
+  rpc GetSpirit(GetSpiritRequest) returns (GetSpiritResponse) {}
+  rpc ListSpirits(ListSpiritsRequest) returns (ListSpiritsResponse) {}
+  rpc UpdateSpirit(UpdateSpiritRequest) returns (UpdateSpiritResponse) {}
+  rpc DeleteSpirit(DeleteSpiritRequest) returns (DeleteSpiritResponse) {}
+}
+
+message CreateSpiritRequest {
+  // The Spirit to create. The ID will be filled in on response.
+  Spirit spirit = 1;
+}
+
+message CreateSpiritResponse {
+  // The newly created Spirit.
+  Spirit spirit = 1;
+}
+
+message GetSpiritRequest {
+  // The id of the Spirit to get.
+  string id = 1;
+}
+
+message GetSpiritResponse {
+  // The retrieved Spirit.
+  Spirit spirit = 1;
+}
+
+message ListSpiritsRequest {
+}
+
+message ListSpiritsResponse {
+  repeated Spirit spirits = 1;
+}
+
+message UpdateSpiritRequest {
+  // The new version of the Spirit.
+  Spirit spirit = 1;
+}
+
+message UpdateSpiritResponse {
+  // The newly updated Spirit.
+  Spirit spirit = 1;
+}
+
+message DeleteSpiritRequest {
+  // The id of the Spirit to delete.
+  string id = 1;
+}
+
+message DeleteSpiritResponse {
+  // The newly deleted Spirit.
+  Spirit spirit = 1;
+}
+
+// Spirit describes a single actor in a Battle.
+message Spirit {
+  // Metadata about this Spirit.
+  spirits.meta.Meta meta = 1;
+
+  // Name of this Spirit - colloquial name used to identify the Spirit.
+  string name = 2;
+
+  // The quantitative description of this Spirit's abilities.
+  SpiritStats stats = 3;
+
+  // The SpiritAction's that this Spirit can take on their turn in a Battle.
+  repeated SpiritAction actions = 4;
+}
+
+// SpiritStats are a quantitative description of a Spirit's abilities.
+message SpiritStats {
+  int64 health = 1;
+  int64 physical_power = 2;
+  int64 physical_constitution = 3;
+  int64 mental_power = 4;
+  int64 mental_constitution = 5;
+  int64 agility = 6;
+}
+
+// SpiritAction is a reference to an Action that a Spirit can invoke during
+// Battle.
+message SpiritAction {
+  // The name of this SpiritAction.
+  string name = 1;
+
+  // The ID of the Action.
+  string action_id = 2;
+}

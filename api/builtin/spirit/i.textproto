@@ -1,0 +1,16 @@
+meta {
+  id: "i"
+}
+name: "i"
+stats {
+  health: 1
+  physical_power: 1
+  physical_constitution: 1
+  mental_power: 1
+  mental_constitution: 1
+  agility: 1
+}
+actions {
+  name: "attack"
+  action_id: "TODO"
+}

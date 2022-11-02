@@ -1,0 +1,223 @@
+syntax = "proto3";
+
+package spirits;
+
+import "meta.proto";
+import "spirit.proto";
+
+option go_package = "github.com/ankeesler/spirits0/internal/api";
+
+// BattleService provides an API to manage Battle's.
+service BattleService {
+  // CreateBattle creates, but doesn't start, a Battle.
+  //
+  // After a Battle is created, one might want to AddTeams's and then
+  // AddSpirit's.
+  rpc CreateBattle(CreateBattleRequest) returns (CreateBattleResponse) {}
+
+  // WatchBattle streams Battle updates.
+  //
+  // Everytime a change is made to a Battle, a response will be sent on the
+  // stream.
+  rpc WatchBattle(WatchBattleRequest) returns (stream WatchBattleResponse) {}
+
+  // ListBattles will list a history of known Battle's.
+  rpc ListBattles(ListBattlesRequest) returns (ListBattlesResponse) {}
+
+  // AddBattleTeam creates an empty Team in a Battle.
+  //
+  // AddBattleTeam can only be called when a Battle has BattleState
+  // BATTLE_STATE_PENDING.
+  //
+  // After a BattleTeam is created, one might want to AddBattleTeamSpirit's.
+  rpc AddBattleTeam(AddBattleTeamRequest) returns (AddBattleTeamResponse) {}
+
+  // AddBattleTeamSpirit adds a Spirit into a Battle via inclusion in a Team.
+  //
+  // After Spirit's are added, one might want to StartBattle.
+  rpc AddBattleTeamSpirit(AddBattleTeamSpiritRequest) returns (AddBattleTeamSpiritResponse) {}
+
+  // StartBattle progresses the Battle from BattleStatus BATTLE_STATE_PENDING to
+  // BATTLE_STATE_STARTED (and thus can only be called when the BattleStatus is
+  // BATTLE_STATE_PENDING).
+  //
+  // After StartBattle is called, one might want to WatchBattle.
+  rpc StartBattle(StartBattleRequest) returns (StartBattleResponse) {}
+
+  // CancelBattle forcefully halts a Battle.
+  //
+  // The Battle's BattleState will be set to BATTLE_STATE_CANCELLED.
+  rpc CancelBattle(CancelBattleRequest) returns (CancelBattleResponse) {}
+}
+
+message CreateBattleRequest {
+}
+
+message CreateBattleResponse {
+  // The created Battle.
+  Battle battle = 1;
+}
+
+message ListBattlesRequest {
+}
+
+message ListBattlesResponse {
+  // The known Battle's.
+  repeated Battle battles = 1;
+}
+
+message WatchBattleRequest {
+  // The id of the Battle to watch.
+  string id = 1;
+}
+
+message WatchBattleResponse {
+  // The Battle that has been updated.
+  Battle battle = 1;
+}
+
+message AddBattleTeamRequest {
+  // The id of the Battle to which to add this BattleTeam.
+  string battle_id = 1;
+
+  // The name of the new BattleTeam.
+  string team_name = 2;
+}
+
+message AddBattleTeamResponse {
+  // The newly updated Battle.
+  Battle battle = 1;
+}
+
+message AddBattleTeamSpiritRequest {
+  // The id of the Battle to which to add this BattleTeamSpirit.
+  string battle_id = 1;
+
+  // The name of the BattleTeam to which to add the Spirit.
+  string team_name = 2;
+
+  // The id of the Spirit to add to the BattleTeam.
+  string spirit_id = 3;
+}
+
+message AddBattleTeamSpiritResponse {
+  // The newly updated Battle.
+  Battle battle = 1;
+}
+
+message StartBattleRequest {
+  // The id of the Battle to start.
+  string id = 1;
+}
+
+message StartBattleResponse {
+  // The newly started Battle.
+  Battle battle = 1;
+}
+
+message CancelBattleRequest {
+  // The id of the Battle to cancel.
+  string id = 1;
+}
+
+message CancelBattleResponse {
+  // The newly cancelled Battle.
+  Battle battle = 1;
+}
+
+// Battle describes a single battle royale amongst Spirit's.
+message Battle {
+  // Metadata about this Battle.
+  spirits.meta.Meta meta = 1;
+
+  // Current state of the Battle.
+  //
+  // If this is BATTLE_STATE_ERROR, the error_message field will be set.
+  BattleState state = 2;
+
+  // Description of error state.
+  //
+  // This is only set when the Battle is in BattleState BATTLE_STATE_ERROR.
+  optional string error_message = 3;
+
+  // List of BattleTeam's participating in this Battle.
+  //
+  // This list references the original Spirit's before any modifications over
+  // the course of a Battle.
+  repeated BattleTeam teams = 4;
+
+  // List of BattleTeams's participating in this Battle as they exist in the
+  // Battle.
+  //
+  // This list references the current state of Spirit's in this Battle.
+  repeated BattleTeam in_battle_teams = 5;
+
+  // The currently acting Spirit.
+  //
+  // This is only set when the BattleState is BATTLE_STATE_WAITING.
+  optional string acting_spirit_id = 6;
+}
+
+// BattleState describes which stage a Battle is in.
+//
+// The Battle stages go like this:
+//   Pending (waiting for Spirit's to join)
+//     |
+//     v
+//   Started (started executing)
+//     ^
+//     |
+//     v
+//   Waiting (waiting for input from user)
+//     |
+//     v
+//   Finished (execution finished)
+//    ...
+// <any state>
+//     |
+//     v
+//   Cancelled (battle has been cancelled)
+//    ...
+// <any state>
+//     |
+//     v
+//   Error (battle has entered into a failure mode)
+enum BattleState {
+  BATTLE_STATE_UNSPECIFIED = 0;
+  BATTLE_STATE_PENDING = 1;
+  BATTLE_STATE_STARTED = 2;
+  BATTLE_STATE_WAITING = 3;
+  BATTLE_STATE_FINISHED = 4;
+  BATTLE_STATE_CANCELLED = 5;
+  BATTLE_STATE_ERROR = 6;
+}
+
+// BattleTeam is a group of Spirit's working together in a Battle.
+message BattleTeam {
+  // Unique (within Battle) identifier of BattleTeam.
+  string name = 1;
+
+  // The list of Spirit's in this BattleTeam.
+  repeated Spirit spirits = 2;
+}
+
+// BattleTeamSpirit is a reference to a Spirit as it exists in a BattleTeam.
+message BattleTeamSpirit {
+  // The identifier of the Spirit as it exists in the SpiritService.
+  string spirit_id = 1;
+  
+  // The intelligence tht this Spirit will use.
+  BattleTeamSpiritIntelligence intelligence = 2;
+}
+
+// BattleTeamSpiritIntelligence describes how a Spirit will decide to take
+// SpiritAction in a Battle.
+enum BattleTeamSpiritIntelligence {
+  BATTLE_TEAM_SPIRIT_INTELLIGENCE_UNSPECIFIED = 0;
+
+  // A human will decide this Spirit's SpiritAction's via CallAction.
+  BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN = 1;
+
+  // This Spirit will chose SpiritActions randomly.
+  BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM = 2;
+}

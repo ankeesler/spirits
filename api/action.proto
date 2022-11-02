@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package spirits;
+
+import "meta.proto";
+
+option go_package = "github.com/ankeesler/spirits0/internal/api";
+
+// ActionService provides a simple CRUD API for Action's.
+service ActionService {
+  rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {}
+  rpc GetAction(GetActionRequest) returns (GetActionResponse) {}
+  rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {}
+  rpc UpdateAction(UpdateActionRequest) returns (UpdateActionResponse) {}
+  rpc DeleteAction(DeleteActionRequest) returns (DeleteActionResponse) {}
+
+  // CallAction invokes an acting Spirit's SpiritAction.
+  //
+  // This is only valid when a Spirit is currently acting, and
+  // the Spirit's BattleTeamSpiritIntelligence is
+  // BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
+  rpc CallAction(CallActionRequest) returns (CallActionResponse) {}
+}
+
+message CreateActionRequest {
+  // The Action to create. The ID will be filled in on response.
+  Action action = 1;
+}
+
+message CreateActionResponse {
+  // The newly created Action.
+  Action action = 1;
+}
+
+message GetActionRequest {
+  // The id of the Action to get.
+  string id = 1;
+}
+
+message GetActionResponse {
+  // The retrieved Action.
+  Action action = 1;
+}
+
+message ListActionsRequest {
+}
+
+message ListActionsResponse {
+  repeated Action actions = 1;
+}
+
+message UpdateActionRequest {
+  // The new version of the Action.
+  Action action = 1;
+}
+
+message UpdateActionResponse {
+  // The newly updated Action.
+  Action action = 1;
+}
+
+message DeleteActionRequest {
+  // The id of the Action to delete.
+  string id = 1;
+}
+
+message DeleteActionResponse {
+  // The newly deleted Action.
+  Action action = 1;
+}
+
+message CallActionRequest {
+  // The id of the Battle to which this call applies.
+  string battle_id = 1;
+
+  // The id of the Spirit to which this call applies.
+  string spirit_id = 2;
+
+  // The name of the spirits.Action to call.
+  string action_name = 3;
+
+  // The Spirit's to which this action should be applied.
+  repeated string target_spirit_ids = 4;
+}
+
+message CallActionResponse {
+}
+
+// Action describes what a Spirit can actually do on their turn in a Battle.
+//
+// An Action is applied to zero or more Spirit's on a Battle turn.
+message Action {
+  // Metadata about this Action.
+  spirits.meta.Meta meta = 1;
+
+  // Description of the Action.
+  string description = 2;
+
+  oneof definition {
+    // An action script.
+    string script = 3;
+  }
+}

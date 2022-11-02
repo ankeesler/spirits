@@ -1,0 +1,5 @@
+meta {
+  id: "attack"
+}
+description: "Perform basic attack on one or more Spirit's"
+script: "for target in action.targets:\n\ttarget.health -= action.source.physical_attack - target.physical_constitution\naction.commit()\n"
