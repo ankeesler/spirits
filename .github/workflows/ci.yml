@@ -51,7 +51,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: TODO
-      uses: echo TODO
+      run: echo TODO
 
   deploy:
     needs: [test-integration]
@@ -59,4 +59,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: TODO
-      uses: echo TODO
+      run: echo TODO
