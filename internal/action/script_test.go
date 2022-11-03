@@ -1,15 +1,19 @@
-package script
+package action
 
 import (
 	"context"
+	"reflect"
 	"testing"
 
-	"github.com/ankeesler/spirits0/internal/api"
 	"github.com/ankeesler/spirits0/internal/spirit"
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/testing/protocmp"
 )
+
+var spiritExporter = cmp.Exporter(func(t reflect.Type) bool {
+	spiritT := reflect.TypeOf(spirit.Spirit{})
+	statsT := reflect.TypeOf(spirit.Stats{})
+	return t == spiritT || t == statsT
+})
 
 func TestScript(t *testing.T) {
 	tests := []struct {
@@ -32,33 +36,29 @@ main()
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			action, err := Compile(test.source)
+			action, err := compile(test.source)
 			if err != nil {
 				t.Fatal("compile:", err)
 			}
 
-			s := &api.Spirit{
-				Stats: &api.SpiritStats{
-					Health:               3,
-					PhysicalPower:        2,
-					PhysicalConstitution: 1,
-				},
-			}
-			source := &spirit.Spirit{API: proto.Clone(s).(*api.Spirit)}
-			target := &spirit.Spirit{API: proto.Clone(s).(*api.Spirit)}
+			stats := spirit.NewStats(3, 2, 1, 0, 0, 0)
+			s := spirit.New("", "", stats, nil)
+
+			source := s.Clone()
+			target := s.Clone()
 			targets := []*spirit.Spirit{target}
-			if err := action.Run(context.Background(), source, targets); err != nil {
+			if _, err := action.Run(context.Background(), source, targets); err != nil {
 				t.Fatal("action run:", err)
 			}
 
-			wantSource := &spirit.Spirit{API: proto.Clone(s).(*api.Spirit)}
-			wantTarget := &spirit.Spirit{API: proto.Clone(s).(*api.Spirit)}
-			wantTarget.API.Stats.Health -= 1
+			wantSource := s.Clone()
+			wantTarget := s.Clone()
+			wantTarget.Stats().SetHealth(wantTarget.Stats().Health() - 1)
 			wantTargets := []*spirit.Spirit{wantTarget}
-			if diff := cmp.Diff(source, wantSource, protocmp.Transform()); len(diff) > 0 {
+			if diff := cmp.Diff(source, wantSource, spiritExporter); len(diff) > 0 {
 				t.Errorf("source mismatch: -got, +want:\n%s", diff)
 			}
-			if diff := cmp.Diff(targets, wantTargets, protocmp.Transform()); len(diff) > 0 {
+			if diff := cmp.Diff(targets, wantTargets, spiritExporter); len(diff) > 0 {
 				t.Errorf("targets mismatch: -got, +want:\n%s", diff)
 			}
 		})

@@ -2,36 +2,40 @@ package spirit
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/ankeesler/spirits0/internal/api"
-	"google.golang.org/protobuf/proto"
 )
 
 type Action interface {
-	Run(context.Context, *Spirit, []*Spirit)
+	Run(context.Context, *Spirit, []*Spirit, [][]*Spirit) (context.Context, error)
 }
 
 type Spirit struct {
-	API *api.Spirit
-
-	Action Action
+	id     string
+	name   string
+	stats  *Stats
+	action Action
 }
 
-func FromAPI(apiSpirit *api.Spirit) (*Spirit, error) {
-	internalSpirit := Spirit{
-		API: proto.Clone(apiSpirit).(*api.Spirit),
+func New(id string, name string, stats *Stats, action Action) *Spirit {
+	return &Spirit{
+		id:     id,
+		name:   name,
+		stats:  stats,
+		action: action,
 	}
-
-	var err error
-	internalSpirit.Action, err = actionFromAPI(apiSpirit.GetActions())
-	if err != nil {
-		return nil, fmt.Errorf("action from api: %w", err)
-	}
-
-	return &internalSpirit, nil
 }
 
-func actionFromAPI(apiActions []*api.SpiritAction) (Action, error) {
-	return nil, nil
+func (s *Spirit) ID() string    { return s.id }
+func (s *Spirit) Name() string  { return s.name }
+func (s *Spirit) Stats() *Stats { return s.stats }
+func (s *Spirit) Act(ctx context.Context, us []*Spirit, them [][]*Spirit) (context.Context, error) {
+	return s.action.Run(ctx, s, us, them)
+}
+
+func (s *Spirit) Clone() *Spirit {
+	return &Spirit{
+		id:     s.id,
+		name:   s.name,
+		stats:  s.stats.Clone(),
+		action: s.action,
+	}
 }

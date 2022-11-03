@@ -3,7 +3,6 @@ syntax = "proto3";
 package spirits;
 
 import "meta.proto";
-import "spirit.proto";
 
 option go_package = "github.com/ankeesler/spirits0/internal/api";
 
@@ -96,8 +95,8 @@ message AddBattleTeamSpiritRequest {
   // The name of the BattleTeam to which to add the Spirit.
   string team_name = 2;
 
-  // The id of the Spirit to add to the BattleTeam.
-  string spirit_id = 3;
+  // The BattleTeamSpirit to add to the BattleTeam.
+  BattleTeamSpirit spirit = 3;
 }
 
 message AddBattleTeamSpiritResponse {
@@ -197,15 +196,15 @@ message BattleTeam {
   // Unique (within Battle) identifier of BattleTeam.
   string name = 1;
 
-  // The list of Spirit's in this BattleTeam.
-  repeated Spirit spirits = 2;
+  // The list of BattleTeamSpirit's in this BattleTeam.
+  repeated BattleTeamSpirit spirits = 2;
 }
 
 // BattleTeamSpirit is a reference to a Spirit as it exists in a BattleTeam.
 message BattleTeamSpirit {
   // The identifier of the Spirit as it exists in the SpiritService.
   string spirit_id = 1;
-  
+
   // The intelligence tht this Spirit will use.
   BattleTeamSpiritIntelligence intelligence = 2;
 }

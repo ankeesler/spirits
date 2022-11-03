@@ -2,4 +2,4 @@ meta {
   id: "heal"
 }
 description: "Perform basic heal on one or more Spirit's"
-script: "bar"
+script: "def main():\n\tfor target in action.targets:\n\t\ttarget.stats.set_health(target.stats.health() + (action.source.stats.mental_power() - target.stats.mental_constitution()))\n\nmain()\n"

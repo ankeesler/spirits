@@ -39,10 +39,7 @@ func (s *Service) CreateAction(
 	ctx context.Context,
 	req *api.CreateActionRequest,
 ) (*api.CreateActionResponse, error) {
-	action, err := s.repo.Create(ctx, req.GetAction(), func(action *api.Action) error {
-		_, err := actionpkg.FromAPI(action)
-		return err
-	})
+	action, err := s.repo.Create(ctx, req.GetAction(), s.validateAction)
 	if err != nil {
 		return nil, err
 	}
@@ -75,10 +72,7 @@ func (s *Service) UpdateAction(
 	ctx context.Context,
 	req *api.UpdateActionRequest,
 ) (*api.UpdateActionResponse, error) {
-	action, err := s.repo.Update(ctx, req.GetAction(), func(action *api.Action) error {
-		_, err := actionpkg.FromAPI(action)
-		return err
-	})
+	action, err := s.repo.Update(ctx, req.GetAction(), s.validateAction)
 	if err != nil {
 		return nil, err
 	}
@@ -110,4 +104,9 @@ func (s *Service) CallAction(
 		return nil, err
 	}
 	return &api.CallActionResponse{}, nil
+}
+
+func (s *Service) validateAction(action *api.Action) error {
+	_, err := actionpkg.FromAPI(action)
+	return err
 }
