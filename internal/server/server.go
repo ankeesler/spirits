@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
@@ -18,7 +19,6 @@ import (
 	battleservice "github.com/ankeesler/spirits0/internal/battle/service"
 	battlememory "github.com/ankeesler/spirits0/internal/battle/storage/memory"
 	"github.com/ankeesler/spirits0/internal/builtin"
-	spiritpkg "github.com/ankeesler/spirits0/internal/spirit"
 	spiritservice "github.com/ankeesler/spirits0/internal/spirit/service"
 	spiritmemory "github.com/ankeesler/spirits0/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits0/internal/storage/memory"
@@ -40,12 +40,13 @@ type Server struct {
 
 func Wire(c *Config) (*Server, error) {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-	spiritRepo := spiritmemory.New(r)
-	spiritService := spiritservice.New(spiritRepo)
 
 	actionRepo := memory.New[*api.Action](r)
 	actionQueue := memoryqueue.New()
 	actionService := actionservice.New(actionRepo, actionQueue)
+
+	spiritRepo := spiritmemory.New(r)
+	spiritService := spiritservice.New(spiritRepo, actionRepo)
 
 	battleRepo := battlememory.New(r)
 	battleService := battleservice.New(battleRepo, spiritRepo, actionQueue)
@@ -65,8 +66,13 @@ func Wire(c *Config) (*Server, error) {
 		spiritRepo,
 		func() *api.Spirit { return &api.Spirit{} },
 		func(spirit *api.Spirit) error {
-			_, err := spiritpkg.FromAPI(spirit)
-			return err
+			for _, action := range spirit.GetActions() {
+				switch action.Definition.(type) {
+				case *api.SpiritAction_ActionId:
+					return errors.New("builtin spirit cannot have action from ID")
+				}
+			}
+			return nil
 		},
 	); err != nil {
 		return nil, fmt.Errorf("load builtin spirits: %w", err)

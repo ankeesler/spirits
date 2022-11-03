@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ankeesler/spirits0/internal/api"
 )
@@ -16,7 +17,7 @@ type BattleRepo interface {
 	List(context.Context) ([]*api.Battle, error)
 
 	AddBattleTeam(context.Context, string, string) (*api.Battle, error)
-	AddBattleTeamSpirit(context.Context, string, string, *api.Spirit) (*api.Battle, error)
+	AddBattleTeamSpirit(context.Context, string, string, *api.BattleTeamSpirit) (*api.Battle, error)
 	UpdateBattleState(context.Context, string, []api.BattleState, api.BattleState) (*api.Battle, error)
 }
 
@@ -100,12 +101,13 @@ func (s *Service) AddBattleTeamSpirit(
 	ctx context.Context,
 	req *api.AddBattleTeamSpiritRequest,
 ) (*api.AddBattleTeamSpiritResponse, error) {
-	spirit, err := s.spiritRepo.Get(ctx, req.GetSpiritId())
+	_, err := s.spiritRepo.Get(ctx, req.GetSpirit().GetSpiritId())
 	if err != nil {
 		return nil, err
 	}
 
-	battle, err := s.battleRepo.AddBattleTeamSpirit(ctx, req.GetBattleId(), req.GetTeamName(), spirit)
+	battle, err := s.battleRepo.AddBattleTeamSpirit(
+		ctx, req.GetBattleId(), req.GetTeamName(), req.GetSpirit())
 	if err != nil {
 		return nil, err
 	}
@@ -143,4 +145,17 @@ func (s *Service) CancelBattle(
 		return nil, err
 	}
 	return &api.CancelBattleResponse{Battle: battle}, nil
+}
+
+func (s *Service) validateBattle(ctx context.Context, battle *api.Battle) error {
+	for _, team := range battle.GetTeams() {
+		for _, spirit := range team.GetSpirits() {
+			if _, err := s.spiritRepo.Get(ctx, spirit.GetSpiritId()); err != nil {
+				return fmt.Errorf("invalid spirit ID %s on team %s: %w",
+					spirit.GetSpiritId(), team.GetName(), err)
+			}
+		}
+	}
+
+	return nil
 }

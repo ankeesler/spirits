@@ -44,6 +44,36 @@ func TestCreateSpirit(t *testing.T) {
 	}
 }
 
+func TestCreateSpiritInvalidArgument(t *testing.T) {
+	clients := startServer(t)
+
+	spirit := &api.Spirit{
+		Name: "some-name",
+		Stats: &api.SpiritStats{
+			Health:  1,
+			Agility: 1,
+		},
+		Actions: []*api.SpiritAction{
+			{
+				Name: "tuna",
+				Definition: &api.SpiritAction_Inline{
+					Inline: &api.Action{Definition: &api.Action_Script{Script: ""}},
+				},
+			},
+			{
+				Name: "tuna",
+				Definition: &api.SpiritAction_Inline{
+					Inline: &api.Action{Definition: &api.Action_Script{Script: ""}},
+				},
+			},
+		},
+	}
+	_, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	if want, got := status.New(codes.InvalidArgument, "duplicate action name: tuna"), status.Convert(err); !reflect.DeepEqual(want, got) {
+		t.Errorf("want %v, got %v", want, got)
+	}
+}
+
 func TestUpdateSpirit(t *testing.T) {
 	clients := startServer(t)
 

@@ -56,7 +56,7 @@ func (s *Storage) AddBattleTeamSpirit(
 	ctx context.Context,
 	battleID string,
 	teamName string,
-	spirit *api.Spirit,
+	spirit *api.BattleTeamSpirit,
 ) (*api.Battle, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -81,7 +81,7 @@ func (s *Storage) AddBattleTeamSpirit(
 		return nil, status.Errorf(codes.NotFound, "team not found")
 	}
 
-	team.Spirits = append(team.GetSpirits(), spirit)
+	team.Spirits = append(team.Spirits, spirit)
 
 	return s.Update(ctx, battle, func(*api.Battle) error { return nil })
 }
