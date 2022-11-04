@@ -3,9 +3,11 @@ package controller
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/ankeesler/spirits0/internal/api"
+	battlepkg "github.com/ankeesler/spirits0/internal/battle"
 	runnerpkg "github.com/ankeesler/spirits0/internal/battle/runner"
 )
 
@@ -41,7 +43,8 @@ func (c *Controller) Run(ctx context.Context) error {
 	for battle := range c.battles {
 		if battle.GetState() == api.BattleState_BATTLE_STATE_STARTED {
 			if _, ok := c.runnerCancels[battle.GetMeta().GetId()]; !ok {
-				runner := runnerpkg.New()
+				internalBattle := c.wireBattle(battle)
+				runner := runnerpkg.New(internalBattle, c.battleCallbackFunc(ctx, battle, internalBattle))
 				ctx, cancel := context.WithCancel(ctx)
 				go runner.Run(ctx)
 				c.runnerCancels[battle.GetMeta().GetId()] = cancel
@@ -55,4 +58,33 @@ func (c *Controller) Run(ctx context.Context) error {
 		}
 	}
 	return nil
+}
+
+func (c *Controller) wireBattle(apiBattle *api.Battle) *battlepkg.Battle {
+	return nil
+}
+
+func (c *Controller) battleCallbackFunc(
+	ctx context.Context,
+	apiBattle *api.Battle,
+	internalBattle *battlepkg.Battle,
+) func(int, error) {
+	return func(turn int, err error) {
+		if err != nil {
+			errorMessage := err.Error()
+			apiBattle.ErrorMessage = &errorMessage
+			apiBattle.State = api.BattleState_BATTLE_STATE_ERROR
+			if _, err := c.repo.Update(
+				ctx,
+				apiBattle,
+				func(*api.Battle) error { return nil },
+			); err != nil {
+				log.Printf("could not update battle: %s", err.Error())
+			}
+			return
+		}
+
+		actingSpirit := internalBattle.Queue().Peek()
+		_ = actingSpirit
+	}
 }
