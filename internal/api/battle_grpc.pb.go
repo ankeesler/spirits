@@ -43,6 +43,10 @@ type BattleServiceClient interface {
 	AddBattleTeam(ctx context.Context, in *AddBattleTeamRequest, opts ...grpc.CallOption) (*AddBattleTeamResponse, error)
 	// AddBattleTeamSpirit adds a Spirit into a Battle via inclusion in a Team.
 	//
+	// Note that when a Spirit is added to a Battle, no future external updates to
+	// the Spirit will be incoporated into the Battle. In order to Battle with the
+	// updated Spirit, a new Battle must be created.
+	//
 	// After Spirit's are added, one might want to StartBattle.
 	AddBattleTeamSpirit(ctx context.Context, in *AddBattleTeamSpiritRequest, opts ...grpc.CallOption) (*AddBattleTeamSpiritResponse, error)
 	// StartBattle progresses the Battle from BattleStatus BATTLE_STATE_PENDING to
@@ -175,6 +179,10 @@ type BattleServiceServer interface {
 	// After a BattleTeam is created, one might want to AddBattleTeamSpirit's.
 	AddBattleTeam(context.Context, *AddBattleTeamRequest) (*AddBattleTeamResponse, error)
 	// AddBattleTeamSpirit adds a Spirit into a Battle via inclusion in a Team.
+	//
+	// Note that when a Spirit is added to a Battle, no future external updates to
+	// the Spirit will be incoporated into the Battle. In order to Battle with the
+	// updated Spirit, a new Battle must be created.
 	//
 	// After Spirit's are added, one might want to StartBattle.
 	AddBattleTeamSpirit(context.Context, *AddBattleTeamSpiritRequest) (*AddBattleTeamSpiritResponse, error)

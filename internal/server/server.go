@@ -56,7 +56,7 @@ func Wire(c *Config) (*Server, error) {
 	api.RegisterActionServiceServer(s, actionService)
 	api.RegisterBattleServiceServer(s, battleService)
 
-	battleController, err := controller.Wire(battleRepo)
+	battleController, err := controller.Wire(battleRepo, actionRepo, actionQueue)
 	if err != nil {
 		return nil, fmt.Errorf("wire battle controller: %w", err)
 	}

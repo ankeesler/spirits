@@ -6,7 +6,8 @@ import (
 
 type Queue interface {
 	HasNext() bool
-	Next() *spirit.Spirit
+	Next() (*spirit.Spirit, []*spirit.Spirit, [][]*spirit.Spirit)
+
 	Peek() *spirit.Spirit
 }
 

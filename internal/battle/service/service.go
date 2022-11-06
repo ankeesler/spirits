@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ankeesler/spirits0/internal/api"
 )
@@ -101,13 +100,16 @@ func (s *Service) AddBattleTeamSpirit(
 	ctx context.Context,
 	req *api.AddBattleTeamSpiritRequest,
 ) (*api.AddBattleTeamSpiritResponse, error) {
-	_, err := s.spiritRepo.Get(ctx, req.GetSpirit().GetSpiritId())
+	spirit, err := s.spiritRepo.Get(ctx, req.GetSpiritId())
 	if err != nil {
 		return nil, err
 	}
 
 	battle, err := s.battleRepo.AddBattleTeamSpirit(
-		ctx, req.GetBattleId(), req.GetTeamName(), req.GetSpirit())
+		ctx, req.GetBattleId(), req.GetTeamName(), &api.BattleTeamSpirit{
+			Spirit:       spirit,
+			Intelligence: req.GetIntelligence(),
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -148,14 +150,5 @@ func (s *Service) CancelBattle(
 }
 
 func (s *Service) validateBattle(ctx context.Context, battle *api.Battle) error {
-	for _, team := range battle.GetTeams() {
-		for _, spirit := range team.GetSpirits() {
-			if _, err := s.spiritRepo.Get(ctx, spirit.GetSpiritId()); err != nil {
-				return fmt.Errorf("invalid spirit ID %s on team %s: %w",
-					spirit.GetSpiritId(), team.GetName(), err)
-			}
-		}
-	}
-
 	return nil
 }

@@ -11,31 +11,25 @@ import (
 
 const maxTurns = 100
 
+type Queue interface {
+	HasNext() bool
+	Next() (*spirit.Spirit, []*spirit.Spirit, [][]*spirit.Spirit)
+}
+
 type Callback func(int, error)
 
 type Runner struct {
-	battle   *battlepkg.Battle
+	queue    Queue
 	callback Callback
 
 	teams       map[string]*battlepkg.Team // Team name -> team
 	spiritTeams map[string]*battlepkg.Team // Spirit ID -> team
 }
 
-func New(battle *battlepkg.Battle, callback Callback) *Runner {
-	teams := make(map[string]*battlepkg.Team)
-	spiritTeams := make(map[string]*battlepkg.Team)
-	for _, team := range battle.Teams() {
-		teams[team.Name()] = team
-		for _, spirit := range team.Spirits() {
-			spiritTeams[spirit.ID()] = team
-		}
-	}
+func New(queue Queue, callback Callback) *Runner {
 	return &Runner{
-		battle:   battle,
+		queue:    queue,
 		callback: callback,
-
-		teams:       teams,
-		spiritTeams: spiritTeams,
 	}
 }
 
@@ -56,12 +50,12 @@ func (r *Runner) Run(ctx context.Context) {
 			break
 		}
 
-		if !r.battle.Queue().HasNext() {
+		if !r.queue.HasNext() {
 			break
 		}
 
-		next := r.battle.Queue().Next()
-		ctx, err = next.Act(ctx, r.myTeamSpirits(next), r.notMyTeamSpirits(next))
+		me, us, them := r.queue.Next()
+		ctx, err = me.Act(ctx, us, them)
 		if err != nil {
 			r.callback(turn, fmt.Errorf("action errored: %w", err))
 			break
@@ -69,19 +63,4 @@ func (r *Runner) Run(ctx context.Context) {
 
 		r.callback(turn, nil)
 	}
-}
-
-func (r *Runner) myTeamSpirits(next *spirit.Spirit) []*spirit.Spirit {
-	return r.spiritTeams[next.ID()].Spirits()
-}
-
-func (r *Runner) notMyTeamSpirits(next *spirit.Spirit) [][]*spirit.Spirit {
-	myTeam := r.spiritTeams[next.ID()]
-	var teams [][]*spirit.Spirit
-	for _, team := range r.teams {
-		if team.Name() != myTeam.Name() {
-			teams = append(teams, team.Spirits())
-		}
-	}
-	return teams
 }
