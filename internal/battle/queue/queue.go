@@ -1,6 +1,6 @@
 package queue
 
-import "github.com/ankeesler/spirits0/internal/spirit"
+import "github.com/ankeesler/spirits/internal/spirit"
 
 type Queue struct {
 	teams [][]*spirit.Spirit

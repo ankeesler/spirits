@@ -6,14 +6,14 @@ import (
 	"log"
 	"time"
 
-	actionpkg "github.com/ankeesler/spirits0/internal/action"
-	"github.com/ankeesler/spirits0/internal/api"
-	"github.com/ankeesler/spirits0/internal/battle"
-	battlepkg "github.com/ankeesler/spirits0/internal/battle"
-	"github.com/ankeesler/spirits0/internal/battle/queue"
-	runnerpkg "github.com/ankeesler/spirits0/internal/battle/runner"
-	"github.com/ankeesler/spirits0/internal/spirit"
-	spiritpkg "github.com/ankeesler/spirits0/internal/spirit"
+	actionpkg "github.com/ankeesler/spirits/internal/action"
+	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/internal/battle"
+	battlepkg "github.com/ankeesler/spirits/internal/battle"
+	"github.com/ankeesler/spirits/internal/battle/queue"
+	runnerpkg "github.com/ankeesler/spirits/internal/battle/runner"
+	"github.com/ankeesler/spirits/internal/spirit"
+	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 )
 
 type BattleRepo interface {

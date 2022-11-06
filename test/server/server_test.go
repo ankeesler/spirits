@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ankeesler/spirits0/internal/api"
-	"github.com/ankeesler/spirits0/internal/server"
+	"github.com/ankeesler/spirits/internal/server"
+	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

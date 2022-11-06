@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ankeesler/spirits0/internal/api"
-	"github.com/ankeesler/spirits0/internal/spirit"
+	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 type SpiritStats interface {

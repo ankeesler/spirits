@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ankeesler/spirits0/internal/spirit"
+	"github.com/ankeesler/spirits/internal/spirit"
 	"go.starlark.net/starlark"
 	"go.starlark.net/starlarkstruct"
 )

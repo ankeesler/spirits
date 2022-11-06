@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	actionpkg "github.com/ankeesler/spirits0/internal/action"
-	"github.com/ankeesler/spirits0/internal/api"
+	actionpkg "github.com/ankeesler/spirits/internal/action"
+	"github.com/ankeesler/spirits/pkg/api"
 )
 
 type ActionRepo interface {

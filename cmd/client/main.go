@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/ankeesler/spirits0/internal/api"
-	"github.com/ankeesler/spirits0/internal/menu"
+	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/internal/menu"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/prototext"

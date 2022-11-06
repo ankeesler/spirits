@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/ankeesler/spirits0/internal/api"
+	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"

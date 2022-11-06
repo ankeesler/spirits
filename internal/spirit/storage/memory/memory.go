@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/ankeesler/spirits0/internal/api"
-	genericmemory "github.com/ankeesler/spirits0/internal/storage/memory"
+	"github.com/ankeesler/spirits/pkg/api"
+	genericmemory "github.com/ankeesler/spirits/internal/storage/memory"
 )
 
 type Storage struct {

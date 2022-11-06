@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/ankeesler/spirits0/internal/api"
+	"github.com/ankeesler/spirits/pkg/api"
 )
 
 type SpiritRepo interface {

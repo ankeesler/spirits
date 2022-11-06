@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	battlepkg "github.com/ankeesler/spirits0/internal/battle"
-	"github.com/ankeesler/spirits0/internal/spirit"
+	battlepkg "github.com/ankeesler/spirits/internal/battle"
+	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 const maxTurns = 100

@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ankeesler/spirits0/internal/server"
+	"github.com/ankeesler/spirits/internal/server"
 )
 
 var (

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ankeesler/spirits0/internal/spirit"
+	"github.com/ankeesler/spirits/internal/spirit"
 	"github.com/google/go-cmp/cmp"
 )
 

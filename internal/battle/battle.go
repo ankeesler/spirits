@@ -1,7 +1,7 @@
 package battle
 
 import (
-	"github.com/ankeesler/spirits0/internal/spirit"
+	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 type Queue interface {

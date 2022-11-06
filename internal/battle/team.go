@@ -1,6 +1,6 @@
 package battle
 
-import "github.com/ankeesler/spirits0/internal/spirit"
+import "github.com/ankeesler/spirits/internal/spirit"
 
 type Team struct {
 	name    string

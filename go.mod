@@ -1,4 +1,4 @@
-module github.com/ankeesler/spirits0
+module github.com/ankeesler/spirits
 
 go 1.19
 
