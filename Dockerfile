@@ -8,6 +8,7 @@ COPY go.mod go.mod
 COPY go.sum go.sum
 COPY cmd/ cmd/
 COPY internal/ internal/
+COPY pkg/ pkg/
 COPY api/builtin builtin/
 
 # Build
