@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ankeesler/spirits/internal/spirit"
 	"go.starlark.net/starlark"
 	"go.starlark.net/starlarkstruct"
 )
@@ -18,13 +17,15 @@ type script struct {
 	program *starlark.Program
 }
 
+type fakeSpirit struct{ Spirit }
+
+func (s fakeSpirit) ID() string   { return "" }
+func (s fakeSpirit) Name() string { return "" }
+
 func compile(source string) (*script, error) {
 	s := &script{}
 
-	predeclared, err := newPredeclared(
-		&spirit.Spirit{},
-		[]*spirit.Spirit{},
-	)
+	predeclared, err := newPredeclared(fakeSpirit{}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("get script predeclared symbols for compile: %w", err)
 	}
@@ -38,8 +39,8 @@ func compile(source string) (*script, error) {
 	return s, nil
 }
 
-func (s *script) Run(
-	ctx context.Context, source *spirit.Spirit, targets []*spirit.Spirit) (context.Context, error) {
+func (s *script) Call(
+	ctx context.Context, source Spirit, targets []Spirit) (context.Context, error) {
 	out := bytes.NewBuffer([]byte{})
 	thread := &starlark.Thread{
 		Name: "<actionscript:load>",
@@ -94,12 +95,12 @@ func (s *script) run(
 }
 
 func newPredeclared(
-	source *spirit.Spirit,
-	targets []*spirit.Spirit,
+	source Spirit,
+	targets []Spirit,
 ) (starlark.StringDict, error) {
 	starlarkCtxStruct := starlarkstruct.FromStringDict(starlarkstruct.Default, starlark.StringDict{
 		"value": starlark.NewBuiltin(
-			"ctx.value",
+			"value",
 			func(
 				thread *starlark.Thread,
 				b *starlark.Builtin,
@@ -125,7 +126,7 @@ func newPredeclared(
 			},
 		),
 		"set_value": starlark.NewBuiltin(
-			"ctx.value",
+			"set_value",
 			func(
 				thread *starlark.Thread,
 				b *starlark.Builtin,
@@ -171,26 +172,25 @@ func newPredeclared(
 	}, nil
 }
 
-func newSpiritStarlarkStruct(spirit *spirit.Spirit) *starlarkstruct.Struct {
+func newSpiritStarlarkStruct(spirit Spirit) *starlarkstruct.Struct {
 	starlarkStatsDict := starlark.StringDict{}
-	stats := spirit.Stats()
 	addStatStarlarkBuitlins(
 		starlarkStatsDict, "health",
-		stats.Health, stats.SetHealth)
+		spirit.Health, spirit.SetHealth)
 	addStatStarlarkBuitlins(
 		starlarkStatsDict, "physical_power",
-		stats.PhysicalPower, stats.SetPhysicalPower)
+		spirit.PhysicalPower, spirit.SetPhysicalPower)
 	addStatStarlarkBuitlins(
 		starlarkStatsDict, "physical_constitution",
-		stats.PhysicalConstitution, stats.SetPhysicalConstitution)
+		spirit.PhysicalConstitution, spirit.SetPhysicalConstitution)
 	addStatStarlarkBuitlins(
 		starlarkStatsDict, "mental_power",
-		stats.MentalPower, stats.SetMentalPower)
+		spirit.MentalPower, spirit.SetMentalPower)
 	addStatStarlarkBuitlins(
 		starlarkStatsDict, "mental_constitution",
-		stats.MentalConstitution, stats.SetMentalConstitution)
+		spirit.MentalConstitution, spirit.SetMentalConstitution)
 	addStatStarlarkBuitlins(
-		starlarkStatsDict, "agility", stats.Health, stats.SetHealth)
+		starlarkStatsDict, "agility", spirit.Health, spirit.SetHealth)
 	starlarkStatsStruct := starlarkstruct.FromStringDict(starlarkstruct.Default, starlarkStatsDict)
 
 	return starlarkstruct.FromStringDict(starlarkstruct.Default, starlark.StringDict{

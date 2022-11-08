@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+const defaultTestServerPort = 12345
+
 type clients struct {
 	spirit api.SpiritServiceClient
 	battle api.BattleServiceClient
@@ -20,10 +22,10 @@ type clients struct {
 func startServer(t *testing.T) *clients {
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
-		port = "12345"
-		os.Setenv("PORT", port)
-
+		port = fmt.Sprintf("%d", defaultTestServerPort)
 		server, err := server.Wire(&server.Config{
+			Port: defaultTestServerPort,
+
 			SpiritBuiltinDir: os.DirFS("../../api/builtin/spirit"),
 			ActionBuiltinDir: os.DirFS("../../api/builtin/action"),
 		})
@@ -34,17 +36,11 @@ func startServer(t *testing.T) *clients {
 		ctx, cancel := context.WithCancel(context.Background())
 		go func() {
 			if err := server.Serve(ctx); err != nil {
-				t.Errorf("server exited with error: %v", err)
+				t.Logf("server exited with error: %v", err)
 			}
 		}()
 
-		t.Cleanup(func() {
-			cancel()
-
-			if !ok {
-				os.Unsetenv("PORT")
-			}
-		})
+		t.Cleanup(cancel)
 	}
 
 	conn, err := grpc.Dial(

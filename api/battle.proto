@@ -105,6 +105,9 @@ message AddBattleTeamSpiritRequest {
 
   // The intelligence that this Spirit will use.
   BattleTeamSpiritIntelligence intelligence = 4;
+
+  // The seed to use for any random actions.
+  int64 seed = 5;
 }
 
 message AddBattleTeamSpiritResponse {
@@ -159,11 +162,16 @@ message Battle {
   // This list references the current state of Spirit's in this Battle.
   repeated BattleTeam in_battle_teams = 5;
 
-  // The currently acting Spirit.
+  // The next Spirit's to run.
   //
   // This is only valid when the BattleState is BATTLE_STATE_STARTED or
   // BATTLE_STATE_WAITING.
-  string acting_spirit_id = 6;
+  //
+  // Note that this list is not complete - it may contain 0 or more entries.
+  repeated string next_spirit_ids = 6;
+
+  // The number of turns that this battle has run.
+  int64 turns = 7;
 }
 
 // BattleState describes which stage a Battle is in.
@@ -216,6 +224,9 @@ message BattleTeamSpirit {
 
   // The intelligence that this Spirit will use.
   BattleTeamSpiritIntelligence intelligence = 2;
+
+  // The seed to use for any random actions.
+  int64 seed = 3;
 }
 
 // BattleTeamSpiritIntelligence describes how a Spirit will decide to take

@@ -19,6 +19,9 @@ message Meta {
 
   // The time at which the resource was last updated.
   google.protobuf.Timestamp updated_time = 4;
+
+  // The identity that last updated the resource.
+  Identity updated_by = 5;
 }
 
 // Identity describes some sort of actor doing something (e.g., a human creating

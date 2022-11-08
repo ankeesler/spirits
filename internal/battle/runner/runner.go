@@ -4,63 +4,105 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"time"
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
-	"github.com/ankeesler/spirits/internal/spirit"
 )
 
 const maxTurns = 100
 
-type Queue interface {
-	HasNext() bool
-	Next() (*spirit.Spirit, []*spirit.Spirit, [][]*spirit.Spirit)
+type BattleRepo interface {
+	Watch(context.Context, chan<- *battlepkg.Battle) error
+	Update(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
 }
 
-type Callback func(int, error)
+type battleContext struct {
+	context.Context
+
+	cancel context.CancelFunc
+}
 
 type Runner struct {
-	queue    Queue
-	callback Callback
+	battleRepo BattleRepo
 
-	teams       map[string]*battlepkg.Team // Team name -> team
-	spiritTeams map[string]*battlepkg.Team // Spirit ID -> team
+	battles        chan *battlepkg.Battle
+	battleContexts map[string]*battleContext
 }
 
-func New(queue Queue, callback Callback) *Runner {
-	return &Runner{
-		queue:    queue,
-		callback: callback,
+func Wire(
+	battleRepo BattleRepo,
+) (*Runner, error) {
+	c := make(chan *battlepkg.Battle)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := battleRepo.Watch(ctx, c); err != nil {
+		return nil, fmt.Errorf("start watch: %w", err)
 	}
+
+	return &Runner{
+		battleRepo: battleRepo,
+
+		battles:        c,
+		battleContexts: make(map[string]*battleContext),
+	}, nil
 }
 
-func (r *Runner) Run(ctx context.Context) {
-	turn := 0
-	for {
-		var err error
+func (c *Runner) Run(ctx context.Context) error {
+	log.Printf("Starting battle runner")
 
+	for {
 		select {
 		case <-ctx.Done():
-			r.callback(turn, ctx.Err())
-		default:
-		}
+			close(c.battles)
+			return fmt.Errorf("context cancelled: %w", ctx.Err())
+		case battle, ok := <-c.battles:
+			if !ok {
+				return errors.New("battle runner watch closed")
+			}
 
-		turn++
-		if turn >= maxTurns {
-			r.callback(turn, errors.New("too many turns"))
-			break
-		}
+			needsUpdate, err := c.runBattle(ctx, battle)
+			if err != nil {
+				log.Printf("error in battle %v: %s", battle, err.Error())
+				continue
+			}
 
-		if !r.queue.HasNext() {
-			break
+			if needsUpdate {
+				if _, err := c.battleRepo.Update(ctx, battle); err != nil {
+					log.Printf("Failed to update battle to %v", battle)
+				}
+			}
 		}
-
-		me, us, them := r.queue.Next()
-		ctx, err = me.Act(ctx, us, them)
-		if err != nil {
-			r.callback(turn, fmt.Errorf("action errored: %w", err))
-			break
-		}
-
-		r.callback(turn, nil)
 	}
+}
+
+func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool, error) {
+	log.Printf("running battle %v", battle)
+
+	if battle.State() != battlepkg.StateStarted {
+		return false, nil
+	}
+
+	if battle.Turns() > maxTurns {
+		battle.SetState(battlepkg.StateError)
+		battle.SetError(errors.New("hit max turns"))
+	} else if !battle.HasNext() {
+		battle.SetState(battlepkg.StateFinished)
+	} else {
+		battleCtx, ok := c.battleContexts[battle.ID()]
+		if !ok {
+			var battleCtx battleContext
+			battleCtx.Context, battleCtx.cancel = context.WithCancel(ctx)
+			c.battleContexts[battle.ID()] = &battleCtx
+		}
+
+		me, us, them := battle.Next()
+		var err error
+		battleCtx.Context, err = me.Run(battleCtx, us, them)
+		if err != nil {
+			return false, fmt.Errorf("spirit %v run: %w", me, err)
+		}
+	}
+
+	return true, nil
 }

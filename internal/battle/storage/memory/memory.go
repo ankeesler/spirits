@@ -5,7 +5,8 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/ankeesler/spirits/pkg/api"
+	battlepkg "github.com/ankeesler/spirits/internal/battle"
+	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	genericmemory "github.com/ankeesler/spirits/internal/storage/memory"
 	"golang.org/x/exp/slices"
 	"google.golang.org/grpc/codes"
@@ -13,14 +14,14 @@ import (
 )
 
 type Storage struct {
-	*genericmemory.Storage[*api.Battle]
+	*genericmemory.Storage[*battlepkg.Battle]
 
 	lock sync.Mutex
 }
 
 func New(r *rand.Rand) *Storage {
 	return &Storage{
-		Storage: genericmemory.New[*api.Battle](r),
+		Storage: genericmemory.New[*battlepkg.Battle](r),
 	}
 }
 
@@ -28,7 +29,7 @@ func (s *Storage) AddBattleTeam(
 	ctx context.Context,
 	battleID string,
 	teamName string,
-) (*api.Battle, error) {
+) (*battlepkg.Battle, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -37,27 +38,27 @@ func (s *Storage) AddBattleTeam(
 		return nil, err
 	}
 
-	if battle.GetState() != api.BattleState_BATTLE_STATE_PENDING {
+	if battle.State() != battlepkg.StatePending {
 		return nil, status.Error(codes.FailedPrecondition, "battle must be pending")
 	}
 
-	for _, team := range battle.Teams {
-		if team.GetName() == teamName {
+	for _, existingTeamName := range battle.TeamNames() {
+		if existingTeamName == teamName {
 			return nil, status.Error(codes.AlreadyExists, "team already exists")
 		}
 	}
 
-	battle.Teams = append(battle.GetTeams(), &api.BattleTeam{Name: teamName})
+	battle.AddTeam(teamName)
 
-	return s.Update(ctx, battle, func(*api.Battle) error { return nil })
+	return s.Update(ctx, battle)
 }
 
 func (s *Storage) AddBattleTeamSpirit(
 	ctx context.Context,
 	battleID string,
 	teamName string,
-	spirit *api.BattleTeamSpirit,
-) (*api.Battle, error) {
+	spirit *spiritpkg.Spirit,
+) (*battlepkg.Battle, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -66,32 +67,32 @@ func (s *Storage) AddBattleTeamSpirit(
 		return nil, err
 	}
 
-	if battle.GetState() != api.BattleState_BATTLE_STATE_PENDING {
+	if battle.State() != battlepkg.StatePending {
 		return nil, status.Error(codes.FailedPrecondition, "battle must be pending")
 	}
 
-	var team *api.BattleTeam
-	for i := range battle.Teams {
-		if battle.Teams[i].GetName() == teamName {
-			team = battle.Teams[i]
+	teamExists := false
+	for _, existingTeamName := range battle.TeamNames() {
+		if existingTeamName == teamName {
+			teamExists = true
 			break
 		}
 	}
-	if team == nil {
+	if !teamExists {
 		return nil, status.Errorf(codes.NotFound, "team not found")
 	}
 
-	team.Spirits = append(team.Spirits, spirit)
+	battle.AddTeamSpirit(teamName, spirit)
 
-	return s.Update(ctx, battle, func(*api.Battle) error { return nil })
+	return s.Update(ctx, battle)
 }
 
 func (s *Storage) UpdateBattleState(
 	ctx context.Context,
 	id string,
-	from []api.BattleState,
-	to api.BattleState,
-) (*api.Battle, error) {
+	from []battlepkg.State,
+	to battlepkg.State,
+) (*battlepkg.Battle, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -100,11 +101,11 @@ func (s *Storage) UpdateBattleState(
 		return nil, err
 	}
 
-	if !slices.Contains(from, battle.GetState()) {
-		return nil, status.Errorf(codes.FailedPrecondition, "battle must be one of %s", from)
+	if !slices.Contains(from, battle.State()) {
+		return nil, status.Errorf(codes.FailedPrecondition, "battle must be one of %v", from)
 	}
 
-	battle.State = to
+	battle.SetState(to)
 
-	return s.Update(ctx, battle, func(_ *api.Battle) error { return nil })
+	return s.Update(ctx, battle)
 }

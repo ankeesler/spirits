@@ -4,24 +4,22 @@ import (
 	"context"
 	"fmt"
 	fspkg "io/fs"
-	"time"
 
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 )
 
-type Creator[T any] interface {
-	Create(context.Context, T, func(T) error) (T, error)
+type Repo[T any] interface {
+	Create(context.Context, T) (T, error)
 }
 
-func Load[T proto.Message](
+func Load[T proto.Message, U any](
+	ctx context.Context,
 	fs fspkg.FS,
-	creator Creator[T],
 	newFunc func() T,
-	validateFunc func(T) error,
+	convertFunc func(T) (U, error),
+	repo Repo[U],
 ) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
 	if err := fspkg.WalkDir(fs, ".", func(path string, d fspkg.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -41,7 +39,12 @@ func Load[T proto.Message](
 			return fmt.Errorf("unmarshal proto %s: %w", path, err)
 		}
 
-		if _, err := creator.Create(ctx, t, validateFunc); err != nil {
+		u, err := convertFunc(t)
+		if err != nil {
+			return fmt.Errorf("convert: %w", err)
+		}
+
+		if _, err := repo.Create(ctx, u); err != nil {
 			return fmt.Errorf("create %s: %w", path, err)
 		}
 

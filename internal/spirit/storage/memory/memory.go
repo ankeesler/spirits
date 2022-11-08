@@ -5,26 +5,26 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/ankeesler/spirits/pkg/api"
+	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	genericmemory "github.com/ankeesler/spirits/internal/storage/memory"
 )
 
 type Storage struct {
-	*genericmemory.Storage[*api.Spirit]
+	*genericmemory.Storage[*spiritpkg.Spirit]
 
 	lock sync.Mutex
 }
 
 func New(r *rand.Rand) *Storage {
 	return &Storage{
-		Storage: genericmemory.New[*api.Spirit](r),
+		Storage: genericmemory.New[*spiritpkg.Spirit](r),
 	}
 }
 
 func (s *Storage) ListSpirits(
 	ctx context.Context,
 	name *string,
-) ([]*api.Spirit, error) {
+) ([]*spiritpkg.Spirit, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -34,9 +34,9 @@ func (s *Storage) ListSpirits(
 	}
 
 	if name != nil {
-		var filteredSpirits []*api.Spirit
+		var filteredSpirits []*spiritpkg.Spirit
 		for _, spirit := range spirits {
-			if spirit.Name == *name {
+			if spirit.Name() == *name {
 				filteredSpirits = append(filteredSpirits, spirit)
 			}
 		}

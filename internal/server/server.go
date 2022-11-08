@@ -2,48 +2,49 @@ package server
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io/fs"
 	"log"
 	"math/rand"
 	"net"
-	"os"
 	"time"
 
-	"github.com/ankeesler/spirits/pkg/api"
 	actionpkg "github.com/ankeesler/spirits/internal/action"
-	memoryqueue "github.com/ankeesler/spirits/internal/action/queue/memory"
+	actionqueue "github.com/ankeesler/spirits/internal/action/queue/memory"
 	actionservice "github.com/ankeesler/spirits/internal/action/service"
-	"github.com/ankeesler/spirits/internal/battle/controller"
+	"github.com/ankeesler/spirits/internal/battle/runner"
 	battleservice "github.com/ankeesler/spirits/internal/battle/service"
 	battlememory "github.com/ankeesler/spirits/internal/battle/storage/memory"
 	"github.com/ankeesler/spirits/internal/builtin"
+	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	spiritservice "github.com/ankeesler/spirits/internal/spirit/service"
 	spiritmemory "github.com/ankeesler/spirits/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits/internal/storage/memory"
+	"github.com/ankeesler/spirits/pkg/api"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 )
 
 type Config struct {
+	Port int
+
 	SpiritBuiltinDir fs.FS
 	ActionBuiltinDir fs.FS
 }
 
 type Server struct {
-	addr string
+	port int
 
-	s                *grpc.Server
-	battleController *controller.Controller
+	s            *grpc.Server
+	battleRunner *runner.Runner
 }
 
 func Wire(c *Config) (*Server, error) {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	actionRepo := memory.New[*api.Action](r)
-	actionQueue := memoryqueue.New()
-	actionService := actionservice.New(actionRepo, actionQueue)
+	actionRepo := memory.New[*actionpkg.Action](r)
+	actionQueue := actionqueue.New()
+	actionService := actionservice.New(actionRepo)
 
 	spiritRepo := spiritmemory.New(r)
 	spiritService := spiritservice.New(spiritRepo, actionRepo)
@@ -51,61 +52,51 @@ func Wire(c *Config) (*Server, error) {
 	battleRepo := battlememory.New(r)
 	battleService := battleservice.New(battleRepo, spiritRepo, actionQueue)
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(unaryLogFunc), grpc.StreamInterceptor(streamLogFunc))
 	api.RegisterSpiritServiceServer(s, spiritService)
 	api.RegisterActionServiceServer(s, actionService)
 	api.RegisterBattleServiceServer(s, battleService)
 
-	battleController, err := controller.Wire(battleRepo, actionRepo, actionQueue)
+	battleRunner, err := runner.Wire(battleRepo)
 	if err != nil {
 		return nil, fmt.Errorf("wire battle controller: %w", err)
 	}
 
-	if err := builtin.Load[*api.Spirit](
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+
+	if err := builtin.Load[*api.Spirit, *spiritpkg.Spirit](
+		ctx,
 		c.SpiritBuiltinDir,
-		spiritRepo,
 		func() *api.Spirit { return &api.Spirit{} },
-		func(spirit *api.Spirit) error {
-			for _, action := range spirit.GetActions() {
-				switch action.Definition.(type) {
-				case *api.SpiritAction_ActionId:
-					return errors.New("builtin spirit cannot have action from ID")
-				}
-			}
-			return nil
+		func(apiSpirit *api.Spirit) (*spiritpkg.Spirit, error) {
+			return spiritpkg.FromAPI(ctx, apiSpirit, actionRepo, nil)
 		},
+		spiritRepo,
 	); err != nil {
 		return nil, fmt.Errorf("load builtin spirits: %w", err)
 	}
 
-	if err := builtin.Load[*api.Action](
+	if err := builtin.Load[*api.Action, *actionpkg.Action](
+		ctx,
 		c.ActionBuiltinDir,
-		actionRepo,
 		func() *api.Action { return &api.Action{} },
-		func(action *api.Action) error {
-			_, err := actionpkg.FromAPI(action)
-			return err
-		},
+		actionpkg.FromAPI,
+		actionRepo,
 	); err != nil {
 		return nil, fmt.Errorf("load builtin actions: %w", err)
 	}
 
-	port, ok := os.LookupEnv("PORT")
-	addr := fmt.Sprintf(":%s", port)
-	if !ok {
-		addr = ":0"
-	}
-
 	return &Server{
-		addr: addr,
+		port: c.Port,
 
-		s:                s,
-		battleController: battleController,
+		s:            s,
+		battleRunner: battleRunner,
 	}, nil
 }
 
 func (s *Server) Serve(ctx context.Context) error {
-	l, err := net.Listen("tcp", s.addr) // Closed by grpc.Serve()
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port)) // Closed by grpc.Serve()
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
 	}
@@ -123,8 +114,29 @@ func (s *Server) Serve(ctx context.Context) error {
 	})
 
 	g.Go(func() error {
-		return s.battleController.Run(ctx)
+		return s.battleRunner.Run(ctx)
 	})
 
 	return g.Wait()
+}
+
+func unaryLogFunc(
+	ctx context.Context,
+	req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (interface{}, error) {
+	log.Printf("Unary req: %s: %v", info.FullMethod, req)
+	rsp, err := handler(ctx, req)
+	log.Printf("Unary rsp: %s: %v %v", info.FullMethod, rsp, err)
+	return rsp, err
+}
+
+func streamLogFunc(
+	srv interface{}, ss grpc.ServerStream,
+	info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	log.Printf("Stream req: %s", info.FullMethod)
+	err := handler(srv, ss)
+	log.Printf("Stream rsp: %s: %v", info.FullMethod, err)
+	return err
 }

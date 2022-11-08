@@ -5,15 +5,21 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"time"
 
-	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Meta interface {
-	GetMeta() *api.Meta
+	ID() string
+	SetID(string)
+
+	CreatedTime() time.Time
+	SetCreatedTime(time.Time)
+
+	UpdatedTime() time.Time
+	SetUpdatedTime(time.Time)
 }
 
 type Storage[T Meta] struct {
@@ -36,7 +42,6 @@ func New[T Meta](r *rand.Rand) *Storage[T] {
 func (s *Storage[T]) Create(
 	ctx context.Context,
 	t T,
-	validateFunc func(T) error,
 ) (T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -46,15 +51,11 @@ func (s *Storage[T]) Create(
 		return t, status.Error(codes.AlreadyExists, "already exists")
 	}
 
-	t.GetMeta().Id = id
-	t.GetMeta().CreatedTime = timestamppb.Now()
-	t.GetMeta().UpdatedTime = t.GetMeta().CreatedTime
+	t.SetID(id)
+	t.SetCreatedTime(time.Now())
+	t.SetUpdatedTime(t.CreatedTime())
 
-	if err := validateFunc(t); err != nil {
-		return t, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	s.data[t.GetMeta().GetId()] = t
+	s.data[t.ID()] = t
 	go s.notifyWatch(ctx, t)
 
 	return t, nil
@@ -104,21 +105,16 @@ func (s *Storage[T]) List(
 func (s *Storage[T]) Update(
 	ctx context.Context,
 	t T,
-	validateFunc func(T) error,
 ) (T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	id := t.GetMeta().GetId()
+	id := t.ID()
 	if _, ok := s.data[id]; !ok {
 		return t, status.Error(codes.NotFound, "not found")
 	}
 
-	t.GetMeta().UpdatedTime = timestamppb.Now()
-
-	if err := validateFunc(t); err != nil {
-		return t, status.Error(codes.InvalidArgument, err.Error())
-	}
+	t.SetUpdatedTime(time.Now())
 
 	s.data[id] = t
 	go s.notifyWatch(ctx, t)

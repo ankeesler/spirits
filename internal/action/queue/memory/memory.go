@@ -1,6 +1,10 @@
 package memory
 
-import "context"
+import (
+	"context"
+
+	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
+)
 
 type Queue struct {
 }
@@ -21,8 +25,9 @@ func (q *Queue) Post(
 
 func (q *Queue) Pend(
 	ctx context.Context,
-	battleID string,
-	spiritID string,
+	me *spiritpkg.Spirit,
+	us []*spiritpkg.Spirit,
+	them [][]*spiritpkg.Spirit,
 ) (string, []string, error) {
 	return "", nil, nil
 }

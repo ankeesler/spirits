@@ -70,7 +70,7 @@ func TestCreateSpiritInvalidArgument(t *testing.T) {
 	}
 	_, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
 	if want, got := status.New(codes.InvalidArgument, "duplicate action name: tuna"), status.Convert(err); !reflect.DeepEqual(want, got) {
-		t.Errorf("want %v, got %v", want, got)
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
@@ -111,7 +111,7 @@ func TestUpdateSpiritNotFound(t *testing.T) {
 	spirit := &api.Spirit{Meta: &api.Meta{Id: "tuna"}}
 	_, err := clients.spirit.UpdateSpirit(context.Background(), &api.UpdateSpiritRequest{Spirit: spirit})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
-		t.Errorf("want %v, got %v", want, got)
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
@@ -120,7 +120,7 @@ func TestGetSpiritNotFound(t *testing.T) {
 
 	_, err := clients.spirit.GetSpirit(context.Background(), &api.GetSpiritRequest{Id: "foo"})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
-		t.Errorf("want %v, got %v", want, got)
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
