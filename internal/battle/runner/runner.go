@@ -77,18 +77,22 @@ func (c *Runner) Run(ctx context.Context) error {
 }
 
 func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool, error) {
-	log.Printf("running battle %v", battle)
-
 	if battle.State() != battlepkg.StateStarted {
 		return false, nil
 	}
 
 	if battle.Turns() > maxTurns {
+		log.Printf("hit max turns for battle %+v", battle)
+
 		battle.SetState(battlepkg.StateError)
 		battle.SetError(errors.New("hit max turns"))
 	} else if !battle.HasNext() {
+		log.Printf("finished battle %+v", battle)
+
 		battle.SetState(battlepkg.StateFinished)
 	} else {
+		log.Printf("running battle %+v", battle)
+
 		battleCtx, ok := c.battleContexts[battle.ID()]
 		if !ok {
 			var battleCtx battleContext

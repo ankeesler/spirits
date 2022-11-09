@@ -47,7 +47,9 @@ func (s *Service) CreateBattle(
 	ctx context.Context,
 	req *api.CreateBattleRequest,
 ) (*api.CreateBattleResponse, error) {
-	apiBattle := &api.Battle{}
+	apiBattle := &api.Battle{
+		State: api.BattleState_BATTLE_STATE_PENDING,
+	}
 	internalBattle, err := battlepkg.FromAPI(
 		ctx, apiBattle, nil, s.actionSource)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/ankeesler/spirits/internal/server"
 )
@@ -18,7 +19,19 @@ var (
 
 func main() {
 	flag.Parse()
+
+	var port int
+	if portEnv, ok := os.LookupEnv("PORT"); ok {
+		var err error
+		port, err = strconv.Atoi(portEnv)
+		if err != nil {
+			log.Fatalf("invalid port: %v", err)
+		}
+	}
+
 	server, err := server.Wire(&server.Config{
+		Port: port,
+
 		SpiritBuiltinDir: os.DirFS(*spiritBuiltinDir),
 		ActionBuiltinDir: os.DirFS(*actionBuiltinDir),
 	})

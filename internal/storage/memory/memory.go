@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"sync"
 	"time"
@@ -46,6 +47,8 @@ func (s *Storage[T]) Create(
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	log.Printf("creating %+v", t)
+
 	id := fmt.Sprintf("%x", s.r.Uint64())
 	if _, ok := s.data[id]; ok {
 		return t, status.Error(codes.AlreadyExists, "already exists")
@@ -68,6 +71,8 @@ func (s *Storage[T]) Get(
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	log.Printf("getting %s", id)
+
 	t, ok := s.data[id]
 	if !ok {
 		return t, status.Error(codes.NotFound, "not found")
@@ -83,6 +88,8 @@ func (s *Storage[T]) Watch(
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	log.Print("opening watch")
+
 	s.watches = append(s.watches, c)
 
 	return nil
@@ -93,6 +100,8 @@ func (s *Storage[T]) List(
 ) ([]T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+
+	log.Print("listing")
 
 	var ts []T
 	for _, t := range s.data {
@@ -108,6 +117,8 @@ func (s *Storage[T]) Update(
 ) (T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+
+	log.Printf("updating %+v", t)
 
 	id := t.ID()
 	if _, ok := s.data[id]; !ok {
@@ -129,6 +140,8 @@ func (s *Storage[T]) Delete(
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	log.Printf("deleting %s", id)
+
 	t, ok := s.data[id]
 	if !ok {
 		return t, status.Error(codes.NotFound, "not found")
@@ -143,6 +156,8 @@ func (s *Storage[T]) notifyWatch(
 	ctx context.Context,
 	t T,
 ) {
+	log.Printf("kicking watch for %+v", t)
+
 	for _, watch := range s.watches {
 		watch <- t
 	}

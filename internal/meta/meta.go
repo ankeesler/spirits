@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/pkg/api"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Meta struct {
@@ -35,7 +36,9 @@ func (m *Meta) Clone() *Meta {
 
 func (m *Meta) ToAPI() *api.Meta {
 	return &api.Meta{
-		Id: m.id,
+		Id:          m.id,
+		CreatedTime: timestamppb.New(m.CreatedTime()),
+		UpdatedTime: timestamppb.New(m.CreatedTime()),
 	}
 }
 

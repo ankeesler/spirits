@@ -6,15 +6,15 @@ import (
 	"github.com/ankeesler/spirits/pkg/api"
 )
 
-type State int
+type State string
 
 const (
-	StatePending State = iota
-	StateStarted
-	StateWaiting
-	StateFinished
-	StateCancelled
-	StateError
+	StatePending   State = "pending"
+	StateStarted         = "started"
+	StateWaiting         = "waiting"
+	StateFinished        = "finished"
+	StateCancelled       = "cancelled"
+	StateError           = "error"
 )
 
 func stateFromAPI(apiBattleState api.BattleState) State {
@@ -51,6 +51,6 @@ func (s State) ToAPI() api.BattleState {
 	case StateError:
 		return api.BattleState_BATTLE_STATE_ERROR
 	default:
-		panic(fmt.Sprintf("unknown battle state type: %d", s))
+		panic(fmt.Sprintf("unknown battle state type: %s", s))
 	}
 }

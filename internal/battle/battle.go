@@ -36,6 +36,8 @@ func FromAPI(
 	actionSource spiritpkg.ActionSource,
 ) (*Battle, error) {
 	internalBattle := &Battle{
+		apiBattle: apiBattle,
+
 		Meta: metapkg.FromAPI(apiBattle.GetMeta()),
 
 		state: stateFromAPI(apiBattle.GetState()),
@@ -144,25 +146,25 @@ func (b *Battle) Next() (*spiritpkg.Spirit, []*spiritpkg.Spirit, [][]*spiritpkg.
 func (b *Battle) Turns() int64 { return b.turns }
 
 func (b *Battle) ToAPI() *api.Battle {
-	// apiBattle := &api.Battle{
-	// 	Meta: b.Meta.ToAPI(),
+	apiBattle := &api.Battle{
+		Meta: b.Meta.ToAPI(),
 
-	// 	State: b.State().ToAPI(),
+		State: b.State().ToAPI(),
 
-	// 	NextSpiritIds: b.queue.NextIDs(),
+		NextSpiritIds: b.queue.NextIDs(),
 
-	// 	Turns: b.Turns(),
-	// }
+		Turns: b.Turns(),
+	}
 
-	// if b.err != nil {
-	// 	errorMessage := b.err.Error()
-	// 	battle.ErrorMessage = &errorMessage
-	// }
+	if b.err != nil {
+		errorMessage := b.err.Error()
+		apiBattle.ErrorMessage = &errorMessage
+	}
 
-	// addInternalBattleTeam(b.teams, &apiBattle.Teams)
-	// addInternalBattleTeam(b.inBattleTeams, &apiBattle.InBattleTeams)
+	addInternalBattleTeam(b.teams, &apiBattle.Teams)
+	addInternalBattleTeam(b.inBattleTeams, &apiBattle.InBattleTeams)
 
-	return b.apiBattle
+	return apiBattle
 }
 
 func addAPIBattleTeams(
@@ -210,7 +212,9 @@ func addInternalBattleTeam(
 		}
 
 		for _, internalTeamSpirit := range internalTeamSpirits {
-			_ = internalTeamSpirit
+			apiBattleTeam.Spirits = append(apiBattleTeam.Spirits, &api.BattleTeamSpirit{
+				Spirit: internalTeamSpirit.ToAPI(),
+			})
 		}
 
 		*apiTeam = append(*apiTeam, apiBattleTeam)

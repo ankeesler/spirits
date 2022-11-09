@@ -9,55 +9,63 @@ import (
 	"strings"
 )
 
-type Menu[T any] []Item[T]
+type Menu []Item
 
-func (m Menu[T]) Run(ctx context.Context, out io.Writer, in io.Reader, t T) error {
+type IO struct {
+	In  io.Reader
+	Out io.Writer
+}
+
+func (m Menu) Run(ctx context.Context, io *IO) (context.Context, error) {
 	for {
-		fmt.Fprintln(out, "--- Menu ---")
+		fmt.Fprintln(io.Out, "--- Menu ---")
 		for i, item := range m {
-			fmt.Fprintf(out, "%d\t%s\n", i, item.Title)
+			fmt.Fprintf(io.Out, "%d\t%s\n", i, item.Title)
 		}
-		fmt.Fprintf(out, "b\tGo back\n")
-		fmt.Fprintln(out, "---")
+		fmt.Fprintf(io.Out, "b\tGo back\n")
+		fmt.Fprintln(io.Out, "---")
 
-		selection, err := Input(out, in, "Selection: ")
+		selection, err := Input(io, "Selection: ")
 		if err != nil {
-			return fmt.Errorf("input: %w", err)
+			return ctx, fmt.Errorf("input: %w", err)
 		}
 
 		if selection == "b" {
-			return nil
+			return ctx, nil
 		}
 
 		selectionInt, err := strconv.Atoi(selection)
 		if err != nil || selectionInt < 0 || selectionInt >= len(m) {
-			fmt.Fprintln(out, "Invalid selection")
+			fmt.Fprintln(io.Out, "Invalid selection")
 			continue
 		}
 
-		if err := m[selectionInt].Run(ctx, out, in, t); err != nil {
-			return err
+		ctx, err = m[selectionInt].Run(ctx, io)
+		if err != nil {
+			return ctx, err
 		}
 	}
 }
 
-type Item[T any] struct {
+type Item struct {
 	Title string
-	Runner[T]
+	Runner
 }
 
-type Runner[T any] interface {
-	Run(context.Context, io.Writer, io.Reader, T) error
+type Runner interface {
+	Run(context.Context, *IO) (context.Context, error)
 }
 
-type RunnerFunc[T any] func(context.Context, io.Writer, io.Reader, T) error
+type RunnerFunc func(context.Context, *IO) (context.Context, error)
 
-func (f RunnerFunc[T]) Run(ctx context.Context, out io.Writer, in io.Reader, t T) error {
-	return f(ctx, out, in, t)
+func (f RunnerFunc) Run(ctx context.Context, io *IO) (context.Context, error) {
+	return f(ctx, io)
 }
 
-func Input(out io.Writer, in io.Reader, prompt string) (string, error) {
-	r := bufio.NewReader(in)
+func Input(io *IO, prompt string) (string, error) {
+	r := bufio.NewReader(io.In)
+
+	fmt.Print(prompt)
 
 	selection, err := r.ReadString('\n')
 	if err != nil {
