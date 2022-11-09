@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ankeesler/spirits/internal/action"
 	actionpkg "github.com/ankeesler/spirits/internal/action"
-	"github.com/ankeesler/spirits/internal/meta"
 	metapkg "github.com/ankeesler/spirits/internal/meta"
 	"github.com/ankeesler/spirits/pkg/api"
 )
@@ -33,7 +31,7 @@ func (f runnerFunc) Run(
 type Spirit struct {
 	apiSpirit *api.Spirit
 
-	*meta.Meta
+	*metapkg.Meta
 
 	name string
 	*stats
@@ -96,7 +94,7 @@ func FromAPI(
 			return nil, fmt.Errorf("spirit %s has no action with name %s", internalSpirit.ID(), actionName)
 		}
 
-		var targets []action.Spirit
+		var targets []actionpkg.Spirit
 		for _, targetID := range targetIDs {
 			target := findTarget(targetID, me, us, them)
 			if target == nil {

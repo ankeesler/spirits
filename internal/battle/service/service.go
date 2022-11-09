@@ -27,7 +27,7 @@ type BattleRepo interface {
 type Service struct {
 	battleRepo   BattleRepo
 	spiritRepo   SpiritRepo
-	actionSource spiritpkg.ActionSource
+	actionSource battlepkg.ActionSource
 
 	api.UnimplementedBattleServiceServer
 }
@@ -35,7 +35,7 @@ type Service struct {
 var _ api.BattleServiceServer = &Service{}
 
 func New(
-	battleRepo BattleRepo, spiritRepo SpiritRepo, actionSource spiritpkg.ActionSource) *Service {
+	battleRepo BattleRepo, spiritRepo SpiritRepo, actionSource battlepkg.ActionSource) *Service {
 	return &Service{
 		battleRepo:   battleRepo,
 		spiritRepo:   spiritRepo,

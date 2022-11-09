@@ -29,11 +29,15 @@ type Battle struct {
 	turns int64
 }
 
+type ActionSource interface {
+	Pend(context.Context, string, string, int64) (string, []string, error)
+}
+
 func FromAPI(
 	ctx context.Context,
 	apiBattle *api.Battle,
 	actionRepo spiritpkg.ActionRepo,
-	actionSource spiritpkg.ActionSource,
+	actionSource ActionSource,
 ) (*Battle, error) {
 	internalBattle := &Battle{
 		apiBattle: apiBattle,
@@ -57,6 +61,7 @@ func FromAPI(
 		apiBattle.GetTeams(),
 		actionRepo,
 		actionSource,
+		internalBattle,
 		internalBattle.teams,
 	)
 
@@ -65,6 +70,7 @@ func FromAPI(
 		apiBattle.GetTeams(),
 		actionRepo,
 		actionSource,
+		internalBattle,
 		internalBattle.inBattleTeams,
 	)
 
@@ -171,17 +177,25 @@ func addAPIBattleTeams(
 	ctx context.Context,
 	apiBattleTeams []*api.BattleTeam,
 	actionRepo spiritpkg.ActionRepo,
-	actionSource spiritpkg.ActionSource,
+	actionSource ActionSource,
+	internalBattle *Battle,
 	internalTeams map[string][]*spiritpkg.Spirit,
 ) error {
 	for _, apiBattleTeam := range apiBattleTeams {
 		for _, apiBattleTeamSpirit := range apiBattleTeam.GetSpirits() {
-			var theActionSource spiritpkg.ActionSource
+			var spiritActionSource spiritpkg.ActionSource
 			switch apiBattleTeamSpirit.GetIntelligence() {
 			case api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN:
-				theActionSource = actionSource
+				spiritActionSource = spiritActionSourceFunc(func(
+					ctx context.Context,
+					me *spiritpkg.Spirit,
+					us []*spiritpkg.Spirit,
+					them [][]*spiritpkg.Spirit,
+				) (string, []string, error) {
+					return actionSource.Pend(ctx, internalBattle.ID(), me.ID(), internalBattle.Turns())
+				})
 			case api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM:
-				theActionSource = randomActionSource{
+				spiritActionSource = randomActionSource{
 					r: rand.New(rand.NewSource(apiBattleTeamSpirit.GetSeed())),
 				}
 			}
@@ -191,7 +205,7 @@ func addAPIBattleTeams(
 				ctx,
 				apiSpirit,
 				actionRepo,
-				theActionSource,
+				spiritActionSource,
 			)
 			if err != nil {
 				return fmt.Errorf("convert spirit %s from API: %w", apiSpirit.GetMeta().GetId(), err)
@@ -219,4 +233,20 @@ func addInternalBattleTeam(
 
 		*apiTeam = append(*apiTeam, apiBattleTeam)
 	}
+}
+
+type spiritActionSourceFunc func(
+	ctx context.Context,
+	me *spiritpkg.Spirit,
+	us []*spiritpkg.Spirit,
+	them [][]*spiritpkg.Spirit,
+) (string, []string, error)
+
+func (f spiritActionSourceFunc) Pend(
+	ctx context.Context,
+	me *spiritpkg.Spirit,
+	us []*spiritpkg.Spirit,
+	them [][]*spiritpkg.Spirit,
+) (string, []string, error) {
+	return f(ctx, me, us, them)
 }
