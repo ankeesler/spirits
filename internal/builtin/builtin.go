@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	fspkg "io/fs"
+	"log"
 
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
@@ -20,6 +21,9 @@ func Load[T proto.Message, U any](
 	convertFunc func(T) (U, error),
 	repo Repo[U],
 ) error {
+	var t T
+	log.Printf("loading %T builtins from %s", t, fs)
+
 	if err := fspkg.WalkDir(fs, ".", func(path string, d fspkg.DirEntry, err error) error {
 		if err != nil {
 			return err

@@ -85,6 +85,7 @@ func FromAPI(
 			internalBattle.queue.AddSpirit(internalSpirit)
 		}
 	}
+	internalBattle.queue.Init()
 
 	internalBattle.turns = apiBattle.GetTurns()
 
@@ -110,10 +111,17 @@ func (b *Battle) Team(name string) []*spiritpkg.Spirit {
 
 func (b *Battle) AddTeam(name string) {
 	b.teams[name] = make([]*spiritpkg.Spirit, 0)
+	b.inBattleTeams[name] = make([]*spiritpkg.Spirit, 0)
 }
 
 func (b *Battle) AddTeamSpirit(name string, spirit *spiritpkg.Spirit) {
 	b.teams[name] = append(b.teams[name], spirit)
+	b.inBattleTeams[name] = append(b.inBattleTeams[name], spirit)
+
+	b.spiritTeams[spirit.ID()] = name
+
+	b.queue.AddSpirit(spirit)
+	b.queue.Init()
 }
 
 func (b *Battle) InBattleTeam(name string) []*spiritpkg.Spirit {
@@ -124,8 +132,8 @@ func (b *Battle) HasNext() bool {
 	healthyTeams := 0
 	for _, team := range b.inBattleTeams {
 		healthySpirits := 0
-		for _, spirit := range team {
-			if spirit.Health() > 0 {
+		for _, internalSpirit := range team {
+			if internalSpirit.Health() > 0 {
 				healthySpirits++
 			}
 		}

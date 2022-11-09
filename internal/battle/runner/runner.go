@@ -36,6 +36,8 @@ func Wire(
 	c := make(chan *battlepkg.Battle)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
+
+	log.Print("battle runner starting watch")
 	if err := battleRepo.Watch(ctx, c); err != nil {
 		return nil, fmt.Errorf("start watch: %w", err)
 	}
@@ -49,7 +51,7 @@ func Wire(
 }
 
 func (c *Runner) Run(ctx context.Context) error {
-	log.Printf("Starting battle runner")
+	log.Printf("starting battle runner")
 
 	for {
 		select {
