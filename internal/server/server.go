@@ -10,6 +10,7 @@ import (
 	"time"
 
 	actionpkg "github.com/ankeesler/spirits/internal/action"
+	convertaction "github.com/ankeesler/spirits/internal/action/convert"
 	actionqueue "github.com/ankeesler/spirits/internal/action/queue/memory"
 	actionservice "github.com/ankeesler/spirits/internal/action/service"
 	"github.com/ankeesler/spirits/internal/battle/runner"
@@ -17,6 +18,7 @@ import (
 	battlememory "github.com/ankeesler/spirits/internal/battle/storage/memory"
 	"github.com/ankeesler/spirits/internal/builtin"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
+	convertspirit "github.com/ankeesler/spirits/internal/spirit/convert"
 	spiritservice "github.com/ankeesler/spirits/internal/spirit/service"
 	spiritmemory "github.com/ankeesler/spirits/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits/internal/storage/memory"
@@ -47,10 +49,10 @@ func Wire(c *Config) (*Server, error) {
 	actionService := actionservice.New(actionRepo)
 
 	spiritRepo := spiritmemory.New(r)
-	spiritService := spiritservice.New(spiritRepo, actionRepo)
+	spiritService := spiritservice.New(spiritRepo)
 
 	battleRepo := battlememory.New(r)
-	battleService := battleservice.New(battleRepo, spiritRepo, actionQueue)
+	battleService := battleservice.New(battleRepo, actionQueue)
 
 	s := grpc.NewServer(grpc.UnaryInterceptor(unaryLogFunc), grpc.StreamInterceptor(streamLogFunc))
 	api.RegisterSpiritServiceServer(s, spiritService)
@@ -69,9 +71,7 @@ func Wire(c *Config) (*Server, error) {
 		ctx,
 		c.SpiritBuiltinDir,
 		func() *api.Spirit { return &api.Spirit{} },
-		func(apiSpirit *api.Spirit) (*spiritpkg.Spirit, error) {
-			return spiritpkg.FromAPI(ctx, apiSpirit, actionRepo, nil)
-		},
+		convertspirit.FromAPI,
 		spiritRepo,
 	); err != nil {
 		return nil, fmt.Errorf("load builtin spirits: %w", err)
@@ -81,7 +81,7 @@ func Wire(c *Config) (*Server, error) {
 		ctx,
 		c.ActionBuiltinDir,
 		func() *api.Action { return &api.Action{} },
-		actionpkg.FromAPI,
+		convertaction.FromAPI,
 		actionRepo,
 	); err != nil {
 		return nil, fmt.Errorf("load builtin actions: %w", err)

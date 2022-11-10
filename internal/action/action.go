@@ -2,12 +2,8 @@ package action
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
-	"github.com/ankeesler/spirits/internal/meta"
 	metapkg "github.com/ankeesler/spirits/internal/meta"
-	"github.com/ankeesler/spirits/pkg/api"
 )
 
 type Spirit interface {
@@ -36,9 +32,7 @@ type caller interface {
 }
 
 type Action struct {
-	apiAction *api.Action
-
-	*meta.Meta
+	*metapkg.Meta
 
 	description string
 	script      *string
@@ -46,32 +40,24 @@ type Action struct {
 	caller
 }
 
-func FromAPI(apiAction *api.Action) (*Action, error) {
-	internalAction := &Action{
-		apiAction: apiAction,
-
-		Meta: metapkg.FromAPI(apiAction.GetMeta()),
-
-		description: apiAction.GetDescription(),
-	}
-
-	switch definition := apiAction.Definition.(type) {
-	case *api.Action_Script:
-		internalAction.script = &definition.Script
-		compiledScript, err := compile(definition.Script)
-		if err != nil {
-			return nil, fmt.Errorf("compile action script: %w", err)
-		}
-		internalAction.caller = compiledScript
-	default:
-		return nil, errors.New("definition not set")
-	}
-
-	return internalAction, nil
+func New(meta *metapkg.Meta) *Action {
+	return &Action{Meta: meta}
 }
 
-func (a *Action) ToAPI() *api.Action {
-	return a.apiAction
+func (a *Action) Description() string               { return a.description }
+func (a *Action) SetDescription(description string) { a.description = description }
+
+func (a *Action) Script() *string { return a.script }
+func (a *Action) SetScript(script string) error {
+	a.script = &script
+
+	compiledScript, err := compile(script)
+	if err != nil {
+		return err
+	}
+	a.caller = compiledScript
+
+	return nil
 }
 
 func (a *Action) Clone() *Action {

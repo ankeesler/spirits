@@ -3,16 +3,12 @@ package service
 import (
 	"context"
 
-	actionpkg "github.com/ankeesler/spirits/internal/action"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
+	convertspirit "github.com/ankeesler/spirits/internal/spirit/convert"
 	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-type ActionRepo interface {
-	Get(context.Context, string) (*actionpkg.Action, error)
-}
 
 type SpiritRepo interface {
 	Create(context.Context, *spiritpkg.Spirit) (*spiritpkg.Spirit, error)
@@ -23,27 +19,17 @@ type SpiritRepo interface {
 	ListSpirits(context.Context, *string) ([]*spiritpkg.Spirit, error)
 }
 
-type fakeActionSource struct{}
-
-func (s fakeActionSource) Pend(
-	context.Context, *spiritpkg.Spirit,
-	[]*spiritpkg.Spirit, [][]*spiritpkg.Spirit) (string, []string, error) {
-	return "", nil, nil
-}
-
 type Service struct {
 	spiritRepo SpiritRepo
-	actionRepo ActionRepo
 
 	api.UnimplementedSpiritServiceServer
 }
 
 var _ api.SpiritServiceServer = &Service{}
 
-func New(spiritRepo SpiritRepo, actionRepo ActionRepo) *Service {
+func New(spiritRepo SpiritRepo) *Service {
 	return &Service{
 		spiritRepo: spiritRepo,
-		actionRepo: actionRepo,
 	}
 }
 
@@ -51,7 +37,7 @@ func (s *Service) CreateSpirit(
 	ctx context.Context,
 	req *api.CreateSpiritRequest,
 ) (*api.CreateSpiritResponse, error) {
-	internalSpirit, err := spiritpkg.FromAPI(ctx, req.GetSpirit(), s.actionRepo, fakeActionSource{})
+	internalSpirit, err := convertspirit.FromAPI(req.GetSpirit())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -61,7 +47,7 @@ func (s *Service) CreateSpirit(
 		return nil, err
 	}
 
-	return &api.CreateSpiritResponse{Spirit: internalSpirit.ToAPI()}, nil
+	return &api.CreateSpiritResponse{Spirit: convertspirit.ToAPI(internalSpirit)}, nil
 }
 
 func (s *Service) GetSpirit(
@@ -72,7 +58,7 @@ func (s *Service) GetSpirit(
 	if err != nil {
 		return nil, err
 	}
-	return &api.GetSpiritResponse{Spirit: internalSpirit.ToAPI()}, nil
+	return &api.GetSpiritResponse{Spirit: convertspirit.ToAPI(internalSpirit)}, nil
 }
 
 func (s *Service) ListSpirits(
@@ -86,7 +72,7 @@ func (s *Service) ListSpirits(
 
 	var apiSpirits []*api.Spirit
 	for _, internalSpirit := range internalSpirits {
-		apiSpirits = append(apiSpirits, internalSpirit.ToAPI())
+		apiSpirits = append(apiSpirits, convertspirit.ToAPI(internalSpirit))
 	}
 
 	return &api.ListSpiritsResponse{Spirits: apiSpirits}, nil
@@ -96,7 +82,7 @@ func (s *Service) UpdateSpirit(
 	ctx context.Context,
 	req *api.UpdateSpiritRequest,
 ) (*api.UpdateSpiritResponse, error) {
-	internalSpirit, err := spiritpkg.FromAPI(ctx, req.GetSpirit(), s.actionRepo, fakeActionSource{})
+	internalSpirit, err := convertspirit.FromAPI(req.GetSpirit())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -106,7 +92,7 @@ func (s *Service) UpdateSpirit(
 		return nil, err
 	}
 
-	return &api.UpdateSpiritResponse{Spirit: internalSpirit.ToAPI()}, nil
+	return &api.UpdateSpiritResponse{Spirit: convertspirit.ToAPI(internalSpirit)}, nil
 }
 
 func (s *Service) DeleteSpirit(
@@ -117,5 +103,5 @@ func (s *Service) DeleteSpirit(
 	if err != nil {
 		return nil, err
 	}
-	return &api.DeleteSpiritResponse{Spirit: internalSpirit.ToAPI()}, nil
+	return &api.DeleteSpiritResponse{Spirit: convertspirit.ToAPI(internalSpirit)}, nil
 }

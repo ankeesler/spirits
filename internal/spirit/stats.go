@@ -11,17 +11,6 @@ type stats struct {
 	agility              int64
 }
 
-func statsFromAPI(apiStats *api.SpiritStats) *stats {
-	return &stats{
-		health:               apiStats.GetHealth(),
-		physicalPower:        apiStats.GetPhysicalPower(),
-		physicalConstitution: apiStats.GetPhysicalConstitution(),
-		mentalPower:          apiStats.GetMentalPower(),
-		mentalConstitution:   apiStats.GetMentalConstitution(),
-		agility:              apiStats.GetAgility(),
-	}
-}
-
 func (s *stats) Health() int64          { return s.health }
 func (s *stats) SetHealth(health int64) { s.health = health }
 

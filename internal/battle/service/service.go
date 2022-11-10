@@ -4,15 +4,11 @@ import (
 	"context"
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
-	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
+	convertbattle "github.com/ankeesler/spirits/internal/battle/convert"
 	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-type SpiritRepo interface {
-	Get(context.Context, string) (*spiritpkg.Spirit, error)
-}
 
 type BattleRepo interface {
 	Create(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
@@ -20,13 +16,19 @@ type BattleRepo interface {
 	List(context.Context) ([]*battlepkg.Battle, error)
 
 	AddBattleTeam(context.Context, string, string) (*battlepkg.Battle, error)
-	AddBattleTeamSpirit(context.Context, string, string, *spiritpkg.Spirit) (*battlepkg.Battle, error)
+	AddBattleTeamSpirit(
+		context.Context,
+		string,
+		string,
+		string,
+		battlepkg.SpiritIntelligence,
+		int64,
+		battlepkg.ActionSource) (*battlepkg.Battle, error)
 	UpdateBattleState(context.Context, string, []battlepkg.State, battlepkg.State) (*battlepkg.Battle, error)
 }
 
 type Service struct {
 	battleRepo   BattleRepo
-	spiritRepo   SpiritRepo
 	actionSource battlepkg.ActionSource
 
 	api.UnimplementedBattleServiceServer
@@ -34,11 +36,9 @@ type Service struct {
 
 var _ api.BattleServiceServer = &Service{}
 
-func New(
-	battleRepo BattleRepo, spiritRepo SpiritRepo, actionSource battlepkg.ActionSource) *Service {
+func New(battleRepo BattleRepo, actionSource battlepkg.ActionSource) *Service {
 	return &Service{
 		battleRepo:   battleRepo,
-		spiritRepo:   spiritRepo,
 		actionSource: actionSource,
 	}
 }
@@ -50,8 +50,7 @@ func (s *Service) CreateBattle(
 	apiBattle := &api.Battle{
 		State: api.BattleState_BATTLE_STATE_PENDING,
 	}
-	internalBattle, err := battlepkg.FromAPI(
-		ctx, apiBattle, nil, s.actionSource)
+	internalBattle, err := convertbattle.FromAPI(apiBattle, s.actionSource)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -61,7 +60,7 @@ func (s *Service) CreateBattle(
 		return nil, err
 	}
 
-	return &api.CreateBattleResponse{Battle: internalBattle.ToAPI()}, nil
+	return &api.CreateBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) WatchBattle(
@@ -77,7 +76,9 @@ func (s *Service) WatchBattle(
 
 	for battle := range c {
 		if battle.ID() == req.GetId() {
-			if err := watch.Send(&api.WatchBattleResponse{Battle: battle.ToAPI()}); err != nil {
+			if err := watch.Send(&api.WatchBattleResponse{
+				Battle: convertbattle.ToAPI(battle),
+			}); err != nil {
 				return err
 			}
 		}
@@ -96,7 +97,7 @@ func (s *Service) ListBattles(
 	}
 	var apiBattles []*api.Battle
 	for _, internalBattle := range internalBattles {
-		apiBattles = append(apiBattles, internalBattle.ToAPI())
+		apiBattles = append(apiBattles, convertbattle.ToAPI(internalBattle))
 	}
 	return &api.ListBattlesResponse{Battles: apiBattles}, nil
 }
@@ -109,25 +110,22 @@ func (s *Service) AddBattleTeam(
 	if err != nil {
 		return nil, err
 	}
-	return &api.AddBattleTeamResponse{Battle: internalBattle.ToAPI()}, nil
+	return &api.AddBattleTeamResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) AddBattleTeamSpirit(
 	ctx context.Context,
 	req *api.AddBattleTeamSpiritRequest,
 ) (*api.AddBattleTeamSpiritResponse, error) {
-	internalSpirit, err := s.spiritRepo.Get(ctx, req.GetSpiritId())
-	if err != nil {
-		return nil, err
-	}
-
 	internalBattle, err := s.battleRepo.AddBattleTeamSpirit(
-		ctx, req.GetBattleId(), req.GetTeamName(), internalSpirit)
+		ctx, req.GetBattleId(), req.GetTeamName(), req.GetSpiritId(),
+		convertbattle.SpiritIntelligenceFromAPI(req.GetIntelligence()), req.GetSeed(),
+		s.actionSource)
 	if err != nil {
 		return nil, err
 	}
 
-	return &api.AddBattleTeamSpiritResponse{Battle: internalBattle.ToAPI()}, nil
+	return &api.AddBattleTeamSpiritResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) StartBattle(
@@ -143,7 +141,7 @@ func (s *Service) StartBattle(
 	if err != nil {
 		return nil, err
 	}
-	return &api.StartBattleResponse{Battle: internalBattle.ToAPI()}, nil
+	return &api.StartBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) CancelBattle(
@@ -159,5 +157,5 @@ func (s *Service) CancelBattle(
 	if err != nil {
 		return nil, err
 	}
-	return &api.CancelBattleResponse{Battle: internalBattle.ToAPI()}, nil
+	return &api.CancelBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }

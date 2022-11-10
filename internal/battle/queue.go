@@ -2,22 +2,20 @@ package battle
 
 import (
 	"container/heap"
-
-	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 )
 
 type queue []*queueEntry
 
 type queueEntry struct {
 	ticks  float64
-	spirit *spiritpkg.Spirit
+	spirit *Spirit
 }
 
-func newQueueEntry(spirit *spiritpkg.Spirit) *queueEntry {
+func newQueueEntry(spirit *Spirit) *queueEntry {
 	return &queueEntry{ticks: float64(1) / float64(spirit.Health()), spirit: spirit}
 }
 
-func (q *queue) AddSpirit(spirit *spiritpkg.Spirit) {
+func (q *queue) AddSpirit(spirit *Spirit) {
 	*q = append(*q, newQueueEntry(spirit))
 }
 
@@ -57,7 +55,7 @@ func (q *queue) Pop() any {
 	return x
 }
 
-func (q *queue) Next() *spiritpkg.Spirit {
+func (q *queue) Next() *Spirit {
 	// Get the next spirit to go.
 	nextEntry := heap.Pop(q).(*queueEntry)
 
@@ -76,10 +74,9 @@ func (q *queue) Next() *spiritpkg.Spirit {
 	return nextEntry.spirit
 }
 
-func (q queue) NextIDs() []string {
-	var ids []string
-	for _, e := range q {
-		ids = append(ids, e.spirit.ID())
+func (q queue) Peek() *Spirit {
+	if len(q) > 0 {
+		return q[0].spirit
 	}
-	return ids
+	return nil
 }

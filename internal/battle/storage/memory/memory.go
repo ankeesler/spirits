@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
+	metapkg "github.com/ankeesler/spirits/internal/meta"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	genericmemory "github.com/ankeesler/spirits/internal/storage/memory"
 	"golang.org/x/exp/slices"
@@ -57,7 +58,10 @@ func (s *Storage) AddBattleTeamSpirit(
 	ctx context.Context,
 	battleID string,
 	teamName string,
-	spirit *spiritpkg.Spirit,
+	spiritID string,
+	intelligence battlepkg.SpiritIntelligence,
+	seed int64,
+	actionSource battlepkg.ActionSource,
 ) (*battlepkg.Battle, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -82,7 +86,9 @@ func (s *Storage) AddBattleTeamSpirit(
 		return nil, status.Errorf(codes.NotFound, "team not found")
 	}
 
-	battle.AddTeamSpirit(teamName, spirit)
+	spirit := spiritpkg.New(metapkg.New())
+	spirit.SetID(spiritID)
+	battle.AddTeamSpirit(teamName, spirit, intelligence, seed, actionSource)
 
 	return s.Update(ctx, battle)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	actionpkg "github.com/ankeesler/spirits/internal/action"
+	convertaction "github.com/ankeesler/spirits/internal/action/convert"
 	"github.com/ankeesler/spirits/pkg/api"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -35,7 +36,7 @@ func (s *Service) CreateAction(
 	ctx context.Context,
 	req *api.CreateActionRequest,
 ) (*api.CreateActionResponse, error) {
-	internalAction, err := actionpkg.FromAPI(req.GetAction())
+	internalAction, err := convertaction.FromAPI(req.GetAction())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -45,7 +46,7 @@ func (s *Service) CreateAction(
 		return nil, err
 	}
 
-	return &api.CreateActionResponse{Action: internalAction.ToAPI()}, nil
+	return &api.CreateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) GetAction(
@@ -56,7 +57,7 @@ func (s *Service) GetAction(
 	if err != nil {
 		return nil, err
 	}
-	return &api.GetActionResponse{Action: internalAction.ToAPI()}, nil
+	return &api.GetActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) ListActions(
@@ -70,7 +71,7 @@ func (s *Service) ListActions(
 
 	var apiActions []*api.Action
 	for _, internalAction := range internalActions {
-		apiActions = append(apiActions, internalAction.ToAPI())
+		apiActions = append(apiActions, convertaction.ToAPI(internalAction))
 	}
 
 	return &api.ListActionsResponse{Actions: apiActions}, nil
@@ -80,7 +81,7 @@ func (s *Service) UpdateAction(
 	ctx context.Context,
 	req *api.UpdateActionRequest,
 ) (*api.UpdateActionResponse, error) {
-	internalAction, err := actionpkg.FromAPI(req.GetAction())
+	internalAction, err := convertaction.FromAPI(req.GetAction())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -90,7 +91,7 @@ func (s *Service) UpdateAction(
 		return nil, err
 	}
 
-	return &api.UpdateActionResponse{Action: internalAction.ToAPI()}, nil
+	return &api.UpdateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) DeleteAction(
@@ -101,5 +102,5 @@ func (s *Service) DeleteAction(
 	if err != nil {
 		return nil, err
 	}
-	return &api.DeleteActionResponse{Action: internalAction.ToAPI()}, nil
+	return &api.DeleteActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }

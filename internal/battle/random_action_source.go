@@ -3,19 +3,18 @@ package battle
 import (
 	"context"
 	"math/rand"
-
-	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 )
 
 type randomActionSource struct {
 	r *rand.Rand
 }
 
-func (s randomActionSource) Pend(
+func (s *randomActionSource) Pend(
 	ctx context.Context,
-	me *spiritpkg.Spirit,
-	us []*spiritpkg.Spirit,
-	them [][]*spiritpkg.Spirit,
+	battle *Battle,
+	me *Spirit,
+	us []*Spirit,
+	them [][]*Spirit,
 ) (string, []string, error) {
 	return "", nil, nil
 }

@@ -15,6 +15,10 @@ type Meta struct {
 	updatedBy   *Identity
 }
 
+func New() *Meta {
+	return &Meta{}
+}
+
 func (m *Meta) ID() string      { return m.id }
 func (m *Meta) SetID(id string) { m.id = id }
 
@@ -39,15 +43,5 @@ func (m *Meta) ToAPI() *api.Meta {
 		Id:          m.id,
 		CreatedTime: timestamppb.New(m.CreatedTime()),
 		UpdatedTime: timestamppb.New(m.CreatedTime()),
-	}
-}
-
-func FromAPI(apiMeta *api.Meta) *Meta {
-	return &Meta{
-		id:          apiMeta.GetId(),
-		createdTime: apiMeta.GetCreatedTime().AsTime(),
-		createdBy:   identityFromAPI(apiMeta.GetCreatedBy()),
-		updatedTime: apiMeta.GetUpdatedTime().AsTime(),
-		updatedBy:   identityFromAPI(apiMeta.GetUpdatedBy()),
 	}
 }

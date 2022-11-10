@@ -87,7 +87,7 @@ func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool,
 		log.Printf("hit max turns for battle %+v", battle)
 
 		battle.SetState(battlepkg.StateError)
-		battle.SetError(errors.New("hit max turns"))
+		battle.SetErr(errors.New("hit max turns"))
 	} else if !battle.HasNext() {
 		log.Printf("finished battle %+v", battle)
 
