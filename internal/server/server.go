@@ -25,6 +25,8 @@ import (
 	"github.com/ankeesler/spirits/pkg/api"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/prototext"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 type Config struct {
@@ -48,10 +50,10 @@ func Wire(c *Config) (*Server, error) {
 	actionQueue := actionqueue.New()
 	actionService := actionservice.New(actionRepo)
 
-	spiritRepo := spiritmemory.New(r)
+	spiritRepo := spiritmemory.New(r, actionRepo)
 	spiritService := spiritservice.New(spiritRepo)
 
-	battleRepo := battlememory.New(r)
+	battleRepo := battlememory.New(r, spiritRepo)
 	battleService := battleservice.New(battleRepo, actionQueue)
 
 	s := grpc.NewServer(grpc.UnaryInterceptor(unaryLogFunc), grpc.StreamInterceptor(streamLogFunc))
@@ -126,9 +128,9 @@ func unaryLogFunc(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (interface{}, error) {
-	log.Printf("Unary req: %s: %v", info.FullMethod, req)
+	log.Printf("Unary req: %s: %v", info.FullMethod, textproto(req))
 	rsp, err := handler(ctx, req)
-	log.Printf("Unary rsp: %s: %v %v", info.FullMethod, rsp, err)
+	log.Printf("Unary rsp: %s: %v %v", info.FullMethod, textproto(req), err)
 	return rsp, err
 }
 
@@ -139,4 +141,10 @@ func streamLogFunc(
 	err := handler(srv, ss)
 	log.Printf("Stream rsp: %s: %v", info.FullMethod, err)
 	return err
+}
+
+func textproto(i any) string {
+	return prototext.MarshalOptions{
+		Multiline: true,
+	}.Format(i.(protoreflect.ProtoMessage))
 }

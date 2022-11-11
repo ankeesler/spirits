@@ -42,16 +42,18 @@ func (s *Spirit) Action(name string) *actionpkg.Action {
 	return s.actions[name]
 }
 
-func (s *Spirit) AddAction(name string, action *actionpkg.Action) {
+func (s *Spirit) SetAction(name string, action *actionpkg.Action) {
 	s.actions[name] = action
 }
 
 func (s *Spirit) Clone() *Spirit {
-	return &Spirit{
-		Meta: s.Meta.Clone(),
+	spirit := New(s.Meta.Clone())
+	spirit.name = s.name
+	spirit.stats = s.stats.Clone()
 
-		name:    s.name,
-		stats:   s.stats.Clone(),
-		actions: s.actions,
+	for k, v := range s.actions {
+		spirit.actions[k] = v
 	}
+
+	return spirit
 }

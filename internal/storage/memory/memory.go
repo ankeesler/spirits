@@ -118,7 +118,7 @@ func (s *Storage[T]) Update(
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("updating %+v", t)
+	log.Printf("updating %#v", t)
 
 	id := t.ID()
 	if _, ok := s.data[id]; !ok {
@@ -156,7 +156,7 @@ func (s *Storage[T]) notifyWatch(
 	ctx context.Context,
 	t T,
 ) {
-	log.Printf("kicking watch for %+v", t)
+	log.Printf("kicking watch for %#v", t)
 
 	for _, watch := range s.watches {
 		watch <- t

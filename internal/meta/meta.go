@@ -32,9 +32,7 @@ func (m *Meta) Clone() *Meta {
 	return &Meta{
 		id:          m.id,
 		createdTime: m.createdTime,
-		createdBy:   m.createdBy.Clone(),
 		updatedTime: m.updatedTime,
-		updatedBy:   m.updatedBy.Clone(),
 	}
 }
 

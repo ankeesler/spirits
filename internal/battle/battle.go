@@ -83,6 +83,8 @@ func (b *Battle) AddTeamSpirit(
 	}
 
 	b.teams[name] = append(b.teams[name], battleSpirit)
+
+	battleSpirit.Spirit = battleSpirit.Spirit.Clone()
 	b.inBattleTeams[name] = append(b.inBattleTeams[name], battleSpirit)
 
 	b.spiritTeams[battleSpirit.ID()] = name
@@ -112,6 +114,8 @@ func (b *Battle) HasNext() bool {
 }
 
 func (b *Battle) Next() (*Spirit, []*Spirit, [][]*Spirit) {
+	b.turns++
+
 	me := b.queue.Next()
 	myTeamName := b.spiritTeams[me.ID()]
 	us := b.inBattleTeams[myTeamName]
@@ -121,6 +125,7 @@ func (b *Battle) Next() (*Spirit, []*Spirit, [][]*Spirit) {
 			them = append(them, teamSpirits)
 		}
 	}
+
 	return me, us, them
 }
 

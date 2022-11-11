@@ -33,7 +33,7 @@ func (q queue) Less(i, j int) bool {
 	// If there is a tie, the highest Agility() goes first.
 	//
 	// This is so that "s(1.1.1.1)" will only go half as many times as "s(1.1.1.2)" (consider their
-	// speeds are 1.0 and 0.5, respectively).
+	// base ticks are 1.0 and 0.5, respectively).
 	if q[i].ticks == q[j].ticks {
 		return q[i].spirit.Agility() > q[j].spirit.Agility()
 	}

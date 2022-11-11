@@ -197,6 +197,90 @@ var m = menu.Menu{
 			}.Run(ctx, io)
 		}),
 	},
+	{
+		Title: "Start Demo Battle",
+		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+			state := getState(ctx)
+
+			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+			if err != nil {
+				return ctx, fmt.Errorf("create battle: %w", err)
+			}
+			battleID := createBattleRsp.GetBattle().GetMeta().GetId()
+
+			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+				Name: stringPtr("zombie"),
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("list spirits: %w", err)
+			}
+			if len(listSpiritsRsp.GetSpirits()) != 1 {
+				return ctx, fmt.Errorf("wanted 1 spirit, got %s", listSpiritsRsp.GetSpirits())
+			}
+			zombieSpirit := listSpiritsRsp.GetSpirits()[0]
+
+			teams := []struct {
+				name      string
+				spiritIDs []string
+			}{
+				{
+					name:      "a",
+					spiritIDs: []string{zombieSpirit.GetMeta().GetId()},
+				},
+				{
+					name:      "b",
+					spiritIDs: []string{zombieSpirit.GetMeta().GetId()},
+				},
+			}
+			for _, team := range teams {
+				if _, err := state.clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+					BattleId: battleID,
+					TeamName: team.name,
+				}); err != nil {
+					return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
+				}
+
+				for _, spiritID := range team.spiritIDs {
+					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+						BattleId:     battleID,
+						TeamName:     team.name,
+						SpiritId:     spiritID,
+						Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
+						Seed:         time.Now().Unix(),
+					}); err != nil {
+						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
+					}
+				}
+			}
+
+			watchCtx, cancel := context.WithCancel(ctx)
+			defer cancel()
+			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+				Id: battleID,
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("watch battle: %w", err)
+			}
+
+			wg := sync.WaitGroup{}
+
+			wg.Add(1)
+			go func() {
+				watchBattle(watchCtx, io, watchStream)
+				wg.Done()
+			}()
+
+			if _, err := state.clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+				Id: battleID,
+			}); err != nil {
+				return ctx, fmt.Errorf("start battle: %w", err)
+			}
+
+			wg.Wait()
+
+			return ctx, nil
+		}),
+	},
 }
 
 func watchBattle(ctx context.Context, io *menu.IO, stream api.BattleService_WatchBattleClient) {
@@ -246,3 +330,5 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+func stringPtr(s string) *string { return &s }

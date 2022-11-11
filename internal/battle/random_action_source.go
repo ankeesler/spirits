@@ -16,5 +16,20 @@ func (s *randomActionSource) Pend(
 	us []*Spirit,
 	them [][]*Spirit,
 ) (string, []string, error) {
-	return "", nil, nil
+	// Select action.
+	actionNames := me.ActionNames()
+	actionNum := s.r.Intn(len(actionNames))
+	actionName := me.ActionNames()[actionNum]
+
+	// Select targets.
+	var targets []string
+	for _, otherTeam := range them {
+		for _, otherSpirit := range otherTeam {
+			if s.r.Intn(2) == 0 {
+				targets = append(targets, otherSpirit.ID())
+			}
+		}
+	}
+
+	return actionName, targets, nil
 }

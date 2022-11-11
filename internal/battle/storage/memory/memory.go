@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
-	metapkg "github.com/ankeesler/spirits/internal/meta"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
 	genericmemory "github.com/ankeesler/spirits/internal/storage/memory"
 	"golang.org/x/exp/slices"
@@ -14,15 +13,23 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type SpiritRepo interface {
+	Get(context.Context, string) (*spiritpkg.Spirit, error)
+}
+
 type Storage struct {
 	*genericmemory.Storage[*battlepkg.Battle]
+
+	spiritRepo SpiritRepo
 
 	lock sync.Mutex
 }
 
-func New(r *rand.Rand) *Storage {
+func New(r *rand.Rand, spiritRepo SpiritRepo) *Storage {
 	return &Storage{
 		Storage: genericmemory.New[*battlepkg.Battle](r),
+
+		spiritRepo: spiritRepo,
 	}
 }
 
@@ -86,8 +93,10 @@ func (s *Storage) AddBattleTeamSpirit(
 		return nil, status.Errorf(codes.NotFound, "team not found")
 	}
 
-	spirit := spiritpkg.New(metapkg.New())
-	spirit.SetID(spiritID)
+	spirit, err := s.spiritRepo.Get(ctx, spiritID)
+	if err != nil {
+		return nil, err
+	}
 	battle.AddTeamSpirit(teamName, spirit, intelligence, seed, actionSource)
 
 	return s.Update(ctx, battle)

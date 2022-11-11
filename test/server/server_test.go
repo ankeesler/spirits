@@ -20,7 +20,7 @@ type clients struct {
 }
 
 func startServer(t *testing.T) *clients {
-	port, ok := os.LookupEnv("PORT")
+	port, ok := os.LookupEnv("SPIRITS_TEST_PORT")
 	if !ok {
 		port = fmt.Sprintf("%d", defaultTestServerPort)
 		server, err := server.Wire(&server.Config{
@@ -36,7 +36,7 @@ func startServer(t *testing.T) *clients {
 		ctx, cancel := context.WithCancel(context.Background())
 		go func() {
 			if err := server.Serve(ctx); err != nil {
-				t.Logf("server exited with error: %v", err)
+				t.Errorf("server exited with error: %v", err)
 			}
 		}()
 

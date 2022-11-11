@@ -18,7 +18,7 @@ type BattleRepo interface {
 }
 
 type battleContext struct {
-	context.Context
+	ctx context.Context
 
 	cancel context.CancelFunc
 }
@@ -66,7 +66,11 @@ func (c *Runner) Run(ctx context.Context) error {
 			needsUpdate, err := c.runBattle(ctx, battle)
 			if err != nil {
 				log.Printf("error in battle %v: %s", battle, err.Error())
-				continue
+
+				battle.SetState(battlepkg.StateError)
+				battle.SetErr(errors.New("hit max turns"))
+
+				needsUpdate = true
 			}
 
 			if needsUpdate {
@@ -85,9 +89,7 @@ func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool,
 
 	if battle.Turns() > maxTurns {
 		log.Printf("hit max turns for battle %+v", battle)
-
-		battle.SetState(battlepkg.StateError)
-		battle.SetErr(errors.New("hit max turns"))
+		return false, errors.New("hit max turns for battle")
 	} else if !battle.HasNext() {
 		log.Printf("finished battle %+v", battle)
 
@@ -97,14 +99,14 @@ func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool,
 
 		battleCtx, ok := c.battleContexts[battle.ID()]
 		if !ok {
-			var battleCtx battleContext
-			battleCtx.Context, battleCtx.cancel = context.WithCancel(ctx)
-			c.battleContexts[battle.ID()] = &battleCtx
+			battleCtx = &battleContext{}
+			battleCtx.ctx, battleCtx.cancel = context.WithCancel(ctx)
+			c.battleContexts[battle.ID()] = battleCtx
 		}
 
 		me, us, them := battle.Next()
 		var err error
-		battleCtx.Context, err = me.Run(battleCtx, us, them)
+		battleCtx.ctx, err = me.Run(battleCtx.ctx, us, them)
 		if err != nil {
 			return false, fmt.Errorf("spirit %v run: %w", me, err)
 		}
