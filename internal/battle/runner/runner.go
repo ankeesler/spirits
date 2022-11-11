@@ -12,7 +12,7 @@ import (
 const maxTurns = 100
 
 type BattleRepo interface {
-	Watch(context.Context) (<-chan *battlepkg.Battle, error)
+	Watch(context.Context, *string) (<-chan *battlepkg.Battle, error)
 	Update(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
 }
 
@@ -39,7 +39,7 @@ func New(battleRepo BattleRepo) *Runner {
 func (r *Runner) Run(ctx context.Context) error {
 	log.Printf("starting battle runner")
 
-	battles, err := r.battleRepo.Watch(ctx)
+	battles, err := r.battleRepo.Watch(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("start watch: %w", err)
 	}

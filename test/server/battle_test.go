@@ -10,13 +10,11 @@ import (
 )
 
 func TestAutoBattle(t *testing.T) {
-	clients := startServer(t)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
+	state := startServer(t)
+	clients := state.clients
 
 	// Create battle.
-	createBattleRsp, err := clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &api.CreateBattleRequest{})
 	if err != nil {
 		t.Fatal("create battle:", err)
 	}
@@ -47,7 +45,7 @@ func TestAutoBattle(t *testing.T) {
 		},
 	}
 	for _, team := range teams {
-		if _, err := clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+		if _, err := clients.battle.AddBattleTeam(state.ctx, &api.AddBattleTeamRequest{
 			BattleId: battleID,
 			TeamName: team.name,
 		}); err != nil {
@@ -55,7 +53,7 @@ func TestAutoBattle(t *testing.T) {
 		}
 
 		for _, spiritID := range team.spiritIDs {
-			if _, err := clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &api.AddBattleTeamSpiritRequest{
 				BattleId:     battleID,
 				TeamName:     team.name,
 				SpiritId:     spiritID,
@@ -67,7 +65,7 @@ func TestAutoBattle(t *testing.T) {
 		}
 	}
 
-	watchStream, err := clients.battle.WatchBattle(ctx, &api.WatchBattleRequest{
+	watchStream, err := clients.battle.WatchBattle(state.ctx, &api.WatchBattleRequest{
 		Id: battleID,
 	})
 	if err != nil {
@@ -77,11 +75,11 @@ func TestAutoBattle(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		watchBattle(ctx, t, watchStream)
+		watchBattle(state.ctx, t, watchStream)
 		wg.Done()
 	}()
 
-	if _, err := clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+	if _, err := clients.battle.StartBattle(state.ctx, &api.StartBattleRequest{
 		Id: battleID,
 	}); err != nil {
 		t.Fatal("start battle:", err)
@@ -91,27 +89,29 @@ func TestAutoBattle(t *testing.T) {
 }
 
 func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_WatchBattleClient) {
+	c := make(chan *api.Battle)
+	go func() {
+		for {
+			rsp, err := stream.Recv()
+			if err != nil {
+				t.Log("watch battle error:", err)
+				close(c)
+				return
+			}
+			c <- rsp.GetBattle()
+		}
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
-			t.Errorf("watch battle closed (client): %s\n", ctx.Err().Error())
+			t.Error("watch battle closed (client):", ctx.Err())
 			return
-		default:
-		}
-
-		rsp, err := stream.Recv()
-		if err != nil {
-			t.Errorf("watch battle closed (server): %s", err.Error())
-			return
-		}
-
-		// t.Log("watch battle: ", prototext.MarshalOptions{
-		// 	Multiline: true,
-		// }.Format(rsp))
-
-		switch rsp.GetBattle().GetState() {
-		case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
-			return
+		case battle := <-c:
+			switch battle.GetState() {
+			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
+				return
+			}
 		}
 	}
 }

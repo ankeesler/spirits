@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/ankeesler/spirits/internal/server"
 	"github.com/ankeesler/spirits/pkg/api"
@@ -14,12 +15,20 @@ import (
 
 const defaultTestServerPort = 12345
 
+type state struct {
+	ctx     context.Context
+	clients *clients
+}
+
 type clients struct {
 	spirit api.SpiritServiceClient
 	battle api.BattleServiceClient
 }
 
-func startServer(t *testing.T) *clients {
+func startServer(t *testing.T) *state {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	// cancel called below in t.Cleanup()
+
 	port, ok := os.LookupEnv("SPIRITS_TEST_PORT")
 	if !ok {
 		port = fmt.Sprintf("%d", defaultTestServerPort)
@@ -34,9 +43,7 @@ func startServer(t *testing.T) *clients {
 		}
 
 		serverErrC := make(chan error, 1)
-		ctx, cancel := context.WithCancel(context.Background())
 		t.Cleanup(func() {
-			cancel()
 			if serverErr := <-serverErrC; serverErr != nil {
 				t.Errorf("server exited with error: %v", serverErr)
 			}
@@ -46,8 +53,10 @@ func startServer(t *testing.T) *clients {
 			serverErrC <- server.Serve(ctx)
 		}()
 	}
+	t.Cleanup(cancel)
 
-	conn, err := grpc.Dial(
+	conn, err := grpc.DialContext(
+		ctx,
 		fmt.Sprintf(":%s", port),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -55,8 +64,11 @@ func startServer(t *testing.T) *clients {
 		t.Fatal(err)
 	}
 
-	return &clients{
-		spirit: api.NewSpiritServiceClient(conn),
-		battle: api.NewBattleServiceClient(conn),
+	return &state{
+		ctx: ctx,
+		clients: &clients{
+			spirit: api.NewSpiritServiceClient(conn),
+			battle: api.NewBattleServiceClient(conn),
+		},
 	}
 }

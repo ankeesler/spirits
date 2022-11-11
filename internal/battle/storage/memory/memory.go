@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"log"
 	"math/rand"
 	"sync"
 
@@ -108,8 +109,12 @@ func (s *Storage) UpdateBattleState(
 	from []battlepkg.State,
 	to battlepkg.State,
 ) (*battlepkg.Battle, error) {
+	log.Printf("waiting to update battle state from %s to %s", from, to)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
+
+	log.Printf("updating battle state from %s to %s", from, to)
 
 	battle, err := s.Get(ctx, id)
 	if err != nil {

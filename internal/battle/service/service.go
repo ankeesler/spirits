@@ -12,7 +12,7 @@ import (
 
 type BattleRepo interface {
 	Create(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
-	Watch(context.Context) (<-chan *battlepkg.Battle, error)
+	Watch(context.Context, *string) (<-chan *battlepkg.Battle, error)
 	List(context.Context) ([]*battlepkg.Battle, error)
 
 	AddBattleTeam(context.Context, string, string) (*battlepkg.Battle, error)
@@ -67,18 +67,17 @@ func (s *Service) WatchBattle(
 	req *api.WatchBattleRequest,
 	watch api.BattleService_WatchBattleServer,
 ) error {
-	c, err := s.battleRepo.Watch(watch.Context())
+	id := req.GetId()
+	c, err := s.battleRepo.Watch(watch.Context(), &id)
 	if err != nil {
 		return err
 	}
 
 	for battle := range c {
-		if battle.ID() == req.GetId() {
-			if err := watch.Send(&api.WatchBattleResponse{
-				Battle: convertbattle.ToAPI(battle),
-			}); err != nil {
-				return err
-			}
+		if err := watch.Send(&api.WatchBattleResponse{
+			Battle: convertbattle.ToAPI(battle),
+		}); err != nil {
+			return err
 		}
 	}
 

@@ -1,7 +1,6 @@
 package test
 
 import (
-	"context"
 	"reflect"
 	"testing"
 
@@ -14,7 +13,8 @@ import (
 )
 
 func TestCreateSpirit(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
 	spirit := &api.Spirit{
 		Name: "some-name",
@@ -23,7 +23,7 @@ func TestCreateSpirit(t *testing.T) {
 			Agility: 2,
 		},
 	}
-	rsp, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	rsp, err := clients.spirit.CreateSpirit(state.ctx, &api.CreateSpiritRequest{Spirit: spirit})
 	if err != nil {
 		t.Fatal("create spirit", err)
 	}
@@ -45,7 +45,8 @@ func TestCreateSpirit(t *testing.T) {
 }
 
 func TestCreateSpiritInvalidArgument(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
 	spirit := &api.Spirit{
 		Name: "some-name",
@@ -68,14 +69,15 @@ func TestCreateSpiritInvalidArgument(t *testing.T) {
 			},
 		},
 	}
-	_, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	_, err := clients.spirit.CreateSpirit(state.ctx, &api.CreateSpiritRequest{Spirit: spirit})
 	if want, got := status.New(codes.InvalidArgument, "duplicate action name: tuna"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
 func TestUpdateSpirit(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
 	spirit := &api.Spirit{
 		Name: "some-name",
@@ -84,7 +86,7 @@ func TestUpdateSpirit(t *testing.T) {
 			Agility: 2,
 		},
 	}
-	createRsp, err := clients.spirit.CreateSpirit(context.Background(), &api.CreateSpiritRequest{Spirit: spirit})
+	createRsp, err := clients.spirit.CreateSpirit(state.ctx, &api.CreateSpiritRequest{Spirit: spirit})
 	if err != nil {
 		t.Error("update spirit", err)
 	}
@@ -93,7 +95,7 @@ func TestUpdateSpirit(t *testing.T) {
 	spirit.Name = createRsp.GetSpirit().Name
 	createRsp.GetSpirit().GetStats().Agility += 1
 	spirit.Stats.Agility = createRsp.GetSpirit().GetStats().Agility
-	updateRsp, err := clients.spirit.UpdateSpirit(context.Background(), &api.UpdateSpiritRequest{Spirit: createRsp.GetSpirit()})
+	updateRsp, err := clients.spirit.UpdateSpirit(state.ctx, &api.UpdateSpiritRequest{Spirit: createRsp.GetSpirit()})
 	if err != nil {
 		t.Fatal("update spirit", err)
 	}
@@ -106,28 +108,31 @@ func TestUpdateSpirit(t *testing.T) {
 }
 
 func TestUpdateSpiritNotFound(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
 	spirit := &api.Spirit{Meta: &api.Meta{Id: "tuna"}}
-	_, err := clients.spirit.UpdateSpirit(context.Background(), &api.UpdateSpiritRequest{Spirit: spirit})
+	_, err := clients.spirit.UpdateSpirit(state.ctx, &api.UpdateSpiritRequest{Spirit: spirit})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
 func TestGetSpiritNotFound(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
-	_, err := clients.spirit.GetSpirit(context.Background(), &api.GetSpiritRequest{Id: "foo"})
+	_, err := clients.spirit.GetSpirit(state.ctx, &api.GetSpiritRequest{Id: "foo"})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
 	}
 }
 
 func TestBuiltin(t *testing.T) {
-	clients := startServer(t)
+	state := startServer(t)
+	clients := state.clients
 
-	rsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+	rsp, err := clients.spirit.ListSpirits(state.ctx, &api.ListSpiritsRequest{
 		Name: stringPtr("i"),
 	})
 	if err != nil {

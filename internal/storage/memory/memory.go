@@ -24,8 +24,8 @@ type Meta interface {
 }
 
 type watchContext[T Meta] struct {
-	ctx context.Context
-	c   chan<- T
+	id *string
+	c  chan<- T
 }
 
 type Storage[T Meta] struct {
@@ -73,6 +73,8 @@ func (s *Storage[T]) Get(
 	ctx context.Context,
 	id string,
 ) (T, error) {
+	log.Printf("waiting to get %s", id)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -88,6 +90,7 @@ func (s *Storage[T]) Get(
 
 func (s *Storage[T]) Watch(
 	ctx context.Context,
+	id *string,
 ) (<-chan T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -95,9 +98,19 @@ func (s *Storage[T]) Watch(
 	var t T
 	log.Printf("opening watch for %T", t)
 
-	c := make(chan T)
+	c := make(chan T, 1)
 	watchID := fmt.Sprintf("%x", s.r.Uint64())
-	s.watches.Store(watchID, c)
+	s.watches.Store(watchID, &watchContext[T]{
+		id: id,
+		c:  c,
+	})
+
+	if id != nil {
+		if t, ok := s.data[*id]; ok {
+			c <- t
+		}
+	}
+
 	go func() {
 		<-ctx.Done()
 		s.watches.Delete(watchID)
@@ -171,7 +184,10 @@ func (s *Storage[T]) notifyWatch(
 	log.Printf("kicking watch for %#v", t)
 
 	s.watches.Range(func(key, val any) bool {
-		val.(chan T) <- t
+		watchCtx := val.(*watchContext[T])
+		if watchCtx.id == nil || *watchCtx.id == t.ID() {
+			watchCtx.c <- t
+		}
 		return true
 	})
 }
