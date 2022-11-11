@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/pkg/api"
-	"google.golang.org/protobuf/encoding/prototext"
 )
 
 func TestAutoBattle(t *testing.T) {
@@ -68,9 +67,7 @@ func TestAutoBattle(t *testing.T) {
 		}
 	}
 
-	watchCtx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	watchStream, err := clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+	watchStream, err := clients.battle.WatchBattle(ctx, &api.WatchBattleRequest{
 		Id: battleID,
 	})
 	if err != nil {
@@ -78,10 +75,9 @@ func TestAutoBattle(t *testing.T) {
 	}
 
 	wg := sync.WaitGroup{}
-
 	wg.Add(1)
 	go func() {
-		watchBattle(watchCtx, t, watchStream)
+		watchBattle(ctx, t, watchStream)
 		wg.Done()
 	}()
 
@@ -109,9 +105,9 @@ func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_Wat
 			return
 		}
 
-		t.Log("watch battle: ", prototext.MarshalOptions{
-			Multiline: true,
-		}.Format(rsp))
+		// t.Log("watch battle: ", prototext.MarshalOptions{
+		// 	Multiline: true,
+		// }.Format(rsp))
 
 		switch rsp.GetBattle().GetState() {
 		case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:

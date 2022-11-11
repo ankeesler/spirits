@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
 )
@@ -13,7 +12,7 @@ import (
 const maxTurns = 100
 
 type BattleRepo interface {
-	Watch(context.Context, chan<- *battlepkg.Battle) error
+	Watch(context.Context) (<-chan *battlepkg.Battle, error)
 	Update(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
 }
 
@@ -26,44 +25,36 @@ type battleContext struct {
 type Runner struct {
 	battleRepo BattleRepo
 
-	battles        chan *battlepkg.Battle
 	battleContexts map[string]*battleContext
 }
 
-func Wire(
-	battleRepo BattleRepo,
-) (*Runner, error) {
-	c := make(chan *battlepkg.Battle)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
-
-	log.Print("battle runner starting watch")
-	if err := battleRepo.Watch(ctx, c); err != nil {
-		return nil, fmt.Errorf("start watch: %w", err)
-	}
-
+func New(battleRepo BattleRepo) *Runner {
 	return &Runner{
 		battleRepo: battleRepo,
 
-		battles:        c,
 		battleContexts: make(map[string]*battleContext),
-	}, nil
+	}
 }
 
-func (c *Runner) Run(ctx context.Context) error {
+func (r *Runner) Run(ctx context.Context) error {
 	log.Printf("starting battle runner")
+
+	battles, err := r.battleRepo.Watch(ctx)
+	if err != nil {
+		return fmt.Errorf("start watch: %w", err)
+	}
 
 	for {
 		select {
 		case <-ctx.Done():
-			close(c.battles)
-			return fmt.Errorf("context cancelled: %w", ctx.Err())
-		case battle, ok := <-c.battles:
+			log.Print("stopping battle runner")
+			return nil
+		case battle, ok := <-battles:
 			if !ok {
 				return errors.New("battle runner watch closed")
 			}
 
-			needsUpdate, err := c.runBattle(ctx, battle)
+			needsUpdate, err := r.runBattle(ctx, battle)
 			if err != nil {
 				log.Printf("error in battle %v: %s", battle, err.Error())
 
@@ -74,7 +65,7 @@ func (c *Runner) Run(ctx context.Context) error {
 			}
 
 			if needsUpdate {
-				if _, err := c.battleRepo.Update(ctx, battle); err != nil {
+				if _, err := r.battleRepo.Update(ctx, battle); err != nil {
 					log.Printf("Failed to update battle to %v", battle)
 				}
 			}

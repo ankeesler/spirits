@@ -12,7 +12,7 @@ import (
 
 type BattleRepo interface {
 	Create(context.Context, *battlepkg.Battle) (*battlepkg.Battle, error)
-	Watch(context.Context, chan<- *battlepkg.Battle) error
+	Watch(context.Context) (<-chan *battlepkg.Battle, error)
 	List(context.Context) ([]*battlepkg.Battle, error)
 
 	AddBattleTeam(context.Context, string, string) (*battlepkg.Battle, error)
@@ -67,10 +67,8 @@ func (s *Service) WatchBattle(
 	req *api.WatchBattleRequest,
 	watch api.BattleService_WatchBattleServer,
 ) error {
-	c := make(chan *battlepkg.Battle)
-	defer close(c)
-
-	if err := s.battleRepo.Watch(watch.Context(), c); err != nil {
+	c, err := s.battleRepo.Watch(watch.Context())
+	if err != nil {
 		return err
 	}
 

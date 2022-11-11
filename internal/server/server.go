@@ -23,6 +23,11 @@ import (
 	spiritmemory "github.com/ankeesler/spirits/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits/internal/storage/memory"
 	"github.com/ankeesler/spirits/pkg/api"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/prototext"
@@ -56,15 +61,28 @@ func Wire(c *Config) (*Server, error) {
 	battleRepo := battlememory.New(r, spiritRepo)
 	battleService := battleservice.New(battleRepo, actionQueue)
 
-	s := grpc.NewServer(grpc.UnaryInterceptor(unaryLogFunc), grpc.StreamInterceptor(streamLogFunc))
+	s := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+			streamLogFunc,
+			grpc_ctxtags.StreamServerInterceptor(),
+			grpc_opentracing.StreamServerInterceptor(),
+			grpc_prometheus.StreamServerInterceptor,
+			grpc_recovery.StreamServerInterceptor(),
+		)),
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			unaryLogFunc,
+			grpc_ctxtags.UnaryServerInterceptor(),
+			grpc_opentracing.UnaryServerInterceptor(),
+			grpc_prometheus.UnaryServerInterceptor,
+			grpc_recovery.UnaryServerInterceptor(),
+		)),
+	)
+
 	api.RegisterSpiritServiceServer(s, spiritService)
 	api.RegisterActionServiceServer(s, actionService)
 	api.RegisterBattleServiceServer(s, battleService)
 
-	battleRunner, err := runner.Wire(battleRepo)
-	if err != nil {
-		return nil, fmt.Errorf("wire battle controller: %w", err)
-	}
+	battleRunner := runner.New(battleRepo)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()

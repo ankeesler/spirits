@@ -33,14 +33,18 @@ func startServer(t *testing.T) *clients {
 			t.Fatal(err)
 		}
 
+		serverErrC := make(chan error, 1)
 		ctx, cancel := context.WithCancel(context.Background())
-		go func() {
-			if err := server.Serve(ctx); err != nil {
-				t.Errorf("server exited with error: %v", err)
+		t.Cleanup(func() {
+			cancel()
+			if serverErr := <-serverErrC; serverErr != nil {
+				t.Errorf("server exited with error: %v", serverErr)
 			}
-		}()
+		})
 
-		t.Cleanup(cancel)
+		go func() {
+			serverErrC <- server.Serve(ctx)
+		}()
 	}
 
 	conn, err := grpc.Dial(

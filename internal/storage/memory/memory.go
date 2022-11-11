@@ -23,11 +23,16 @@ type Meta interface {
 	SetUpdatedTime(time.Time)
 }
 
+type watchContext[T Meta] struct {
+	ctx context.Context
+	c   chan<- T
+}
+
 type Storage[T Meta] struct {
 	r *rand.Rand
 
 	data    map[string]T
-	watches []chan<- T
+	watches sync.Map
 
 	lock sync.Mutex
 }
@@ -83,16 +88,23 @@ func (s *Storage[T]) Get(
 
 func (s *Storage[T]) Watch(
 	ctx context.Context,
-	c chan<- T,
-) error {
+) (<-chan T, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Print("opening watch")
+	var t T
+	log.Printf("opening watch for %T", t)
 
-	s.watches = append(s.watches, c)
+	c := make(chan T)
+	watchID := fmt.Sprintf("%x", s.r.Uint64())
+	s.watches.Store(watchID, c)
+	go func() {
+		<-ctx.Done()
+		s.watches.Delete(watchID)
+		close(c)
+	}()
 
-	return nil
+	return c, nil
 }
 
 func (s *Storage[T]) List(
@@ -158,7 +170,8 @@ func (s *Storage[T]) notifyWatch(
 ) {
 	log.Printf("kicking watch for %#v", t)
 
-	for _, watch := range s.watches {
-		watch <- t
-	}
+	s.watches.Range(func(key, val any) bool {
+		val.(chan T) <- t
+		return true
+	})
 }
