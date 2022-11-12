@@ -13,13 +13,6 @@ service ActionService {
   rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {}
   rpc UpdateAction(UpdateActionRequest) returns (UpdateActionResponse) {}
   rpc DeleteAction(DeleteActionRequest) returns (DeleteActionResponse) {}
-
-  // CallAction invokes an acting Spirit's SpiritAction.
-  //
-  // This is only valid when a Spirit is currently acting, and
-  // the Spirit's BattleTeamSpiritIntelligence is
-  // BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
-  rpc CallAction(CallActionRequest) returns (CallActionResponse) {}
 }
 
 message CreateActionRequest {
@@ -67,23 +60,6 @@ message DeleteActionRequest {
 message DeleteActionResponse {
   // The newly deleted Action.
   Action action = 1;
-}
-
-message CallActionRequest {
-  // The id of the Battle to which this call applies.
-  string battle_id = 1;
-
-  // The id of the Spirit to which this call applies.
-  string spirit_id = 2;
-
-  // The name of the spirits.Action to call.
-  string action_name = 3;
-
-  // The Spirit's to which this action should be applied.
-  repeated string target_spirit_ids = 4;
-}
-
-message CallActionResponse {
 }
 
 // Action describes what a Spirit can actually do on their turn in a Battle.

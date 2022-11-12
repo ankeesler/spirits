@@ -15,5 +15,6 @@ func (s *humanActionSource) Pend(
 	us []*Spirit,
 	them [][]*Spirit,
 ) (string, []string, error) {
+	battle.SetState(StateWaiting)
 	return s.actionSource.Pend(ctx, battle.ID(), me.ID(), battle.Turns())
 }

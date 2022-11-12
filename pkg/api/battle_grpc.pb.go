@@ -59,6 +59,12 @@ type BattleServiceClient interface {
 	//
 	// The Battle's BattleState will be set to BATTLE_STATE_CANCELLED.
 	CancelBattle(ctx context.Context, in *CancelBattleRequest, opts ...grpc.CallOption) (*CancelBattleResponse, error)
+	// CallAction invokes an acting Spirit's SpiritAction.
+	//
+	// This is only valid when a Spirit is currently acting, and
+	// the Spirit's BattleTeamSpiritIntelligence is
+	// BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
+	CallAction(ctx context.Context, in *CallActionRequest, opts ...grpc.CallOption) (*CallActionResponse, error)
 }
 
 type battleServiceClient struct {
@@ -155,6 +161,15 @@ func (c *battleServiceClient) CancelBattle(ctx context.Context, in *CancelBattle
 	return out, nil
 }
 
+func (c *battleServiceClient) CallAction(ctx context.Context, in *CallActionRequest, opts ...grpc.CallOption) (*CallActionResponse, error) {
+	out := new(CallActionResponse)
+	err := c.cc.Invoke(ctx, "/spirits.BattleService/CallAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BattleServiceServer is the server API for BattleService service.
 // All implementations must embed UnimplementedBattleServiceServer
 // for forward compatibility
@@ -196,6 +211,12 @@ type BattleServiceServer interface {
 	//
 	// The Battle's BattleState will be set to BATTLE_STATE_CANCELLED.
 	CancelBattle(context.Context, *CancelBattleRequest) (*CancelBattleResponse, error)
+	// CallAction invokes an acting Spirit's SpiritAction.
+	//
+	// This is only valid when a Spirit is currently acting, and
+	// the Spirit's BattleTeamSpiritIntelligence is
+	// BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
+	CallAction(context.Context, *CallActionRequest) (*CallActionResponse, error)
 	mustEmbedUnimplementedBattleServiceServer()
 }
 
@@ -223,6 +244,9 @@ func (UnimplementedBattleServiceServer) StartBattle(context.Context, *StartBattl
 }
 func (UnimplementedBattleServiceServer) CancelBattle(context.Context, *CancelBattleRequest) (*CancelBattleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelBattle not implemented")
+}
+func (UnimplementedBattleServiceServer) CallAction(context.Context, *CallActionRequest) (*CallActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CallAction not implemented")
 }
 func (UnimplementedBattleServiceServer) mustEmbedUnimplementedBattleServiceServer() {}
 
@@ -366,6 +390,24 @@ func _BattleService_CancelBattle_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BattleService_CallAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CallActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BattleServiceServer).CallAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spirits.BattleService/CallAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BattleServiceServer).CallAction(ctx, req.(*CallActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BattleService_ServiceDesc is the grpc.ServiceDesc for BattleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -396,6 +438,10 @@ var BattleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelBattle",
 			Handler:    _BattleService_CancelBattle_Handler,
+		},
+		{
+			MethodName: "CallAction",
+			Handler:    _BattleService_CallAction_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

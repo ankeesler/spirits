@@ -52,6 +52,13 @@ service BattleService {
   //
   // The Battle's BattleState will be set to BATTLE_STATE_CANCELLED.
   rpc CancelBattle(CancelBattleRequest) returns (CancelBattleResponse) {}
+
+  // CallAction invokes an acting Spirit's SpiritAction.
+  //
+  // This is only valid when a Spirit is currently acting, and
+  // the Spirit's BattleTeamSpiritIntelligence is
+  // BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
+  rpc CallAction(CallActionRequest) returns (CallActionResponse) {}
 }
 
 message CreateBattleRequest {
@@ -133,6 +140,26 @@ message CancelBattleRequest {
 message CancelBattleResponse {
   // The newly cancelled Battle.
   Battle battle = 1;
+}
+
+message CallActionRequest {
+  // The id of the Battle to which this call applies.
+  string battle_id = 1;
+
+  // The id of the Spirit to which this call applies.
+  string spirit_id = 2;
+
+  // The turn on which this Action call applies.
+  int64 turn = 3;
+
+  // The name of the spirits.Action to call.
+  string action_name = 4;
+
+  // The Spirit's to which this action should be applied.
+  repeated string target_spirit_ids = 5;
+}
+
+message CallActionResponse {
 }
 
 // Battle describes a single battle royale amongst Spirit's.

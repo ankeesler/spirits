@@ -27,12 +27,6 @@ type ActionServiceClient interface {
 	ListActions(ctx context.Context, in *ListActionsRequest, opts ...grpc.CallOption) (*ListActionsResponse, error)
 	UpdateAction(ctx context.Context, in *UpdateActionRequest, opts ...grpc.CallOption) (*UpdateActionResponse, error)
 	DeleteAction(ctx context.Context, in *DeleteActionRequest, opts ...grpc.CallOption) (*DeleteActionResponse, error)
-	// CallAction invokes an acting Spirit's SpiritAction.
-	//
-	// This is only valid when a Spirit is currently acting, and
-	// the Spirit's BattleTeamSpiritIntelligence is
-	// BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
-	CallAction(ctx context.Context, in *CallActionRequest, opts ...grpc.CallOption) (*CallActionResponse, error)
 }
 
 type actionServiceClient struct {
@@ -88,15 +82,6 @@ func (c *actionServiceClient) DeleteAction(ctx context.Context, in *DeleteAction
 	return out, nil
 }
 
-func (c *actionServiceClient) CallAction(ctx context.Context, in *CallActionRequest, opts ...grpc.CallOption) (*CallActionResponse, error) {
-	out := new(CallActionResponse)
-	err := c.cc.Invoke(ctx, "/spirits.ActionService/CallAction", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ActionServiceServer is the server API for ActionService service.
 // All implementations must embed UnimplementedActionServiceServer
 // for forward compatibility
@@ -106,12 +91,6 @@ type ActionServiceServer interface {
 	ListActions(context.Context, *ListActionsRequest) (*ListActionsResponse, error)
 	UpdateAction(context.Context, *UpdateActionRequest) (*UpdateActionResponse, error)
 	DeleteAction(context.Context, *DeleteActionRequest) (*DeleteActionResponse, error)
-	// CallAction invokes an acting Spirit's SpiritAction.
-	//
-	// This is only valid when a Spirit is currently acting, and
-	// the Spirit's BattleTeamSpiritIntelligence is
-	// BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
-	CallAction(context.Context, *CallActionRequest) (*CallActionResponse, error)
 	mustEmbedUnimplementedActionServiceServer()
 }
 
@@ -133,9 +112,6 @@ func (UnimplementedActionServiceServer) UpdateAction(context.Context, *UpdateAct
 }
 func (UnimplementedActionServiceServer) DeleteAction(context.Context, *DeleteActionRequest) (*DeleteActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAction not implemented")
-}
-func (UnimplementedActionServiceServer) CallAction(context.Context, *CallActionRequest) (*CallActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CallAction not implemented")
 }
 func (UnimplementedActionServiceServer) mustEmbedUnimplementedActionServiceServer() {}
 
@@ -240,24 +216,6 @@ func _ActionService_DeleteAction_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ActionService_CallAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CallActionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ActionServiceServer).CallAction(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spirits.ActionService/CallAction",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ActionServiceServer).CallAction(ctx, req.(*CallActionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ActionService_ServiceDesc is the grpc.ServiceDesc for ActionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -284,10 +242,6 @@ var ActionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAction",
 			Handler:    _ActionService_DeleteAction_Handler,
-		},
-		{
-			MethodName: "CallAction",
-			Handler:    _ActionService_CallAction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

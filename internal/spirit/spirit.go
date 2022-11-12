@@ -1,15 +1,9 @@
 package spirit
 
 import (
-	"context"
-
 	actionpkg "github.com/ankeesler/spirits/internal/action"
 	metapkg "github.com/ankeesler/spirits/internal/meta"
 )
-
-type ActionRepo interface {
-	Get(context.Context, string) (*actionpkg.Action, error)
-}
 
 type Spirit struct {
 	*metapkg.Meta

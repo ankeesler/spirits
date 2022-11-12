@@ -146,18 +146,18 @@ func unaryLogFunc(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (interface{}, error) {
-	log.Printf("Unary req: %s: %v", info.FullMethod, textproto(req))
+	log.Printf("unary req: %s: %v", info.FullMethod, textproto(req))
 	rsp, err := handler(ctx, req)
-	log.Printf("Unary rsp: %s: %v %v", info.FullMethod, textproto(req), err)
+	log.Printf("unary rsp: %s: %v %v", info.FullMethod, textproto(req), err)
 	return rsp, err
 }
 
 func streamLogFunc(
 	srv interface{}, ss grpc.ServerStream,
 	info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	log.Printf("Stream req: %s", info.FullMethod)
+	log.Printf("stream req: %s", info.FullMethod)
 	err := handler(srv, ss)
-	log.Printf("Stream rsp: %s: %v", info.FullMethod, err)
+	log.Printf("stream rsp: %s: %v", info.FullMethod, err)
 	return err
 }
 
