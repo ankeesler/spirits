@@ -27,8 +27,13 @@ type BattleRepo interface {
 	UpdateBattleState(context.Context, string, []battlepkg.State, battlepkg.State) (*battlepkg.Battle, error)
 }
 
+type ActionSink interface {
+	Post(context.Context, string, string, int64, string, []string) error
+}
+
 type Service struct {
 	battleRepo   BattleRepo
+	actionSink   ActionSink
 	actionSource battlepkg.ActionSource
 
 	api.UnimplementedBattleServiceServer
@@ -36,9 +41,10 @@ type Service struct {
 
 var _ api.BattleServiceServer = &Service{}
 
-func New(battleRepo BattleRepo, actionSource battlepkg.ActionSource) *Service {
+func New(battleRepo BattleRepo, actionSink ActionSink, actionSource battlepkg.ActionSource) *Service {
 	return &Service{
 		battleRepo:   battleRepo,
+		actionSink:   actionSink,
 		actionSource: actionSource,
 	}
 }
@@ -161,4 +167,16 @@ func (s *Service) CancelBattle(
 		return nil, err
 	}
 	return &api.CancelBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+}
+
+func (s *Service) CallAction(
+	ctx context.Context,
+	req *api.CallActionRequest,
+) (*api.CallActionResponse, error) {
+	if err := s.actionSink.Post(
+		ctx, req.GetBattleId(), req.GetSpiritId(), req.GetTurn(),
+		req.GetActionName(), req.GetTargetSpiritIds()); err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &api.CallActionResponse{}, nil
 }

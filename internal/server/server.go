@@ -59,7 +59,7 @@ func Wire(c *Config) (*Server, error) {
 	spiritService := spiritservice.New(spiritRepo)
 
 	battleRepo := battlememory.New(r, spiritRepo)
-	battleService := battleservice.New(battleRepo, actionQueue)
+	battleService := battleservice.New(battleRepo, actionQueue, actionQueue)
 
 	s := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
