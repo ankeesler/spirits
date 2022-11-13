@@ -161,11 +161,17 @@ func TestManualBattle(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
+		turns := make(map[int64]struct{})
 		for {
 			battle := watchBattle(state.ctx, t, watchStream)
 			if battle == nil {
 				break
 			}
+
+			if _, ok := turns[battle.GetTurns()]; ok {
+				continue
+			}
+			turns[battle.GetTurns()] = struct{}{}
 
 			if _, err := clients.battle.CallAction(state.ctx, &spiritsv1.CallActionRequest{
 				BattleId:        battle.GetMeta().GetId(),

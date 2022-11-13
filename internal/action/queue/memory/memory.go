@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -26,9 +27,13 @@ func (q *Queue) Pend(
 	spiritID string,
 	turn int64,
 ) (string, []string, error) {
+	msg := fmt.Sprintf("action queue: pend %s", q.key(battleID, spiritID, turn))
+	log.Print(msg)
+
 	select {
 	case actionCall, ok := <-q.c(battleID, spiritID, turn):
 		if !ok {
+			log.Printf("%s: channel closed", msg)
 			return "", nil, fmt.Errorf(
 				"channel closed for battleID %q spiritID %q turn %d actions",
 				battleID,
@@ -36,8 +41,11 @@ func (q *Queue) Pend(
 				turn,
 			)
 		}
+		log.Printf("%s: done", msg)
+		q.done(battleID, spiritID, turn)
 		return actionCall.actionName, actionCall.targetSpiritIDs, nil
 	case <-ctx.Done():
+		log.Printf("%s: context cancelled", msg)
 		return "", nil, fmt.Errorf(
 			"context canceled for battleID %q spiritID %q turn %d actions",
 			battleID,
@@ -55,20 +63,28 @@ func (q *Queue) Post(
 	actionName string,
 	targetSpiritIDs []string,
 ) error {
-	for retry := 0; retry < 3; retry++ {
-		select {
-		case q.c(battleID, spiritID, turn) <- &actionCall{actionName: actionName, targetSpiritIDs: targetSpiritIDs}:
-			return nil
-		default:
-			time.Sleep(time.Second)
+	msg := fmt.Sprintf("action queue: post %s", q.key(battleID, spiritID, turn))
+	log.Print(msg)
+
+	timer := time.NewTimer(time.Second * 3)
+	select {
+	case <-timer.C:
+	case q.c(battleID, spiritID, turn) <- &actionCall{actionName: actionName, targetSpiritIDs: targetSpiritIDs}:
+		if !timer.Stop() {
+			<-timer.C
 		}
+		log.Printf("%s: done", msg)
+		return nil
 	}
+
+	log.Printf("%s: no pend", msg)
 
 	return fmt.Errorf(
 		"no one listening for battleID %q spiritID %q turn %d actions",
 		battleID,
 		spiritID,
-		turn)
+		turn,
+	)
 }
 
 func (q *Queue) c(
@@ -76,12 +92,30 @@ func (q *Queue) c(
 	spiritID string,
 	turn int64,
 ) chan *actionCall {
-	key := fmt.Sprintf("%s-%s-%d", battleID, spiritID, turn)
 	c := make(chan *actionCall)
-	cc, exists := q.m.LoadOrStore(key, c)
+	cc, exists := q.m.LoadOrStore(q.key(battleID, spiritID, turn), c)
 	if exists {
 		close(c)
 		c = cc.(chan *actionCall)
 	}
 	return c
+}
+
+func (q *Queue) done(
+	battleID string,
+	spiritID string,
+	turn int64,
+) {
+	cc, exists := q.m.LoadAndDelete(q.key(battleID, spiritID, turn))
+	if exists {
+		close(cc.(chan *actionCall))
+	}
+}
+
+func (q *Queue) key(
+	battleID string,
+	spiritID string,
+	turn int64,
+) string {
+	return fmt.Sprintf("%s-%s-%d", battleID, spiritID, turn)
 }
