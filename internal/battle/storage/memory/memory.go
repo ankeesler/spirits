@@ -122,7 +122,8 @@ func (s *Storage) UpdateBattleState(
 	}
 
 	if !slices.Contains(from, battle.State()) {
-		return nil, status.Errorf(codes.FailedPrecondition, "battle must be one of %v", from)
+		return nil, status.Errorf(
+			codes.FailedPrecondition, "battle must be one of %v but was %v", from, battle.State())
 	}
 
 	battle.SetState(to)

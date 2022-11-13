@@ -148,7 +148,7 @@ func (s *Service) CancelBattle(
 	internalBattle, err := s.battleRepo.UpdateBattleState(
 		ctx,
 		req.GetId(),
-		[]battlepkg.State{battlepkg.StateStarted, battlepkg.StateWaiting},
+		[]battlepkg.State{battlepkg.StateStarted, battlepkg.StateRunning, battlepkg.StateWaiting},
 		battlepkg.StateCancelled,
 	)
 	if err != nil {

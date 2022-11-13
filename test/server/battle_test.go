@@ -91,8 +91,6 @@ func TestAutoBattle(t *testing.T) {
 }
 
 func TestManualBattle(t *testing.T) {
-	t.Skip()
-
 	state := startServer(t)
 	clients := state.clients
 
@@ -187,12 +185,15 @@ func TestManualBattle(t *testing.T) {
 }
 
 func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_WatchBattleClient) *api.Battle {
+	t.Helper()
+
 	c := make(chan *api.Battle)
+	var cErr error
 	go func() {
 		for {
 			rsp, err := stream.Recv()
 			if err != nil {
-				t.Log("watch battle error:", err)
+				cErr = err
 				close(c)
 				return
 			}
@@ -205,7 +206,10 @@ func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_Wat
 		case <-ctx.Done():
 			t.Error("watch battle closed (client):", ctx.Err())
 			return nil
-		case battle := <-c:
+		case battle, ok := <-c:
+			if !ok {
+				t.Error("rx goroutine failed with error:", cErr)
+			}
 			switch battle.GetState() {
 			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
 				return nil

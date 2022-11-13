@@ -54,6 +54,8 @@ func stateFromAPI(apiBattleState api.BattleState) battlepkg.State {
 		return battlepkg.StatePending
 	case api.BattleState_BATTLE_STATE_STARTED:
 		return battlepkg.StateStarted
+	case api.BattleState_BATTLE_STATE_RUNNING:
+		return battlepkg.StateRunning
 	case api.BattleState_BATTLE_STATE_WAITING:
 		return battlepkg.StateWaiting
 	case api.BattleState_BATTLE_STATE_FINISHED:

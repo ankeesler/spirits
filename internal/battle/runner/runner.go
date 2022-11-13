@@ -53,55 +53,88 @@ func (r *Runner) Run(ctx context.Context) error {
 			if !ok {
 				return errors.New("battle runner watch closed")
 			}
-
-			needsUpdate, err := r.runBattle(ctx, battle)
-			if err != nil {
-				log.Printf("error in battle %v: %s", battle, err.Error())
-
-				battle.SetState(battlepkg.StateError)
-				battle.SetErr(errors.New("hit max turns"))
-
-				needsUpdate = true
-			}
-
-			if needsUpdate {
-				if _, err := r.battleRepo.Update(ctx, battle); err != nil {
-					log.Printf("Failed to update battle to %v", battle)
-				}
-			}
+			r.processBattle(ctx, battle)
 		}
 	}
 }
 
-func (c *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) (bool, error) {
-	if battle.State() != battlepkg.StateStarted {
-		return false, nil
-	}
+func (r *Runner) processBattle(
+	ctx context.Context, battle *battlepkg.Battle) {
+	battleCtx, exists := r.battleContexts[battle.ID()]
 
-	if battle.Turns() > maxTurns {
-		log.Printf("hit max turns for battle %+v", battle)
-		return false, errors.New("hit max turns for battle")
-	} else if !battle.HasNext() {
-		log.Printf("finished battle %+v", battle)
-
-		battle.SetState(battlepkg.StateFinished)
-	} else {
-		log.Printf("running battle %+v", battle)
-
-		battleCtx, ok := c.battleContexts[battle.ID()]
-		if !ok {
+	switch battle.State() {
+	case battlepkg.StateStarted:
+		if !exists {
 			battleCtx = &battleContext{}
 			battleCtx.ctx, battleCtx.cancel = context.WithCancel(ctx)
-			c.battleContexts[battle.ID()] = battleCtx
+			r.battleContexts[battle.ID()] = battleCtx
+
+			go func() {
+				if err := r.runBattle(battleCtx.ctx, battle); err != nil {
+					battle.SetState(battlepkg.StateError)
+					battle.SetErr(err)
+				} else {
+					battle.SetState(battlepkg.StateFinished)
+				}
+
+				r.updateBattle(ctx, battle)
+			}()
 		}
 
-		me, us, them := battle.Next()
-		var err error
-		battleCtx.ctx, err = me.Run(battleCtx.ctx, us, them)
-		if err != nil {
-			return false, fmt.Errorf("spirit %v run: %w", me, err)
+	case battlepkg.StateCancelled:
+		if exists {
+			battleCtx.cancel()
+			delete(r.battleContexts, battle.ID())
 		}
 	}
+}
 
-	return true, nil
+func (r *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) error {
+	for {
+		battle.SetState(battlepkg.StateStarted)
+		r.updateBattle(ctx, battle)
+
+		select {
+		case <-ctx.Done():
+			log.Printf("battle context done: %+v", battle)
+			return ctx.Err()
+		default:
+		}
+
+		if battle.Turns() > maxTurns {
+			log.Printf("hit max turns for battle %+v", battle)
+			return errors.New("hit max turns for battle")
+		}
+
+		if !battle.HasNext() {
+			log.Printf("finished battle %+v", battle)
+			return nil
+		}
+
+		log.Printf("really running battle %+v", battle)
+
+		me, us, them, needsWaiting := battle.Next()
+		r.handleNeedsWaiting(ctx, battle, needsWaiting)
+
+		var err error
+		ctx, err = me.Run(ctx, us, them)
+		if err != nil {
+			return fmt.Errorf("spirit %v run: %w", me, err)
+		}
+	}
+}
+
+func (r *Runner) handleNeedsWaiting(
+	ctx context.Context, battle *battlepkg.Battle, needsWaiting bool) {
+	// This is a horrible hack :(
+	if needsWaiting {
+		battle.SetState(battlepkg.StateWaiting)
+		r.updateBattle(ctx, battle)
+	}
+}
+
+func (r *Runner) updateBattle(ctx context.Context, battle *battlepkg.Battle) {
+	if _, err := r.battleRepo.Update(ctx, battle); err != nil {
+		log.Printf("failed to update battle to %v", battle)
+	}
 }

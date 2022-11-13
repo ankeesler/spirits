@@ -53,7 +53,7 @@ func (s *Spirit) Run(
 
 	internalAction := me.Action(actionName)
 	if internalAction == nil {
-		return nil, fmt.Errorf("spirit %s has no action with name %s", me.ID(), actionName)
+		return ctx, fmt.Errorf("spirit %s has no action with name %s", me.ID(), actionName)
 	}
 
 	var targets []actionpkg.Spirit

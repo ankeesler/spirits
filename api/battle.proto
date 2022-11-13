@@ -191,7 +191,7 @@ message Battle {
 
   // The next Spirit's to run.
   //
-  // This is only valid when the BattleState is BATTLE_STATE_STARTED or
+  // This is only valid when the BattleState is BATTLE_STATE_RUNNING or
   // BATTLE_STATE_WAITING.
   //
   // Note that this list is not complete - it may contain 0 or more entries.
@@ -229,10 +229,10 @@ enum BattleState {
   BATTLE_STATE_UNSPECIFIED = 0;
   BATTLE_STATE_PENDING = 1;
   BATTLE_STATE_STARTED = 2;
-  BATTLE_STATE_WAITING = 3;
-  BATTLE_STATE_FINISHED = 4;
-  BATTLE_STATE_CANCELLED = 5;
-  BATTLE_STATE_ERROR = 6;
+  BATTLE_STATE_WAITING = 4;
+  BATTLE_STATE_FINISHED = 5;
+  BATTLE_STATE_CANCELLED = 6;
+  BATTLE_STATE_ERROR = 7;
 }
 
 // BattleTeam is a group of Spirit's working together in a Battle.

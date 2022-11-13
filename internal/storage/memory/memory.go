@@ -23,16 +23,11 @@ type Meta interface {
 	SetUpdatedTime(time.Time)
 }
 
-type watchContext[T Meta] struct {
-	id *string
-	c  chan<- T
-}
-
 type Storage[T Meta] struct {
 	r *rand.Rand
 
 	data    map[string]T
-	watches sync.Map
+	watches *watchList[T]
 
 	lock sync.Mutex
 }
@@ -41,7 +36,8 @@ func New[T Meta](r *rand.Rand) *Storage[T] {
 	return &Storage[T]{
 		r: r,
 
-		data: make(map[string]T),
+		data:    make(map[string]T),
+		watches: newWatchList[T](),
 	}
 }
 
@@ -49,10 +45,12 @@ func (s *Storage[T]) Create(
 	ctx context.Context,
 	t T,
 ) (T, error) {
+	log.Printf("waiting to create %T %+v", t, t)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("creating %+v", t)
+	log.Printf("creating %T %+v", t, t)
 
 	id := fmt.Sprintf("%x", s.r.Uint64())
 	if _, ok := s.data[id]; ok {
@@ -64,7 +62,7 @@ func (s *Storage[T]) Create(
 	t.SetUpdatedTime(t.CreatedTime())
 
 	s.data[t.ID()] = t
-	go s.notifyWatch(ctx, t)
+	go s.watches.notify(t)
 
 	return t, nil
 }
@@ -73,14 +71,16 @@ func (s *Storage[T]) Get(
 	ctx context.Context,
 	id string,
 ) (T, error) {
-	log.Printf("waiting to get %s", id)
+	var t T
+	log.Printf("waiting to get %T %s", t, id)
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("getting %s", id)
+	log.Printf("getting %T %s", t, id)
 
-	t, ok := s.data[id]
+	var ok bool
+	t, ok = s.data[id]
 	if !ok {
 		return t, status.Error(codes.NotFound, "not found")
 	}
@@ -92,30 +92,22 @@ func (s *Storage[T]) Watch(
 	ctx context.Context,
 	id *string,
 ) (<-chan T, error) {
+	var t T
+	log.Printf("waiting to watch %T %+v", t, id)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	var t T
-	log.Printf("opening watch for %T", t)
+	log.Printf("watching %T %+v", t, id)
 
 	c := make(chan T, 1)
-	watchID := fmt.Sprintf("%x", s.r.Uint64())
-	s.watches.Store(watchID, &watchContext[T]{
-		id: id,
-		c:  c,
-	})
+	s.watches.add(ctx, id, c)
 
 	if id != nil {
 		if t, ok := s.data[*id]; ok {
 			c <- t
 		}
 	}
-
-	go func() {
-		<-ctx.Done()
-		s.watches.Delete(watchID)
-		close(c)
-	}()
 
 	return c, nil
 }
@@ -140,10 +132,12 @@ func (s *Storage[T]) Update(
 	ctx context.Context,
 	t T,
 ) (T, error) {
+	log.Printf("waiting to update %T %+v", t, t)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("updating %#v", t)
+	log.Printf("updating %T %+v", t, t)
 
 	id := t.ID()
 	if _, ok := s.data[id]; !ok {
@@ -153,7 +147,7 @@ func (s *Storage[T]) Update(
 	t.SetUpdatedTime(time.Now())
 
 	s.data[id] = t
-	go s.notifyWatch(ctx, t)
+	go s.watches.notify(t)
 
 	return t, nil
 }
@@ -162,12 +156,16 @@ func (s *Storage[T]) Delete(
 	ctx context.Context,
 	id string,
 ) (T, error) {
+	var t T
+	log.Printf("waiting to delete %T %+v", t, t)
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("deleting %s", id)
+	log.Printf("deleting %T %+v", t, t)
 
-	t, ok := s.data[id]
+	var ok bool
+	t, ok = s.data[id]
 	if !ok {
 		return t, status.Error(codes.NotFound, "not found")
 	}
@@ -175,19 +173,4 @@ func (s *Storage[T]) Delete(
 	delete(s.data, id)
 
 	return t, nil
-}
-
-func (s *Storage[T]) notifyWatch(
-	ctx context.Context,
-	t T,
-) {
-	log.Printf("kicking watch for %#v", t)
-
-	s.watches.Range(func(key, val any) bool {
-		watchCtx := val.(*watchContext[T])
-		if watchCtx.id == nil || *watchCtx.id == t.ID() {
-			watchCtx.c <- t
-		}
-		return true
-	})
 }

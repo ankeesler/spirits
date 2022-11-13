@@ -156,9 +156,19 @@ func streamLogFunc(
 	srv interface{}, ss grpc.ServerStream,
 	info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	log.Printf("stream req: %s", info.FullMethod)
-	err := handler(srv, ss)
+	err := handler(srv, &loggingStream{info: info, ServerStream: ss})
 	log.Printf("stream rsp: %s: %v", info.FullMethod, err)
 	return err
+}
+
+type loggingStream struct {
+	info *grpc.StreamServerInfo
+	grpc.ServerStream
+}
+
+func (l *loggingStream) SendMsg(m interface{}) error {
+	log.Printf("stream rsp: %s: %v...", l.info.FullMethod, textproto(m))
+	return l.ServerStream.SendMsg(m)
 }
 
 func textproto(i any) string {

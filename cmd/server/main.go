@@ -18,6 +18,8 @@ var (
 )
 
 func main() {
+	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
+
 	flag.Parse()
 
 	var port int

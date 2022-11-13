@@ -88,7 +88,7 @@ func TestUpdateSpirit(t *testing.T) {
 	}
 	createRsp, err := clients.spirit.CreateSpirit(state.ctx, &api.CreateSpiritRequest{Spirit: spirit})
 	if err != nil {
-		t.Error("update spirit", err)
+		t.Fatal("update spirit", err)
 	}
 
 	createRsp.GetSpirit().Name = "some-other-name"

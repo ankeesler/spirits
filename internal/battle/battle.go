@@ -113,7 +113,7 @@ func (b *Battle) HasNext() bool {
 	return healthyTeams > 1
 }
 
-func (b *Battle) Next() (*Spirit, []*Spirit, [][]*Spirit) {
+func (b *Battle) Next() (*Spirit, []*Spirit, [][]*Spirit, bool) {
 	b.turns++
 
 	me := b.queue.Next()
@@ -126,7 +126,7 @@ func (b *Battle) Next() (*Spirit, []*Spirit, [][]*Spirit) {
 		}
 	}
 
-	return me, us, them
+	return me, us, them, me.Intelligence() == SpiritIntelligenceHuman
 }
 
 func (b *Battle) PeekNext() *Spirit {

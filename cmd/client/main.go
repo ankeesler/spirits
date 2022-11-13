@@ -281,30 +281,156 @@ var m = menu.Menu{
 			return ctx, nil
 		}),
 	},
+	{
+		Title: "Start Demo Human Battle",
+		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+			state := getState(ctx)
+
+			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+			if err != nil {
+				return ctx, fmt.Errorf("create battle: %w", err)
+			}
+			battleID := createBattleRsp.GetBattle().GetMeta().GetId()
+			fmt.Fprintln(io.Out, "Created battle")
+			time.Sleep(time.Second * 4)
+
+			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+				Name: stringPtr("zombie"),
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("list spirits: %w", err)
+			}
+			if len(listSpiritsRsp.GetSpirits()) != 1 {
+				return ctx, fmt.Errorf("wanted 1 spirit, got %s", listSpiritsRsp.GetSpirits())
+			}
+			zombieSpirit := listSpiritsRsp.GetSpirits()[0]
+
+			teams := []struct {
+				name      string
+				spiritIDs []string
+			}{
+				{
+					name:      "a",
+					spiritIDs: []string{zombieSpirit.GetMeta().GetId()},
+				},
+				{
+					name:      "b",
+					spiritIDs: []string{zombieSpirit.GetMeta().GetId()},
+				},
+			}
+			for _, team := range teams {
+				if _, err := state.clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+					BattleId: battleID,
+					TeamName: team.name,
+				}); err != nil {
+					return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
+				}
+				fmt.Fprintf(io.Out, "Added %s battle team\n", team.name)
+				time.Sleep(time.Second * 4)
+
+				for _, spiritID := range team.spiritIDs {
+					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+						BattleId:     battleID,
+						TeamName:     team.name,
+						SpiritId:     spiritID,
+						Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
+						Seed:         time.Now().Unix(),
+					}); err != nil {
+						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
+					}
+
+					fmt.Fprintf(io.Out, "Added %s battle team spirit\n", team.name)
+					time.Sleep(time.Second * 4)
+				}
+			}
+
+			watchCtx, cancel := context.WithCancel(ctx)
+			defer cancel()
+			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+				Id: battleID,
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("watch battle: %w", err)
+			}
+			fmt.Fprintf(io.Out, "Watched battle\n")
+			time.Sleep(time.Second * 4)
+
+			wg := sync.WaitGroup{}
+
+			wg.Add(1)
+			go func() {
+				for {
+					battle := watchBattle(watchCtx, io, watchStream)
+					if battle == nil {
+						break
+					}
+
+					if _, err := menu.Input(io, "Press any button to call next action"); err != nil {
+						fmt.Fprintln(io.Out, "input:", err)
+						break
+					}
+
+					if _, err := state.clients.battle.CallAction(watchCtx, &api.CallActionRequest{
+						BattleId:        battle.GetMeta().GetId(),
+						SpiritId:        battle.GetNextSpiritIds()[0],
+						Turn:            battle.GetTurns(),
+						ActionName:      "attack",
+						TargetSpiritIds: []string{zombieSpirit.Meta.GetId()},
+					}); err != nil {
+						fmt.Fprintln(io.Out, "call action:", err)
+						break
+					}
+
+					fmt.Fprintf(io.Out, "Called action")
+					time.Sleep(time.Second * 4)
+				}
+				wg.Done()
+			}()
+
+			if _, err := state.clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+				Id: battleID,
+			}); err != nil {
+				return ctx, fmt.Errorf("start battle: %w", err)
+			}
+			fmt.Fprintf(io.Out, "Started battle\n")
+			time.Sleep(time.Second * 4)
+
+			wg.Wait()
+
+			return ctx, nil
+		}),
+	},
 }
 
-func watchBattle(ctx context.Context, io *menu.IO, stream api.BattleService_WatchBattleClient) {
+func watchBattle(ctx context.Context, io *menu.IO, stream api.BattleService_WatchBattleClient) *api.Battle {
+	c := make(chan *api.Battle)
+	go func() {
+		for {
+			rsp, err := stream.Recv()
+			if err != nil {
+				fmt.Fprintln(io.Out, "watch battle error:", err)
+				close(c)
+				return
+			}
+			c <- rsp.GetBattle()
+		}
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Fprintf(io.Out, "watch battle closed (client): %s\n", ctx.Err().Error())
-			return
-		default:
-		}
-
-		rsp, err := stream.Recv()
-		if err != nil {
-			fmt.Fprintf(io.Out, "watch battle closed (server): %s", err.Error())
-			return
-		}
-
-		fmt.Fprint(io.Out, "watch battle: ", prototext.MarshalOptions{
-			Multiline: true,
-		}.Format(rsp))
-
-		switch rsp.GetBattle().GetState() {
-		case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
-			return
+			fmt.Fprintln(io.Out, "watch battle closed (client):", ctx.Err())
+			return nil
+		case battle, ok := <-c:
+			if !ok {
+				return nil
+			}
+			switch battle.GetState() {
+			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
+				return nil
+			case api.BattleState_BATTLE_STATE_WAITING:
+				return battle
+			}
 		}
 	}
 }
