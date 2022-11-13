@@ -13,13 +13,14 @@ func TestAutoBattle(t *testing.T) {
 	state := startServer(t)
 	clients := state.clients
 
-	// Create battle.
+	t.Log("creating battle...")
 	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &api.CreateBattleRequest{})
 	if err != nil {
 		t.Fatal("create battle:", err)
 	}
 	battleID := createBattleRsp.GetBattle().GetMeta().GetId()
 
+	t.Log("finding spirits...")
 	listSpiritsRsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
 		Name: stringPtr("zombie"),
 	})
@@ -45,6 +46,7 @@ func TestAutoBattle(t *testing.T) {
 		},
 	}
 	for _, team := range teams {
+		t.Logf("adding battle team %s...", team.name)
 		if _, err := clients.battle.AddBattleTeam(state.ctx, &api.AddBattleTeamRequest{
 			BattleId: battleID,
 			TeamName: team.name,
@@ -53,6 +55,7 @@ func TestAutoBattle(t *testing.T) {
 		}
 
 		for _, spiritID := range team.spiritIDs {
+			t.Logf("adding battle team spirit to %s...", team.name)
 			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &api.AddBattleTeamSpiritRequest{
 				BattleId:     battleID,
 				TeamName:     team.name,
@@ -65,6 +68,7 @@ func TestAutoBattle(t *testing.T) {
 		}
 	}
 
+	t.Log("watching battle...")
 	watchStream, err := clients.battle.WatchBattle(state.ctx, &api.WatchBattleRequest{
 		Id: battleID,
 	})
@@ -81,6 +85,7 @@ func TestAutoBattle(t *testing.T) {
 		wg.Done()
 	}()
 
+	t.Log("starting battle...")
 	if _, err := clients.battle.StartBattle(state.ctx, &api.StartBattleRequest{
 		Id: battleID,
 	}); err != nil {
@@ -202,6 +207,7 @@ func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_Wat
 	}()
 
 	for {
+		t.Log("watching...")
 		select {
 		case <-ctx.Done():
 			t.Error("watch battle closed (client):", ctx.Err())
@@ -209,6 +215,7 @@ func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_Wat
 		case battle, ok := <-c:
 			if !ok {
 				t.Error("rx goroutine failed with error:", cErr)
+				return nil
 			}
 			switch battle.GetState() {
 			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:

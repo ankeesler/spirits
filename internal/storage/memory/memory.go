@@ -45,12 +45,12 @@ func (s *Storage[T]) Create(
 	ctx context.Context,
 	t T,
 ) (T, error) {
-	log.Printf("waiting to create %T %+v", t, t)
+	log.Printf("waiting to create %T %s", t, t.ID())
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("creating %T %+v", t, t)
+	log.Printf("creating %T %s", t, t.ID())
 
 	id := fmt.Sprintf("%x", s.r.Uint64())
 	if _, ok := s.data[id]; ok {
@@ -100,8 +100,7 @@ func (s *Storage[T]) Watch(
 
 	log.Printf("watching %T %+v", t, id)
 
-	c := make(chan T, 1)
-	s.watches.add(ctx, id, c)
+	c := s.watches.add(ctx, id)
 
 	if id != nil {
 		if t, ok := s.data[*id]; ok {
@@ -132,12 +131,12 @@ func (s *Storage[T]) Update(
 	ctx context.Context,
 	t T,
 ) (T, error) {
-	log.Printf("waiting to update %T %+v", t, t)
+	log.Printf("waiting to update %T %s", t, t.ID())
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("updating %T %+v", t, t)
+	log.Printf("updating %T %s", t, t.ID())
 
 	id := t.ID()
 	if _, ok := s.data[id]; !ok {
@@ -157,12 +156,12 @@ func (s *Storage[T]) Delete(
 	id string,
 ) (T, error) {
 	var t T
-	log.Printf("waiting to delete %T %+v", t, t)
+	log.Printf("waiting to delete %T %s", t, id)
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("deleting %T %+v", t, t)
+	log.Printf("deleting %T %s", t, id)
 
 	var ok bool
 	t, ok = s.data[id]

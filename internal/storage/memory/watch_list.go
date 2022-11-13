@@ -1,34 +1,35 @@
 package memory
 
 import (
-	"container/list"
 	"context"
+	"fmt"
 	"log"
+	"math/rand"
 	"path/filepath"
 	"runtime"
 	"sync"
 )
 
 type watchContext[T Meta] struct {
-	id *string
-	c  chan<- T
+	id  *string
+	ctx context.Context
+	c   chan T
+
+	source string
 }
 
 type watchList[T Meta] struct {
-	l    *list.List
+	m    map[string]*watchContext[T]
 	lock sync.Mutex
 }
 
 func newWatchList[T Meta]() *watchList[T] {
 	return &watchList[T]{
-		l: list.New(),
+		m: make(map[string]*watchContext[T]),
 	}
 }
 
-func (l *watchList[T]) add(ctx context.Context, id *string, c chan<- T) {
-	l.lock.Lock()
-	defer l.lock.Unlock()
-
+func (l *watchList[T]) add(ctx context.Context, id *string) chan T {
 	_, callerFile, callerLine, ok := runtime.Caller(2)
 	if !ok {
 		callerFile = "???"
@@ -38,38 +39,47 @@ func (l *watchList[T]) add(ctx context.Context, id *string, c chan<- T) {
 	}
 
 	var t T
-	log.Printf("opening watch for %T and id %+v from %s:%d",
+	log.Printf("waiting to open watch for %T and id %+v from %s:%d",
 		t, id, callerFile, callerLine)
-
-	e := l.l.PushBack(&watchContext[T]{id: id, c: c})
-	go func() {
-		<-ctx.Done()
-		log.Printf("closing watch for %T and id %+v from %s:%d",
-			t, id, callerFile, callerLine)
-
-		func() {
-			l.lock.Lock()
-			defer l.lock.Unlock()
-
-			l.l.Remove(e)
-		}()
-
-		close(c)
-	}()
-}
-
-func (l *watchList[T]) notify(t T) {
-	log.Printf("kicking watch for %#v", t)
 
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
-	for e := l.l.Front(); e != nil; e = e.Next() {
-		watchCtx := e.Value.(*watchContext[T])
+	log.Printf("opening watch for %T and id %+v from %s:%d",
+		t, id, callerFile, callerLine)
+
+	wc := &watchContext[T]{
+		ctx: ctx,
+		id:  id,
+		c:   make(chan T, 1),
+
+		source: fmt.Sprintf("%s:%d", callerFile, callerLine),
+	}
+	l.m[fmt.Sprintf("%x", rand.Int63())] = wc
+
+	return wc.c
+}
+
+func (l *watchList[T]) notify(t T) {
+	log.Printf("kicking watch for %T %s", t, t.ID())
+
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	var toDelete []string
+	for id, watchCtx := range l.m {
 		if watchCtx.id == nil || *watchCtx.id == t.ID() {
-			log.Printf("about to watch from id %+v", t.ID())
-			watchCtx.c <- t
-			log.Printf("watched from id %+v", t.ID())
+			log.Printf("about to watch id %+v from %s", t.ID(), watchCtx.source)
+			select {
+			case <-watchCtx.ctx.Done():
+				log.Printf("watched was closed for id %+v from %s", t.ID(), watchCtx.source)
+				toDelete = append(toDelete, id)
+			case watchCtx.c <- t:
+				log.Printf("watched id %+v from %s", t.ID(), watchCtx.source)
+			}
 		}
+	}
+	for _, toDeleteID := range toDelete {
+		delete(l.m, toDeleteID)
 	}
 }

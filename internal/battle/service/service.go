@@ -73,15 +73,21 @@ func (s *Service) WatchBattle(
 		return err
 	}
 
-	for battle := range c {
-		if err := watch.Send(&api.WatchBattleResponse{
-			Battle: convertbattle.ToAPI(battle),
-		}); err != nil {
-			return err
+	for {
+		select {
+		case <-watch.Context().Done():
+			return nil
+		case battle, ok := <-c:
+			if !ok {
+				break
+			}
+			if err := watch.Send(&api.WatchBattleResponse{
+				Battle: convertbattle.ToAPI(battle),
+			}); err != nil {
+				return err
+			}
 		}
 	}
-
-	return nil
 }
 
 func (s *Service) ListBattles(
