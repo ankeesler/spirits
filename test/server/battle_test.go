@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 )
 
 func TestAutoBattle(t *testing.T) {
@@ -175,6 +175,7 @@ func TestManualBattle(t *testing.T) {
 				TargetSpiritIds: []string{zombieSpirit.Meta.GetId()},
 			}); err != nil {
 				t.Error("call action:", err)
+				break
 			}
 		}
 		wg.Done()

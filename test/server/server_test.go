@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/internal/server"
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -26,7 +26,7 @@ type clients struct {
 }
 
 func startServer(t *testing.T) *state {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	// cancel called below in t.Cleanup()
 
 	port, ok := os.LookupEnv("SPIRITS_TEST_PORT")

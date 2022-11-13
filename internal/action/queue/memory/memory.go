@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 )
 
 type Queue struct {
@@ -54,17 +55,20 @@ func (q *Queue) Post(
 	actionName string,
 	targetSpiritIDs []string,
 ) error {
-	select {
-	case q.c(battleID, spiritID, turn) <- &actionCall{actionName: actionName, targetSpiritIDs: targetSpiritIDs}:
-	default:
-		return fmt.Errorf(
-			"no one listening for battleID %q spiritID %q turn %d actions",
-			battleID,
-			spiritID,
-			turn,
-		)
+	for retry := 0; retry < 3; retry++ {
+		select {
+		case q.c(battleID, spiritID, turn) <- &actionCall{actionName: actionName, targetSpiritIDs: targetSpiritIDs}:
+			return nil
+		default:
+			time.Sleep(time.Second)
+		}
 	}
-	return nil
+
+	return fmt.Errorf(
+		"no one listening for battleID %q spiritID %q turn %d actions",
+		battleID,
+		spiritID,
+		turn)
 }
 
 func (q *Queue) c(

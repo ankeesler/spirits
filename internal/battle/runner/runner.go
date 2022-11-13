@@ -119,7 +119,7 @@ func (r *Runner) runBattle(ctx context.Context, battle *battlepkg.Battle) error 
 		var err error
 		ctx, err = me.Run(ctx, us, them)
 		if err != nil {
-			return fmt.Errorf("spirit %v run: %w", me, err)
+			return fmt.Errorf("spirit %s run: %w", me.ID(), err)
 		}
 	}
 }
