@@ -1,10 +1,8 @@
 syntax = "proto3";
 
-package spirits.meta;
+package spirits.v1;
 
 import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/ankeesler/spirits0/internal/api";
 
 // Meta holds auxillary information about a resource.
 message Meta {
@@ -25,7 +23,7 @@ message Meta {
 }
 
 // Identity describes some sort of actor doing something (e.g., a human creating
-// a spirits.spirit.Spirit, a machine cancelling a spirits.spirit.Battle, etc.).
+// a Spirit, a machine cancelling a Battle, etc.).
 message Identity {
   string principle = 1;
 }

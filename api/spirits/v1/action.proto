@@ -1,10 +1,8 @@
 syntax = "proto3";
 
-package spirits;
+package spirits.v1;
 
-import "meta.proto";
-
-option go_package = "github.com/ankeesler/spirits0/internal/api";
+import "spirits/v1/meta.proto";
 
 // ActionService provides a simple CRUD API for Action's.
 service ActionService {
@@ -67,7 +65,7 @@ message DeleteActionResponse {
 // An Action is applied to zero or more Spirit's on a Battle turn.
 message Action {
   // Metadata about this Action.
-  spirits.meta.Meta meta = 1;
+  Meta meta = 1;
 
   // Description of the Action.
   string description = 2;

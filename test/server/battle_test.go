@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 )
 
 func TestAutoBattle(t *testing.T) {
@@ -14,14 +14,14 @@ func TestAutoBattle(t *testing.T) {
 	clients := state.clients
 
 	t.Log("creating battle...")
-	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &api.CreateBattleRequest{})
+	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &spiritsv1.CreateBattleRequest{})
 	if err != nil {
 		t.Fatal("create battle:", err)
 	}
 	battleID := createBattleRsp.GetBattle().GetMeta().GetId()
 
 	t.Log("finding spirits...")
-	listSpiritsRsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+	listSpiritsRsp, err := clients.spirit.ListSpirits(context.Background(), &spiritsv1.ListSpiritsRequest{
 		Name: stringPtr("zombie"),
 	})
 	if err != nil {
@@ -47,7 +47,7 @@ func TestAutoBattle(t *testing.T) {
 	}
 	for _, team := range teams {
 		t.Logf("adding battle team %s...", team.name)
-		if _, err := clients.battle.AddBattleTeam(state.ctx, &api.AddBattleTeamRequest{
+		if _, err := clients.battle.AddBattleTeam(state.ctx, &spiritsv1.AddBattleTeamRequest{
 			BattleId: battleID,
 			TeamName: team.name,
 		}); err != nil {
@@ -56,11 +56,11 @@ func TestAutoBattle(t *testing.T) {
 
 		for _, spiritID := range team.spiritIDs {
 			t.Logf("adding battle team spirit to %s...", team.name)
-			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &api.AddBattleTeamSpiritRequest{
+			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &spiritsv1.AddBattleTeamSpiritRequest{
 				BattleId:     battleID,
 				TeamName:     team.name,
 				SpiritId:     spiritID,
-				Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
+				Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
 				Seed:         time.Now().Unix(),
 			}); err != nil {
 				t.Fatalf("add battle team %s: %v", team.name, err)
@@ -69,7 +69,7 @@ func TestAutoBattle(t *testing.T) {
 	}
 
 	t.Log("watching battle...")
-	watchStream, err := clients.battle.WatchBattle(state.ctx, &api.WatchBattleRequest{
+	watchStream, err := clients.battle.WatchBattle(state.ctx, &spiritsv1.WatchBattleRequest{
 		Id: battleID,
 	})
 	if err != nil {
@@ -86,7 +86,7 @@ func TestAutoBattle(t *testing.T) {
 	}()
 
 	t.Log("starting battle...")
-	if _, err := clients.battle.StartBattle(state.ctx, &api.StartBattleRequest{
+	if _, err := clients.battle.StartBattle(state.ctx, &spiritsv1.StartBattleRequest{
 		Id: battleID,
 	}); err != nil {
 		t.Fatal("start battle:", err)
@@ -100,13 +100,13 @@ func TestManualBattle(t *testing.T) {
 	clients := state.clients
 
 	// Create battle.
-	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &api.CreateBattleRequest{})
+	createBattleRsp, err := clients.battle.CreateBattle(state.ctx, &spiritsv1.CreateBattleRequest{})
 	if err != nil {
 		t.Fatal("create battle:", err)
 	}
 	battleID := createBattleRsp.GetBattle().GetMeta().GetId()
 
-	listSpiritsRsp, err := clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+	listSpiritsRsp, err := clients.spirit.ListSpirits(context.Background(), &spiritsv1.ListSpiritsRequest{
 		Name: stringPtr("zombie"),
 	})
 	if err != nil {
@@ -131,7 +131,7 @@ func TestManualBattle(t *testing.T) {
 		},
 	}
 	for _, team := range teams {
-		if _, err := clients.battle.AddBattleTeam(state.ctx, &api.AddBattleTeamRequest{
+		if _, err := clients.battle.AddBattleTeam(state.ctx, &spiritsv1.AddBattleTeamRequest{
 			BattleId: battleID,
 			TeamName: team.name,
 		}); err != nil {
@@ -139,11 +139,11 @@ func TestManualBattle(t *testing.T) {
 		}
 
 		for _, spiritID := range team.spiritIDs {
-			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &api.AddBattleTeamSpiritRequest{
+			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &spiritsv1.AddBattleTeamSpiritRequest{
 				BattleId:     battleID,
 				TeamName:     team.name,
 				SpiritId:     spiritID,
-				Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
+				Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
 				Seed:         time.Now().Unix(),
 			}); err != nil {
 				t.Fatalf("add battle team %s: %v", team.name, err)
@@ -151,7 +151,7 @@ func TestManualBattle(t *testing.T) {
 		}
 	}
 
-	watchStream, err := clients.battle.WatchBattle(state.ctx, &api.WatchBattleRequest{
+	watchStream, err := clients.battle.WatchBattle(state.ctx, &spiritsv1.WatchBattleRequest{
 		Id: battleID,
 	})
 	if err != nil {
@@ -167,7 +167,7 @@ func TestManualBattle(t *testing.T) {
 				break
 			}
 
-			if _, err := clients.battle.CallAction(state.ctx, &api.CallActionRequest{
+			if _, err := clients.battle.CallAction(state.ctx, &spiritsv1.CallActionRequest{
 				BattleId:        battle.GetMeta().GetId(),
 				SpiritId:        battle.GetNextSpiritIds()[0],
 				Turn:            battle.GetTurns(),
@@ -180,7 +180,7 @@ func TestManualBattle(t *testing.T) {
 		wg.Done()
 	}()
 
-	if _, err := clients.battle.StartBattle(state.ctx, &api.StartBattleRequest{
+	if _, err := clients.battle.StartBattle(state.ctx, &spiritsv1.StartBattleRequest{
 		Id: battleID,
 	}); err != nil {
 		t.Fatal("start battle:", err)
@@ -189,10 +189,10 @@ func TestManualBattle(t *testing.T) {
 	wg.Wait()
 }
 
-func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_WatchBattleClient) *api.Battle {
+func watchBattle(ctx context.Context, t *testing.T, stream spiritsv1.BattleService_WatchBattleClient) *spiritsv1.Battle {
 	t.Helper()
 
-	c := make(chan *api.Battle)
+	c := make(chan *spiritsv1.Battle)
 	var cErr error
 	go func() {
 		for {
@@ -218,9 +218,9 @@ func watchBattle(ctx context.Context, t *testing.T, stream api.BattleService_Wat
 				return nil
 			}
 			switch battle.GetState() {
-			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
+			case spiritsv1.BattleState_BATTLE_STATE_FINISHED, spiritsv1.BattleState_BATTLE_STATE_CANCELLED, spiritsv1.BattleState_BATTLE_STATE_ERROR:
 				return nil
-			case api.BattleState_BATTLE_STATE_WAITING:
+			case spiritsv1.BattleState_BATTLE_STATE_WAITING:
 				return battle
 			}
 		}

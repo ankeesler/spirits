@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/internal/server"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -21,8 +21,8 @@ type state struct {
 }
 
 type clients struct {
-	spirit api.SpiritServiceClient
-	battle api.BattleServiceClient
+	spirit spiritsv1.SpiritServiceClient
+	battle spiritsv1.BattleServiceClient
 }
 
 func startServer(t *testing.T) *state {
@@ -67,8 +67,8 @@ func startServer(t *testing.T) *state {
 	return &state{
 		ctx: ctx,
 		clients: &clients{
-			spirit: api.NewSpiritServiceClient(conn),
-			battle: api.NewBattleServiceClient(conn),
+			spirit: spiritsv1.NewSpiritServiceClient(conn),
+			battle: spiritsv1.NewBattleServiceClient(conn),
 		},
 	}
 }

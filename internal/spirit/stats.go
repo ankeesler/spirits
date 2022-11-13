@@ -1,6 +1,6 @@
 package spirit
 
-import "github.com/ankeesler/spirits/pkg/api"
+import "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 
 type stats struct {
 	health               int64
@@ -33,8 +33,8 @@ func (s *stats) SetMentalConstitution(mentalConstitution int64) {
 func (s *stats) Agility() int64           { return s.agility }
 func (s *stats) SetAgility(agility int64) { s.agility = agility }
 
-func (s *stats) ToAPI() *api.SpiritStats {
-	return &api.SpiritStats{
+func (s *stats) ToAPI() *spiritsv1.SpiritStats {
+	return &spiritsv1.SpiritStats{
 		Health: s.Health(),
 
 		PhysicalPower:        s.PhysicalPower(),

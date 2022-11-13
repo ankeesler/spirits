@@ -10,15 +10,15 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/internal/menu"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/prototext"
 )
 
 type clients struct {
-	spirit api.SpiritServiceClient
-	battle api.BattleServiceClient
+	spirit spiritsv1.SpiritServiceClient
+	battle spiritsv1.BattleServiceClient
 }
 
 type state struct {
@@ -48,7 +48,7 @@ var m = menu.Menu{
 		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 			state := getState(ctx)
 
-			rsp, err := state.clients.spirit.ListSpirits(ctx, &api.ListSpiritsRequest{})
+			rsp, err := state.clients.spirit.ListSpirits(ctx, &spiritsv1.ListSpiritsRequest{})
 			if err != nil {
 				return ctx, fmt.Errorf("list spirits: %w", err)
 			}
@@ -65,7 +65,7 @@ var m = menu.Menu{
 		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 			state := getState(ctx)
 
-			rsp, err := state.clients.battle.ListBattles(ctx, &api.ListBattlesRequest{})
+			rsp, err := state.clients.battle.ListBattles(ctx, &spiritsv1.ListBattlesRequest{})
 			if err != nil {
 				return ctx, fmt.Errorf("list battles: %w", err)
 			}
@@ -82,7 +82,7 @@ var m = menu.Menu{
 		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 			state := getState(ctx)
 
-			rsp, err := state.clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+			rsp, err := state.clients.battle.CreateBattle(ctx, &spiritsv1.CreateBattleRequest{})
 			if err != nil {
 				return ctx, fmt.Errorf("create battle: %w", err)
 			}
@@ -104,7 +104,7 @@ var m = menu.Menu{
 							return ctx, err
 						}
 
-						rsp, err := state.clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+						rsp, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
 							BattleId: state.battleID,
 							TeamName: teamName,
 						})
@@ -124,7 +124,7 @@ var m = menu.Menu{
 								Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 									state := getState(ctx)
 
-									rsp, err := state.clients.spirit.ListSpirits(ctx, &api.ListSpiritsRequest{})
+									rsp, err := state.clients.spirit.ListSpirits(ctx, &spiritsv1.ListSpiritsRequest{})
 									if err != nil {
 										return ctx, fmt.Errorf("list spirits: %w", err)
 									}
@@ -135,11 +135,11 @@ var m = menu.Menu{
 											Title: spirit.GetName(),
 											Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 												state := getState(ctx)
-												rsp, err := state.clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+												rsp, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
 													BattleId:     state.battleID,
 													TeamName:     state.teamName,
 													SpiritId:     spirit.GetMeta().GetId(),
-													Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
+													Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
 													Seed:         time.Now().Unix(),
 												})
 												if err != nil {
@@ -168,7 +168,7 @@ var m = menu.Menu{
 
 						watchCtx, cancel := context.WithCancel(ctx)
 						defer cancel()
-						watchStream, err := state.clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+						watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
 							Id: state.battleID,
 						})
 						if err != nil {
@@ -183,7 +183,7 @@ var m = menu.Menu{
 							wg.Done()
 						}()
 
-						if _, err := state.clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+						if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
 							Id: state.battleID,
 						}); err != nil {
 							return ctx, fmt.Errorf("start battle: %w", err)
@@ -202,13 +202,13 @@ var m = menu.Menu{
 		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 			state := getState(ctx)
 
-			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &spiritsv1.CreateBattleRequest{})
 			if err != nil {
 				return ctx, fmt.Errorf("create battle: %w", err)
 			}
 			battleID := createBattleRsp.GetBattle().GetMeta().GetId()
 
-			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &spiritsv1.ListSpiritsRequest{
 				Name: stringPtr("zombie"),
 			})
 			if err != nil {
@@ -233,7 +233,7 @@ var m = menu.Menu{
 				},
 			}
 			for _, team := range teams {
-				if _, err := state.clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+				if _, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
 					BattleId: battleID,
 					TeamName: team.name,
 				}); err != nil {
@@ -241,11 +241,11 @@ var m = menu.Menu{
 				}
 
 				for _, spiritID := range team.spiritIDs {
-					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
 						BattleId:     battleID,
 						TeamName:     team.name,
 						SpiritId:     spiritID,
-						Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
+						Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
 						Seed:         time.Now().Unix(),
 					}); err != nil {
 						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
@@ -255,7 +255,7 @@ var m = menu.Menu{
 
 			watchCtx, cancel := context.WithCancel(ctx)
 			defer cancel()
-			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
 				Id: battleID,
 			})
 			if err != nil {
@@ -270,7 +270,7 @@ var m = menu.Menu{
 				wg.Done()
 			}()
 
-			if _, err := state.clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+			if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
 				Id: battleID,
 			}); err != nil {
 				return ctx, fmt.Errorf("start battle: %w", err)
@@ -286,7 +286,7 @@ var m = menu.Menu{
 		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 			state := getState(ctx)
 
-			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &api.CreateBattleRequest{})
+			createBattleRsp, err := state.clients.battle.CreateBattle(ctx, &spiritsv1.CreateBattleRequest{})
 			if err != nil {
 				return ctx, fmt.Errorf("create battle: %w", err)
 			}
@@ -294,7 +294,7 @@ var m = menu.Menu{
 			fmt.Fprintln(io.Out, "Created battle")
 			time.Sleep(time.Second * 4)
 
-			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &api.ListSpiritsRequest{
+			listSpiritsRsp, err := state.clients.spirit.ListSpirits(context.Background(), &spiritsv1.ListSpiritsRequest{
 				Name: stringPtr("zombie"),
 			})
 			if err != nil {
@@ -319,7 +319,7 @@ var m = menu.Menu{
 				},
 			}
 			for _, team := range teams {
-				if _, err := state.clients.battle.AddBattleTeam(ctx, &api.AddBattleTeamRequest{
+				if _, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
 					BattleId: battleID,
 					TeamName: team.name,
 				}); err != nil {
@@ -329,11 +329,11 @@ var m = menu.Menu{
 				time.Sleep(time.Second * 4)
 
 				for _, spiritID := range team.spiritIDs {
-					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &api.AddBattleTeamSpiritRequest{
+					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
 						BattleId:     battleID,
 						TeamName:     team.name,
 						SpiritId:     spiritID,
-						Intelligence: api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
+						Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
 						Seed:         time.Now().Unix(),
 					}); err != nil {
 						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
@@ -346,7 +346,7 @@ var m = menu.Menu{
 
 			watchCtx, cancel := context.WithCancel(ctx)
 			defer cancel()
-			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &api.WatchBattleRequest{
+			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
 				Id: battleID,
 			})
 			if err != nil {
@@ -370,7 +370,7 @@ var m = menu.Menu{
 						break
 					}
 
-					if _, err := state.clients.battle.CallAction(watchCtx, &api.CallActionRequest{
+					if _, err := state.clients.battle.CallAction(watchCtx, &spiritsv1.CallActionRequest{
 						BattleId:        battle.GetMeta().GetId(),
 						SpiritId:        battle.GetNextSpiritIds()[0],
 						Turn:            battle.GetTurns(),
@@ -387,7 +387,7 @@ var m = menu.Menu{
 				wg.Done()
 			}()
 
-			if _, err := state.clients.battle.StartBattle(ctx, &api.StartBattleRequest{
+			if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
 				Id: battleID,
 			}); err != nil {
 				return ctx, fmt.Errorf("start battle: %w", err)
@@ -402,8 +402,8 @@ var m = menu.Menu{
 	},
 }
 
-func watchBattle(ctx context.Context, io *menu.IO, stream api.BattleService_WatchBattleClient) *api.Battle {
-	c := make(chan *api.Battle)
+func watchBattle(ctx context.Context, io *menu.IO, stream spiritsv1.BattleService_WatchBattleClient) *spiritsv1.Battle {
+	c := make(chan *spiritsv1.Battle)
 	go func() {
 		for {
 			rsp, err := stream.Recv()
@@ -426,9 +426,9 @@ func watchBattle(ctx context.Context, io *menu.IO, stream api.BattleService_Watc
 				return nil
 			}
 			switch battle.GetState() {
-			case api.BattleState_BATTLE_STATE_FINISHED, api.BattleState_BATTLE_STATE_CANCELLED, api.BattleState_BATTLE_STATE_ERROR:
+			case spiritsv1.BattleState_BATTLE_STATE_FINISHED, spiritsv1.BattleState_BATTLE_STATE_CANCELLED, spiritsv1.BattleState_BATTLE_STATE_ERROR:
 				return nil
-			case api.BattleState_BATTLE_STATE_WAITING:
+			case spiritsv1.BattleState_BATTLE_STATE_WAITING:
 				return battle
 			}
 		}
@@ -448,8 +448,8 @@ func main() {
 
 	ctx := setState(context.Background(), &state{
 		clients: &clients{
-			spirit: api.NewSpiritServiceClient(conn),
-			battle: api.NewBattleServiceClient(conn),
+			spirit: spiritsv1.NewSpiritServiceClient(conn),
+			battle: spiritsv1.NewBattleServiceClient(conn),
 		},
 	})
 	if _, err := m.Run(ctx, &menu.IO{In: os.Stdin, Out: os.Stdout}); err != nil {

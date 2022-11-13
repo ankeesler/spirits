@@ -4,14 +4,14 @@ import (
 	convertaction "github.com/ankeesler/spirits/internal/action/convert"
 	convertmeta "github.com/ankeesler/spirits/internal/meta/convert"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 )
 
-func ToAPI(internalSpirit *spiritpkg.Spirit) *api.Spirit {
-	apiSpirit := &api.Spirit{
+func ToAPI(internalSpirit *spiritpkg.Spirit) *spiritsv1.Spirit {
+	apiSpirit := &spiritsv1.Spirit{
 		Meta: convertmeta.ToAPI(internalSpirit.Meta),
 		Name: internalSpirit.Name(),
-		Stats: &api.SpiritStats{
+		Stats: &spiritsv1.SpiritStats{
 			Health:               internalSpirit.Health(),
 			PhysicalPower:        internalSpirit.PhysicalPower(),
 			PhysicalConstitution: internalSpirit.PhysicalConstitution(),
@@ -23,14 +23,14 @@ func ToAPI(internalSpirit *spiritpkg.Spirit) *api.Spirit {
 
 	for _, actionName := range internalSpirit.ActionNames() {
 		internalAction := internalSpirit.Action(actionName)
-		apiSpiritAction := &api.SpiritAction{
+		apiSpiritAction := &spiritsv1.SpiritAction{
 			Name: actionName,
 		}
 
 		if id := internalAction.ID(); len(id) > 0 {
-			apiSpiritAction.Definition = &api.SpiritAction_ActionId{ActionId: id}
+			apiSpiritAction.Definition = &spiritsv1.SpiritAction_ActionId{ActionId: id}
 		} else {
-			apiSpiritAction.Definition = &api.SpiritAction_Inline{
+			apiSpiritAction.Definition = &spiritsv1.SpiritAction_Inline{
 				Inline: convertaction.ToAPI(internalAction),
 			}
 		}

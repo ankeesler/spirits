@@ -6,11 +6,11 @@ import (
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
 	convertmeta "github.com/ankeesler/spirits/internal/meta/convert"
 	convertspirit "github.com/ankeesler/spirits/internal/spirit/convert"
-	"github.com/ankeesler/spirits/pkg/api"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 )
 
-func ToAPI(internalBattle *battlepkg.Battle) *api.Battle {
-	apiBattle := &api.Battle{
+func ToAPI(internalBattle *battlepkg.Battle) *spiritsv1.Battle {
+	apiBattle := &spiritsv1.Battle{
 		Meta:  convertmeta.ToAPI(internalBattle.Meta),
 		State: stateToAPI(internalBattle.State()),
 	}
@@ -33,13 +33,13 @@ func ToAPI(internalBattle *battlepkg.Battle) *api.Battle {
 	return apiBattle
 }
 
-func teamToAPI(teamName string, internalTeamSpirits []*battlepkg.Spirit, apiTeams *[]*api.BattleTeam) {
-	apiBattleTeam := &api.BattleTeam{
+func teamToAPI(teamName string, internalTeamSpirits []*battlepkg.Spirit, apiTeams *[]*spiritsv1.BattleTeam) {
+	apiBattleTeam := &spiritsv1.BattleTeam{
 		Name: teamName,
 	}
 
 	for _, internalTeamSpirit := range internalTeamSpirits {
-		apiBattleTeam.Spirits = append(apiBattleTeam.Spirits, &api.BattleTeamSpirit{
+		apiBattleTeam.Spirits = append(apiBattleTeam.Spirits, &spiritsv1.BattleTeamSpirit{
 			Spirit:       convertspirit.ToAPI(internalTeamSpirit.Spirit),
 			Intelligence: spiritIntelligenceToAPI(internalTeamSpirit.Intelligence()),
 			Seed:         internalTeamSpirit.Seed(),
@@ -49,22 +49,20 @@ func teamToAPI(teamName string, internalTeamSpirits []*battlepkg.Spirit, apiTeam
 	*apiTeams = append(*apiTeams, apiBattleTeam)
 }
 
-func stateToAPI(internalState battlepkg.State) api.BattleState {
+func stateToAPI(internalState battlepkg.State) spiritsv1.BattleState {
 	switch internalState {
 	case battlepkg.StatePending:
-		return api.BattleState_BATTLE_STATE_PENDING
+		return spiritsv1.BattleState_BATTLE_STATE_PENDING
 	case battlepkg.StateStarted:
-		return api.BattleState_BATTLE_STATE_STARTED
-	case battlepkg.StateRunning:
-		return api.BattleState_BATTLE_STATE_RUNNING
+		return spiritsv1.BattleState_BATTLE_STATE_STARTED
 	case battlepkg.StateWaiting:
-		return api.BattleState_BATTLE_STATE_WAITING
+		return spiritsv1.BattleState_BATTLE_STATE_WAITING
 	case battlepkg.StateFinished:
-		return api.BattleState_BATTLE_STATE_FINISHED
+		return spiritsv1.BattleState_BATTLE_STATE_FINISHED
 	case battlepkg.StateCancelled:
-		return api.BattleState_BATTLE_STATE_CANCELLED
+		return spiritsv1.BattleState_BATTLE_STATE_CANCELLED
 	case battlepkg.StateError:
-		return api.BattleState_BATTLE_STATE_ERROR
+		return spiritsv1.BattleState_BATTLE_STATE_ERROR
 	default:
 		panic(fmt.Sprintf("unknown battle state type: %s", internalState))
 	}
@@ -72,12 +70,12 @@ func stateToAPI(internalState battlepkg.State) api.BattleState {
 
 func spiritIntelligenceToAPI(
 	internalSpiritIntelligence battlepkg.SpiritIntelligence,
-) api.BattleTeamSpiritIntelligence {
+) spiritsv1.BattleTeamSpiritIntelligence {
 	switch internalSpiritIntelligence {
 	case battlepkg.SpiritIntelligenceHuman:
-		return api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN
+		return spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN
 	case battlepkg.SpiritIntelligenceRandom:
-		return api.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM
+		return spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM
 	default:
 		panic(fmt.Sprintf("unknown api spirit intelligence type: %s", internalSpiritIntelligence))
 	}

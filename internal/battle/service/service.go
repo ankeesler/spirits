@@ -5,7 +5,7 @@ import (
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
 	convertbattle "github.com/ankeesler/spirits/internal/battle/convert"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -36,10 +36,10 @@ type Service struct {
 	actionSink   ActionSink
 	actionSource battlepkg.ActionSource
 
-	api.UnimplementedBattleServiceServer
+	spiritsv1.UnimplementedBattleServiceServer
 }
 
-var _ api.BattleServiceServer = &Service{}
+var _ spiritsv1.BattleServiceServer = &Service{}
 
 func New(battleRepo BattleRepo, actionSink ActionSink, actionSource battlepkg.ActionSource) *Service {
 	return &Service{
@@ -51,10 +51,10 @@ func New(battleRepo BattleRepo, actionSink ActionSink, actionSource battlepkg.Ac
 
 func (s *Service) CreateBattle(
 	ctx context.Context,
-	req *api.CreateBattleRequest,
-) (*api.CreateBattleResponse, error) {
-	apiBattle := &api.Battle{
-		State: api.BattleState_BATTLE_STATE_PENDING,
+	req *spiritsv1.CreateBattleRequest,
+) (*spiritsv1.CreateBattleResponse, error) {
+	apiBattle := &spiritsv1.Battle{
+		State: spiritsv1.BattleState_BATTLE_STATE_PENDING,
 	}
 	internalBattle, err := convertbattle.FromAPI(apiBattle, s.actionSource)
 	if err != nil {
@@ -66,12 +66,12 @@ func (s *Service) CreateBattle(
 		return nil, err
 	}
 
-	return &api.CreateBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+	return &spiritsv1.CreateBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) WatchBattle(
-	req *api.WatchBattleRequest,
-	watch api.BattleService_WatchBattleServer,
+	req *spiritsv1.WatchBattleRequest,
+	watch spiritsv1.BattleService_WatchBattleServer,
 ) error {
 	id := req.GetId()
 	c, err := s.battleRepo.Watch(watch.Context(), &id)
@@ -87,7 +87,7 @@ func (s *Service) WatchBattle(
 			if !ok {
 				break
 			}
-			if err := watch.Send(&api.WatchBattleResponse{
+			if err := watch.Send(&spiritsv1.WatchBattleResponse{
 				Battle: convertbattle.ToAPI(battle),
 			}); err != nil {
 				return err
@@ -98,34 +98,34 @@ func (s *Service) WatchBattle(
 
 func (s *Service) ListBattles(
 	ctx context.Context,
-	req *api.ListBattlesRequest,
-) (*api.ListBattlesResponse, error) {
+	req *spiritsv1.ListBattlesRequest,
+) (*spiritsv1.ListBattlesResponse, error) {
 	internalBattles, err := s.battleRepo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
-	var apiBattles []*api.Battle
+	var apiBattles []*spiritsv1.Battle
 	for _, internalBattle := range internalBattles {
 		apiBattles = append(apiBattles, convertbattle.ToAPI(internalBattle))
 	}
-	return &api.ListBattlesResponse{Battles: apiBattles}, nil
+	return &spiritsv1.ListBattlesResponse{Battles: apiBattles}, nil
 }
 
 func (s *Service) AddBattleTeam(
 	ctx context.Context,
-	req *api.AddBattleTeamRequest,
-) (*api.AddBattleTeamResponse, error) {
+	req *spiritsv1.AddBattleTeamRequest,
+) (*spiritsv1.AddBattleTeamResponse, error) {
 	internalBattle, err := s.battleRepo.AddBattleTeam(ctx, req.GetBattleId(), req.GetTeamName())
 	if err != nil {
 		return nil, err
 	}
-	return &api.AddBattleTeamResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+	return &spiritsv1.AddBattleTeamResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) AddBattleTeamSpirit(
 	ctx context.Context,
-	req *api.AddBattleTeamSpiritRequest,
-) (*api.AddBattleTeamSpiritResponse, error) {
+	req *spiritsv1.AddBattleTeamSpiritRequest,
+) (*spiritsv1.AddBattleTeamSpiritResponse, error) {
 	internalBattle, err := s.battleRepo.AddBattleTeamSpirit(
 		ctx, req.GetBattleId(), req.GetTeamName(), req.GetSpiritId(),
 		convertbattle.SpiritIntelligenceFromAPI(req.GetIntelligence()), req.GetSeed(),
@@ -134,13 +134,13 @@ func (s *Service) AddBattleTeamSpirit(
 		return nil, err
 	}
 
-	return &api.AddBattleTeamSpiritResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+	return &spiritsv1.AddBattleTeamSpiritResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) StartBattle(
 	ctx context.Context,
-	req *api.StartBattleRequest,
-) (*api.StartBattleResponse, error) {
+	req *spiritsv1.StartBattleRequest,
+) (*spiritsv1.StartBattleResponse, error) {
 	internalBattle, err := s.battleRepo.UpdateBattleState(
 		ctx,
 		req.GetId(),
@@ -150,13 +150,13 @@ func (s *Service) StartBattle(
 	if err != nil {
 		return nil, err
 	}
-	return &api.StartBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+	return &spiritsv1.StartBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) CancelBattle(
 	ctx context.Context,
-	req *api.CancelBattleRequest,
-) (*api.CancelBattleResponse, error) {
+	req *spiritsv1.CancelBattleRequest,
+) (*spiritsv1.CancelBattleResponse, error) {
 	internalBattle, err := s.battleRepo.UpdateBattleState(
 		ctx,
 		req.GetId(),
@@ -166,17 +166,17 @@ func (s *Service) CancelBattle(
 	if err != nil {
 		return nil, err
 	}
-	return &api.CancelBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
+	return &spiritsv1.CancelBattleResponse{Battle: convertbattle.ToAPI(internalBattle)}, nil
 }
 
 func (s *Service) CallAction(
 	ctx context.Context,
-	req *api.CallActionRequest,
-) (*api.CallActionResponse, error) {
+	req *spiritsv1.CallActionRequest,
+) (*spiritsv1.CallActionResponse, error) {
 	if err := s.actionSink.Post(
 		ctx, req.GetBattleId(), req.GetSpiritId(), req.GetTurn(),
 		req.GetActionName(), req.GetTargetSpiritIds()); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &api.CallActionResponse{}, nil
+	return &spiritsv1.CallActionResponse{}, nil
 }

@@ -1,11 +1,9 @@
 syntax = "proto3";
 
-package spirits;
+package spirits.v1;
 
-import "action.proto";
-import "meta.proto";
-
-option go_package = "github.com/ankeesler/spirits0/internal/api";
+import "spirits/v1/action.proto";
+import "spirits/v1/meta.proto";
 
 // SpiritService provides a simple CRUD API for Spirit's.
 service SpiritService {
@@ -68,7 +66,7 @@ message DeleteSpiritResponse {
 // Spirit describes a single actor in a Battle.
 message Spirit {
   // Metadata about this Spirit.
-  spirits.meta.Meta meta = 1;
+  Meta meta = 1;
 
   // Name of this Spirit - colloquial name used to identify the Spirit.
   string name = 2;

@@ -8,10 +8,10 @@ import (
 	metapkg "github.com/ankeesler/spirits/internal/meta"
 	convertmeta "github.com/ankeesler/spirits/internal/meta/convert"
 	spiritpkg "github.com/ankeesler/spirits/internal/spirit"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 )
 
-func FromAPI(apiSpirit *api.Spirit) (*spiritpkg.Spirit, error) {
+func FromAPI(apiSpirit *spiritsv1.Spirit) (*spiritpkg.Spirit, error) {
 	internalMeta := convertmeta.FromAPI(apiSpirit.GetMeta())
 	internalSpirit := spiritpkg.New(internalMeta)
 
@@ -32,11 +32,11 @@ func FromAPI(apiSpirit *api.Spirit) (*spiritpkg.Spirit, error) {
 
 		var internalAction *actionpkg.Action
 		switch definition := apiSpiritAction.GetDefinition().(type) {
-		case *api.SpiritAction_ActionId:
+		case *spiritsv1.SpiritAction_ActionId:
 			internalAction = actionpkg.New(metapkg.New())
 			internalAction.SetID(definition.ActionId)
 
-		case *api.SpiritAction_Inline:
+		case *spiritsv1.SpiritAction_Inline:
 			var err error
 			internalAction, err = convertaction.FromAPI(definition.Inline)
 			if err != nil {

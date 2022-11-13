@@ -22,7 +22,7 @@ import (
 	spiritservice "github.com/ankeesler/spirits/internal/spirit/service"
 	spiritmemory "github.com/ankeesler/spirits/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits/internal/storage/memory"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
@@ -78,29 +78,29 @@ func Wire(c *Config) (*Server, error) {
 		)),
 	)
 
-	api.RegisterSpiritServiceServer(s, spiritService)
-	api.RegisterActionServiceServer(s, actionService)
-	api.RegisterBattleServiceServer(s, battleService)
+	spiritsv1.RegisterSpiritServiceServer(s, spiritService)
+	spiritsv1.RegisterActionServiceServer(s, actionService)
+	spiritsv1.RegisterBattleServiceServer(s, battleService)
 
 	battleRunner := runner.New(battleRepo)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 
-	if err := builtin.Load[*api.Spirit, *spiritpkg.Spirit](
+	if err := builtin.Load[*spiritsv1.Spirit, *spiritpkg.Spirit](
 		ctx,
 		c.SpiritBuiltinDir,
-		func() *api.Spirit { return &api.Spirit{} },
+		func() *spiritsv1.Spirit { return &spiritsv1.Spirit{} },
 		convertspirit.FromAPI,
 		spiritRepo,
 	); err != nil {
 		return nil, fmt.Errorf("load builtin spirits: %w", err)
 	}
 
-	if err := builtin.Load[*api.Action, *actionpkg.Action](
+	if err := builtin.Load[*spiritsv1.Action, *actionpkg.Action](
 		ctx,
 		c.ActionBuiltinDir,
-		func() *api.Action { return &api.Action{} },
+		func() *spiritsv1.Action { return &spiritsv1.Action{} },
 		convertaction.FromAPI,
 		actionRepo,
 	); err != nil {

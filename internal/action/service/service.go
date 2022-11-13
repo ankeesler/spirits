@@ -5,7 +5,7 @@ import (
 
 	actionpkg "github.com/ankeesler/spirits/internal/action"
 	convertaction "github.com/ankeesler/spirits/internal/action/convert"
-	"github.com/ankeesler/spirits/pkg/api"
+	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,10 +21,10 @@ type Repo interface {
 type Service struct {
 	repo Repo
 
-	api.UnimplementedActionServiceServer
+	spiritsv1.UnimplementedActionServiceServer
 }
 
-var _ api.ActionServiceServer = &Service{}
+var _ spiritsv1.ActionServiceServer = &Service{}
 
 func New(repo Repo) *Service {
 	return &Service{
@@ -34,8 +34,8 @@ func New(repo Repo) *Service {
 
 func (s *Service) CreateAction(
 	ctx context.Context,
-	req *api.CreateActionRequest,
-) (*api.CreateActionResponse, error) {
+	req *spiritsv1.CreateActionRequest,
+) (*spiritsv1.CreateActionResponse, error) {
 	internalAction, err := convertaction.FromAPI(req.GetAction())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -46,41 +46,41 @@ func (s *Service) CreateAction(
 		return nil, err
 	}
 
-	return &api.CreateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
+	return &spiritsv1.CreateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) GetAction(
 	ctx context.Context,
-	req *api.GetActionRequest,
-) (*api.GetActionResponse, error) {
+	req *spiritsv1.GetActionRequest,
+) (*spiritsv1.GetActionResponse, error) {
 	internalAction, err := s.repo.Get(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	return &api.GetActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
+	return &spiritsv1.GetActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) ListActions(
 	ctx context.Context,
-	req *api.ListActionsRequest,
-) (*api.ListActionsResponse, error) {
+	req *spiritsv1.ListActionsRequest,
+) (*spiritsv1.ListActionsResponse, error) {
 	internalActions, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var apiActions []*api.Action
+	var apiActions []*spiritsv1.Action
 	for _, internalAction := range internalActions {
 		apiActions = append(apiActions, convertaction.ToAPI(internalAction))
 	}
 
-	return &api.ListActionsResponse{Actions: apiActions}, nil
+	return &spiritsv1.ListActionsResponse{Actions: apiActions}, nil
 }
 
 func (s *Service) UpdateAction(
 	ctx context.Context,
-	req *api.UpdateActionRequest,
-) (*api.UpdateActionResponse, error) {
+	req *spiritsv1.UpdateActionRequest,
+) (*spiritsv1.UpdateActionResponse, error) {
 	internalAction, err := convertaction.FromAPI(req.GetAction())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -91,16 +91,16 @@ func (s *Service) UpdateAction(
 		return nil, err
 	}
 
-	return &api.UpdateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
+	return &spiritsv1.UpdateActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }
 
 func (s *Service) DeleteAction(
 	ctx context.Context,
-	req *api.DeleteActionRequest,
-) (*api.DeleteActionResponse, error) {
+	req *spiritsv1.DeleteActionRequest,
+) (*spiritsv1.DeleteActionResponse, error) {
 	internalAction, err := s.repo.Delete(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	return &api.DeleteActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
+	return &spiritsv1.DeleteActionResponse{Action: convertaction.ToAPI(internalAction)}, nil
 }

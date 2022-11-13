@@ -1,0 +1,25 @@
+{
+  "name": "spirits",
+  "version": "1.0.0",
+  "description": "spirits is a turn-based battle royale game",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankeesler/spirits.git"
+  },
+  "author": "Andrew Keesler <ankeesler@users.noreply.github.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ankeesler/spirits/issues"
+  },
+  "homepage": "https://github.com/ankeesler/spirits#readme",
+  "devDependencies": {
+    "create-react-app": "^5.0.1"
+  }
+}

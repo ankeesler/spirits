@@ -1,11 +1,9 @@
 syntax = "proto3";
 
-package spirits;
+package spirits.v1;
 
-import "meta.proto";
-import "spirit.proto";
-
-option go_package = "github.com/ankeesler/spirits0/internal/api";
+import "spirits/v1/meta.proto";
+import "spirits/v1/spirit.proto";
 
 // BattleService provides an API to manage Battle's.
 service BattleService {
@@ -152,7 +150,7 @@ message CallActionRequest {
   // The turn on which this Action call applies.
   int64 turn = 3;
 
-  // The name of the spirits.Action to call.
+  // The name of the Action to call.
   string action_name = 4;
 
   // The Spirit's to which this action should be applied.
@@ -165,7 +163,7 @@ message CallActionResponse {
 // Battle describes a single battle royale amongst Spirit's.
 message Battle {
   // Metadata about this Battle.
-  spirits.meta.Meta meta = 1;
+  Meta meta = 1;
 
   // Current state of the Battle.
   //
