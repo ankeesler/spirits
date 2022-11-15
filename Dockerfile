@@ -9,7 +9,7 @@ COPY go.sum go.sum
 COPY cmd/ cmd/
 COPY internal/ internal/
 COPY pkg/ pkg/
-COPY api/builtin builtin/
+COPY api/builtin/ builtin/
 
 # Build
 RUN \
@@ -31,4 +31,4 @@ COPY --from=builder /workspace/builtin/ /etc/spirits/builtin/
 USER 65532:65532
 
 ENTRYPOINT ["/server"]
-CMD ["-spirit-builtin-dir", "/etc/spirits/builtin/spirit", "-action-builtin-dir", "/etc/spirits/builtin/action"]
+CMD ["-spirit-builtin-dir", "/etc/spirits/builtin/v1/spirit", "-action-builtin-dir", "/etc/spirits/builtin/v1/action"]

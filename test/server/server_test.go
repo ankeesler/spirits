@@ -35,8 +35,8 @@ func startServer(t *testing.T) *state {
 		server, err := server.Wire(&server.Config{
 			Port: defaultTestServerPort,
 
-			SpiritBuiltinDir: os.DirFS("../../api/builtin/spirit"),
-			ActionBuiltinDir: os.DirFS("../../api/builtin/action"),
+			SpiritBuiltinDir: os.DirFS("../../api/builtin/v1/spirit"),
+			ActionBuiltinDir: os.DirFS("../../api/builtin/v1/action"),
 		})
 		if err != nil {
 			t.Fatal(err)

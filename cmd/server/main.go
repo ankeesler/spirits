@@ -12,9 +12,9 @@ import (
 
 var (
 	spiritBuiltinDir = flag.String(
-		"spirit-builtin-dir", "api/builtin/spirit", "Path to builtin spirit directory")
+		"spirit-builtin-dir", "api/builtin/v1/spirit", "Path to builtin spirit directory")
 	actionBuiltinDir = flag.String(
-		"action-builtin-dir", "api/builtin/action", "Path to builtin action directory")
+		"action-builtin-dir", "api/builtin/v1/action", "Path to builtin action directory")
 )
 
 func main() {
