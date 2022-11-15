@@ -22,11 +22,12 @@ import (
 	spiritservice "github.com/ankeesler/spirits/internal/spirit/service"
 	spiritmemory "github.com/ankeesler/spirits/internal/spirit/storage/memory"
 	"github.com/ankeesler/spirits/internal/storage/memory"
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -67,6 +68,7 @@ func Wire(c *Config) (*Server, error) {
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_opentracing.StreamServerInterceptor(),
 			grpc_prometheus.StreamServerInterceptor,
+			grpc_validator.StreamServerInterceptor(),
 			grpc_recovery.StreamServerInterceptor(),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
@@ -74,6 +76,7 @@ func Wire(c *Config) (*Server, error) {
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_opentracing.UnaryServerInterceptor(),
 			grpc_prometheus.UnaryServerInterceptor,
+			grpc_validator.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(),
 		)),
 	)

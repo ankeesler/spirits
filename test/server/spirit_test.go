@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -125,6 +125,20 @@ func TestGetSpiritNotFound(t *testing.T) {
 	_, err := clients.spirit.GetSpirit(state.ctx, &spiritsv1.GetSpiritRequest{Id: "foo"})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
+	}
+}
+
+func TestInvalidSpiritName(t *testing.T) {
+	state := startServer(t)
+	clients := state.clients
+
+	_, err := clients.spirit.CreateSpirit(state.ctx, &spiritsv1.CreateSpiritRequest{Spirit: &spiritsv1.Spirit{}})
+	s, ok := status.FromError(err)
+	if !ok {
+		t.Fatal("wanted error")
+	}
+	if want, got := codes.InvalidArgument, s.Code(); want != got {
+		t.Errorf("wanted code %d, got %d", want, got)
 	}
 }
 

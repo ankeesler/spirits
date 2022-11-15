@@ -5,6 +5,7 @@ package spirits.v1;
 import "spirits/v1/action.proto";
 import "spirits/v1/meta.proto";
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/ankeesler/spirits;spiritsv1";
 
@@ -98,7 +99,7 @@ message Spirit {
   Meta meta = 1;
 
   // Name of this Spirit - colloquial name used to identify the Spirit.
-  string name = 2;
+  string name = 2 [(validate.rules).string.min_len = 1];
 
   // The quantitative description of this Spirit's abilities.
   SpiritStats stats = 3;
