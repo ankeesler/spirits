@@ -4,16 +4,43 @@ package spirits.v1;
 
 import "spirits/v1/action.proto";
 import "spirits/v1/meta.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/ankeesler/spirits;spiritsv1";
 
 // SpiritService provides a simple CRUD API for Spirit's.
 service SpiritService {
-  rpc CreateSpirit(CreateSpiritRequest) returns (CreateSpiritResponse) {}
-  rpc GetSpirit(GetSpiritRequest) returns (GetSpiritResponse) {}
-  rpc ListSpirits(ListSpiritsRequest) returns (ListSpiritsResponse) {}
-  rpc UpdateSpirit(UpdateSpiritRequest) returns (UpdateSpiritResponse) {}
-  rpc DeleteSpirit(DeleteSpiritRequest) returns (DeleteSpiritResponse) {}
+  rpc CreateSpirit(CreateSpiritRequest) returns (CreateSpiritResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/spirits"
+      body: "*"
+    };
+  }
+
+  rpc GetSpirit(GetSpiritRequest) returns (GetSpiritResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/{id=spirits/*}"
+    };
+  }
+
+  rpc ListSpirits(ListSpiritsRequest) returns (ListSpiritsResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/spirits"
+    };
+  }
+
+  rpc UpdateSpirit(UpdateSpiritRequest) returns (UpdateSpiritResponse) {
+    option (google.api.http) = {
+      put: "/spirits/v1/{spirit.meta.id=spirits/*}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteSpirit(DeleteSpiritRequest) returns (DeleteSpiritResponse) {
+    option (google.api.http) = {
+      delete: "/spirits/v1/{id=spirits/*}"
+    };
+  }
 }
 
 message CreateSpiritRequest {

@@ -7,7 +7,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # Run from root of repo
 cd "${MY_DIR}/.."
 
-docker run -v "${PWD}:/spirits" ankeesler/spirits-codegen:latest \
+docker run -v "${PWD}:/spirits" spirits-codegen:latest \
   --go_out=paths=source_relative:/spirits/pkg/api \
   --go-grpc_out=paths=source_relative:/spirits/pkg/api \
   --validate_out=lang=go,paths=source_relative:/spirits/pkg/api \

@@ -3,16 +3,43 @@ syntax = "proto3";
 package spirits.v1;
 
 import "spirits/v1/meta.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/ankeesler/spirits;spiritsv1";
 
 // ActionService provides a simple CRUD API for Action's.
 service ActionService {
-  rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {}
-  rpc GetAction(GetActionRequest) returns (GetActionResponse) {}
-  rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {}
-  rpc UpdateAction(UpdateActionRequest) returns (UpdateActionResponse) {}
-  rpc DeleteAction(DeleteActionRequest) returns (DeleteActionResponse) {}
+  rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/actions"
+      body: "*"
+    };
+  }
+
+  rpc GetAction(GetActionRequest) returns (GetActionResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/{id=actions/*}"
+    };
+  }
+
+  rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/actions"
+    };
+  }
+
+  rpc UpdateAction(UpdateActionRequest) returns (UpdateActionResponse) {
+    option (google.api.http) = {
+      put: "/spirits/v1/{action.meta.id=actions/*}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteAction(DeleteActionRequest) returns (DeleteActionResponse) {
+    option (google.api.http) = {
+      delete: "/spirits/v1/{id=actions/*}"
+    };
+  }
 }
 
 message CreateActionRequest {
