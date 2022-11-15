@@ -55,8 +55,15 @@ func main() {
 	}
 	defer l.Close()
 
+	logHandler := func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			log.Printf("%s %s", r.Method, r.URL)
+			h.ServeHTTP(w, r)
+		})
+	}
+
 	log.Printf("server listening on %s", l.Addr().String())
-	if err := http.Serve(l, mux); err != nil {
+	if err := http.Serve(l, logHandler(mux)); err != nil {
 		log.Fatalf("http server: %s", err.Error())
 	}
 }
