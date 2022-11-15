@@ -22,7 +22,7 @@ jobs:
         with:
           context: image/codegen
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:latest , ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:${{ env.GITHUB_SHA }}
+          tags: ankeesler/spirits-codegen:latest
 
   test-codegen:
     needs: [codegen-image]
