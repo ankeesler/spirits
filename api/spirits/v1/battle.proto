@@ -5,6 +5,8 @@ package spirits.v1;
 import "spirits/v1/meta.proto";
 import "spirits/v1/spirit.proto";
 
+option go_package = "github.com/ankeesler/spirits;spiritsv1";
+
 // BattleService provides an API to manage Battle's.
 service BattleService {
   // CreateBattle creates, but doesn't start, a Battle.

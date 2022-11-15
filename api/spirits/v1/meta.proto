@@ -4,6 +4,8 @@ package spirits.v1;
 
 import "google/protobuf/timestamp.proto";
 
+option go_package = "github.com/ankeesler/spirits;spiritsv1";
+
 // Meta holds auxillary information about a resource.
 message Meta {
   // The unique identifier for the resource.

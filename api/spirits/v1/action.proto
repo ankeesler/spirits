@@ -4,6 +4,8 @@ package spirits.v1;
 
 import "spirits/v1/meta.proto";
 
+option go_package = "github.com/ankeesler/spirits;spiritsv1";
+
 // ActionService provides a simple CRUD API for Action's.
 service ActionService {
   rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {}

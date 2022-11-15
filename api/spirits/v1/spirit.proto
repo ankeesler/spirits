@@ -5,6 +5,8 @@ package spirits.v1;
 import "spirits/v1/action.proto";
 import "spirits/v1/meta.proto";
 
+option go_package = "github.com/ankeesler/spirits;spiritsv1";
+
 // SpiritService provides a simple CRUD API for Spirit's.
 service SpiritService {
   rpc CreateSpirit(CreateSpiritRequest) returns (CreateSpiritResponse) {}
