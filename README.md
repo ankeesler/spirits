@@ -2,6 +2,12 @@
 
 `spirits` is a turn-based battle royale framework.
 
+To run:
+```
+$ docker-compose up
+$ open http://127.0.0.1:12346
+```
+
 ## Muses
 
 * Pokémon
@@ -22,3 +28,4 @@ Current known list of development dependencies:
 * `go`
 * `npm`
 * `docker`
+* `docker-compose`

@@ -1,12 +1,32 @@
-import React, { FC } from 'react';
+import { FC } from 'react'
+import Table from 'react-bootstrap/Table';
 import './ActionTable.css';
 
-interface ActionTableProps {}
+import { Action } from '../../lib/api/spirits/v1/action.pb';
 
-const ActionTable: FC<ActionTableProps> = () => (
-  <div className="ActionTable" data-testid="ActionTable">
-    ActionTable Component
-  </div>
-);
+interface ActionTableProps {
+  actions: Action[]
+}
+
+const ActionTable: FC<ActionTableProps> = (props) => {
+  return (
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.actions.map((Action: Action) => 
+          <tr>
+            <td>{Action.meta?.id}</td>
+            <td>{Action.description}</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  )
+}
 
 export default ActionTable;

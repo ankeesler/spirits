@@ -5,10 +5,8 @@ import ActionTable from './ActionTable';
 
 describe('<ActionTable />', () => {
   test('it should mount', () => {
-    render(<ActionTable />);
-    
+    render(<ActionTable actions={[]} />);
     const actionTable = screen.getByTestId('ActionTable');
-
     expect(actionTable).toBeInTheDocument();
   });
 });

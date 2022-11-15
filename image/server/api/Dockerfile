@@ -1,5 +1,5 @@
 # Build the server binary
-FROM golang:1.19 as builder
+FROM golang:1.19-alpine3.16 as builder
 
 WORKDIR /workspace
 
@@ -25,9 +25,12 @@ RUN \
 # Use distroless as minimal base image to package the server binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot
+
 WORKDIR /
+
 COPY --from=builder /workspace/server .
 COPY --from=builder /workspace/builtin/ /etc/spirits/builtin/
+
 USER 65532:65532
 
 ENTRYPOINT ["/server"]

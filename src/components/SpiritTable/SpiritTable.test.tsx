@@ -5,10 +5,8 @@ import SpiritTable from './SpiritTable';
 
 describe('<SpiritTable />', () => {
   test('it should mount', () => {
-    render(<SpiritTable />);
-    
-    // const spiritTable = screen.getByTestId('SpiritTable');
-
-    // expect(spiritTable).toBeInTheDocument();
+    render(<SpiritTable spirits={[]} />);
+    const spiritTable = screen.getByTestId('SpiritTable');
+    expect(spiritTable).toBeInTheDocument();
   });
 });

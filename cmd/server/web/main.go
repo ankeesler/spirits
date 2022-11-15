@@ -17,11 +17,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const defaultAPIServerAddress = "127.0.0.1:12345"
+
 var (
 	webAssetsDir = flag.String(
 		"web-assets-dir", "build", "Path to web assets")
-	upstreamAPIServer = flag.String(
-		"upstream-api-server", "127.0.0.1:12345", "URL for upstream API server")
 )
 
 func main() {
@@ -36,12 +36,18 @@ func main() {
 		}
 	}
 
+	upstreamAPIServer, ok := os.LookupEnv("SPIRIT_API_SERVER_ADDRESS")
+	if !ok {
+		upstreamAPIServer = defaultAPIServerAddress
+	}
+	log.Printf("using API server address: %s", upstreamAPIServer)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(*webAssetsDir)))
-	mux.Handle("/api/", http.StripPrefix("/api", gatewayMux(ctx, *upstreamAPIServer)))
+	mux.Handle("/api/", http.StripPrefix("/api", gatewayMux(ctx, upstreamAPIServer)))
 
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {

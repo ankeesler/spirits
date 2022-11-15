@@ -1,15 +1,19 @@
-FROM node:18 as react-builder
+FROM node:18-alpine3.16 as react-builder
 
 WORKDIR /workspace
-ENV NODE_ENV production
 
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+COPY tsconfig.json tsconfig.json
 COPY public/ public/
 COPY src/ src/
 
 RUN npm install
-RUN npm build
+RUN npm run build --production
 
-FROM golang:1.19 as server-builder
+FROM golang:1.19-alpine3.16 as server-builder
+
+WORKDIR /workspace
 
 # Copy the source
 COPY go.mod go.mod
@@ -30,9 +34,13 @@ RUN \
   go build -a -o server ./cmd/server/web
 
 FROM gcr.io/distroless/static:nonroot
+
 WORKDIR /
+ENV NODE_ENV production
+
 COPY --from=react-builder /workspace/build .
 COPY --from=server-builder /workspace/server .
+
 USER 65532:65532
 
 ENTRYPOINT ["/server"]

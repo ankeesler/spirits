@@ -1,24 +1,14 @@
-import { useState, FC, useEffect } from 'react'
+import { FC } from 'react'
 import Table from 'react-bootstrap/Table';
 import './SpiritTable.css';
-import { Spirit, SpiritAction, SpiritService } from '../../lib/api/spirits/v1/spirit.pb';
 
-interface SpiritTablePros {
+import { Spirit, SpiritAction } from '../../lib/api/spirits/v1/spirit.pb';
+
+interface SpiritTableProps {
+  spirits: Spirit[]
 }
 
-const SpiritTable: FC<SpiritTablePros> = () => {
-  const [spirits, setSpirits] = useState<Spirit[]>([]);
-
-  useEffect(() => {
-    SpiritService.ListSpirits({}, {pathPrefix: '/api'}).then((rsp) => {
-      if (rsp.spirits) {
-        setSpirits(rsp.spirits!);
-      }
-    }).catch((error) => {
-      console.error(`list spirits: ${error.toString()}`);
-    });
-  });
-
+const SpiritTable: FC<SpiritTableProps> = (props) => {
   return (
     <Table striped bordered hover>
       <thead>
@@ -29,7 +19,7 @@ const SpiritTable: FC<SpiritTablePros> = () => {
         </tr>
       </thead>
       <tbody>
-        {spirits.map((spirit: Spirit) => 
+        {props.spirits.map((spirit: Spirit) => 
           <tr>
             <td>{spirit.meta?.id}</td>
             <td>{spirit.name}</td>
