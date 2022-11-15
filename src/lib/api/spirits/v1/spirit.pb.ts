@@ -32,12 +32,9 @@ export type GetSpiritResponse = {
   spirit?: Spirit
 }
 
-
-type BaseListSpiritsRequest = {
+export type ListSpiritsRequest = {
+  name?: string
 }
-
-export type ListSpiritsRequest = BaseListSpiritsRequest
-  & OneOf<{ name: string }>
 
 export type ListSpiritsResponse = {
   spirits?: Spirit[]
@@ -85,18 +82,18 @@ export type SpiritAction = BaseSpiritAction
 
 export class SpiritService {
   static CreateSpirit(req: CreateSpiritRequest, initReq?: fm.InitReq): Promise<CreateSpiritResponse> {
-    return fm.fetchReq<CreateSpiritRequest, CreateSpiritResponse>(`/spirits.v1.SpiritService/CreateSpirit`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<CreateSpiritRequest, CreateSpiritResponse>(`/spirits/v1/spirits`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static GetSpirit(req: GetSpiritRequest, initReq?: fm.InitReq): Promise<GetSpiritResponse> {
-    return fm.fetchReq<GetSpiritRequest, GetSpiritResponse>(`/spirits.v1.SpiritService/GetSpirit`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<GetSpiritRequest, GetSpiritResponse>(`/spirits/v1/${req["idspirits"]}?${fm.renderURLSearchParams(req, ["idspirits"])}`, {...initReq, method: "GET"})
   }
   static ListSpirits(req: ListSpiritsRequest, initReq?: fm.InitReq): Promise<ListSpiritsResponse> {
-    return fm.fetchReq<ListSpiritsRequest, ListSpiritsResponse>(`/spirits.v1.SpiritService/ListSpirits`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<ListSpiritsRequest, ListSpiritsResponse>(`/spirits/v1/spirits?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
   static UpdateSpirit(req: UpdateSpiritRequest, initReq?: fm.InitReq): Promise<UpdateSpiritResponse> {
-    return fm.fetchReq<UpdateSpiritRequest, UpdateSpiritResponse>(`/spirits.v1.SpiritService/UpdateSpirit`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<UpdateSpiritRequest, UpdateSpiritResponse>(`/spirits/v1/${req["spiritMetaIdspirits"]}`, {...initReq, method: "PUT", body: JSON.stringify(req, fm.replacer)})
   }
   static DeleteSpirit(req: DeleteSpiritRequest, initReq?: fm.InitReq): Promise<DeleteSpiritResponse> {
-    return fm.fetchReq<DeleteSpiritRequest, DeleteSpiritResponse>(`/spirits.v1.SpiritService/DeleteSpirit`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<DeleteSpiritRequest, DeleteSpiritResponse>(`/spirits/v1/${req["idspirits"]}`, {...initReq, method: "DELETE"})
   }
 }

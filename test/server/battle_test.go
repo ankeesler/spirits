@@ -48,8 +48,8 @@ func TestAutoBattle(t *testing.T) {
 	for _, team := range teams {
 		t.Logf("adding battle team %s...", team.name)
 		if _, err := clients.battle.AddBattleTeam(state.ctx, &spiritsv1.AddBattleTeamRequest{
-			BattleId: battleID,
-			TeamName: team.name,
+			BattleId: &battleID,
+			TeamName: &team.name,
 		}); err != nil {
 			t.Fatalf("add battle team %s: %v", team.name, err)
 		}
@@ -57,11 +57,11 @@ func TestAutoBattle(t *testing.T) {
 		for _, spiritID := range team.spiritIDs {
 			t.Logf("adding battle team spirit to %s...", team.name)
 			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-				BattleId:     battleID,
-				TeamName:     team.name,
-				SpiritId:     spiritID,
-				Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
-				Seed:         time.Now().Unix(),
+				BattleId:     &battleID,
+				TeamName:     &team.name,
+				SpiritId:     &spiritID,
+				Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM),
+				Seed:         int64Ptr(time.Now().Unix()),
 			}); err != nil {
 				t.Fatalf("add battle team %s: %v", team.name, err)
 			}
@@ -70,7 +70,7 @@ func TestAutoBattle(t *testing.T) {
 
 	t.Log("watching battle...")
 	watchStream, err := clients.battle.WatchBattle(state.ctx, &spiritsv1.WatchBattleRequest{
-		Id: battleID,
+		Id: &battleID,
 	})
 	if err != nil {
 		t.Fatal("watch battle:", err)
@@ -87,7 +87,7 @@ func TestAutoBattle(t *testing.T) {
 
 	t.Log("starting battle...")
 	if _, err := clients.battle.StartBattle(state.ctx, &spiritsv1.StartBattleRequest{
-		Id: battleID,
+		Id: &battleID,
 	}); err != nil {
 		t.Fatal("start battle:", err)
 	}
@@ -132,19 +132,19 @@ func TestManualBattle(t *testing.T) {
 	}
 	for _, team := range teams {
 		if _, err := clients.battle.AddBattleTeam(state.ctx, &spiritsv1.AddBattleTeamRequest{
-			BattleId: battleID,
-			TeamName: team.name,
+			BattleId: &battleID,
+			TeamName: &team.name,
 		}); err != nil {
 			t.Fatalf("add battle team %s: %v", team.name, err)
 		}
 
 		for _, spiritID := range team.spiritIDs {
 			if _, err := clients.battle.AddBattleTeamSpirit(state.ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-				BattleId:     battleID,
-				TeamName:     team.name,
-				SpiritId:     spiritID,
-				Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
-				Seed:         time.Now().Unix(),
+				BattleId:     &battleID,
+				TeamName:     &team.name,
+				SpiritId:     &spiritID,
+				Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN),
+				Seed:         int64Ptr(time.Now().Unix()),
 			}); err != nil {
 				t.Fatalf("add battle team %s: %v", team.name, err)
 			}
@@ -152,7 +152,7 @@ func TestManualBattle(t *testing.T) {
 	}
 
 	watchStream, err := clients.battle.WatchBattle(state.ctx, &spiritsv1.WatchBattleRequest{
-		Id: battleID,
+		Id: &battleID,
 	})
 	if err != nil {
 		t.Fatal("watch battle:", err)
@@ -174,10 +174,10 @@ func TestManualBattle(t *testing.T) {
 			turns[battle.GetTurns()] = struct{}{}
 
 			if _, err := clients.battle.CallAction(state.ctx, &spiritsv1.CallActionRequest{
-				BattleId:        battle.GetMeta().GetId(),
-				SpiritId:        battle.GetNextSpiritIds()[0],
-				Turn:            battle.GetTurns(),
-				ActionName:      "attack",
+				BattleId:        stringPtr(battle.GetMeta().GetId()),
+				SpiritId:        stringPtr(battle.GetNextSpiritIds()[0]),
+				Turn:            int64Ptr(battle.GetTurns()),
+				ActionName:      stringPtr("attack"),
 				TargetSpiritIds: []string{zombieSpirit.Meta.GetId()},
 			}); err != nil {
 				t.Error("call action:", err)
@@ -188,7 +188,7 @@ func TestManualBattle(t *testing.T) {
 	}()
 
 	if _, err := clients.battle.StartBattle(state.ctx, &spiritsv1.StartBattleRequest{
-		Id: battleID,
+		Id: &battleID,
 	}); err != nil {
 		t.Fatal("start battle:", err)
 	}

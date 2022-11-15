@@ -8,15 +8,6 @@ import * as fm from "../../fetch.pb"
 import * as SpiritsV1Meta from "./meta.pb"
 import * as SpiritsV1Spirit from "./spirit.pb"
 
-type Absent<T, K extends keyof T> = { [k in Exclude<keyof T, K>]?: undefined };
-type OneOf<T> =
-  | { [k in keyof T]?: undefined }
-  | (
-    keyof T extends infer K ?
-      (K extends string & keyof T ? { [k in K]: T[K] } & Absent<T, K>
-        : never)
-    : never);
-
 export enum BattleState {
   BATTLE_STATE_UNSPECIFIED = "BATTLE_STATE_UNSPECIFIED",
   BATTLE_STATE_PENDING = "BATTLE_STATE_PENDING",
@@ -103,18 +94,15 @@ export type CallActionRequest = {
 export type CallActionResponse = {
 }
 
-
-type BaseBattle = {
+export type Battle = {
   meta?: SpiritsV1Meta.Meta
   state?: BattleState
+  errorMessage?: string
   teams?: BattleTeam[]
   inBattleTeams?: BattleTeam[]
   nextSpiritIds?: string[]
   turns?: string
 }
-
-export type Battle = BaseBattle
-  & OneOf<{ errorMessage: string }>
 
 export type BattleTeam = {
   name?: string

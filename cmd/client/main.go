@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/ankeesler/spirits/internal/menu"
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/prototext"
@@ -105,8 +105,8 @@ var m = menu.Menu{
 						}
 
 						rsp, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
-							BattleId: state.battleID,
-							TeamName: teamName,
+							BattleId: &state.battleID,
+							TeamName: &teamName,
 						})
 						if err != nil {
 							return ctx, fmt.Errorf("add battle team: %w", err)
@@ -136,11 +136,11 @@ var m = menu.Menu{
 											Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
 												state := getState(ctx)
 												rsp, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-													BattleId:     state.battleID,
-													TeamName:     state.teamName,
-													SpiritId:     spirit.GetMeta().GetId(),
-													Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
-													Seed:         time.Now().Unix(),
+													BattleId:     &state.battleID,
+													TeamName:     &state.teamName,
+													SpiritId:     stringPtr(spirit.GetMeta().GetId()),
+													Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM),
+													Seed:         int64Ptr(time.Now().Unix()),
 												})
 												if err != nil {
 													return ctx, fmt.Errorf("add battle team spirit: %w", err)
@@ -169,7 +169,7 @@ var m = menu.Menu{
 						watchCtx, cancel := context.WithCancel(ctx)
 						defer cancel()
 						watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
-							Id: state.battleID,
+							Id: &state.battleID,
 						})
 						if err != nil {
 							return ctx, fmt.Errorf("watch battle: %w", err)
@@ -184,7 +184,7 @@ var m = menu.Menu{
 						}()
 
 						if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
-							Id: state.battleID,
+							Id: &state.battleID,
 						}); err != nil {
 							return ctx, fmt.Errorf("start battle: %w", err)
 						}
@@ -234,19 +234,19 @@ var m = menu.Menu{
 			}
 			for _, team := range teams {
 				if _, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
-					BattleId: battleID,
-					TeamName: team.name,
+					BattleId: &battleID,
+					TeamName: &team.name,
 				}); err != nil {
 					return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
 				}
 
 				for _, spiritID := range team.spiritIDs {
 					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-						BattleId:     battleID,
-						TeamName:     team.name,
-						SpiritId:     spiritID,
-						Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM,
-						Seed:         time.Now().Unix(),
+						BattleId:     &battleID,
+						TeamName:     &team.name,
+						SpiritId:     &spiritID,
+						Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM),
+						Seed:         int64Ptr(time.Now().Unix()),
 					}); err != nil {
 						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
 					}
@@ -256,7 +256,7 @@ var m = menu.Menu{
 			watchCtx, cancel := context.WithCancel(ctx)
 			defer cancel()
 			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
-				Id: battleID,
+				Id: &battleID,
 			})
 			if err != nil {
 				return ctx, fmt.Errorf("watch battle: %w", err)
@@ -271,7 +271,7 @@ var m = menu.Menu{
 			}()
 
 			if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
-				Id: battleID,
+				Id: &battleID,
 			}); err != nil {
 				return ctx, fmt.Errorf("start battle: %w", err)
 			}
@@ -320,8 +320,8 @@ var m = menu.Menu{
 			}
 			for _, team := range teams {
 				if _, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
-					BattleId: battleID,
-					TeamName: team.name,
+					BattleId: &battleID,
+					TeamName: &team.name,
 				}); err != nil {
 					return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
 				}
@@ -330,11 +330,11 @@ var m = menu.Menu{
 
 				for _, spiritID := range team.spiritIDs {
 					if _, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-						BattleId:     battleID,
-						TeamName:     team.name,
-						SpiritId:     spiritID,
-						Intelligence: spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN,
-						Seed:         time.Now().Unix(),
+						BattleId:     &battleID,
+						TeamName:     &team.name,
+						SpiritId:     &spiritID,
+						Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN),
+						Seed:         int64Ptr(time.Now().Unix()),
 					}); err != nil {
 						return ctx, fmt.Errorf("add battle team %s: %w", team.name, err)
 					}
@@ -347,7 +347,7 @@ var m = menu.Menu{
 			watchCtx, cancel := context.WithCancel(ctx)
 			defer cancel()
 			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
-				Id: battleID,
+				Id: &battleID,
 			})
 			if err != nil {
 				return ctx, fmt.Errorf("watch battle: %w", err)
@@ -371,10 +371,10 @@ var m = menu.Menu{
 					}
 
 					if _, err := state.clients.battle.CallAction(watchCtx, &spiritsv1.CallActionRequest{
-						BattleId:        battle.GetMeta().GetId(),
-						SpiritId:        battle.GetNextSpiritIds()[0],
-						Turn:            battle.GetTurns(),
-						ActionName:      "attack",
+						BattleId:        stringPtr(battle.GetMeta().GetId()),
+						SpiritId:        stringPtr(battle.GetNextSpiritIds()[0]),
+						Turn:            int64Ptr(battle.GetTurns()),
+						ActionName:      stringPtr("attack"),
 						TargetSpiritIds: []string{zombieSpirit.Meta.GetId()},
 					}); err != nil {
 						fmt.Fprintln(io.Out, "call action:", err)
@@ -388,7 +388,7 @@ var m = menu.Menu{
 			}()
 
 			if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
-				Id: battleID,
+				Id: &battleID,
 			}); err != nil {
 				return ctx, fmt.Errorf("start battle: %w", err)
 			}
@@ -458,3 +458,7 @@ func main() {
 }
 
 func stringPtr(s string) *string { return &s }
+func int64Ptr(i int64) *int64    { return &i }
+func intelligencePtr(intelligence spiritsv1.BattleTeamSpiritIntelligence) *spiritsv1.BattleTeamSpiritIntelligence {
+	return &intelligence
+}

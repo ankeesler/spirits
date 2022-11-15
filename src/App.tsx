@@ -1,25 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import './App.css';
+
+import ActionTable from './components/ActionTable/ActionTable';
+import SpiritTable from './components/SpiritTable/SpiritTable';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Tabs
+      defaultActiveKey="spirits"
+      id="uncontrolled-tab-example"
+      className="mb-3"
+    >
+      <Tab eventKey="spirits" title="Spirits">
+        <SpiritTable />
+      </Tab>
+      <Tab eventKey="actions" title="Actions">
+        <ActionTable />
+      </Tab>
+    </Tabs>
   );
 }
 

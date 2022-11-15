@@ -1956,6 +1956,8 @@ func (m *Battle) validate(all bool) error {
 
 	// no validation rules for State
 
+	// no validation rules for ErrorMessage
+
 	for idx, item := range m.GetTeams() {
 		_, _ = idx, item
 
@@ -2025,10 +2027,6 @@ func (m *Battle) validate(all bool) error {
 	}
 
 	// no validation rules for Turns
-
-	if m.ErrorMessage != nil {
-		// no validation rules for ErrorMessage
-	}
 
 	if len(errors) > 0 {
 		return BattleMultiError(errors)

@@ -1,5 +1,3 @@
-meta {
-}
 name: "zombie"
 stats {
   health: 5

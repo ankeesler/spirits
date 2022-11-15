@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package spirits.v1;
 
@@ -66,7 +66,7 @@ message CreateBattleRequest {
 
 message CreateBattleResponse {
   // The created Battle.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message ListBattlesRequest {
@@ -79,81 +79,81 @@ message ListBattlesResponse {
 
 message WatchBattleRequest {
   // The id of the Battle to watch.
-  string id = 1;
+  required string id = 1;
 }
 
 message WatchBattleResponse {
   // The Battle that has been updated.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message AddBattleTeamRequest {
   // The id of the Battle to which to add this BattleTeam.
-  string battle_id = 1;
+  required string battle_id = 1;
 
   // The name of the new BattleTeam.
-  string team_name = 2;
+  required string team_name = 2;
 }
 
 message AddBattleTeamResponse {
   // The newly updated Battle.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message AddBattleTeamSpiritRequest {
   // The id of the Battle to which to add this BattleTeamSpirit.
-  string battle_id = 1;
+  required string battle_id = 1;
 
   // The name of the BattleTeam to which to add the Spirit.
-  string team_name = 2;
+  required string team_name = 2;
 
   // The id of the Spirit to add to the BattleTeam.
-  string spirit_id = 3;
+  required string spirit_id = 3;
 
   // The intelligence that this Spirit will use.
-  BattleTeamSpiritIntelligence intelligence = 4;
+  required BattleTeamSpiritIntelligence intelligence = 4;
 
   // The seed to use for any random actions.
-  int64 seed = 5;
+  required int64 seed = 5;
 }
 
 message AddBattleTeamSpiritResponse {
   // The newly updated Battle.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message StartBattleRequest {
   // The id of the Battle to start.
-  string id = 1;
+  required string id = 1;
 }
 
 message StartBattleResponse {
   // The newly started Battle.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message CancelBattleRequest {
   // The id of the Battle to cancel.
-  string id = 1;
+  required string id = 1;
 }
 
 message CancelBattleResponse {
   // The newly cancelled Battle.
-  Battle battle = 1;
+  required Battle battle = 1;
 }
 
 message CallActionRequest {
   // The id of the Battle to which this call applies.
-  string battle_id = 1;
+  required string battle_id = 1;
 
   // The id of the Spirit to which this call applies.
-  string spirit_id = 2;
+  required string spirit_id = 2;
 
   // The turn on which this Action call applies.
-  int64 turn = 3;
+  required int64 turn = 3;
 
   // The name of the Action to call.
-  string action_name = 4;
+  required string action_name = 4;
 
   // The Spirit's to which this action should be applied.
   repeated string target_spirit_ids = 5;
@@ -165,12 +165,12 @@ message CallActionResponse {
 // Battle describes a single battle royale amongst Spirit's.
 message Battle {
   // Metadata about this Battle.
-  Meta meta = 1;
+  optional Meta meta = 1;
 
   // Current state of the Battle.
   //
   // If this is BATTLE_STATE_ERROR, the error_message field will be set.
-  BattleState state = 2;
+  optional BattleState state = 2;
 
   // Description of error state.
   //
@@ -198,7 +198,7 @@ message Battle {
   repeated string next_spirit_ids = 6;
 
   // The number of turns that this battle has run.
-  int64 turns = 7;
+  optional int64 turns = 7;
 }
 
 // BattleState describes which stage a Battle is in.
@@ -238,7 +238,7 @@ enum BattleState {
 // BattleTeam is a group of Spirit's working together in a Battle.
 message BattleTeam {
   // Unique (within Battle) identifier of BattleTeam.
-  string name = 1;
+  optional string name = 1;
 
   // The list of BattleTeamSpirit's in this BattleTeam.
   repeated BattleTeamSpirit spirits = 2;
@@ -247,13 +247,13 @@ message BattleTeam {
 // BattleTeamSpirit is a reference to a Spirit as it exists in a BattleTeam.
 message BattleTeamSpirit {
   // The Spirit as it exists in this BattleTeam.
-  Spirit spirit = 1;
+  optional Spirit spirit = 1;
 
   // The intelligence that this Spirit will use.
-  BattleTeamSpiritIntelligence intelligence = 2;
+  optional BattleTeamSpiritIntelligence intelligence = 2;
 
   // The seed to use for any random actions.
-  int64 seed = 3;
+  optional int64 seed = 3;
 }
 
 // BattleTeamSpiritIntelligence describes how a Spirit will decide to take

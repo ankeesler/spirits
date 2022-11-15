@@ -28,55 +28,61 @@ func ToAPI(internalBattle *battlepkg.Battle) *spiritsv1.Battle {
 	if next := internalBattle.PeekNext(); next != nil {
 		apiBattle.NextSpiritIds = []string{next.ID()}
 	}
-	apiBattle.Turns = internalBattle.Turns()
+	apiBattle.Turns = int64Ptr(internalBattle.Turns())
 
 	return apiBattle
 }
 
 func teamToAPI(teamName string, internalTeamSpirits []*battlepkg.Spirit, apiTeams *[]*spiritsv1.BattleTeam) {
 	apiBattleTeam := &spiritsv1.BattleTeam{
-		Name: teamName,
+		Name: &teamName,
 	}
 
 	for _, internalTeamSpirit := range internalTeamSpirits {
 		apiBattleTeam.Spirits = append(apiBattleTeam.Spirits, &spiritsv1.BattleTeamSpirit{
 			Spirit:       convertspirit.ToAPI(internalTeamSpirit.Spirit),
 			Intelligence: spiritIntelligenceToAPI(internalTeamSpirit.Intelligence()),
-			Seed:         internalTeamSpirit.Seed(),
+			Seed:         int64Ptr(internalTeamSpirit.Seed()),
 		})
 	}
 
 	*apiTeams = append(*apiTeams, apiBattleTeam)
 }
 
-func stateToAPI(internalState battlepkg.State) spiritsv1.BattleState {
+func stateToAPI(internalState battlepkg.State) *spiritsv1.BattleState {
+	var s spiritsv1.BattleState
 	switch internalState {
 	case battlepkg.StatePending:
-		return spiritsv1.BattleState_BATTLE_STATE_PENDING
+		s = spiritsv1.BattleState_BATTLE_STATE_PENDING
 	case battlepkg.StateStarted:
-		return spiritsv1.BattleState_BATTLE_STATE_STARTED
+		s = spiritsv1.BattleState_BATTLE_STATE_STARTED
 	case battlepkg.StateWaiting:
-		return spiritsv1.BattleState_BATTLE_STATE_WAITING
+		s = spiritsv1.BattleState_BATTLE_STATE_WAITING
 	case battlepkg.StateFinished:
-		return spiritsv1.BattleState_BATTLE_STATE_FINISHED
+		s = spiritsv1.BattleState_BATTLE_STATE_FINISHED
 	case battlepkg.StateCancelled:
-		return spiritsv1.BattleState_BATTLE_STATE_CANCELLED
+		s = spiritsv1.BattleState_BATTLE_STATE_CANCELLED
 	case battlepkg.StateError:
-		return spiritsv1.BattleState_BATTLE_STATE_ERROR
+		s = spiritsv1.BattleState_BATTLE_STATE_ERROR
 	default:
 		panic(fmt.Sprintf("unknown battle state type: %s", internalState))
 	}
+	return &s
 }
 
 func spiritIntelligenceToAPI(
 	internalSpiritIntelligence battlepkg.SpiritIntelligence,
-) spiritsv1.BattleTeamSpiritIntelligence {
+) *spiritsv1.BattleTeamSpiritIntelligence {
+	var i spiritsv1.BattleTeamSpiritIntelligence
 	switch internalSpiritIntelligence {
 	case battlepkg.SpiritIntelligenceHuman:
-		return spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN
+		i = spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN
 	case battlepkg.SpiritIntelligenceRandom:
-		return spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM
+		i = spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM
 	default:
 		panic(fmt.Sprintf("unknown api spirit intelligence type: %s", internalSpiritIntelligence))
 	}
+	return &i
 }
+
+func int64Ptr(i int64) *int64 { return &i }

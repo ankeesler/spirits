@@ -17,10 +17,14 @@ func TestCreateSpirit(t *testing.T) {
 	clients := state.clients
 
 	spirit := &spiritsv1.Spirit{
-		Name: "some-name",
+		Name: stringPtr("some-name"),
 		Stats: &spiritsv1.SpiritStats{
-			Health:  1,
-			Agility: 2,
+			Health:               int64Ptr(1),
+			PhysicalPower:        int64Ptr(2),
+			PhysicalConstitution: int64Ptr(3),
+			MentalPower:          int64Ptr(4),
+			MentalConstitution:   int64Ptr(5),
+			Agility:              int64Ptr(6),
 		},
 	}
 	rsp, err := clients.spirit.CreateSpirit(state.ctx, &spiritsv1.CreateSpiritRequest{Spirit: spirit})
@@ -49,20 +53,20 @@ func TestCreateSpiritInvalidArgument(t *testing.T) {
 	clients := state.clients
 
 	spirit := &spiritsv1.Spirit{
-		Name: "some-name",
+		Name: stringPtr("some-name"),
 		Stats: &spiritsv1.SpiritStats{
-			Health:  1,
-			Agility: 1,
+			Health:  int64Ptr(1),
+			Agility: int64Ptr(1),
 		},
 		Actions: []*spiritsv1.SpiritAction{
 			{
-				Name: "tuna",
+				Name: stringPtr("tuna"),
 				Definition: &spiritsv1.SpiritAction_Inline{
 					Inline: &spiritsv1.Action{Definition: &spiritsv1.Action_Script{Script: ""}},
 				},
 			},
 			{
-				Name: "tuna",
+				Name: stringPtr("tuna"),
 				Definition: &spiritsv1.SpiritAction_Inline{
 					Inline: &spiritsv1.Action{Definition: &spiritsv1.Action_Script{Script: ""}},
 				},
@@ -80,10 +84,14 @@ func TestUpdateSpirit(t *testing.T) {
 	clients := state.clients
 
 	spirit := &spiritsv1.Spirit{
-		Name: "some-name",
+		Name: stringPtr("some-name"),
 		Stats: &spiritsv1.SpiritStats{
-			Health:  1,
-			Agility: 2,
+			Health:               int64Ptr(1),
+			PhysicalPower:        int64Ptr(2),
+			PhysicalConstitution: int64Ptr(3),
+			MentalPower:          int64Ptr(4),
+			MentalConstitution:   int64Ptr(5),
+			Agility:              int64Ptr(6),
 		},
 	}
 	createRsp, err := clients.spirit.CreateSpirit(state.ctx, &spiritsv1.CreateSpiritRequest{Spirit: spirit})
@@ -91,9 +99,9 @@ func TestUpdateSpirit(t *testing.T) {
 		t.Fatal("update spirit", err)
 	}
 
-	createRsp.GetSpirit().Name = "some-other-name"
+	createRsp.GetSpirit().Name = stringPtr("some-other-name")
 	spirit.Name = createRsp.GetSpirit().Name
-	createRsp.GetSpirit().GetStats().Agility += 1
+	*createRsp.GetSpirit().GetStats().Agility += 1
 	spirit.Stats.Agility = createRsp.GetSpirit().GetStats().Agility
 	updateRsp, err := clients.spirit.UpdateSpirit(state.ctx, &spiritsv1.UpdateSpiritRequest{Spirit: createRsp.GetSpirit()})
 	if err != nil {
@@ -111,7 +119,7 @@ func TestUpdateSpiritNotFound(t *testing.T) {
 	state := startServer(t)
 	clients := state.clients
 
-	spirit := &spiritsv1.Spirit{Meta: &spiritsv1.Meta{Id: "tuna"}}
+	spirit := &spiritsv1.Spirit{Meta: &spiritsv1.Meta{Id: stringPtr("tuna")}, Name: stringPtr("aaa")}
 	_, err := clients.spirit.UpdateSpirit(state.ctx, &spiritsv1.UpdateSpiritRequest{Spirit: spirit})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
@@ -122,7 +130,7 @@ func TestGetSpiritNotFound(t *testing.T) {
 	state := startServer(t)
 	clients := state.clients
 
-	_, err := clients.spirit.GetSpirit(state.ctx, &spiritsv1.GetSpiritRequest{Id: "foo"})
+	_, err := clients.spirit.GetSpirit(state.ctx, &spiritsv1.GetSpiritRequest{Id: stringPtr("foo")})
 	if want, got := status.New(codes.NotFound, "not found"), status.Convert(err); !reflect.DeepEqual(want, got) {
 		t.Errorf("want %q, got %q", want, got)
 	}
@@ -138,7 +146,7 @@ func TestInvalidSpiritName(t *testing.T) {
 		t.Fatal("wanted error")
 	}
 	if want, got := codes.InvalidArgument, s.Code(); want != got {
-		t.Errorf("wanted code %d, got %d", want, got)
+		t.Errorf("wanted code %d, got %d (%+v)", want, got, err)
 	}
 }
 
@@ -165,3 +173,7 @@ func noMeta(spirit *spiritsv1.Spirit) *spiritsv1.Spirit {
 }
 
 func stringPtr(s string) *string { return &s }
+func int64Ptr(i int64) *int64    { return &i }
+func intelligencePtr(intelligence spiritsv1.BattleTeamSpiritIntelligence) *spiritsv1.BattleTeamSpiritIntelligence {
+	return &intelligence
+}

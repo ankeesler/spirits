@@ -552,9 +552,7 @@ func (m *ListSpiritsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Name != nil {
-		// no validation rules for Name
-	}
+	// no validation rules for Name
 
 	if len(errors) > 0 {
 		return ListSpiritsRequestMultiError(errors)

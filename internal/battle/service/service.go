@@ -5,7 +5,7 @@ import (
 
 	battlepkg "github.com/ankeesler/spirits/internal/battle"
 	convertbattle "github.com/ankeesler/spirits/internal/battle/convert"
-	"github.com/ankeesler/spirits/pkg/api/spirits/v1"
+	spiritsv1 "github.com/ankeesler/spirits/pkg/api/spirits/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -53,8 +53,9 @@ func (s *Service) CreateBattle(
 	ctx context.Context,
 	req *spiritsv1.CreateBattleRequest,
 ) (*spiritsv1.CreateBattleResponse, error) {
+	state := spiritsv1.BattleState_BATTLE_STATE_PENDING
 	apiBattle := &spiritsv1.Battle{
-		State: spiritsv1.BattleState_BATTLE_STATE_PENDING,
+		State: &state,
 	}
 	internalBattle, err := convertbattle.FromAPI(apiBattle, s.actionSource)
 	if err != nil {

@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package spirits.v1;
 
@@ -46,22 +46,22 @@ service SpiritService {
 
 message CreateSpiritRequest {
   // The Spirit to create. The ID will be filled in on response.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 message CreateSpiritResponse {
   // The newly created Spirit.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 message GetSpiritRequest {
   // The id of the Spirit to get.
-  string id = 1;
+  required string id = 1;
 }
 
 message GetSpiritResponse {
   // The retrieved Spirit.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 message ListSpiritsRequest {
@@ -75,34 +75,34 @@ message ListSpiritsResponse {
 
 message UpdateSpiritRequest {
   // The new version of the Spirit.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 message UpdateSpiritResponse {
   // The newly updated Spirit.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 message DeleteSpiritRequest {
   // The id of the Spirit to delete.
-  string id = 1;
+  required string id = 1;
 }
 
 message DeleteSpiritResponse {
   // The newly deleted Spirit.
-  Spirit spirit = 1;
+  required Spirit spirit = 1;
 }
 
 // Spirit describes a single actor in a Battle.
 message Spirit {
   // Metadata about this Spirit.
-  Meta meta = 1;
+  optional Meta meta = 1;
 
   // Name of this Spirit - colloquial name used to identify the Spirit.
-  string name = 2 [(validate.rules).string.min_len = 1];
+  optional string name = 2 [(validate.rules).string.min_len = 1];
 
   // The quantitative description of this Spirit's abilities.
-  SpiritStats stats = 3;
+  optional SpiritStats stats = 3;
 
   // The SpiritAction's that this Spirit can take on their turn in a Battle.
   repeated SpiritAction actions = 4;
@@ -110,19 +110,19 @@ message Spirit {
 
 // SpiritStats are a quantitative description of a Spirit's abilities.
 message SpiritStats {
-  int64 health = 1;
-  int64 physical_power = 2;
-  int64 physical_constitution = 3;
-  int64 mental_power = 4;
-  int64 mental_constitution = 5;
-  int64 agility = 6;
+  optional int64 health = 1;
+  optional int64 physical_power = 2;
+  optional int64 physical_constitution = 3;
+  optional int64 mental_power = 4;
+  optional int64 mental_constitution = 5;
+  optional int64 agility = 6;
 }
 
 // SpiritAction is a reference to an Action that a Spirit can invoke during
 // Battle.
 message SpiritAction {
   // The name of this SpiritAction.
-  string name = 1;
+  optional string name = 1;
 
   oneof definition {
     // The ID of the Action.

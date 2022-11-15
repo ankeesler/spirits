@@ -28,15 +28,15 @@ type Meta struct {
 	unknownFields protoimpl.UnknownFields
 
 	// The unique identifier for the resource.
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
 	// The time at which the resource was created.
-	CreatedTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_time,json=createdTime,proto3" json:"created_time,omitempty"`
+	CreatedTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_time,json=createdTime" json:"created_time,omitempty"`
 	// The identity that created the resource.
-	CreatedBy *Identity `protobuf:"bytes,3,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	CreatedBy *Identity `protobuf:"bytes,3,opt,name=created_by,json=createdBy" json:"created_by,omitempty"`
 	// The time at which the resource was last updated.
-	UpdatedTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_time,json=updatedTime,proto3" json:"updated_time,omitempty"`
+	UpdatedTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_time,json=updatedTime" json:"updated_time,omitempty"`
 	// The identity that last updated the resource.
-	UpdatedBy *Identity `protobuf:"bytes,5,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy *Identity `protobuf:"bytes,5,opt,name=updated_by,json=updatedBy" json:"updated_by,omitempty"`
 }
 
 func (x *Meta) Reset() {
@@ -72,8 +72,8 @@ func (*Meta) Descriptor() ([]byte, []int) {
 }
 
 func (x *Meta) GetId() string {
-	if x != nil {
-		return x.Id
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
@@ -113,7 +113,7 @@ type Identity struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Principle string `protobuf:"bytes,1,opt,name=principle,proto3" json:"principle,omitempty"`
+	Principle *string `protobuf:"bytes,1,opt,name=principle" json:"principle,omitempty"`
 }
 
 func (x *Identity) Reset() {
@@ -149,8 +149,8 @@ func (*Identity) Descriptor() ([]byte, []int) {
 }
 
 func (x *Identity) GetPrinciple() string {
-	if x != nil {
-		return x.Principle
+	if x != nil && x.Principle != nil {
+		return *x.Principle
 	}
 	return ""
 }
@@ -183,8 +183,7 @@ var file_spirits_v1_meta_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x72, 0x69, 0x6e, 0x63, 0x69, 0x70, 0x6c, 0x65, 0x42,
 	0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6e,
 	0x6b, 0x65, 0x65, 0x73, 0x6c, 0x65, 0x72, 0x2f, 0x73, 0x70, 0x69, 0x72, 0x69, 0x74, 0x73, 0x3b,
-	0x73, 0x70, 0x69, 0x72, 0x69, 0x74, 0x73, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x73, 0x70, 0x69, 0x72, 0x69, 0x74, 0x73, 0x76, 0x31,
 }
 
 var (

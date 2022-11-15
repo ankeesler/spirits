@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package spirits.v1;
 
@@ -44,22 +44,22 @@ service ActionService {
 
 message CreateActionRequest {
   // The Action to create. The ID will be filled in on response.
-  Action action = 1;
+  required Action action = 1;
 }
 
 message CreateActionResponse {
   // The newly created Action.
-  Action action = 1;
+  required Action action = 1;
 }
 
 message GetActionRequest {
   // The id of the Action to get.
-  string id = 1;
+  required string id = 1;
 }
 
 message GetActionResponse {
   // The retrieved Action.
-  Action action = 1;
+  required Action action = 1;
 }
 
 message ListActionsRequest {
@@ -71,22 +71,22 @@ message ListActionsResponse {
 
 message UpdateActionRequest {
   // The new version of the Action.
-  Action action = 1;
+  required Action action = 1;
 }
 
 message UpdateActionResponse {
   // The newly updated Action.
-  Action action = 1;
+  required Action action = 1;
 }
 
 message DeleteActionRequest {
   // The id of the Action to delete.
-  string id = 1;
+  required string id = 1;
 }
 
 message DeleteActionResponse {
   // The newly deleted Action.
-  Action action = 1;
+  required Action action = 1;
 }
 
 // Action describes what a Spirit can actually do on their turn in a Battle.
@@ -94,10 +94,10 @@ message DeleteActionResponse {
 // An Action is applied to zero or more Spirit's on a Battle turn.
 message Action {
   // Metadata about this Action.
-  Meta meta = 1;
+  optional Meta meta = 1;
 
   // Description of the Action.
-  string description = 2;
+  optional string description = 2;
 
   oneof definition {
     // An action script.

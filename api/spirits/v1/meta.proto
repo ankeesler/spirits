@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package spirits.v1;
 
@@ -9,23 +9,23 @@ option go_package = "github.com/ankeesler/spirits;spiritsv1";
 // Meta holds auxillary information about a resource.
 message Meta {
   // The unique identifier for the resource.
-  string id = 1;
+  optional string id = 1;
 
   // The time at which the resource was created.
-  google.protobuf.Timestamp created_time = 2;
+  optional google.protobuf.Timestamp created_time = 2;
 
   // The identity that created the resource.
-  Identity created_by = 3;
+  optional Identity created_by = 3;
 
   // The time at which the resource was last updated.
-  google.protobuf.Timestamp updated_time = 4;
+  optional google.protobuf.Timestamp updated_time = 4;
 
   // The identity that last updated the resource.
-  Identity updated_by = 5;
+  optional Identity updated_by = 5;
 }
 
 // Identity describes some sort of actor doing something (e.g., a human creating
 // a Spirit, a machine cancelling a Battle, etc.).
 message Identity {
-  string principle = 1;
+  optional string principle = 1;
 }

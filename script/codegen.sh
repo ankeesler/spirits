@@ -12,6 +12,7 @@ docker run -v "${PWD}:/spirits" ankeesler/spirits-codegen:latest \
   --go-grpc_out=paths=source_relative:/spirits/pkg/api \
   --validate_out=lang=go,paths=source_relative:/spirits/pkg/api \
   --grpc-gateway_out=paths=source_relative:/spirits/pkg/api \
+  --grpc-gateway-ts_out=paths=source_relative:/spirits/src/lib/api \
   -I/spirits/api \
   /spirits/api/spirits/v1/meta.proto \
   /spirits/api/spirits/v1/action.proto \

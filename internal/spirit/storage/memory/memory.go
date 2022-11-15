@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"math/rand"
+	"sort"
 	"sync"
 
 	actionpkg "github.com/ankeesler/spirits/internal/action"
@@ -73,6 +74,10 @@ func (s *Storage) ListSpirits(
 		}
 		spirits = filteredSpirits
 	}
+
+	sort.Slice(spirits, func(i, j int) bool {
+		return spirits[i].Name() < spirits[j].Name()
+	})
 
 	return spirits, nil
 }
