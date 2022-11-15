@@ -25,21 +25,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:latest , ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:${{ github.sha }}
 
-  test-codegen:
-    needs: [codegen-image]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Test
-      run: |
-        ./script/codegen.sh
-        if [[ -n "$(git status --porcelain)" ]]; then
-          git diff
-          exit 1
-        fi
-
   test-server:
-    needs: [test-codegen]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
