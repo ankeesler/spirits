@@ -59,7 +59,7 @@ jobs:
       with:
         node-version: '17'
     - run: npm install
-    - run: echo TODO
+    - run: npm test
 
   build:
     needs: [test-web, test-server]
