@@ -8,6 +8,7 @@ jobs:
   codegen-image:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -22,7 +23,7 @@ jobs:
         with:
           context: image/codegen
           push: true
-          tags: ankeesler/spirits-codegen:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:latest , ${{ secrets.DOCKERHUB_USERNAME }}/spirits-codegen:${{ github.sha }}
 
   test-codegen:
     needs: [codegen-image]
