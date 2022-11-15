@@ -87,7 +87,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/spirits-web-server:latest , ${{ secrets.DOCKERHUB_USERNAME }}/spirits-web-server:${{ github.sha }}
 
   test-integration:
-    needs: [build]
+    needs: [build-api, build-web]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
