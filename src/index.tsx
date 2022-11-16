@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FakeSpiritClient, SpiritClient } from './lib/client/spirit';
-import { ActionClient, FakeActionClient } from './lib/client/action';
-import { Spirit } from './lib/api/spirits/v1/spirit.pb';
-import { Action } from './lib/api/spirits/v1/action.pb';
+import {FakeSpiritClient, SpiritClient} from './lib/client/spirit';
+import {ActionClient, FakeActionClient} from './lib/client/action';
+import {Spirit} from './lib/api/spirits/v1/spirit.pb';
+import {Action} from './lib/api/spirits/v1/action.pb';
 
 const fakeSpirits: Spirit[] = [
   {
@@ -56,16 +56,18 @@ const fakeActions: Action[] = [
 ];
 
 const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-const spiritClient = isDev ? new FakeSpiritClient(fakeSpirits) : new SpiritClient();
-const actionClient = isDev ? new FakeActionClient(fakeActions) : new ActionClient();
+const spiritClient =
+  isDev ? new FakeSpiritClient(fakeSpirits) : new SpiritClient();
+const actionClient =
+  isDev ? new FakeActionClient(fakeActions) : new ActionClient();
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <React.StrictMode>
-    <App spiritClient={spiritClient} actionClient={actionClient}/>
-  </React.StrictMode>
+    <React.StrictMode>
+      <App spiritClient={spiritClient} actionClient={actionClient}/>
+    </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

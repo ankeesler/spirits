@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import './App.css';
@@ -6,8 +6,8 @@ import './App.css';
 import ActionTable from './components/ActionTable/ActionTable';
 import SpiritTable from './components/SpiritTable/SpiritTable';
 
-import { Action } from './lib/api/spirits/v1/action.pb';
-import { Spirit } from './lib/api/spirits/v1/spirit.pb';
+import {Action} from './lib/api/spirits/v1/action.pb';
+import {Spirit} from './lib/api/spirits/v1/spirit.pb';
 
 interface SpiritClient {
   listSpirits(): Promise<Spirit[]>
@@ -28,19 +28,19 @@ const App: FC<AppProps> = (props) => {
 
   useEffect(() => {
     props.spiritClient
-      .listSpirits()
-      .then(setSpirits)
-      .catch((error) => {
-        console.error(`list spirits: ${error.toString()}`);
-      });
+        .listSpirits()
+        .then(setSpirits)
+        .catch((error) => {
+          console.error(`list spirits: ${error.toString()}`);
+        });
   }, [props.spiritClient]);
 
   useEffect(() => {
     props.actionClient.listActions()
-    .then(setActions)
-    .catch((error) => {
-      console.error(`list spirits: ${error.toString()}`);
-    });
+        .then(setActions)
+        .catch((error) => {
+          console.error(`list spirits: ${error.toString()}`);
+        });
   }, [props.actionClient]);
 
   return (
@@ -57,6 +57,6 @@ const App: FC<AppProps> = (props) => {
       </Tab>
     </Tabs>
   );
-}
+};
 
 export default App;

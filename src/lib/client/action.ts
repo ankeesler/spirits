@@ -1,9 +1,10 @@
-import { Action, ActionService } from "../api/spirits/v1/action.pb";
+import {Action, ActionService} from '../api/spirits/v1/action.pb';
 
-const INIT_REQ = {pathPrefix: '/api'}
+const INIT_REQ = {pathPrefix: '/api'};
 
 export class ActionClient {
   listActions(): Promise<Action[]> {
+    // eslint-disable-next-line new-cap
     return ActionService.ListActions({}, INIT_REQ).then((rsp) => {
       return rsp.actions!;
     }).catch((error) => {

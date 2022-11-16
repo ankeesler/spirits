@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import React, {FC} from 'react';
 import Table from 'react-bootstrap/Table';
 import './ActionTable.css';
 
-import { Action } from '../../lib/api/spirits/v1/action.pb';
+import {Action} from '../../lib/api/spirits/v1/action.pb';
 
 interface ActionTableProps {
   actions: Action[]
@@ -18,15 +18,15 @@ const ActionTable: FC<ActionTableProps> = (props) => {
         </tr>
       </thead>
       <tbody>
-        {props.actions.map((Action: Action) => 
-          <tr>
+        {props.actions.map((Action: Action, i: number) =>
+          <tr key={i}>
             <td>{Action.meta?.id}</td>
             <td>{Action.description}</td>
-          </tr>
+          </tr>,
         )}
       </tbody>
     </Table>
-  )
-}
+  );
+};
 
 export default ActionTable;
