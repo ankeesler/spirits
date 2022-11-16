@@ -23,7 +23,7 @@ const SpiritTable: FC<SpiritTableProps> = (props) => {
           <tr>
             <td>{spirit.meta?.id}</td>
             <td>{spirit.name}</td>
-            <td>{spirit.actions?.map((action: SpiritAction) => action.name)}</td>
+            <td>{spirit.actions?.map((action: SpiritAction) => action.name + ' ')}</td>
           </tr>
         )}
       </tbody>
