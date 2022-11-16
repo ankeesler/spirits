@@ -38,8 +38,8 @@ FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 ENV NODE_ENV production
 
-COPY --from=react-builder /workspace/build .
-COPY --from=server-builder /workspace/server .
+COPY --from=react-builder /workspace/build /build
+COPY --from=server-builder /workspace/server /server
 
 USER 65532:65532
 
