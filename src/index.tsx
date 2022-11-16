@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {FakeSpiritClient, SpiritClient} from './lib/client/spirit';
-import {ActionClient, FakeActionClient} from './lib/client/action';
+import {FakeActionClient, ActionClient} from './lib/client/action';
 import {Spirit} from './lib/api/spirits/v1/spirit.pb';
 import {Action} from './lib/api/spirits/v1/action.pb';
 
