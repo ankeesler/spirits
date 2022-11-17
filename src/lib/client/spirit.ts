@@ -3,13 +3,9 @@ import {Spirit, SpiritService} from '../api/spirits/v1/spirit.pb';
 const INIT_REQ = {pathPrefix: '/api'};
 
 export class SpiritClient {
-  listSpirits(): Promise<Spirit[]> {
+  async listSpirits(): Promise<Spirit[]> {
     // eslint-disable-next-line new-cap
-    return SpiritService.ListSpirits({}, INIT_REQ).then((rsp) => {
-      return rsp.spirits!;
-    }).catch((error) => {
-      return error;
-    });
+    return (await SpiritService.ListSpirits({}, INIT_REQ)).spirits!;
   }
 };
 

@@ -4,10 +4,31 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {FakeBattleClient, BattleClient} from './lib/client/battle';
 import {FakeSpiritClient, SpiritClient} from './lib/client/spirit';
 import {FakeActionClient, ActionClient} from './lib/client/action';
+import {Battle, BattleState} from './lib/api/spirits/v1/battle.pb';
 import {Spirit} from './lib/api/spirits/v1/spirit.pb';
 import {Action} from './lib/api/spirits/v1/action.pb';
+
+const fakeBattles: Battle[] = [
+  {
+    meta: {
+      id: 'abc123',
+      createdTime: '2022-10-10',
+      updatedTime: '2022-10-10',
+    },
+    state: BattleState.BATTLE_STATE_FINISHED,
+  },
+  {
+    meta: {
+      id: 'def456',
+      createdTime: '2022-11-16',
+      updatedTime: '2022-11-18',
+    },
+    state: BattleState.BATTLE_STATE_WAITING,
+  },
+];
 
 const fakeSpirits: Spirit[] = [
   {
@@ -56,6 +77,8 @@ const fakeActions: Action[] = [
 ];
 
 const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+const battleClient =
+  isDev ? new FakeBattleClient(fakeBattles) : new BattleClient();
 const spiritClient =
   isDev ? new FakeSpiritClient(fakeSpirits) : new SpiritClient();
 const actionClient =
@@ -66,7 +89,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
     <React.StrictMode>
-      <App spiritClient={spiritClient} actionClient={actionClient}/>
+      <App
+        battleClient={battleClient}
+        spiritClient={spiritClient}
+        actionClient={actionClient} />
     </React.StrictMode>,
 );
 
