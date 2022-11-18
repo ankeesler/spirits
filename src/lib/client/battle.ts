@@ -2,6 +2,8 @@ import {Battle, BattleService, BattleState} from '../api/spirits/v1/battle.pb';
 
 const INIT_REQ = {pathPrefix: '/api'};
 
+export type BattleCallback = (battle: Battle) => void
+
 export class BattleClient {
   async createBattle(): Promise<Battle> {
     // eslint-disable-next-line new-cap
@@ -19,6 +21,13 @@ export class BattleClient {
       battleId: battleId,
       teamName: teamName,
     })).battle!;
+  }
+
+  async watchBattle(id: string, callback: BattleCallback): Promise<void> {
+    // eslint-disable-next-line new-cap
+    return BattleService.WatchBattle({id: id}, (rsp) => {
+      callback(rsp.battle!);
+    });
   }
 };
 
@@ -50,5 +59,12 @@ export class FakeBattleClient {
   addTeam(_: string, teamName: string): Promise<Battle> {
     this.battles[0].teams?.push({name: teamName});
     return Promise.resolve(this.battles[0]);
+  }
+
+  watchBattle(id: string, callback: BattleCallback): Promise<void> {
+    setInterval(() => {
+      callback(this.battles[0]);
+    }, 1000);
+    return Promise.resolve();
   }
 };

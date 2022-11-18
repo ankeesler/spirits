@@ -110,7 +110,7 @@ const router = createBrowserRouter([
         path: '/battles/:id',
         element: <BattleView battleClient={battleClient}/>,
         loader: async ({params}) => {
-          return Promise.resolve('tuna');
+          return params.id;
         },
       },
     ],
