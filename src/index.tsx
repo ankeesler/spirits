@@ -1,9 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Root from './routes/Root';
+import Home from './routes/Home';
+import BattleView from './routes/BattleView';
+
 import {FakeBattleClient, BattleClient} from './lib/client/battle';
 import {FakeSpiritClient, SpiritClient} from './lib/client/spirit';
 import {FakeActionClient, ActionClient} from './lib/client/action';
@@ -84,15 +91,38 @@ const spiritClient =
 const actionClient =
   isDev ? new FakeActionClient(fakeActions) : new ActionClient();
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root
+      battleClient={battleClient}
+      spiritClient={spiritClient}
+      actionClient={actionClient} />,
+    children: [
+      {
+        path: '/',
+        element: <Home
+          battleClient={battleClient}
+          spiritClient={spiritClient}
+          actionClient={actionClient} />,
+      },
+      {
+        path: '/battles/:id',
+        element: <BattleView battleClient={battleClient}/>,
+        loader: async ({params}) => {
+          return Promise.resolve('tuna');
+        },
+      },
+    ],
+  },
+]);
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
     <React.StrictMode>
-      <App
-        battleClient={battleClient}
-        spiritClient={spiritClient}
-        actionClient={actionClient} />
+      <RouterProvider router={router} />
     </React.StrictMode>,
 );
 

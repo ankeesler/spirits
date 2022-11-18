@@ -12,6 +12,14 @@ export class BattleClient {
     // eslint-disable-next-line new-cap
     return (await BattleService.ListBattles({}, INIT_REQ)).battles!;
   }
+
+  async addTeam(battleId: string, teamName: string): Promise<Battle> {
+    // eslint-disable-next-line new-cap
+    return (await BattleService.AddBattleTeam({
+      battleId: battleId,
+      teamName: teamName,
+    })).battle!;
+  }
 };
 
 export class FakeBattleClient {
@@ -37,5 +45,10 @@ export class FakeBattleClient {
 
   listBattles(): Promise<Battle[]> {
     return Promise.resolve(this.battles);
+  }
+
+  addTeam(_: string, teamName: string): Promise<Battle> {
+    this.battles[0].teams?.push({name: teamName});
+    return Promise.resolve(this.battles[0]);
   }
 };
