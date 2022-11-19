@@ -42,6 +42,109 @@ var (
 	port = flag.Int("port", 12345, "The server port")
 )
 
+var battleMenu = menu.Menu{
+	{
+		Title: "Add Battle Team",
+		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+			state := getState(ctx)
+
+			teamName, err := menu.Input(io, "Team name: ")
+			if err != nil {
+				return ctx, err
+			}
+
+			rsp, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
+				BattleId: &state.battleID,
+				TeamName: &teamName,
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("add battle team: %w", err)
+			}
+
+			state.teamName = teamName
+
+			fmt.Fprint(io.Out, prototext.MarshalOptions{
+				Multiline: true,
+			}.Format(rsp))
+
+			return menu.Menu{
+				{
+					Title: "Add Battle Team Spirit",
+					Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+						state := getState(ctx)
+
+						rsp, err := state.clients.spirit.ListSpirits(ctx, &spiritsv1.ListSpiritsRequest{})
+						if err != nil {
+							return ctx, fmt.Errorf("list spirits: %w", err)
+						}
+
+						var submenu menu.Menu
+						for _, spirit := range rsp.GetSpirits() {
+							submenu = append(submenu, menu.Item{
+								Title: spirit.GetName(),
+								Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+									state := getState(ctx)
+									rsp, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
+										BattleId:     &state.battleID,
+										TeamName:     &state.teamName,
+										SpiritId:     stringPtr(spirit.GetMeta().GetId()),
+										Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM),
+										Seed:         int64Ptr(time.Now().Unix()),
+									})
+									if err != nil {
+										return ctx, fmt.Errorf("add battle team spirit: %w", err)
+									}
+
+									fmt.Fprint(io.Out, prototext.MarshalOptions{
+										Multiline: true,
+									}.Format(rsp))
+
+									return ctx, nil
+								}),
+							})
+						}
+
+						return submenu.Run(ctx, io)
+					}),
+				},
+			}.Run(ctx, io)
+		}),
+	},
+	{
+		Title: "Start Battle",
+		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+			state := getState(ctx)
+
+			watchCtx, cancel := context.WithCancel(ctx)
+			defer cancel()
+			watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
+				Id: &state.battleID,
+			})
+			if err != nil {
+				return ctx, fmt.Errorf("watch battle: %w", err)
+			}
+
+			wg := sync.WaitGroup{}
+
+			wg.Add(1)
+			go func() {
+				watchBattle(watchCtx, io, watchStream)
+				wg.Done()
+			}()
+
+			if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
+				Id: &state.battleID,
+			}); err != nil {
+				return ctx, fmt.Errorf("start battle: %w", err)
+			}
+
+			wg.Wait()
+
+			return ctx, nil
+		}),
+	},
+}
+
 var m = menu.Menu{
 	{
 		Title: "List Spirits",
@@ -93,108 +196,21 @@ var m = menu.Menu{
 				Multiline: true,
 			}.Format(rsp))
 
-			return menu.Menu{
-				{
-					Title: "Add Battle Team",
-					Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
-						state := getState(ctx)
+			return battleMenu.Run(ctx, io)
+		}),
+	},
+	{
+		Title: "Update Battle",
+		Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
+			state := getState(ctx)
 
-						teamName, err := menu.Input(io, "Team name: ")
-						if err != nil {
-							return ctx, err
-						}
+			var err error
+			state.battleID, err = menu.Input(io, "Battle ID: ")
+			if err != nil {
+				return ctx, fmt.Errorf("input: %w", err)
+			}
 
-						rsp, err := state.clients.battle.AddBattleTeam(ctx, &spiritsv1.AddBattleTeamRequest{
-							BattleId: &state.battleID,
-							TeamName: &teamName,
-						})
-						if err != nil {
-							return ctx, fmt.Errorf("add battle team: %w", err)
-						}
-
-						state.teamName = teamName
-
-						fmt.Fprint(io.Out, prototext.MarshalOptions{
-							Multiline: true,
-						}.Format(rsp))
-
-						return menu.Menu{
-							{
-								Title: "Add Battle Team Spirit",
-								Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
-									state := getState(ctx)
-
-									rsp, err := state.clients.spirit.ListSpirits(ctx, &spiritsv1.ListSpiritsRequest{})
-									if err != nil {
-										return ctx, fmt.Errorf("list spirits: %w", err)
-									}
-
-									var submenu menu.Menu
-									for _, spirit := range rsp.GetSpirits() {
-										submenu = append(submenu, menu.Item{
-											Title: spirit.GetName(),
-											Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
-												state := getState(ctx)
-												rsp, err := state.clients.battle.AddBattleTeamSpirit(ctx, &spiritsv1.AddBattleTeamSpiritRequest{
-													BattleId:     &state.battleID,
-													TeamName:     &state.teamName,
-													SpiritId:     stringPtr(spirit.GetMeta().GetId()),
-													Intelligence: intelligencePtr(spiritsv1.BattleTeamSpiritIntelligence_BATTLE_TEAM_SPIRIT_INTELLIGENCE_RANDOM),
-													Seed:         int64Ptr(time.Now().Unix()),
-												})
-												if err != nil {
-													return ctx, fmt.Errorf("add battle team spirit: %w", err)
-												}
-
-												fmt.Fprint(io.Out, prototext.MarshalOptions{
-													Multiline: true,
-												}.Format(rsp))
-
-												return ctx, nil
-											}),
-										})
-									}
-
-									return submenu.Run(ctx, io)
-								}),
-							},
-						}.Run(ctx, io)
-					}),
-				},
-				{
-					Title: "Start Battle",
-					Runner: menu.RunnerFunc(func(ctx context.Context, io *menu.IO) (context.Context, error) {
-						state := getState(ctx)
-
-						watchCtx, cancel := context.WithCancel(ctx)
-						defer cancel()
-						watchStream, err := state.clients.battle.WatchBattle(watchCtx, &spiritsv1.WatchBattleRequest{
-							Id: &state.battleID,
-						})
-						if err != nil {
-							return ctx, fmt.Errorf("watch battle: %w", err)
-						}
-
-						wg := sync.WaitGroup{}
-
-						wg.Add(1)
-						go func() {
-							watchBattle(watchCtx, io, watchStream)
-							wg.Done()
-						}()
-
-						if _, err := state.clients.battle.StartBattle(ctx, &spiritsv1.StartBattleRequest{
-							Id: &state.battleID,
-						}); err != nil {
-							return ctx, fmt.Errorf("start battle: %w", err)
-						}
-
-						wg.Wait()
-
-						return ctx, nil
-					}),
-				},
-			}.Run(ctx, io)
+			return battleMenu.Run(ctx, io)
 		}),
 	},
 	{

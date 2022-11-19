@@ -23,6 +23,7 @@ const BattleView: FC<BattleViewProps> = (props) => {
 
   useEffect(() => {
     props.battleClient.watchBattle(id as string, (battle: Battle) => {
+      console.log(`BattleView: got battle: ${battle.toString()}`);
       setLoaded(true);
       setBattle(battle);
     });

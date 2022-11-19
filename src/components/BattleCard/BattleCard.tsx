@@ -1,7 +1,9 @@
 import React, {FC} from 'react';
 import Card from 'react-bootstrap/Card';
 
-import {Battle, BattleState} from '../../lib/api/spirits/v1/battle.pb';
+import {
+  Battle, BattleState, BattleTeam} from '../../lib/api/spirits/v1/battle.pb';
+import TeamCard from '../TeamCard/TeamCard';
 
 interface BattleCardProps {
   battle: Battle
@@ -11,7 +13,7 @@ const BattleCard: FC<BattleCardProps> = (props) => {
   const getBattleState = (): string => {
     switch (props.battle.state) {
       case BattleState.BATTLE_STATE_PENDING:
-        return 'Waiting for teams...';
+        return 'Waiting for teams to join...';
       case BattleState.BATTLE_STATE_STARTED:
         return 'Running...';
       case BattleState.BATTLE_STATE_WAITING:
@@ -31,7 +33,9 @@ const BattleCard: FC<BattleCardProps> = (props) => {
     <Card>
       <Card.Header>{getBattleState()}</Card.Header>
       <Card.Body>
-        <Card.Title>{props.battle.meta?.id}</Card.Title>
+        {props.battle.teams!.map((team: BattleTeam, i: number) =>
+          <TeamCard team={team} key={i} />,
+        )}
       </Card.Body>
     </Card>
   );

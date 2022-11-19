@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import Table from 'react-bootstrap/Table';
-import './BattleTable.css';
+import {Link} from 'react-router-dom';
 
 import {Battle} from '../../lib/api/spirits/v1/battle.pb';
 
@@ -22,7 +22,9 @@ const BattleTable: FC<BattleTableProps> = (props) => {
       <tbody>
         {props.battles.map((battle: Battle, i: number) =>
           <tr key={i}>
-            <td>{battle.meta?.id}</td>
+            <td>
+              <Link to={`/battles/${battle.meta?.id}`}>{battle.meta?.id}</Link>
+            </td>
             <td>{battle.meta?.createdTime}</td>
             <td>{battle.meta?.updatedTime}</td>
             <td>{battle.state}</td>

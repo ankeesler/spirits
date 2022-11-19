@@ -1,6 +1,5 @@
 import React, {FC} from 'react';
 import Table from 'react-bootstrap/Table';
-import './ActionTable.css';
 
 import {Action} from '../../lib/api/spirits/v1/action.pb';
 
