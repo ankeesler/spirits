@@ -2,9 +2,9 @@ import React, {FC, useState} from 'react';
 import {Container, Nav, Navbar} from 'react-bootstrap';
 import {Link, Outlet, useNavigate} from 'react-router-dom';
 
-import {Action} from './../lib/api/spirits/v1/action.pb';
-import {Battle} from './../lib/api/spirits/v1/battle.pb';
-import {Spirit} from './../lib/api/spirits/v1/spirit.pb';
+import {Action} from '../lib/api/spirits/v1/action.pb';
+import {Battle} from '../lib/api/spirits/v1/battle.pb';
+import {Spirit} from '../lib/api/spirits/v1/spirit.pb';
 
 interface BattleClient {
   createBattle(): Promise<Battle>
@@ -39,7 +39,7 @@ interface LogLine {
   message: string
 };
 
-const Root: FC<AppProps> = (props) => {
+const RootView: FC<AppProps> = (props) => {
   const [logLines, setLogLines] = useState<LogLine[]>([{
     time: new Date(),
     level: LogLevel.INFO,
@@ -123,4 +123,4 @@ const Root: FC<AppProps> = (props) => {
   );
 };
 
-export default Root;
+export default RootView;

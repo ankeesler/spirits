@@ -7,7 +7,7 @@ import {
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Root from './routes/Root';
+import RootView from './routes/RootView';
 import HomeView from './routes/HomeView';
 import BattleView from './routes/BattleView';
 import ErrorView from './routes/ErrorView';
@@ -95,7 +95,7 @@ const actionClient =
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root
+    element: <RootView
       battleClient={battleClient}
       spiritClient={spiritClient}
       actionClient={actionClient} />,
