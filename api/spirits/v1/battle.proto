@@ -4,6 +4,7 @@ package spirits.v1;
 
 import "spirits/v1/meta.proto";
 import "spirits/v1/spirit.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/ankeesler/spirits;spiritsv1";
 
@@ -13,16 +14,29 @@ service BattleService {
   //
   // After a Battle is created, one might want to AddTeams's and then
   // AddSpirit's.
-  rpc CreateBattle(CreateBattleRequest) returns (CreateBattleResponse) {}
+  rpc CreateBattle(CreateBattleRequest) returns (CreateBattleResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles"
+      body: "*"
+    };
+  }
 
   // WatchBattle streams Battle updates.
   //
   // Everytime a change is made to a Battle, a response will be sent on the
   // stream.
-  rpc WatchBattle(WatchBattleRequest) returns (stream WatchBattleResponse) {}
+  rpc WatchBattle(WatchBattleRequest) returns (stream WatchBattleResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/battles/{id}/watch"
+    };
+  }
 
   // ListBattles will list a history of known Battle's.
-  rpc ListBattles(ListBattlesRequest) returns (ListBattlesResponse) {}
+  rpc ListBattles(ListBattlesRequest) returns (ListBattlesResponse) {
+    option (google.api.http) = {
+      get: "/spirits/v1/battles"
+    };
+  }
 
   // AddBattleTeam creates an empty Team in a Battle.
   //
@@ -30,7 +44,12 @@ service BattleService {
   // BATTLE_STATE_PENDING.
   //
   // After a BattleTeam is created, one might want to AddBattleTeamSpirit's.
-  rpc AddBattleTeam(AddBattleTeamRequest) returns (AddBattleTeamResponse) {}
+  rpc AddBattleTeam(AddBattleTeamRequest) returns (AddBattleTeamResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles/{battle_id}/teams"
+      body: "*"
+    };
+  }
 
   // AddBattleTeamSpirit adds a Spirit into a Battle via inclusion in a Team.
   //
@@ -39,26 +58,44 @@ service BattleService {
   // updated Spirit, a new Battle must be created.
   //
   // After Spirit's are added, one might want to StartBattle.
-  rpc AddBattleTeamSpirit(AddBattleTeamSpiritRequest) returns (AddBattleTeamSpiritResponse) {}
+  rpc AddBattleTeamSpirit(AddBattleTeamSpiritRequest) returns (AddBattleTeamSpiritResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles/{battle_id}/teams/{team_name}/spirits"
+      body: "*"
+    };
+  }
 
   // StartBattle progresses the Battle from BattleStatus BATTLE_STATE_PENDING to
   // BATTLE_STATE_STARTED (and thus can only be called when the BattleStatus is
   // BATTLE_STATE_PENDING).
   //
   // After StartBattle is called, one might want to WatchBattle.
-  rpc StartBattle(StartBattleRequest) returns (StartBattleResponse) {}
+  rpc StartBattle(StartBattleRequest) returns (StartBattleResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles/{id}/start"
+    };
+  }
 
   // CancelBattle forcefully halts a Battle.
   //
   // The Battle's BattleState will be set to BATTLE_STATE_CANCELLED.
-  rpc CancelBattle(CancelBattleRequest) returns (CancelBattleResponse) {}
+  rpc CancelBattle(CancelBattleRequest) returns (CancelBattleResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles/{id}/cancel"
+    };
+  }
 
   // CallAction invokes an acting Spirit's SpiritAction.
   //
   // This is only valid when a Spirit is currently acting, and
   // the Spirit's BattleTeamSpiritIntelligence is
   // BATTLE_TEAM_SPIRIT_INTELLIGENCE_HUMAN.
-  rpc CallAction(CallActionRequest) returns (CallActionResponse) {}
+  rpc CallAction(CallActionRequest) returns (CallActionResponse) {
+    option (google.api.http) = {
+      post: "/spirits/v1/battles/{battle_id}/actions"
+      body: "*"
+    };
+  }
 }
 
 message CreateBattleRequest {

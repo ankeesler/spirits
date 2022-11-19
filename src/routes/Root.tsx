@@ -69,7 +69,7 @@ const Root: FC<AppProps> = (props) => {
   const onNewBattle = () => {
     props.battleClient.createBattle()
         .then((battle) => {
-          logger.info(`new battle: ${battle.meta?.id}`);
+          logger.info(`New battle: ${battle.meta?.id}`);
           navigate(`/battles/${battle.meta?.id}`);
         }).catch((error) => {
           logger.error(`create battle: ${error.toString()}`);

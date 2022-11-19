@@ -23,22 +23,27 @@ interface ActionClient {
   listActions(): Promise<Action[]>
 };
 
-interface HomeProps {
+interface HomeViewProps {
   battleClient: BattleClient
   spiritClient: SpiritClient
   actionClient: ActionClient
 };
 
-const Home: FC<HomeProps> = (props) => {
+const HomeView: FC<HomeViewProps> = (props) => {
   const [battles, setBattles] = useState<Battle[]>([]);
+  const [battlesLoaded, setBattlesLoaded] = useState<Boolean>(false);
   const [spirits, setSpirits] = useState<Spirit[]>([]);
+  const [spiritsLoaded, setSpiritsLoaded] = useState<Boolean>(false);
   const [actions, setActions] = useState<Action[]>([]);
+  const [actionsLoaded, setActionsLoaded] = useState<Boolean>(false);
 
   useEffect(() => {
     props.battleClient
         .listBattles()
-        .then(setBattles)
-        .catch((error) => {
+        .then((battles: Battle[]) => {
+          setBattlesLoaded(true);
+          setBattles(battles);
+        }).catch((error) => {
           console.error(`list battles: ${error.toString()}`);
         });
   }, [props.battleClient]);
@@ -46,17 +51,21 @@ const Home: FC<HomeProps> = (props) => {
   useEffect(() => {
     props.spiritClient
         .listSpirits()
-        .then(setSpirits)
-        .catch((error) => {
+        .then((spirits: Spirit[]) => {
+          setSpiritsLoaded(true);
+          setSpirits(spirits);
+        }).catch((error) => {
           console.error(`list spirits: ${error.toString()}`);
         });
   }, [props.spiritClient]);
 
   useEffect(() => {
     props.actionClient.listActions()
-        .then(setActions)
-        .catch((error) => {
-          console.error(`list spirits: ${error.toString()}`);
+        .then((actions: Action[]) => {
+          setActionsLoaded(true);
+          setActions(actions);
+        }).catch((error) => {
+          console.error(`list actions: ${error.toString()}`);
         });
   }, [props.actionClient]);
 
@@ -66,21 +75,21 @@ const Home: FC<HomeProps> = (props) => {
     className="mb-3"
   >
     <Tab eventKey="battles" title="Battles">
-      {battles.length > 0 ?
+      {battlesLoaded ?
         <BattleTable battles={battles} /> :
         <Spinner animation="border" role="status" />}
     </Tab>
     <Tab eventKey="spirits" title="Spirits">
-      {spirits.length > 0 ?
+      {spiritsLoaded ?
         <SpiritTable spirits={spirits} /> :
         <Spinner animation="border" role="status" />}
     </Tab>
     <Tab eventKey="actions" title="Actions">
-      {actions.length > 0 ?
+      {actionsLoaded ?
         <ActionTable actions={actions} /> :
         <Spinner animation="border" role="status" />}
     </Tab>
   </Tabs>;
 };
 
-export default Home;
+export default HomeView;

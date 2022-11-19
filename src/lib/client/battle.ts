@@ -20,14 +20,14 @@ export class BattleClient {
     return (await BattleService.AddBattleTeam({
       battleId: battleId,
       teamName: teamName,
-    })).battle!;
+    }, INIT_REQ)).battle!;
   }
 
   async watchBattle(id: string, callback: BattleCallback): Promise<void> {
     // eslint-disable-next-line new-cap
     return BattleService.WatchBattle({id: id}, (rsp) => {
       callback(rsp.battle!);
-    });
+    }, INIT_REQ);
   }
 };
 
@@ -58,12 +58,12 @@ export class FakeBattleClient {
 
   addTeam(_: string, teamName: string): Promise<Battle> {
     this.battles[0].teams?.push({name: teamName});
-    return Promise.resolve(this.battles[0]);
+    return Promise.resolve(this.battles[-1]);
   }
 
   watchBattle(id: string, callback: BattleCallback): Promise<void> {
-    setInterval(() => {
-      callback(this.battles[0]);
+    setTimeout(() => {
+      callback(this.battles.at(-1)!);
     }, 1000);
     return Promise.resolve();
   }

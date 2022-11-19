@@ -8,8 +8,9 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Root from './routes/Root';
-import Home from './routes/Home';
+import HomeView from './routes/HomeView';
 import BattleView from './routes/BattleView';
+import ErrorView from './routes/ErrorView';
 
 import {FakeBattleClient, BattleClient} from './lib/client/battle';
 import {FakeSpiritClient, SpiritClient} from './lib/client/spirit';
@@ -98,10 +99,11 @@ const router = createBrowserRouter([
       battleClient={battleClient}
       spiritClient={spiritClient}
       actionClient={actionClient} />,
+    errorElement: <ErrorView />,
     children: [
       {
         path: '/',
-        element: <Home
+        element: <HomeView
           battleClient={battleClient}
           spiritClient={spiritClient}
           actionClient={actionClient} />,

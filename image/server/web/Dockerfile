@@ -4,12 +4,23 @@ WORKDIR /workspace
 
 COPY package.json package.json
 COPY package-lock.json package-lock.json
+RUN \
+  --mount=type=cache,target=/cache/npmcache \
+  --mount=type=cache,target=/cache/npmprefix \
+  NPM_CONFIG_CACHE=/cache/npmcache \
+  NPM_CONFIG_PREFIX=/cache/npmprefix \
+  npm install --save-prod
+
 COPY tsconfig.json tsconfig.json
 COPY public/ public/
 COPY src/ src/
 
-RUN npm install
-RUN npm run build --production
+RUN \
+  --mount=type=cache,target=/cache/npmcache \
+  --mount=type=cache,target=/cache/npmprefix \
+  NPM_CONFIG_CACHE=/cache/npmcache \
+  NPM_CONFIG_PREFIX=/cache/npmprefix \
+  npm run build --production
 
 FROM golang:1.19-alpine3.16 as server-builder
 

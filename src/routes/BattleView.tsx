@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Container, Spinner} from 'react-bootstrap';
 import {useLoaderData} from 'react-router-dom';
+import BattleCard from '../components/BattleCard/BattleCard';
 
 import {Battle} from '../lib/api/spirits/v1/battle.pb';
 
@@ -18,20 +19,20 @@ interface BattleViewProps {
 const BattleView: FC<BattleViewProps> = (props) => {
   const id = useLoaderData();
   const [battle, setBattle] = useState<Battle>({});
+  const [loaded, setLoaded] = useState<Boolean>(false);
 
   useEffect(() => {
-    props.battleClient.watchBattle(id as string, setBattle);
+    props.battleClient.watchBattle(id as string, (battle: Battle) => {
+      setLoaded(true);
+      setBattle(battle);
+    });
   }, []);
 
-  const getBody = () => {
-    if (!battle.meta) {
-      return <Spinner animation="border" role="status" />;
-    }
-
-    return (<div>battle.meta.id</div>);
-  };
-
-  return <Container>{getBody()}</Container>;
+  return (
+    <Container>
+      {loaded ? <BattleCard battle={battle} /> : <Spinner />}
+    </Container>
+  );
 };
 
 export default BattleView;

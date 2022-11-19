@@ -116,12 +116,16 @@ func gatewayMux(ctx context.Context, upstreamAPIServer string) http.Handler {
 		log.Fatalf("dial upstream API server: %s", err.Error())
 	}
 
-	if err := spiritsv1.RegisterActionServiceHandler(ctx, mux, conn); err != nil {
-		log.Fatalf("register action service upstream: %s", err.Error())
+	if err := spiritsv1.RegisterBattleServiceHandler(ctx, mux, conn); err != nil {
+		log.Fatalf("register battle service upstream: %s", err.Error())
 	}
 
 	if err := spiritsv1.RegisterSpiritServiceHandler(ctx, mux, conn); err != nil {
 		log.Fatalf("register spirit service upstream: %s", err.Error())
+	}
+
+	if err := spiritsv1.RegisterActionServiceHandler(ctx, mux, conn); err != nil {
+		log.Fatalf("register action service upstream: %s", err.Error())
 	}
 
 	return mux

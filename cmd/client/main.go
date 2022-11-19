@@ -39,7 +39,7 @@ func getState(ctx context.Context) *state {
 }
 
 var (
-	port = flag.Int("port", 50051, "The server port")
+	port = flag.Int("port", 12345, "The server port")
 )
 
 var m = menu.Menu{

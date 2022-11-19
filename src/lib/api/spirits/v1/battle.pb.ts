@@ -117,27 +117,27 @@ export type BattleTeamSpirit = {
 
 export class BattleService {
   static CreateBattle(req: CreateBattleRequest, initReq?: fm.InitReq): Promise<CreateBattleResponse> {
-    return fm.fetchReq<CreateBattleRequest, CreateBattleResponse>(`/spirits.v1.BattleService/CreateBattle`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<CreateBattleRequest, CreateBattleResponse>(`/spirits/v1/battles`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static WatchBattle(req: WatchBattleRequest, entityNotifier?: fm.NotifyStreamEntityArrival<WatchBattleResponse>, initReq?: fm.InitReq): Promise<void> {
-    return fm.fetchStreamingRequest<WatchBattleRequest, WatchBattleResponse>(`/spirits.v1.BattleService/WatchBattle`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchStreamingRequest<WatchBattleRequest, WatchBattleResponse>(`/spirits/v1/battles/${req["id"]}/watch?${fm.renderURLSearchParams(req, ["id"])}`, entityNotifier, {...initReq, method: "GET"})
   }
   static ListBattles(req: ListBattlesRequest, initReq?: fm.InitReq): Promise<ListBattlesResponse> {
-    return fm.fetchReq<ListBattlesRequest, ListBattlesResponse>(`/spirits.v1.BattleService/ListBattles`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<ListBattlesRequest, ListBattlesResponse>(`/spirits/v1/battles?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
   static AddBattleTeam(req: AddBattleTeamRequest, initReq?: fm.InitReq): Promise<AddBattleTeamResponse> {
-    return fm.fetchReq<AddBattleTeamRequest, AddBattleTeamResponse>(`/spirits.v1.BattleService/AddBattleTeam`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<AddBattleTeamRequest, AddBattleTeamResponse>(`/spirits/v1/battles/${req["battleId"]}/teams`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static AddBattleTeamSpirit(req: AddBattleTeamSpiritRequest, initReq?: fm.InitReq): Promise<AddBattleTeamSpiritResponse> {
-    return fm.fetchReq<AddBattleTeamSpiritRequest, AddBattleTeamSpiritResponse>(`/spirits.v1.BattleService/AddBattleTeamSpirit`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<AddBattleTeamSpiritRequest, AddBattleTeamSpiritResponse>(`/spirits/v1/battles/${req["battleId"]}/teams/${req["teamName"]}/spirits`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static StartBattle(req: StartBattleRequest, initReq?: fm.InitReq): Promise<StartBattleResponse> {
-    return fm.fetchReq<StartBattleRequest, StartBattleResponse>(`/spirits.v1.BattleService/StartBattle`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<StartBattleRequest, StartBattleResponse>(`/spirits/v1/battles/${req["id"]}/start`, {...initReq, method: "POST"})
   }
   static CancelBattle(req: CancelBattleRequest, initReq?: fm.InitReq): Promise<CancelBattleResponse> {
-    return fm.fetchReq<CancelBattleRequest, CancelBattleResponse>(`/spirits.v1.BattleService/CancelBattle`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<CancelBattleRequest, CancelBattleResponse>(`/spirits/v1/battles/${req["id"]}/cancel`, {...initReq, method: "POST"})
   }
   static CallAction(req: CallActionRequest, initReq?: fm.InitReq): Promise<CallActionResponse> {
-    return fm.fetchReq<CallActionRequest, CallActionResponse>(`/spirits.v1.BattleService/CallAction`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<CallActionRequest, CallActionResponse>(`/spirits/v1/battles/${req["battleId"]}/actions`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
 }
