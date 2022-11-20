@@ -63,7 +63,52 @@ export class FakeBattleClient {
 
   watchBattle(id: string, callback: BattleCallback): Promise<void> {
     setTimeout(() => {
-      callback(this.battles.at(-1)!);
+      const battle = this.battles.at(-1)!;
+      battle.teams = [
+        {
+          name: 'team-a',
+          spirits: [
+            {
+              spirit: {
+                name: 'zombie',
+                stats: {
+                  health: '5',
+                },
+              },
+            },
+            {
+              spirit: {
+                name: 'i',
+                stats: {
+                  health: '1',
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'team-b',
+          spirits: [
+            {
+              spirit: {
+                name: 'zombie',
+                stats: {
+                  health: '5',
+                },
+              },
+            },
+            {
+              spirit: {
+                name: 'i',
+                stats: {
+                  health: '1',
+                },
+              },
+            },
+          ],
+        },
+      ];
+      callback(battle);
     }, 1000);
     return Promise.resolve();
   }

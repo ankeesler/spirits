@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 
 import {
   Battle, BattleState, BattleTeam} from '../../lib/api/spirits/v1/battle.pb';
@@ -33,9 +34,11 @@ const BattleCard: FC<BattleCardProps> = (props) => {
     <Card>
       <Card.Header>{getBattleState()}</Card.Header>
       <Card.Body>
-        {props.battle.teams!.map((team: BattleTeam, i: number) =>
-          <TeamCard team={team} key={i} />,
-        )}
+        <CardGroup>
+          {props.battle.teams!.map((team: BattleTeam, i: number) =>
+            <TeamCard team={team} key={i} />,
+          )}
+        </CardGroup>
       </Card.Body>
     </Card>
   );
