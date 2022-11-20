@@ -1,5 +1,8 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, FormEvent, useEffect, useState} from 'react';
 import {Container, Spinner} from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import {useLoaderData} from 'react-router-dom';
 import BattleCard from '../components/BattleCard/BattleCard';
 
@@ -18,20 +21,55 @@ interface BattleViewProps {
 
 const BattleView: FC<BattleViewProps> = (props) => {
   const id = useLoaderData();
-  const [battle, setBattle] = useState<Battle>({});
-  const [loaded, setLoaded] = useState<Boolean>(false);
+  const [battle, setBattle] = useState<Battle | undefined>(undefined);
+  const [showAddTeamModal, setShowAddTeamModal] = useState<boolean>(false);
+  const [teamName, setTeamName] = useState<string>('');
 
   useEffect(() => {
     props.battleClient.watchBattle(id as string, (battle: Battle) => {
       console.log(`BattleView: got battle: ${battle.toString()}`);
-      setLoaded(true);
       setBattle(battle);
     });
   }, []);
 
+  const onAddTeam = (e: FormEvent) => {
+    e.preventDefault();
+
+    props.battleClient.addTeam(battle!.meta!.id!, teamName)
+        .then(setBattle)
+        .catch((error) => {
+          alert(error.message);
+        });
+
+    setShowAddTeamModal(false);
+    setTeamName('');
+  };
+
   return (
     <Container>
-      {loaded ? <BattleCard battle={battle} /> : <Spinner />}
+      <Button className="mb-3" onClick={() => setShowAddTeamModal(true)}>
+        Add Team
+      </Button>
+
+      {battle ? <BattleCard battle={battle!} /> : <Spinner />}
+
+      <Modal show={showAddTeamModal} onHide={() => setShowAddTeamModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add team</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={onAddTeam}>
+            <Form.Group className="mb-3">
+              <Form.Label>Team name</Form.Label>
+              <Form.Control
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                autoFocus />
+            </Form.Group>
+            <Button type="submit">Add</Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

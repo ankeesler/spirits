@@ -57,8 +57,11 @@ export class FakeBattleClient {
   }
 
   addTeam(_: string, teamName: string): Promise<Battle> {
-    this.battles[0].teams?.push({name: teamName});
-    return Promise.resolve(this.battles[-1]);
+    if (!this.battles.at(-1)!.teams) {
+      this.battles.at(-1)!.teams = [];
+    }
+    this.battles.at(-1)!.teams!.push({name: teamName, spirits: []});
+    return Promise.resolve(this.battles.at(-1)!);
   }
 
   watchBattle(id: string, callback: BattleCallback): Promise<void> {
