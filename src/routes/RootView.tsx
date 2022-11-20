@@ -92,6 +92,12 @@ const RootView: FC<AppProps> = (props) => {
     return `[${logLine.time.toLocaleTimeString()}] ${logLine.message}`;
   };
 
+  document.onkeyup = (e: KeyboardEvent) => {
+    if (e.which === 'N'.charCodeAt(0)) {
+      onNewBattle();
+    }
+  };
+
   return (
     <div className="font-monospace p-3">
       <Navbar bg="light" className="mb-3">

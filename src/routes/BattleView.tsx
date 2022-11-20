@@ -45,6 +45,12 @@ const BattleView: FC<BattleViewProps> = (props) => {
     setTeamName('');
   };
 
+  document.onkeyup = (e: KeyboardEvent) => {
+    if (e.which === 'A'.charCodeAt(0)) {
+      setShowAddTeamModal(true);
+    }
+  };
+
   return (
     <Container>
       <Button className="mb-3" onClick={() => setShowAddTeamModal(true)}>
